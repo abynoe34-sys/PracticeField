@@ -2,6 +2,12 @@ import OpenAI from 'openai'
 import type { Exercise, ExperienceLevel, VideoAnalysis, VideoComparison } from '@/types'
 import { getTemplateExercises } from './training-templates'
 import { findRBDrillsForPainPoint } from './position-drills/rb'
+import { findWRDrillsForPainPoint } from './position-drills/wr'
+import { findQBDrillsForPainPoint } from './position-drills/qb'
+import { findOLDrillsForPainPoint } from './position-drills/ol'
+import { findTEDrillsForPainPoint } from './position-drills/te'
+import { findDLDrillsForPainPoint } from './position-drills/dl'
+import { findLBDrillsForPainPoint } from './position-drills/lb'
 
 let _client: OpenAI | null = null
 
@@ -34,24 +40,32 @@ export async function generateTrainingPlanAI(params: GeneratePlanParams): Promis
     ? `\nVideo Analysis Evidence:\nThese issues were directly observed in practice video footage:\n${params.videoIssues.map(i => `- ${i}`).join('\n')}\nPrioritize exercises that address these video-confirmed issues.`
     : ''
 
-  // For RB players, pull relevant drills from the curated library and include them
-  // in the prompt so the AI references real, coach-validated drill names.
+  // For position-specific players, pull relevant drills from the curated library
+  // so the AI references real, coach-validated drill names and cues.
   let positionDrillContext = ''
-  if (params.position?.toUpperCase() === 'RB' && params.painPoints.length > 0) {
+  const posUpper = params.position?.toUpperCase()
+  if (params.painPoints.length > 0 && (posUpper === 'RB' || posUpper === 'WR' || posUpper === 'QB' || posUpper === 'OL' || posUpper === 'TE' || posUpper === 'DL' || posUpper === 'LB')) {
+    const finder = posUpper === 'WR' ? findWRDrillsForPainPoint
+      : posUpper === 'QB' ? findQBDrillsForPainPoint
+      : posUpper === 'OL' ? findOLDrillsForPainPoint
+      : posUpper === 'TE' ? findTEDrillsForPainPoint
+      : posUpper === 'DL' ? findDLDrillsForPainPoint
+      : posUpper === 'LB' ? findLBDrillsForPainPoint
+      : findRBDrillsForPainPoint
     const seen = new Set<string>()
-    const rbDrillLines: string[] = []
+    const drillLines: string[] = []
     for (const pp of params.painPoints) {
-      for (const drill of findRBDrillsForPainPoint(pp)) {
+      for (const drill of finder(pp)) {
         if (!seen.has(drill.name)) {
           seen.add(drill.name)
-          rbDrillLines.push(
+          drillLines.push(
             `  • ${drill.name} — "${drill.coaching_cue}" (fixes: ${drill.fixes.slice(0, 3).join(', ')})`
           )
         }
       }
     }
-    if (rbDrillLines.length > 0) {
-      positionDrillContext = `\nCurated RB Drill Library (prefer these drills when relevant):\n${rbDrillLines.join('\n')}\n`
+    if (drillLines.length > 0) {
+      positionDrillContext = `\nCurated ${posUpper} Drill Library (prefer these drills when relevant):\n${drillLines.join('\n')}\n`
     }
   }
 
@@ -126,13 +140,13 @@ C = Visible technique breakdowns affecting performance, needs focused work
 D = Fundamental errors present, safety or effectiveness concerns`
 
 const POSITION_CUES: Record<string, string> = {
-  QB:  'Evaluate: drop-back footwork, hip rotation through throw, platform consistency, eyes pre-snap vs post-snap, ball placement by coverage type.',
-  WR:  'Evaluate: release off line, route stem depth, break sharpness, catch point (hands vs body), separation creation, after-catch run.',
+  QB:  'Evaluate: drop-back footwork (is the QB hitting the correct landmark depth — 3-step at 3-4 yds, 5-step at 5-7 yds, 7-step at 9-11 yds — or drifting past it?), platform on the throw (set base, or off the back foot?), hip rotation (hips-first sequence into the throw, or arm-only?), release point (at the apex or past it?), elbow position (up through the throw or dropping to side-arm?), pocket presence (sliding and stepping up to reset platform, or bailing backward/sideways at first pressure?), pre-snap eyes (scanning coverage before the snap or staring at one receiver?), post-snap progression speed (working 1-2-3 or locking onto the first read?), accuracy and ball placement by coverage type.',
+  WR:  'Evaluate: release off the line of scrimmage (vs press: swim/rip/push-pull — is the release effective or does the CB maintain contact?), route stem (does the WR attack the CB\'s leverage or run a flat predictable stem?), break sharpness (hips before shoulders on out/comeback; no rounding on slants), catch technique (hands-first vs. body catch, thumbs-in above waist / pinkies-together below, eyes on tip of ball through catch), concentration under contact (does the WR secure the ball before looking for yards or does anticipation of contact cause early eye movement?), separation at the top of route, after-catch run ability. Also evaluate stalk block effort and technique on run plays.',
   RB:  'Evaluate: stance (2pt weight on balls of feet / 3pt fingertips only), first-step burst direction and explosion timing off snap, pad level through the hole (stay low at contact), ball security (4-point carry: fingertips wrap over tip, forearm under ball, bicep squeeze, tuck into chest), pass protection stance (wide base, hands ready, punch timing), route running from backfield (sell run fake first, release clean), cut sharpness (outside foot plant, rip or spin, re-accelerate). Reference drills: Two-Point Stance, Three-Point Stance, Ball Security Gauntlet, Cone Cut Drill, Shuffle Cut, Third Leg Drill, Hand & Finger Placement, Route Running Out of Backfield.',
-  TE:  'Evaluate: release vs press, route precision, hands (catching away from body), blocking hand placement and sustain.',
-  OL:  'Evaluate: stance balance, first-step direction, hand placement (punch inside frame), pad level, hip drive, sustain through whistle.',
-  DL:  'Evaluate: pre-snap alignment, get-off timing, hand usage, pass rush move setup and counter, pad level.',
-  LB:  'Evaluate: pre-snap read, run-fit angles, trigger quickness, hip flip in coverage, zone drops, open-field tackling.',
+  OL:  'Evaluate: stance type (2-pt vs 3-pt coil — weight on fingertips or balls of feet?), first-step direction and flatness (false step or upright rise?), hand placement on contact (thumbs-up inside the frame or outside/grabbing?), pad level through the block (pad under pad or stood up?), hip drive and uncoil sequence (arms-first or ground-up?), sustain through the whistle (feet stop at contact or keep driving?), pass protection kick-slide mechanics and anchor on bull rush, pull path on gap schemes (flat kick or looping arc?).',
+  TE:  'Evaluate: stance alignment (in-line vs off-ball — is the stance appropriate for assignment?), release vs press (swim, rip, push-pull — does the TE get clean separation?), route stem and break sharpness (does the TE threaten the safety on vertical routes? does the TE hit proper crossing depth?), catch technique (hands first away from body, eyes on tip through catch, concentration under contact), blocking hand placement and sustain when in-line (same standard as OL), chip-and-release timing on pass protection assignments.',
+  DL:  'Evaluate: pre-snap stance (hand position in shade — ball hand or man hand?), get-off timing and flatness of first step (rising or staying low?), hand fighting at the point of attack (who establishes inside grip first?), pass rush move setup and execution (does the DL close the distance before running the move?), block recognition and reaction (base vs double team vs reach — does the DL read correctly?), pad level through the block (staying low or getting stood up?), pursuit angle after the shed.',
+  LB:  'Evaluate: pre-snap alignment and reads (correct gap assignment?), trigger quickness on run (does the LB fire on the right key or hesitate?), block defeat technique (shock and shed — or absorbed?), back-hip pursuit angle (inside leverage maintained?), pass drop footwork (45-degree angle or flat/straight back?), hip flip timing in zone-to-man transitions, zone assignment execution (correct window depth?), open-field tackling (hawk progression — buzz feet, hit position, wrap and drive?).',
   CB:  'Evaluate: press alignment, backpedal mechanics, hip flip timing, zone technique, man-coverage leverage, ball-tracking.',
   DB:  'Evaluate: alignment depth, backpedal, break on ball, angle of pursuit, zone assignment execution.',
   default: 'Evaluate overall athletic movement quality, technique consistency, and position-specific fundamentals.',

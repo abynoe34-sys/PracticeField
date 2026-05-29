@@ -1,5 +1,11 @@
 import type { Exercise, ExperienceLevel } from '@/types'
 import { findRBDrillsForPainPoint, rbDrillToExercise } from './position-drills/rb'
+import { findWRDrillsForPainPoint, wrDrillToExercise } from './position-drills/wr'
+import { findQBDrillsForPainPoint, qbDrillToExercise } from './position-drills/qb'
+import { findOLDrillsForPainPoint, olDrillToExercise } from './position-drills/ol'
+import { findTEDrillsForPainPoint, teDrillToExercise } from './position-drills/te'
+import { findDLDrillsForPainPoint, dlDrillToExercise } from './position-drills/dl'
+import { findLBDrillsForPainPoint, lbDrillToExercise } from './position-drills/lb'
 
 // ─── Exercise Library ─────────────────────────────────────────────────────────
 // Curated by pain-point keywords. Used as fallback when OpenAI is unavailable.
@@ -300,6 +306,204 @@ function getRBMainExercises(level: ExperienceLevel, painPoints: string[]): Exerc
   return sorted
 }
 
+/**
+ * WR-specific main exercises drawn from the curated position drill library.
+ */
+function getWRMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
+  const drillScores = new Map<string, { exercise: Exercise; score: number }>()
+
+  for (const pp of painPoints) {
+    for (const drill of findWRDrillsForPainPoint(pp)) {
+      const entry = drillScores.get(drill.name)
+      if (entry) {
+        entry.score += 1
+      } else {
+        drillScores.set(drill.name, { exercise: wrDrillToExercise(drill), score: 1 })
+      }
+    }
+  }
+
+  const sorted = [...drillScores.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(({ exercise }) => exercise)
+
+  if (sorted.length < 4) {
+    const existing = new Set(sorted.map(e => e.name))
+    const filler = getGenericMainExercises(level, painPoints)
+      .filter(e => !existing.has(e.name))
+      .slice(0, 6 - sorted.length)
+    return [...sorted, ...filler]
+  }
+
+  return sorted
+}
+
+/**
+ * QB-specific main exercises drawn from the curated position drill library.
+ */
+function getQBMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
+  const drillScores = new Map<string, { exercise: Exercise; score: number }>()
+
+  for (const pp of painPoints) {
+    for (const drill of findQBDrillsForPainPoint(pp)) {
+      const entry = drillScores.get(drill.name)
+      if (entry) {
+        entry.score += 1
+      } else {
+        drillScores.set(drill.name, { exercise: qbDrillToExercise(drill), score: 1 })
+      }
+    }
+  }
+
+  const sorted = [...drillScores.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(({ exercise }) => exercise)
+
+  if (sorted.length < 4) {
+    const existing = new Set(sorted.map(e => e.name))
+    const filler = getGenericMainExercises(level, painPoints)
+      .filter(e => !existing.has(e.name))
+      .slice(0, 6 - sorted.length)
+    return [...sorted, ...filler]
+  }
+
+  return sorted
+}
+
+/**
+ * OL-specific main exercises drawn from the curated position drill library.
+ */
+function getOLMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
+  const drillScores = new Map<string, { exercise: Exercise; score: number }>()
+
+  for (const pp of painPoints) {
+    for (const drill of findOLDrillsForPainPoint(pp)) {
+      const entry = drillScores.get(drill.name)
+      if (entry) {
+        entry.score += 1
+      } else {
+        drillScores.set(drill.name, { exercise: olDrillToExercise(drill), score: 1 })
+      }
+    }
+  }
+
+  const sorted = [...drillScores.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(({ exercise }) => exercise)
+
+  if (sorted.length < 4) {
+    const existing = new Set(sorted.map(e => e.name))
+    const filler = getGenericMainExercises(level, painPoints)
+      .filter(e => !existing.has(e.name))
+      .slice(0, 6 - sorted.length)
+    return [...sorted, ...filler]
+  }
+
+  return sorted
+}
+
+/**
+ * TE-specific main exercises drawn from the curated position drill library.
+ */
+function getTEMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
+  const drillScores = new Map<string, { exercise: Exercise; score: number }>()
+
+  for (const pp of painPoints) {
+    for (const drill of findTEDrillsForPainPoint(pp)) {
+      const entry = drillScores.get(drill.name)
+      if (entry) {
+        entry.score += 1
+      } else {
+        drillScores.set(drill.name, { exercise: teDrillToExercise(drill), score: 1 })
+      }
+    }
+  }
+
+  const sorted = [...drillScores.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(({ exercise }) => exercise)
+
+  if (sorted.length < 4) {
+    const existing = new Set(sorted.map(e => e.name))
+    const filler = getGenericMainExercises(level, painPoints)
+      .filter(e => !existing.has(e.name))
+      .slice(0, 6 - sorted.length)
+    return [...sorted, ...filler]
+  }
+
+  return sorted
+}
+
+/**
+ * DL-specific main exercises drawn from the curated position drill library.
+ */
+function getDLMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
+  const drillScores = new Map<string, { exercise: Exercise; score: number }>()
+
+  for (const pp of painPoints) {
+    for (const drill of findDLDrillsForPainPoint(pp)) {
+      const entry = drillScores.get(drill.name)
+      if (entry) {
+        entry.score += 1
+      } else {
+        drillScores.set(drill.name, { exercise: dlDrillToExercise(drill), score: 1 })
+      }
+    }
+  }
+
+  const sorted = [...drillScores.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(({ exercise }) => exercise)
+
+  if (sorted.length < 4) {
+    const existing = new Set(sorted.map(e => e.name))
+    const filler = getGenericMainExercises(level, painPoints)
+      .filter(e => !existing.has(e.name))
+      .slice(0, 6 - sorted.length)
+    return [...sorted, ...filler]
+  }
+
+  return sorted
+}
+
+/**
+ * LB-specific main exercises drawn from the curated position drill library.
+ */
+function getLBMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
+  const drillScores = new Map<string, { exercise: Exercise; score: number }>()
+
+  for (const pp of painPoints) {
+    for (const drill of findLBDrillsForPainPoint(pp)) {
+      const entry = drillScores.get(drill.name)
+      if (entry) {
+        entry.score += 1
+      } else {
+        drillScores.set(drill.name, { exercise: lbDrillToExercise(drill), score: 1 })
+      }
+    }
+  }
+
+  const sorted = [...drillScores.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(({ exercise }) => exercise)
+
+  if (sorted.length < 4) {
+    const existing = new Set(sorted.map(e => e.name))
+    const filler = getGenericMainExercises(level, painPoints)
+      .filter(e => !existing.has(e.name))
+      .slice(0, 6 - sorted.length)
+    return [...sorted, ...filler]
+  }
+
+  return sorted
+}
+
 export function getTemplateExercises(
   level: ExperienceLevel,
   painPoints: string[],
@@ -309,8 +513,21 @@ export function getTemplateExercises(
   const warmups   = pickByCategory(EXERCISE_LIBRARY, 'warmup',   2, painPoints).map(toExercise)
   const cooldowns = pickByCategory(EXERCISE_LIBRARY, 'cooldown', 2, painPoints).map(toExercise)
 
-  const main = position?.toUpperCase() === 'RB'
+  const pos = position?.toUpperCase()
+  const main = pos === 'RB'
     ? getRBMainExercises(level, painPoints)
+    : pos === 'WR'
+    ? getWRMainExercises(level, painPoints)
+    : pos === 'QB'
+    ? getQBMainExercises(level, painPoints)
+    : pos === 'OL'
+    ? getOLMainExercises(level, painPoints)
+    : pos === 'TE'
+    ? getTEMainExercises(level, painPoints)
+    : pos === 'DL'
+    ? getDLMainExercises(level, painPoints)
+    : pos === 'LB'
+    ? getLBMainExercises(level, painPoints)
     : getGenericMainExercises(level, painPoints)
 
   return [...warmups, ...main.slice(0, 8), ...cooldowns]

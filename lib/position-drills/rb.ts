@@ -223,8 +223,8 @@ export const RB_DRILLS: RBDrillEntry[] = [
     technique_area: 'contact_breaking_tackles',
     sets: 4, reps: 8, duration: null,
     why: 'Dipping the shoulder and ripping through the tackler\'s arms is the most effective tackle-breaking technique through the line. It lowers your pad level and generates upward force through the defender.',
-    coaching_cue: 'Dip the shoulder, rip up through the armpit — not around',
-    common_mistake: 'Going around the tackler instead of through — loses yards and momentum',
+    coaching_cue: 'Hips low, shoulders square — follow through lifting the arm upward. Hips move forward first before the arm follows through.',
+    common_mistake: 'Going around the tackler instead of through, or following through with the arm before driving the hips',
     fixes: ['breaking tackles', 'contact', 'pad level', 'yards after contact'],
     progressions: ['Bag rip', 'Partner static', 'Live pursuit drill'],
     videos: [
@@ -253,9 +253,9 @@ export const RB_DRILLS: RBDrillEntry[] = [
     technique_area: 'contact_breaking_tackles',
     sets: 4, reps: 8, duration: null,
     why: 'A proper stiff arm extends full arm length, targeting the defender\'s face/shoulder. It creates maximum distance and allows the RB to accelerate past.',
-    coaching_cue: 'Full extension — lock the elbow, push through, don\'t hold',
-    common_mistake: 'Bent elbow stiff arm — no leverage, can get grabbed',
-    fixes: ['stiff arm', 'contact', 'breaking tackles', 'arm strength'],
+    coaching_cue: 'Quick and powerful — use it to manipulate the defender\'s momentum. Stay balanced. Don\'t hold the stiff arm too long.',
+    common_mistake: 'Holding the stiff arm too long or losing balance — makes you a one-arm runner',
+    fixes: ['stiff arm', 'contact', 'breaking tackles', 'arm strength', 'sideline'],
     progressions: ['Static push on wall', 'Bag stiff arm', 'Live one-on-one pursuit'],
     videos: [
       { title: 'RB Academy – Stiff Arm Drill', url: 'https://www.youtube.com/watch?v=4xKUOgGZCdk', duration: '1:42' },
@@ -292,6 +292,51 @@ export const RB_DRILLS: RBDrillEntry[] = [
       { title: 'RB Drills – Explosion after contact', url: 'https://www.youtube.com/watch?v=T4l0hVBkCOA', duration: '3:01' },
       { title: 'Press the line & side shuffle', url: 'https://www.youtube.com/watch?v=CXGYTJ8O334', duration: '1:37' },
       { title: 'Guaranteed yardage vs a linebacker', url: 'https://www.youtube.com/watch?v=DduYOoh2saY', duration: '3:29' },
+    ],
+  },
+  {
+    name: 'Blast (Short Yardage Power Run)',
+    category: 'technique',
+    technique_area: 'contact_breaking_tackles',
+    sets: 4, reps: 8, duration: null,
+    why: 'The blast is the go-to technique in short-yardage situations. Two hands on the ball, low pad level, and a square approach lets the RB absorb contact and drive forward through the pile.',
+    coaching_cue: 'Two hands on the ball, shoulders square, hips low, head up — drive through the contact, don\'t stop at it.',
+    common_mistake: 'Standing up at the point of contact and losing leverage — defenders stack you up easily when you\'re high',
+    fixes: ['short yardage', 'blast', 'contact', 'goal line', 'power run', 'ball security'],
+    progressions: ['Bag blast at half speed', 'Full-speed bag blast with two-hand carry', 'Live short-yardage drill'],
+    videos: [
+      { title: 'Running Back Drills – Explosion after contact', url: 'https://www.youtube.com/watch?v=T4l0hVBkCOA', duration: '3:01' },
+      { title: 'Guaranteed yardage vs a linebacker', url: 'https://www.youtube.com/watch?v=DduYOoh2saY', duration: '3:29' },
+    ],
+  },
+  {
+    name: 'Roll Off',
+    category: 'technique',
+    technique_area: 'contact_breaking_tackles',
+    sets: 4, reps: 6, duration: null,
+    why: 'The roll off is the best technique against more than one defender. Slightly opening the hips and rolling the body away from contact lets the RB shed multiple tacklers and gain that extra yard.',
+    coaching_cue: 'Hips low, shoulders square — slightly open your hips and roll your body away from contact. You should be facing upfield after the roll.',
+    common_mistake: 'Rolling sideways instead of through — you lose forward momentum and end up facing the wrong direction',
+    fixes: ['roll off', 'contact', 'breaking tackles', 'multiple defenders', 'yards after contact'],
+    progressions: ['Walk-through roll vs bag', 'Jog speed roll vs shield', 'Live roll off vs two defenders'],
+    videos: [
+      { title: 'Running Back Academy – Breaking Tackles', url: 'https://www.youtube.com/watch?v=UDxqYOu4iNE', duration: '1:20' },
+      { title: 'Florida Gators – Contact roll off drill', url: 'https://www.youtube.com/watch?v=CStJzFgTexU&t=828s', duration: '23:16 (full session)' },
+    ],
+  },
+  {
+    name: 'Bounce Off',
+    category: 'technique',
+    technique_area: 'contact_breaking_tackles',
+    sets: 4, reps: 6, duration: null,
+    why: 'The bounce off is ideal against multiple defenders when a direct blast won\'t work. After contact, bouncing back slightly and to the side — while keeping balance — allows the RB to re-accelerate forward.',
+    coaching_cue: 'Hips low, shoulders square — after contact bounce back slightly to the side, keep your balance, then continue forward. Don\'t fall.',
+    common_mistake: 'Losing balance on the bounce and going sideways or down instead of re-accelerating forward',
+    fixes: ['bounce off', 'contact', 'breaking tackles', 'multiple defenders', 'balance', 'yards after contact'],
+    progressions: ['Stationary bounce vs pad', 'Moving bounce off bag', 'Live bounce off vs two defenders'],
+    videos: [
+      { title: 'RB Drills – Explosion after contact', url: 'https://www.youtube.com/watch?v=T4l0hVBkCOA', duration: '3:01' },
+      { title: 'Press the line & side shuffle', url: 'https://www.youtube.com/watch?v=CXGYTJ8O334', duration: '1:37' },
     ],
   },
   {
@@ -659,4 +704,162 @@ export const RB_AREA_LABELS: Record<RBTechniqueArea, string> = {
   footwork:                  'Footwork',
   catching:                  'Catching & Routes',
   strength_conditioning:     'Strength & Conditioning',
+}
+
+// ─── Teaching Progression ─────────────────────────────────────────────────────
+// Structured coaching steps derived from "Steps of Teaching Running Backs"
+// Covers the full progression a coach should follow when developing an RB.
+
+export interface RBTeachingStep {
+  order: number
+  topic: string
+  technique_area: RBTechniqueArea
+  keyPoints: string[]
+  /** Specific sub-techniques or named moves within this topic */
+  techniques?: {
+    name: string
+    bestFor: string
+    cues: string[]
+  }[]
+}
+
+export const RB_TEACHING_PROGRESSION: RBTeachingStep[] = [
+  {
+    order: 1,
+    topic: 'Stance',
+    technique_area: 'stance',
+    keyPoints: [
+      'Two-point stance: weight on balls of feet, slight forward lean, eyes through the line',
+      'Three-point stance: fingertips only on ground, dominant foot staggered back, flat back',
+      'Proper stance hides the play direction and allows equal explosion left or right',
+    ],
+  },
+  {
+    order: 2,
+    topic: 'First Step',
+    technique_area: 'first_step',
+    keyPoints: [
+      'React to snap count — not the movement of others',
+      'First step determines your path and momentum through the hole',
+      'Explosive lateral first step for zone reads; downhill first step for gap schemes',
+    ],
+  },
+  {
+    order: 3,
+    topic: 'Taking a Handoff',
+    technique_area: 'handoff',
+    keyPoints: [
+      'Run your path — trust the QB to find your pocket',
+      'Eyes on the mesh point, not the defense',
+      'Create a proper pocket with top arm up, bottom arm across the body',
+      'Secure ball immediately after receiving — do not look for defenders before securing',
+    ],
+  },
+  {
+    order: 4,
+    topic: 'Ball Security',
+    technique_area: 'ball_security',
+    keyPoints: [
+      'Four-point carry: fingertips wrap over tip, forearm under ball, bicep squeeze, tuck into chest',
+      'Switch to inside arm when running near sideline',
+      'Tuck before contact — do not wait until you feel the hit',
+    ],
+  },
+  {
+    order: 5,
+    topic: 'Catching & Hand Position',
+    technique_area: 'catching',
+    keyPoints: [
+      'Thumbs-in for balls at or above the waist',
+      'Thumbs-out (pinkies together) for balls below the waist',
+      'Catch with hands — not your body. Soft hands, then squeeze.',
+      'Eyes on the ball all the way into the hands before looking for yards',
+    ],
+  },
+  {
+    order: 6,
+    topic: 'Route Running',
+    technique_area: 'catching',
+    keyPoints: [
+      'Sell the run fake first before releasing into the route',
+      'Clean release — do not telegraph the route direction early',
+      'Common backfield routes: flat, swing, hook/dump, arrow',
+    ],
+  },
+  {
+    order: 7,
+    topic: 'Blocking — Run & Pass',
+    technique_area: 'blocking',
+    keyPoints: [
+      'Run block: hands inside defender\'s frame, thumbs up, drive through the chest',
+      'Pass protection: stay square, punch on contact — do not lunge or reach',
+      'Cut block: aim at thighs not knees, explode and bear crawl through',
+      'Win the inside hand position — hands inside wins every time',
+    ],
+  },
+  {
+    order: 8,
+    topic: 'Contact & Breaking Tackles',
+    technique_area: 'contact_breaking_tackles',
+    keyPoints: [
+      'Always keep hips low and shoulders square through contact',
+      'Match the technique to the situation — see below',
+    ],
+    techniques: [
+      {
+        name: 'Blast',
+        bestFor: 'Short yardage / goal line',
+        cues: [
+          'Two hands on the ball',
+          'Shoulders square',
+          'Hips low, head up',
+          'Drive through the contact — do not stop at it',
+        ],
+      },
+      {
+        name: 'Rip',
+        bestFor: 'Along the sideline / through the line',
+        cues: [
+          'Hips low, shoulders square',
+          'Follow through lifting the arm upward',
+          'Hips move forward FIRST before the arm follows through',
+        ],
+      },
+      {
+        name: 'Stiff Arm',
+        bestFor: 'Open field / sideline situations',
+        cues: [
+          'Make it quick and powerful',
+          'Use it to manipulate the defender\'s momentum',
+          'Stay balanced — do not hold it too long',
+        ],
+      },
+      {
+        name: 'Roll Off',
+        bestFor: 'Against more than one defender',
+        cues: [
+          'Hips low, shoulders square',
+          'Slightly open hips and roll body away from contact',
+          'Body should be facing upfield after the roll off',
+        ],
+      },
+      {
+        name: 'Bounce Off',
+        bestFor: 'Against more than one defender',
+        cues: [
+          'Hips low, shoulders square',
+          'After contact: bounce back slightly to the side',
+          'Keep balance — then continue forward',
+        ],
+      },
+    ],
+  },
+]
+
+/**
+ * Get the teaching step for a given technique area.
+ * Useful for surfacing structured coaching notes alongside drill cards.
+ */
+export function getRBTeachingStep(area: RBTechniqueArea): RBTeachingStep | undefined {
+  return RB_TEACHING_PROGRESSION.find(s => s.technique_area === area)
 }
