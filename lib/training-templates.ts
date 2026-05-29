@@ -1,0 +1,348 @@
+import type { Exercise, ExperienceLevel } from '@/types'
+import { findRBDrillsForPainPoint, rbDrillToExercise } from './position-drills/rb'
+
+// ─── Exercise Library ─────────────────────────────────────────────────────────
+// Curated by pain-point keywords. Used as fallback when OpenAI is unavailable.
+
+type ExerciseTemplate = Omit<Exercise, 'why'> & { tags: string[]; why: string }
+
+const EXERCISE_LIBRARY: ExerciseTemplate[] = [
+  // WARMUP
+  {
+    name: 'Dynamic Hip Flexor Stretch',
+    sets: 2, reps: 10, duration: null,
+    category: 'warmup',
+    tags: ['hip', 'mobility', 'flexibility', 'stiffness'],
+    why: 'Opens the hip flexors before explosive movements, reducing injury risk and improving stride length.',
+  },
+  {
+    name: 'Leg Swings (front-to-back & lateral)',
+    sets: 2, reps: 15, duration: null,
+    category: 'warmup',
+    tags: ['hip', 'mobility', 'warmup', 'flexibility'],
+    why: 'Dynamically activates the hip joint through its full range of motion before running drills.',
+  },
+  {
+    name: 'High Knees (in place)',
+    sets: 3, reps: null, duration: '30 seconds',
+    category: 'warmup',
+    tags: ['warmup', 'speed', 'knee drive', 'cardio'],
+    why: 'Elevates heart rate and reinforces proper knee drive mechanics critical for speed.',
+  },
+
+  // SPEED
+  {
+    name: '10-Yard Burst Starts',
+    sets: 6, reps: 1, duration: null,
+    category: 'speed',
+    tags: ['speed', 'acceleration', 'first step', 'burst', 'slow'],
+    why: 'Trains explosive first-step acceleration—the most critical phase of any route or pursuit angle.',
+  },
+  {
+    name: '40-Yard Interval Sprints',
+    sets: 5, reps: 1, duration: null,
+    category: 'speed',
+    tags: ['speed', '40', 'top-end', 'slow', 'cardio'],
+    why: 'Builds top-end speed and conditions the phosphocreatine energy system used in football plays.',
+  },
+  {
+    name: 'Resisted Band Sprints (15 yards)',
+    sets: 4, reps: 2, duration: null,
+    category: 'speed',
+    tags: ['speed', 'power', 'acceleration', 'strength', 'burst'],
+    why: 'Resistance bands force greater hip extension and glute activation, translating directly to faster acceleration.',
+  },
+  {
+    name: 'A-Skip Drill',
+    sets: 3, reps: null, duration: '20 yards',
+    category: 'speed',
+    tags: ['speed', 'knee drive', 'mechanics', 'form'],
+    why: 'Reinforces proper sprint mechanics: vertical shin angle, dorsiflexion, and high knee drive.',
+  },
+
+  // AGILITY
+  {
+    name: '5-10-5 Pro Agility Shuttle',
+    sets: 4, reps: 1, duration: null,
+    category: 'agility',
+    tags: ['agility', 'change of direction', 'lateral', 'slow', 'cuts'],
+    why: 'The gold-standard change-of-direction test and drill—trains the plant-and-drive mechanics used on every cut.',
+  },
+  {
+    name: 'L-Drill (3-Cone)',
+    sets: 4, reps: 1, duration: null,
+    category: 'agility',
+    tags: ['agility', 'change of direction', 'cuts', 'lateral', 'corner'],
+    why: 'Develops the ability to redirect momentum while maintaining body control and pad level.',
+  },
+  {
+    name: 'Ladder Drills (high-knees, lateral, ickey shuffle)',
+    sets: 3, reps: null, duration: '3 minutes total',
+    category: 'agility',
+    tags: ['agility', 'footwork', 'foot speed', 'coordination', 'lateral'],
+    why: 'Improves foot coordination and ground contact time—key for quick, precise movements on the field.',
+  },
+  {
+    name: 'Box Jumps',
+    sets: 4, reps: 6, duration: null,
+    category: 'agility',
+    tags: ['power', 'agility', 'explosion', 'vertical', 'jumping'],
+    why: 'Trains triple extension (ankle, knee, hip) which powers every explosive athletic movement in football.',
+  },
+
+  // FOOTWORK
+  {
+    name: 'Cone Route Tree (1-7 routes)',
+    sets: 3, reps: null, duration: '10 minutes',
+    category: 'footwork',
+    tags: ['footwork', 'routes', 'wr', 'te', 'rb', 'cuts', 'separation'],
+    why: 'Drilling the full route tree with cones builds muscle memory for precise break points and clean releases.',
+  },
+  {
+    name: 'QB Drop-Back Footwork (3/5/7 step)',
+    sets: 5, reps: 5, duration: null,
+    category: 'footwork',
+    tags: ['footwork', 'qb', 'pocket', 'drop', 'mechanics'],
+    why: 'Consistent drop-back footwork ensures the QB reaches the proper depth and weight transfer position for every throw.',
+  },
+  {
+    name: 'Mirror Drill (Partner)',
+    sets: 4, reps: null, duration: '30 seconds each',
+    category: 'footwork',
+    tags: ['footwork', 'coverage', 'db', 'cb', 'lateral', 'change of direction'],
+    why: 'Simulates game-speed mirroring of a receiver/ball carrier, building reactive lateral agility for defenders.',
+  },
+  {
+    name: 'Backpedal to Break Drill',
+    sets: 4, reps: 6, duration: null,
+    category: 'footwork',
+    tags: ['footwork', 'db', 'cb', 'backpedal', 'coverage', 'mechanics'],
+    why: 'Trains the backpedal and hip-flip transition that cornerbacks and safeties use on every passing down.',
+  },
+
+  // STRENGTH
+  {
+    name: 'Goblet Squat',
+    sets: 3, reps: 12, duration: null,
+    category: 'strength',
+    tags: ['strength', 'legs', 'lower body', 'squat', 'beginner'],
+    why: 'Builds quad and glute strength with a front-loaded position that reinforces upright torso and depth.',
+  },
+  {
+    name: 'Romanian Deadlift (RDL)',
+    sets: 3, reps: 10, duration: null,
+    category: 'strength',
+    tags: ['strength', 'hamstring', 'posterior chain', 'speed', 'hinge'],
+    why: 'Develops the hamstrings and posterior chain—the primary muscles responsible for top-end sprint speed.',
+  },
+  {
+    name: 'Split Squat (Bulgarian)',
+    sets: 3, reps: 8, duration: null,
+    category: 'strength',
+    tags: ['strength', 'legs', 'single leg', 'balance', 'stability'],
+    why: 'Single-leg loading identifies and corrects strength imbalances that cause technique breakdown under fatigue.',
+  },
+  {
+    name: 'Single-Leg Bounding',
+    sets: 3, reps: null, duration: '20 yards',
+    category: 'strength',
+    tags: ['strength', 'power', 'speed', 'single leg', 'explosion'],
+    why: 'Develops explosive single-leg power and hip drive, directly transferring to faster acceleration and cutting.',
+  },
+  {
+    name: 'Sled Push (moderate load)',
+    sets: 4, reps: null, duration: '20 yards each',
+    category: 'strength',
+    tags: ['strength', 'power', 'acceleration', 'burst', 'push', 'ol', 'dl'],
+    why: 'Builds functional pushing strength in the exact body position used when accelerating out of a stance.',
+  },
+
+  // TECHNIQUE
+  {
+    name: 'Release vs. Press Coverage (bag/partner)',
+    sets: 3, reps: null, duration: '10 minutes',
+    category: 'technique',
+    tags: ['technique', 'wr', 'te', 'release', 'separation', 'press', 'stack'],
+    why: 'Practicing release technique against resistance builds the confidence and skill to win off the line vs. press corners.',
+  },
+  {
+    name: 'Catch Point Drill (high/low/away/in)',
+    sets: 3, reps: 10, duration: null,
+    category: 'technique',
+    tags: ['technique', 'wr', 'te', 'hands', 'catching', 'drops'],
+    why: 'Reps across all catch-point windows train the hands to lead and secure the ball away from the body.',
+  },
+  {
+    name: 'Pocket Presence Simulation',
+    sets: 3, reps: null, duration: '10 minutes',
+    category: 'technique',
+    tags: ['technique', 'qb', 'pocket', 'pressure', 'footwork', 'mechanics'],
+    why: 'Moving through a simulated collapsing pocket while scanning downfield builds the mechanical habits that hold up under live pressure.',
+  },
+  {
+    name: 'Ball Security Gauntlet (RB)',
+    sets: 3, reps: null, duration: '5 minutes',
+    category: 'technique',
+    tags: ['technique', 'rb', 'ball security', 'fumble', 'carry'],
+    why: 'High-volume contact on the ball trains the secure four-point carry position into automatic muscle memory.',
+  },
+  {
+    name: 'Block Sustain & Finish Drill',
+    sets: 4, reps: 6, duration: null,
+    category: 'technique',
+    tags: ['technique', 'ol', 'blocking', 'finish', 'sustain', 'push', 'punch'],
+    why: 'Repetitions of punch-and-sustain develop hand placement and hip drive needed to move defenders at the point of attack.',
+  },
+
+  // COOLDOWN
+  {
+    name: 'Static Quad & Hip Flexor Stretch',
+    sets: 1, reps: null, duration: '60 seconds each side',
+    category: 'cooldown',
+    tags: ['cooldown', 'flexibility', 'hip', 'recovery'],
+    why: 'Reduces post-workout tightness in the hip flexors and quads that can limit stride length over time.',
+  },
+  {
+    name: 'Seated Hamstring Stretch',
+    sets: 1, reps: null, duration: '60 seconds each side',
+    category: 'cooldown',
+    tags: ['cooldown', 'flexibility', 'hamstring', 'recovery', 'speed'],
+    why: 'Lengthens the hamstrings after sprint work, maintaining the range of motion needed for full posterior chain power.',
+  },
+  {
+    name: 'Foam Roll (quads, IT band, calves)',
+    sets: 1, reps: null, duration: '5 minutes',
+    category: 'cooldown',
+    tags: ['cooldown', 'recovery', 'soreness', 'stiffness'],
+    why: 'Self-myofascial release reduces muscle stiffness and soreness, speeding recovery between sessions.',
+  },
+]
+
+// ─── Template Selection Logic ─────────────────────────────────────────────────
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const toExercise = ({ tags: _tags, ...e }: ExerciseTemplate): Exercise => e
+
+function scoreExercise(exercise: ExerciseTemplate, painPoints: string[]): number {
+  const painText = painPoints.join(' ').toLowerCase()
+  let score = 0
+  for (const tag of exercise.tags) {
+    if (painText.includes(tag)) score += 2
+  }
+  return score
+}
+
+function pickByCategory(
+  exercises: ExerciseTemplate[],
+  category: Exercise['category'],
+  count: number,
+  painPoints: string[]
+): ExerciseTemplate[] {
+  const pool = exercises.filter(e => e.category === category)
+  const scored = pool
+    .map(e => ({ e, score: scoreExercise(e, painPoints) }))
+    .sort((a, b) => b.score - a.score)
+  return scored.slice(0, count).map(x => x.e)
+}
+
+/** Generic main exercises from the shared library */
+function getGenericMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
+  const mainCategories: Exercise['category'][] =
+    level === 'beginner'
+      ? ['footwork', 'agility', 'technique', 'strength']
+      : ['speed', 'agility', 'strength', 'technique', 'footwork']
+
+  const mainExercises: ExerciseTemplate[] = []
+  for (const cat of mainCategories) {
+    const picked = pickByCategory(EXERCISE_LIBRARY, cat, 2, painPoints)
+    for (const p of picked) {
+      if (!mainExercises.find(e => e.name === p.name)) mainExercises.push(p)
+    }
+    if (mainExercises.length >= 8) break
+  }
+  return mainExercises.map(toExercise)
+}
+
+/**
+ * RB-specific main exercises drawn from the curated position drill library.
+ * Scores each drill against the pain points and picks the top matches,
+ * falling back to the generic pool if fewer than 4 RB drills are found.
+ */
+function getRBMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
+  // Score each drill by how many pain points it addresses
+  const drillScores = new Map<string, { exercise: Exercise; score: number }>()
+
+  for (const pp of painPoints) {
+    for (const drill of findRBDrillsForPainPoint(pp)) {
+      const entry = drillScores.get(drill.name)
+      if (entry) {
+        entry.score += 1
+      } else {
+        drillScores.set(drill.name, { exercise: rbDrillToExercise(drill), score: 1 })
+      }
+    }
+  }
+
+  const sorted = [...drillScores.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(({ exercise }) => exercise)
+
+  // Pad with generic exercises if the pain points didn't yield enough RB matches
+  if (sorted.length < 4) {
+    const existing = new Set(sorted.map(e => e.name))
+    const filler = getGenericMainExercises(level, painPoints)
+      .filter(e => !existing.has(e.name))
+      .slice(0, 6 - sorted.length)
+    return [...sorted, ...filler]
+  }
+
+  return sorted
+}
+
+export function getTemplateExercises(
+  level: ExperienceLevel,
+  painPoints: string[],
+  position?: string | null
+): Exercise[] {
+  // Always bookend with generic warmup / cooldown
+  const warmups   = pickByCategory(EXERCISE_LIBRARY, 'warmup',   2, painPoints).map(toExercise)
+  const cooldowns = pickByCategory(EXERCISE_LIBRARY, 'cooldown', 2, painPoints).map(toExercise)
+
+  const main = position?.toUpperCase() === 'RB'
+    ? getRBMainExercises(level, painPoints)
+    : getGenericMainExercises(level, painPoints)
+
+  return [...warmups, ...main.slice(0, 8), ...cooldowns]
+}
+
+// ─── Timeline Calculator ──────────────────────────────────────────────────────
+
+export function getImprovementTimeline(level: ExperienceLevel, painPoints: string[]): {
+  weeks: string
+  reason: string
+  pivot_at_weeks: number
+} {
+  const timelineMap: Record<ExperienceLevel, { weeks: string; pivot_at_weeks: number }> = {
+    beginner:     { weeks: '4–6 weeks', pivot_at_weeks: 4 },
+    intermediate: { weeks: '6–10 weeks', pivot_at_weeks: 6 },
+    elite:        { weeks: '8–14 weeks', pivot_at_weeks: 8 },
+  }
+  const t = timelineMap[level]
+
+  const isPhysical = painPoints.some(p =>
+    /speed|strength|power|burst|explosion/i.test(p)
+  )
+  const isTechnique = painPoints.some(p =>
+    /route|footwork|hand|mechanic|technique/i.test(p)
+  )
+
+  const reason =
+    isPhysical && isTechnique
+      ? 'Combined physical and technique improvements take consistent rep exposure across multiple weeks to wire into muscle memory.'
+      : isPhysical
+      ? 'Physical attributes like speed and strength require neurological adaptation (2–3 wks) before measurable gains appear.'
+      : 'Technique corrections require repetition under progressively harder conditions before they hold under game pressure.'
+
+  return { ...t, reason }
+}
