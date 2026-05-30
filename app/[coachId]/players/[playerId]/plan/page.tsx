@@ -7,23 +7,35 @@ import type { Player, Session, SessionVideo, ExperienceLevel } from '@/types'
 
 type PainPointSource = 'video' | 'session' | 'manual'
 
+interface Suggestion {
+  text:   string
+  source: PainPointSource
+}
+
 export default function GeneratePlanPage() {
   const { coachId, playerId } = useParams<{ coachId: string; playerId: string }>()
   const router = useRouter()
 
-  const [player,     setPlayer]     = useState<Player | null>(null)
-  const [sessions,   setSessions]   = useState<Session[]>([])
+  const [player,      setPlayer]      = useState<Player | null>(null)
   const [latestVideo, setLatestVideo] = useState<SessionVideo | null>(null)
-  const [loading,    setLoading]    = useState(true)
-  const [generating, setGenerating] = useState(false)
-  const [error,      setError]      = useState<string | null>(null)
+  const [loading,     setLoading]     = useState(true)
+  const [generating,  setGenerating]  = useState(false)
+  const [error,       setError]       = useState<string | null>(null)
 
-  const [painPoints,  setPainPoints]  = useState<string[]>([])
-  const [sources,     setSources]     = useState<Record<string, PainPointSource>>({})
-  const [draft,       setDraft]       = useState('')
-  const [level,       setLevel]       = useState<ExperienceLevel>('beginner')
-  const [weeks,       setWeeks]       = useState(6)
-  const [useAI,       setUseAI]       = useState(true)
+  // Suggestions pool (from video + session) — NOT auto-added
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([])
+
+  // Chosen targets
+  const [painPoints, setPainPoints] = useState<string[]>([])
+  const [sources,    setSources]    = useState<Record<string, PainPointSource>>({})
+
+  // Manual entry
+  const [draft, setDraft] = useState('')
+
+  // Plan config
+  const [level, setLevel] = useState<ExperienceLevel>('beginner')
+  const [weeks, setWeeks] = useState(6)
+  const [useAI, setUseAI] = useState(true)
 
   const load = useCallback(async () => {
     const [pr, sr, vr] = await Promise.all([
@@ -38,51 +50,55 @@ export default function GeneratePlanPage() {
     setLevel(p.experience_level ?? 'beginner')
 
     const sessionList: Session[] = sd.sessions ?? []
-    setSessions(sessionList)
 
-    // ── Pull issues from the most recent completed video analysis ─────────
+    // ── All issues from all completed videos (de-duped), severity ordered ──
     const videos: SessionVideo[] = vd.videos ?? []
     const latestAnalysed = videos.find(v => v.analysis_status === 'complete' && v.analysis) ?? null
     setLatestVideo(latestAnalysed)
 
     const videoIssues: string[] = latestAnalysed?.analysis?.issues
-      .filter(i => i.severity === 'critical' || i.severity === 'high')
+      .sort((a, b) => {
+        const order: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 }
+        return (order[a.severity] ?? 4) - (order[b.severity] ?? 4)
+      })
       .map(i => i.issue) ?? []
 
     // ── Session improvements from latest session ──────────────────────────
     const sessionImprovements: string[] = sessionList[0]?.improvements.slice(0, 5) ?? []
 
-    // ── Merge — video issues first, then session (deduplicated) ───────────
+    // ── Build suggestion list — video first, then session (de-duped) ───────
     const seen = new Set<string>()
-    const merged: string[] = []
-    const newSources: Record<string, PainPointSource> = {}
+    const pool: Suggestion[] = []
 
     for (const issue of videoIssues) {
       if (!seen.has(issue)) {
         seen.add(issue)
-        merged.push(issue)
-        newSources[issue] = 'video'
+        pool.push({ text: issue, source: 'video' })
       }
     }
     for (const imp of sessionImprovements) {
       if (!seen.has(imp)) {
         seen.add(imp)
-        merged.push(imp)
-        newSources[imp] = 'session'
+        pool.push({ text: imp, source: 'session' })
       }
     }
 
-    if (merged.length) {
-      setPainPoints(merged)
-      setSources(newSources)
-    }
-
+    setSuggestions(pool)
     setLoading(false)
   }, [coachId, playerId])
 
   useEffect(() => { load() }, [load])
 
-  const addPainPoint = () => {
+  // Add a suggestion from the dropdown
+  const addFromDropdown = (text: string) => {
+    if (!text || painPoints.includes(text)) return
+    const src = suggestions.find(s => s.text === text)?.source ?? 'manual'
+    setPainPoints(prev => [...prev, text])
+    setSources(prev => ({ ...prev, [text]: src }))
+  }
+
+  // Add manually typed entry
+  const addManual = () => {
     const t = draft.trim()
     if (t && !painPoints.includes(t)) {
       setPainPoints(prev => [...prev, t])
@@ -110,14 +126,13 @@ export default function GeneratePlanPage() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        player_id:         playerId,
-        coach_id:          coachId,
-        pain_points:       painPoints,
-        experience_level:  level,
-        commitment_weeks:  weeks,
-        use_ai:            useAI,
-        // Pass video issues separately so AI can weight them higher
-        video_issues: painPoints.filter(p => sources[p] === 'video'),
+        player_id:        playerId,
+        coach_id:         coachId,
+        pain_points:      painPoints,
+        experience_level: level,
+        commitment_weeks: weeks,
+        use_ai:           useAI,
+        video_issues:     painPoints.filter(p => sources[p] === 'video'),
       }),
     })
     const json = await res.json()
@@ -132,13 +147,13 @@ export default function GeneratePlanPage() {
   }
 
   const sourceStyle: Record<PainPointSource, { pill: string; icon: string; tip: string }> = {
-    video:   { pill: 'bg-brand-950 text-brand-400 border-brand-800',  icon: '🎥', tip: 'From video analysis' },
-    session: { pill: 'bg-blue-950 text-blue-400 border-blue-800',     icon: '📋', tip: 'From session review'  },
-    manual:  { pill: 'bg-gray-800 text-gray-300 border-gray-700',     icon: '',   tip: 'Added manually'      },
+    video:   { pill: 'bg-brand-950 text-brand-400 border-brand-800', icon: '🎥', tip: 'From video analysis' },
+    session: { pill: 'bg-blue-950 text-blue-400 border-blue-800',    icon: '📋', tip: 'From session review'  },
+    manual:  { pill: 'bg-gray-800 text-gray-300 border-gray-700',    icon: '',   tip: 'Added manually'       },
   }
 
-  const hasVideoIssues  = painPoints.some(p => sources[p] === 'video')
-  const hasSessionIssues = painPoints.some(p => sources[p] === 'session')
+  // Dropdown options = suggestions not yet added
+  const availableOptions = suggestions.filter(s => !painPoints.includes(s.text))
 
   if (loading) {
     return <div className="text-gray-500 text-sm py-12 text-center">Loading…</div>
@@ -162,64 +177,111 @@ export default function GeneratePlanPage() {
             Areas to Target *
           </label>
 
-          {/* Source legend */}
-          {(hasVideoIssues || hasSessionIssues) && (
-            <div className="flex flex-wrap gap-2 mb-3">
-              {hasVideoIssues && (
-                <span className="flex items-center gap-1 text-xs text-brand-400 bg-brand-950 border border-brand-800 px-2 py-0.5 rounded">
-                  🎥 From video analysis
-                  {latestVideo?.analysis?.overall_grade && (
-                    <span className="opacity-60">· Grade {latestVideo.analysis.overall_grade}</span>
-                  )}
-                </span>
-              )}
-              {hasSessionIssues && (
-                <span className="flex items-center gap-1 text-xs text-blue-400 bg-blue-950 border border-blue-800 px-2 py-0.5 rounded">
-                  📋 From session review
-                </span>
-              )}
-            </div>
-          )}
-
-          {/* Tag chips */}
+          {/* Selected chips */}
           {painPoints.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-3">
               {painPoints.map((pp, i) => {
                 const src = sources[pp] ?? 'manual'
                 const style = sourceStyle[src]
                 return (
-                  <span key={i} className={`flex items-center gap-1 text-xs border px-2 py-1 rounded ${style.pill}`}
-                    title={style.tip}>
+                  <span
+                    key={i}
+                    title={style.tip}
+                    className={`flex items-center gap-1 text-xs border px-2 py-1 rounded ${style.pill}`}
+                  >
                     {style.icon && <span>{style.icon}</span>}
                     {pp}
-                    <button type="button" onClick={() => removePainPoint(i)}
-                      className="ml-0.5 font-bold opacity-60 hover:opacity-100">×</button>
+                    <button
+                      type="button"
+                      onClick={() => removePainPoint(i)}
+                      className="ml-0.5 font-bold opacity-60 hover:opacity-100"
+                    >×</button>
                   </span>
                 )
               })}
             </div>
           )}
 
-          {/* Add manually */}
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={draft}
-              onChange={e => setDraft(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addPainPoint() } }}
-              placeholder="Add additional area…"
-              className="flex-1 bg-field-dark border border-field-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
-            />
-            <button type="button" onClick={addPainPoint}
-              className="px-3 py-2 bg-field-dark border border-field-border rounded-lg text-sm text-gray-300 hover:text-white hover:border-gray-500">
-              Add
-            </button>
-          </div>
+          {/* Suggestions dropdown */}
+          {suggestions.length > 0 ? (
+            <div className="space-y-2">
+              <select
+                value=""
+                onChange={e => { addFromDropdown(e.target.value); e.target.value = '' }}
+                className="w-full bg-field-dark border border-field-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-600"
+              >
+                <option value="" disabled>
+                  {availableOptions.length === 0
+                    ? '✓ All suggestions added'
+                    : `Select an area to target… (${availableOptions.length} available)`}
+                </option>
 
-          {painPoints.length === 0 && (
-            <p className="text-xs text-gray-600 mt-2">
-              No video or session data found. Type an area above to get started.
-            </p>
+                {/* Video analysis group */}
+                {availableOptions.some(s => s.source === 'video') && (
+                  <optgroup label={`🎥 Video Analysis${latestVideo?.analysis?.overall_grade ? ` · Grade ${latestVideo.analysis.overall_grade}` : ''}`}>
+                    {availableOptions
+                      .filter(s => s.source === 'video')
+                      .map(s => (
+                        <option key={s.text} value={s.text}>{s.text}</option>
+                      ))}
+                  </optgroup>
+                )}
+
+                {/* Session review group */}
+                {availableOptions.some(s => s.source === 'session') && (
+                  <optgroup label="📋 Session Review">
+                    {availableOptions
+                      .filter(s => s.source === 'session')
+                      .map(s => (
+                        <option key={s.text} value={s.text}>{s.text}</option>
+                      ))}
+                  </optgroup>
+                )}
+              </select>
+
+              {/* Manual entry */}
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={draft}
+                  onChange={e => setDraft(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addManual() } }}
+                  placeholder="Or type a custom area…"
+                  className="flex-1 bg-field-dark border border-field-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
+                />
+                <button
+                  type="button"
+                  onClick={addManual}
+                  className="px-3 py-2 bg-field-dark border border-field-border rounded-lg text-sm text-gray-300 hover:text-white hover:border-gray-500"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          ) : (
+            /* No suggestions — manual only */
+            <div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={draft}
+                  onChange={e => setDraft(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addManual() } }}
+                  placeholder="Type an area to target…"
+                  className="flex-1 bg-field-dark border border-field-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
+                />
+                <button
+                  type="button"
+                  onClick={addManual}
+                  className="px-3 py-2 bg-field-dark border border-field-border rounded-lg text-sm text-gray-300 hover:text-white hover:border-gray-500"
+                >
+                  Add
+                </button>
+              </div>
+              <p className="text-xs text-gray-600 mt-2">
+                No video or session data found. Type an area above to get started.
+              </p>
+            </div>
           )}
         </div>
 
@@ -227,8 +289,11 @@ export default function GeneratePlanPage() {
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1.5">Experience Level</label>
-            <select value={level} onChange={e => setLevel(e.target.value as ExperienceLevel)}
-              className="w-full bg-field-dark border border-field-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-600">
+            <select
+              value={level}
+              onChange={e => setLevel(e.target.value as ExperienceLevel)}
+              className="w-full bg-field-dark border border-field-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-600"
+            >
               <option value="beginner">Beginner</option>
               <option value="intermediate">Intermediate</option>
               <option value="elite">Elite</option>
@@ -236,8 +301,11 @@ export default function GeneratePlanPage() {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-1.5">Commitment (weeks)</label>
-            <select value={weeks} onChange={e => setWeeks(Number(e.target.value))}
-              className="w-full bg-field-dark border border-field-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-600">
+            <select
+              value={weeks}
+              onChange={e => setWeeks(Number(e.target.value))}
+              className="w-full bg-field-dark border border-field-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-600"
+            >
               <option value={4}>4 weeks</option>
               <option value={6}>6 weeks</option>
               <option value={8}>8 weeks</option>
@@ -252,8 +320,11 @@ export default function GeneratePlanPage() {
             <p className="text-sm font-medium text-white">Use AI (GPT-4o mini)</p>
             <p className="text-xs text-gray-500">Falls back to expert templates if unavailable</p>
           </div>
-          <button type="button" onClick={() => setUseAI(v => !v)}
-            className={`relative w-10 h-5 rounded-full transition-colors ${useAI ? 'bg-brand-600' : 'bg-gray-700'}`}>
+          <button
+            type="button"
+            onClick={() => setUseAI(v => !v)}
+            className={`relative w-10 h-5 rounded-full transition-colors ${useAI ? 'bg-brand-600' : 'bg-gray-700'}`}
+          >
             <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform ${useAI ? 'translate-x-5' : ''}`} />
           </button>
         </div>
@@ -262,8 +333,11 @@ export default function GeneratePlanPage() {
           <p className="text-sm text-red-400 bg-red-950 border border-red-900 rounded-lg px-3 py-2">{error}</p>
         )}
 
-        <button type="submit" disabled={generating || painPoints.length === 0}
-          className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors">
+        <button
+          type="submit"
+          disabled={generating || painPoints.length === 0}
+          className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors"
+        >
           {generating ? '⚡ Generating…' : '🤖 Generate Virtual Plan'}
         </button>
       </form>
