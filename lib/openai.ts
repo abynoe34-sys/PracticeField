@@ -265,13 +265,12 @@ Respond ONLY with a single valid JSON object matching this exact structure (no m
   // Strip markdown fences if present
   let cleaned = raw.replace(/```json\n?|\n?```/g, '').trim()
 
-  // If GPT-4o wrapped the JSON in extra text, extract the first {...} block
-  if (!cleaned.startsWith('{')) {
-    const jsonStart = cleaned.indexOf('{')
-    const jsonEnd   = cleaned.lastIndexOf('}')
-    if (jsonStart !== -1 && jsonEnd !== -1) {
-      cleaned = cleaned.slice(jsonStart, jsonEnd + 1)
-    }
+  // Always extract outermost { } block — handles leading prose, trailing notes,
+  // or any extra text GPT-4o adds before or after the JSON object
+  const jsonStart = cleaned.indexOf('{')
+  const jsonEnd   = cleaned.lastIndexOf('}')
+  if (jsonStart !== -1 && jsonEnd > jsonStart) {
+    cleaned = cleaned.slice(jsonStart, jsonEnd + 1)
   }
 
   try {
