@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
@@ -13,19 +14,29 @@ export default function Navigation({ coachId }: NavigationProps) {
   const base = `/${coachId}`
 
   const links = [
-    { href: base, label: 'Dashboard', icon: '⚡' },
-    { href: `${base}/players`, label: 'Players', icon: '🏈' },
-    { href: `${base}/settings`, label: 'Settings', icon: '⚙️' },
+    { href: base,               label: 'Dashboard', icon: '⚡' },
+    { href: `${base}/players`,  label: 'Players',   icon: '🏈' },
+    { href: `${base}/settings`, label: 'Settings',  icon: '⚙️' },
   ]
 
   return (
     <nav className="sticky top-0 z-50 bg-field-dark border-b border-field-border">
       <div className="max-w-5xl mx-auto px-4">
         <div className="flex items-center justify-between h-14">
-          {/* Brand */}
-          <Link href={base} className="flex items-center gap-2 font-bold text-brand-400 text-lg tracking-tight">
-            <span className="text-2xl">🏟️</span>
-            <span className="hidden sm:inline">Practice Field</span>
+
+          {/* Brand / Logo */}
+          <Link href={base} className="flex items-center gap-2.5 shrink-0">
+            <Image
+              src="/logo.png"
+              alt="Practice Field"
+              width={32}
+              height={32}
+              className="rounded object-contain"
+              priority
+            />
+            <span className="hidden sm:inline font-bold text-white text-base tracking-tight">
+              Practice Field
+            </span>
           </Link>
 
           {/* Nav links */}
@@ -54,6 +65,7 @@ export default function Navigation({ coachId }: NavigationProps) {
               {coachId}
             </span>
           </div>
+
         </div>
       </div>
     </nav>
