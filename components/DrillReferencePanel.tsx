@@ -60,10 +60,16 @@ import {
   DB_AREA_LABELS,
 } from '@/lib/position-drills/db'
 import type { DBDrillEntry, DBTeachingStep } from '@/lib/position-drills/db'
+import {
+  findOLBDrillsForPainPoint,
+  getOLBTeachingStep,
+  OLB_AREA_LABELS,
+} from '@/lib/position-drills/olb'
+import type { OLBDrillEntry, OLBTeachingStep } from '@/lib/position-drills/olb'
 
 // Union types so all positions share the same card components
-type AnyDrill = RBDrillEntry | WRDrillEntry | QBDrillEntry | OLDrillEntry | TEDrillEntry | DLDrillEntry | LBDrillEntry | DBDrillEntry
-type AnyTeachingStep = RBTeachingStep | WRTeachingStep | QBTeachingStep | OLTeachingStep | TETeachingStep | DLTeachingStep | LBTeachingStep | DBTeachingStep
+type AnyDrill = RBDrillEntry | WRDrillEntry | QBDrillEntry | OLDrillEntry | TEDrillEntry | DLDrillEntry | LBDrillEntry | DBDrillEntry | OLBDrillEntry
+type AnyTeachingStep = RBTeachingStep | WRTeachingStep | QBTeachingStep | OLTeachingStep | TETeachingStep | DLTeachingStep | LBTeachingStep | DBTeachingStep | OLBTeachingStep
 
 interface DrillReferencePanelProps {
   /** Position string from the player profile (e.g. "RB", "QB") */
@@ -254,7 +260,7 @@ function TeachingStepCard({ step }: { step: AnyTeachingStep }) {
 
 // ─── Position config ──────────────────────────────────────────────────────────
 
-const SUPPORTED_POSITIONS = ['RB', 'WR', 'QB', 'OL', 'TE', 'DL', 'LB', 'DB', 'CB', 'S'] as const
+const SUPPORTED_POSITIONS = ['RB', 'WR', 'QB', 'OL', 'TE', 'DL', 'LB', 'OLB', 'DB', 'CB', 'S'] as const
 type SupportedPosition = typeof SUPPORTED_POSITIONS[number]
 
 function isSupportedPosition(pos: string | null | undefined): pos is SupportedPosition {
@@ -268,6 +274,7 @@ function getAreaLabels(pos: SupportedPosition): Record<string, string> {
   if (pos === 'TE') return TE_AREA_LABELS
   if (pos === 'DL') return DL_AREA_LABELS
   if (pos === 'LB') return LB_AREA_LABELS
+  if (pos === 'OLB') return OLB_AREA_LABELS
   if (pos === 'DB' || pos === 'CB' || pos === 'S') return DB_AREA_LABELS
   return RB_AREA_LABELS
 }
@@ -279,6 +286,7 @@ function matchDrills(pos: SupportedPosition, issues: string[]): AnyDrill[] {
     : pos === 'TE' ? findTEDrillsForPainPoint
     : pos === 'DL' ? findDLDrillsForPainPoint
     : pos === 'LB' ? findLBDrillsForPainPoint
+    : pos === 'OLB' ? findOLBDrillsForPainPoint
     : (pos === 'DB' || pos === 'CB' || pos === 'S') ? findDBDrillsForPainPoint
     : findRBDrillsForPainPoint
   const scoreMap = new Map<string, { drill: AnyDrill; score: number }>()
@@ -302,6 +310,7 @@ function getTeachingStep(pos: SupportedPosition, area: string): AnyTeachingStep 
   if (pos === 'TE') return getTETeachingStep(area as Parameters<typeof getTETeachingStep>[0])
   if (pos === 'DL') return getDLTeachingStep(area as Parameters<typeof getDLTeachingStep>[0])
   if (pos === 'LB') return getLBTeachingStep(area as Parameters<typeof getLBTeachingStep>[0])
+  if (pos === 'OLB') return getOLBTeachingStep(area as Parameters<typeof getOLBTeachingStep>[0])
   if (pos === 'DB' || pos === 'CB' || pos === 'S') return getDBTeachingStep(area as Parameters<typeof getDBTeachingStep>[0])
   return getRBTeachingStep(area as Parameters<typeof getRBTeachingStep>[0])
 }

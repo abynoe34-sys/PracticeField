@@ -7,6 +7,7 @@ import { findTEDrillsForPainPoint, teDrillToExercise } from './position-drills/t
 import { findDLDrillsForPainPoint, dlDrillToExercise } from './position-drills/dl'
 import { findLBDrillsForPainPoint, lbDrillToExercise } from './position-drills/lb'
 import { findDBDrillsForPainPoint, dbDrillToExercise } from './position-drills/db'
+import { findOLBDrillsForPainPoint, olbDrillToExercise } from './position-drills/olb'
 
 // ─── Exercise Library ─────────────────────────────────────────────────────────
 // Curated by pain-point keywords. Used as fallback when OpenAI is unavailable.
@@ -505,6 +506,39 @@ function getLBMainExercises(level: ExperienceLevel, painPoints: string[]): Exerc
   return sorted
 }
 
+/**
+ * OLB-specific main exercises drawn from the curated position drill library.
+ */
+function getOLBMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
+  const drillScores = new Map<string, { exercise: Exercise; score: number }>()
+
+  for (const pp of painPoints) {
+    for (const drill of findOLBDrillsForPainPoint(pp)) {
+      const entry = drillScores.get(drill.name)
+      if (entry) {
+        entry.score += 1
+      } else {
+        drillScores.set(drill.name, { exercise: olbDrillToExercise(drill), score: 1 })
+      }
+    }
+  }
+
+  const sorted = [...drillScores.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(({ exercise }) => exercise)
+
+  if (sorted.length < 4) {
+    const existing = new Set(sorted.map(e => e.name))
+    const filler = getGenericMainExercises(level, painPoints)
+      .filter(e => !existing.has(e.name))
+      .slice(0, 6 - sorted.length)
+    return [...sorted, ...filler]
+  }
+
+  return sorted
+}
+
 function getDBMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
   const drillScores = new Map<string, { exercise: Exercise; score: number }>()
 
@@ -559,6 +593,8 @@ export function getTemplateExercises(
     ? getDLMainExercises(level, painPoints)
     : pos === 'LB'
     ? getLBMainExercises(level, painPoints)
+    : pos === 'OLB'
+    ? getOLBMainExercises(level, painPoints)
     : (pos === 'DB' || pos === 'CB' || pos === 'S')
     ? getDBMainExercises(level, painPoints)
     : getGenericMainExercises(level, painPoints)
