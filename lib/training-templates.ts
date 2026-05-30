@@ -630,11 +630,13 @@ function getDBMainExercises(level: ExperienceLevel, painPoints: string[]): Exerc
  * use.  Covers every value in the FootballPosition union type.
  *
  * OT / OG / C  → OL   (all offensive-line variants share the OL library)
- * DE / DT / NT → DL   (all defensive-line variants share the DL library)
- * ILB          → LB   (inside LB uses the general LB library; OLB has its own)
+ * DE / DT / NT  → DL   (all defensive-line variants share the DL library)
+ * ILB / OLB    → LB   (all linebacker variants share the LB library)
  * CB / SS / FS → DB   (all defensive-back variants share the DB library)
- * FB           → RB   (fullback closest to RB)
+ * FB           → RB   (fullback uses the RB library)
  * S            → DB   (generic "safety" tag)
+ *
+ * QB and TE each have their own dedicated libraries and are NOT grouped.
  */
 export function normalizePosition(position: string | null | undefined): string | null {
   const p = position?.toUpperCase() ?? null
@@ -646,8 +648,8 @@ export function normalizePosition(position: string | null | undefined): string |
   // Defensive line group
   if (['DE', 'DT', 'NT', 'DL'].includes(p)) return 'DL'
 
-  // Linebacker group (OLB has its own library so keep it separate)
-  if (['ILB', 'LB'].includes(p)) return 'LB'
+  // Linebacker group — ILB and OLB both use the general LB library
+  if (['ILB', 'OLB', 'LB'].includes(p)) return 'LB'
 
   // Defensive back group
   if (['CB', 'SS', 'FS', 'DB', 'S'].includes(p)) return 'DB'
@@ -655,7 +657,8 @@ export function normalizePosition(position: string | null | undefined): string |
   // Fullback → RB library
   if (p === 'FB') return 'RB'
 
-  // All other positions returned as-is (QB, RB, WR, TE, OLB, K, P, LS, Athlete)
+  // Individual libraries: QB, RB, WR, TE — returned as-is
+  // No library: K, P, LS, Athlete — returned as-is (falls to generic)
   return p
 }
 
@@ -683,8 +686,6 @@ export function getTemplateExercises(
     ? getDLMainExercises(level, painPoints)
     : pos === 'LB'
     ? getLBMainExercises(level, painPoints)
-    : pos === 'OLB'
-    ? getOLBMainExercises(level, painPoints)
     : pos === 'DB'
     ? getDBMainExercises(level, painPoints)
     : getGenericMainExercises(level, painPoints)

@@ -48,7 +48,8 @@ export async function generateTrainingPlanAI(params: GeneratePlanParams): Promis
   // ILB → LB, CB/SS/FS → DB, FB → RB) so no position falls through to generic.
   let positionDrillContext = ''
   const posNorm = normalizePosition(params.position)
-  const DRILL_LIBRARY_POSITIONS = ['RB','WR','QB','OL','TE','DL','LB','OLB','DB']
+  // OLB and ILB both normalise to LB; QB and TE keep individual libraries
+  const DRILL_LIBRARY_POSITIONS = ['RB','WR','QB','OL','TE','DL','LB','DB']
   if (params.painPoints.length > 0 && posNorm && DRILL_LIBRARY_POSITIONS.includes(posNorm)) {
     const finder = posNorm === 'WR' ? findWRDrillsForPainPoint
       : posNorm === 'QB' ? findQBDrillsForPainPoint
@@ -56,7 +57,6 @@ export async function generateTrainingPlanAI(params: GeneratePlanParams): Promis
       : posNorm === 'TE' ? findTEDrillsForPainPoint
       : posNorm === 'DL' ? findDLDrillsForPainPoint
       : posNorm === 'LB' ? findLBDrillsForPainPoint
-      : posNorm === 'OLB' ? findOLBDrillsForPainPoint
       : posNorm === 'DB' ? findDBDrillsForPainPoint
       : findRBDrillsForPainPoint  // RB / FB fallback
     const seen = new Set<string>()
