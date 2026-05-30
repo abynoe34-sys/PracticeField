@@ -57,9 +57,35 @@ function ExerciseRow({ exercise, index }: { exercise: Exercise; index: number })
         <span className="text-gray-500 text-xs ml-1">{open ? '▲' : '▼'}</span>
       </button>
       {open && (
-        <div className="px-4 py-3 bg-field-dark border-t border-field-border">
-          <p className="text-xs font-semibold text-brand-400 uppercase tracking-wide mb-1">Why this helps</p>
-          <p className="text-sm text-gray-300">{exercise.why}</p>
+        <div className="px-4 py-4 bg-field-dark border-t border-field-border space-y-3">
+          {/* Why this helps */}
+          <div>
+            <p className="text-xs font-semibold text-brand-400 uppercase tracking-wide mb-1">Why this helps</p>
+            <p className="text-sm text-gray-300">{exercise.why}</p>
+          </div>
+
+          {/* Coaching cue */}
+          {exercise.coaching_cue && (
+            <div className="bg-yellow-950/50 border border-yellow-900/60 rounded-lg px-3 py-2">
+              <p className="text-xs font-semibold text-yellow-400 uppercase tracking-wide mb-0.5">🗣 Coaching Cue</p>
+              <p className="text-sm text-yellow-100 italic">&ldquo;{exercise.coaching_cue}&rdquo;</p>
+            </div>
+          )}
+
+          {/* Demo video link */}
+          {exercise.demo_url && (
+            <a
+              href={exercise.demo_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-xs text-red-400 hover:text-red-300 transition-colors"
+              onClick={e => e.stopPropagation()}
+            >
+              <span className="text-base leading-none">▶</span>
+              <span className="font-medium">Watch demo on YouTube</span>
+              <span className="opacity-50">↗</span>
+            </a>
+          )}
         </div>
       )}
     </div>

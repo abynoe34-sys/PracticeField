@@ -479,6 +479,8 @@ export function lbDrillToExercise(drill: LBDrillEntry) {
     duration: drill.duration ?? null,
     why: drill.why,
     category: 'technique' as const,
+    coaching_cue: drill.coaching_cue ?? null,
+    demo_url: drill.videos[0]?.url ?? null,
   }
 }
 

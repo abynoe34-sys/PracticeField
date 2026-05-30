@@ -653,6 +653,8 @@ export function olbDrillToExercise(drill: OLBDrillEntry): Exercise {
     duration: drill.duration ?? null,
     category: drill.category,
     why: drill.why,
+    coaching_cue: drill.coaching_cue ?? null,
+    demo_url: drill.videos[0]?.url ?? null,
   }
 }
 

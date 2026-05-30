@@ -91,12 +91,14 @@ ${positionDrillContext}
 Generate a structured training plan with 8-12 exercises that directly address the pain points while preserving strengths.
 
 For each exercise, provide:
-- name: exercise name
+- name: exercise name (use real drill names that coaches and players will recognise — be position-specific)
 - sets: number of sets (or null if not applicable)
 - reps: number of reps (or null if time-based)
 - duration: time-based duration (or null if set/rep based), e.g. "30 seconds"
 - why: 1-2 sentence explanation of WHY this helps the specific pain point
 - category: one of: warmup, agility, strength, footwork, speed, technique, cooldown
+- coaching_cue: the exact verbal cue a coach shouts on the sideline to fix the key fault, e.g. "Eyes through the ball — catch, THEN look for yards"
+- demo_url: a real YouTube URL for the best publicly available demonstration of this exact drill. Use a real video you know exists (e.g. https://www.youtube.com/watch?v=VIDEOID). If unsure, use a YouTube search URL like https://www.youtube.com/results?search_query=<drill+name>+football+drill
 
 Respond ONLY with a valid JSON array of exercise objects. No markdown, no explanation outside the JSON.`
 

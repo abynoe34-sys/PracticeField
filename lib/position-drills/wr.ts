@@ -404,6 +404,8 @@ export function wrDrillToExercise(drill: WRDrillEntry): import('@/types').Exerci
     duration: drill.duration,
     why: drill.why,
     category: drill.category,
+    coaching_cue: drill.coaching_cue ?? null,
+    demo_url: drill.videos[0]?.url ?? null,
   }
 }
 

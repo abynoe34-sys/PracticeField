@@ -51,6 +51,8 @@ export interface Exercise {
   duration: string | null   // e.g. "30 seconds", "10 minutes"
   why: string
   category: 'warmup' | 'agility' | 'strength' | 'footwork' | 'speed' | 'technique' | 'cooldown'
+  coaching_cue?: string | null   // sideline coaching tip, e.g. "Eyes through the ball on the catch"
+  demo_url?: string | null       // YouTube demo link or search URL
 }
 
 export interface TrainingPlan {
