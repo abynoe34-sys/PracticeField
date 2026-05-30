@@ -84,13 +84,18 @@ export async function POST(req: NextRequest) {
         label:            video.label ?? 'Practice drill',
         baselineAnalysis,
       })
-    } catch (aiError) {
-      console.error('AI analysis error:', aiError)
+    } catch (aiError: unknown) {
+      const errMsg = aiError instanceof Error ? aiError.message : String(aiError)
+      const statusCode = (aiError as { status?: number })?.status
+      console.error('AI analysis error:', errMsg, 'status:', statusCode)
       await db
         .from('session_videos')
         .update({ analysis_status: 'failed' })
         .eq('id', video_id)
-      return NextResponse.json({ error: 'AI analysis failed' }, { status: 500 })
+      return NextResponse.json(
+        { error: `AI analysis failed: ${errMsg}` },
+        { status: 500 }
+      )
     }
 
     // Save analysis result
