@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
     const drillType = formData.get('drill_type') as string | null
     const notes     = formData.get('notes') as string | null
     const isBaseline = formData.get('is_baseline') === 'true'
+    const recordedAt = formData.get('recorded_at') as string | null
 
     if (!file || !playerId || !coachId) {
       return NextResponse.json(
@@ -72,6 +73,7 @@ export async function POST(req: NextRequest) {
         drill_type:      drillType || 'general',
         notes:           notes || null,
         is_baseline:     isBaseline,
+        recorded_at:     recordedAt || new Date().toISOString().split('T')[0],
         analysis_status: 'pending',
         frame_paths:     [],
       })

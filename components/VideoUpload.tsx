@@ -30,6 +30,7 @@ export default function VideoUpload({ playerId, coachId, sessionId, onUploaded }
   const [drillType, setDrillType] = useState<DrillType>('general')
   const [notes, setNotes] = useState('')
   const [isBaseline, setIsBaseline] = useState(false)
+  const [recordedAt, setRecordedAt] = useState(() => new Date().toISOString().split('T')[0])
   const [stage, setStage] = useState<'idle' | 'ready' | 'extracting' | 'uploading' | 'analyzing' | 'done' | 'error'>('idle')
   const [progress, setProgress] = useState(0)
   const [errorMsg, setErrorMsg] = useState('')
@@ -73,6 +74,7 @@ export default function VideoUpload({ playerId, coachId, sessionId, onUploaded }
       form.append('drill_type', drillType)
       form.append('notes', notes)
       form.append('is_baseline', String(isBaseline))
+      form.append('recorded_at', recordedAt)
 
       const uploadRes = await fetch('/api/videos/upload', { method: 'POST', body: form })
       const uploadJson = await uploadRes.json()
@@ -116,6 +118,7 @@ export default function VideoUpload({ playerId, coachId, sessionId, onUploaded }
     setProgress(0)
     setErrorMsg('')
     setLabel('')
+    setRecordedAt(new Date().toISOString().split('T')[0])
   }
 
   // ── Progress stages UI
@@ -171,6 +174,17 @@ export default function VideoUpload({ playerId, coachId, sessionId, onUploaded }
           </div>
 
           <div className="grid grid-cols-2 gap-3">
+            <div className="col-span-2">
+              <label className="block text-xs text-gray-500 mb-1">📅 Date Filmed</label>
+              <input
+                type="date"
+                value={recordedAt}
+                onChange={e => setRecordedAt(e.target.value)}
+                max={new Date().toISOString().split('T')[0]}
+                className="w-full bg-field-dark border border-field-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-600"
+              />
+            </div>
+
             <div className="col-span-2">
               <label className="block text-xs text-gray-500 mb-1">Label / Drill Name</label>
               <input

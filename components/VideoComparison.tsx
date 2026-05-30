@@ -1,14 +1,16 @@
 'use client'
 
 import { useState } from 'react'
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 import type { SessionVideo, VideoAnalysis } from '@/types'
 import { formatDate } from '@/lib/utils'
 
 interface VideoComparisonProps {
-  videos: SessionVideo[]  // sorted oldest → newest, all with complete analysis
+  videos: SessionVideo[]
 }
 
 const GRADE_ORDER: Record<string, number> = { A: 4, B: 3, C: 2, D: 1 }
+const GRADE_LABEL: Record<number, string> = { 4: 'A', 3: 'B', 2: 'C', 1: 'D' }
 
 function gradeColor(grade: string): string {
   return grade === 'A' ? 'text-brand-400'
@@ -17,15 +19,21 @@ function gradeColor(grade: string): string {
        : 'text-red-400'
 }
 
-function trendArrow(a: string, b: string): { icon: string; color: string } {
+function trendArrow(a: string, b: string): { icon: string; color: string; label: string } {
   const diff = (GRADE_ORDER[b] ?? 0) - (GRADE_ORDER[a] ?? 0)
-  if (diff > 0)  return { icon: '↑', color: 'text-brand-400' }
-  if (diff < 0)  return { icon: '↓', color: 'text-red-400' }
-  return { icon: '→', color: 'text-yellow-400' }
+  if (diff > 0)  return { icon: '↑', color: 'text-brand-400',  label: 'Improving' }
+  if (diff < 0)  return { icon: '↓', color: 'text-red-400',    label: 'Declining' }
+  return           { icon: '→', color: 'text-yellow-400', label: 'Plateau'   }
+}
+
+function videoDate(v: SessionVideo): string {
+  return v.recorded_at ?? v.created_at
 }
 
 export default function VideoComparison({ videos }: VideoComparisonProps) {
-  const complete = videos.filter(v => v.analysis_status === 'complete' && v.analysis)
+  // Only use fully analysed videos; sort oldest → newest by filmed date
+  const complete = [...videos.filter(v => v.analysis_status === 'complete' && v.analysis)]
+    .sort((a, b) => videoDate(a).localeCompare(videoDate(b)))
 
   const [leftIdx,  setLeftIdx]  = useState(0)
   const [rightIdx, setRightIdx] = useState(Math.max(complete.length - 1, 0))
@@ -43,23 +51,71 @@ export default function VideoComparison({ videos }: VideoComparisonProps) {
   const la: VideoAnalysis = left.analysis!
   const ra: VideoAnalysis = right.analysis!
 
-  const { icon: tIcon, color: tColor } = trendArrow(la.overall_grade, ra.overall_grade)
+  const { icon: tIcon, color: tColor, label: tLabel } = trendArrow(la.overall_grade, ra.overall_grade)
 
-  // All unique issue types across both videos
   const allIssues = [...new Set([
     ...la.issues.map(i => i.issue),
     ...ra.issues.map(i => i.issue),
   ])]
 
-  // Score keys
   const scoreKeys = Object.keys(la.technique_scores)
+
+  // Build timeline data for the grade chart (all completed videos)
+  const timelineData = complete.map(v => ({
+    date:  formatDate(videoDate(v)),
+    grade: GRADE_ORDER[v.analysis?.overall_grade ?? 'C'] ?? 2,
+    label: v.label ?? v.file_name ?? 'Video',
+    raw:   v.analysis?.overall_grade ?? 'C',
+  }))
 
   return (
     <div className="space-y-4">
-      {/* Selector */}
+
+      {/* ── Grade Timeline ─────────────────────────────────────────────── */}
+      {complete.length >= 2 && (
+        <div className="bg-field-card border border-field-border rounded-xl p-4">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+            📈 Grade Progress Over Time
+          </p>
+          <ResponsiveContainer width="100%" height={120}>
+            <LineChart data={timelineData} margin={{ top: 8, right: 8, bottom: 0, left: -20 }}>
+              <XAxis
+                dataKey="date"
+                tick={{ fill: '#6b7280', fontSize: 10 }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                domain={[1, 4]}
+                ticks={[1, 2, 3, 4]}
+                tickFormatter={v => GRADE_LABEL[v] ?? ''}
+                tick={{ fill: '#6b7280', fontSize: 10 }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <Tooltip
+                contentStyle={{ background: '#0f1117', border: '1px solid #1f2937', borderRadius: 8, fontSize: 12 }}
+                labelStyle={{ color: '#9ca3af' }}
+                formatter={(v: number) => [GRADE_LABEL[v] ?? v, 'Grade']}
+              />
+              <ReferenceLine y={2} stroke="#374151" strokeDasharray="3 3" />
+              <Line
+                type="monotone"
+                dataKey="grade"
+                stroke="#22c55e"
+                strokeWidth={2}
+                dot={{ fill: '#22c55e', r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
+      {/* ── Video Selectors ────────────────────────────────────────────── */}
       <div className="grid grid-cols-2 gap-3">
-        {['Earlier', 'Later'].map((lbl, idx) => {
-          const current = idx === 0 ? leftIdx : rightIdx
+        {(['Earlier', 'Later'] as const).map((lbl, idx) => {
+          const current = idx === 0 ? leftIdx  : rightIdx
           const setter  = idx === 0 ? setLeftIdx : setRightIdx
           return (
             <div key={lbl}>
@@ -71,7 +127,7 @@ export default function VideoComparison({ videos }: VideoComparisonProps) {
               >
                 {complete.map((v, i) => (
                   <option key={v.id} value={i}>
-                    {formatDate(v.created_at)} — {v.label ?? 'Video'} ({v.analysis?.overall_grade})
+                    {formatDate(videoDate(v))} — {v.label ?? 'Video'} ({v.analysis?.overall_grade})
                   </option>
                 ))}
               </select>
@@ -80,27 +136,25 @@ export default function VideoComparison({ videos }: VideoComparisonProps) {
         })}
       </div>
 
-      {/* Grade headline */}
+      {/* ── Grade Headline ─────────────────────────────────────────────── */}
       <div className="flex items-center justify-between bg-field-card border border-field-border rounded-xl px-5 py-4">
         <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">{formatDate(left.created_at)}</p>
+          <p className="text-xs text-gray-500 mb-1">{formatDate(videoDate(left))}</p>
           <p className={`text-4xl font-black ${gradeColor(la.overall_grade)}`}>{la.overall_grade}</p>
-          <p className="text-xs text-gray-500 mt-1">{left.label}</p>
+          <p className="text-xs text-gray-500 mt-1 max-w-[120px] truncate">{left.label}</p>
         </div>
         <div className="text-center">
           <p className={`text-3xl font-bold ${tColor}`}>{tIcon}</p>
-          <p className={`text-xs font-semibold mt-1 ${tColor}`}>
-            {tIcon === '↑' ? 'Improving' : tIcon === '↓' ? 'Declining' : 'Plateau'}
-          </p>
+          <p className={`text-xs font-semibold mt-1 ${tColor}`}>{tLabel}</p>
         </div>
         <div className="text-center">
-          <p className="text-xs text-gray-500 mb-1">{formatDate(right.created_at)}</p>
+          <p className="text-xs text-gray-500 mb-1">{formatDate(videoDate(right))}</p>
           <p className={`text-4xl font-black ${gradeColor(ra.overall_grade)}`}>{ra.overall_grade}</p>
-          <p className="text-xs text-gray-500 mt-1">{right.label}</p>
+          <p className="text-xs text-gray-500 mt-1 max-w-[120px] truncate">{right.label}</p>
         </div>
       </div>
 
-      {/* Technique score comparison */}
+      {/* ── Technique Score Comparison ─────────────────────────────────── */}
       <div className="bg-field-card border border-field-border rounded-xl p-4 space-y-3">
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">Technique Scores</p>
         {scoreKeys.map(key => {
@@ -108,7 +162,6 @@ export default function VideoComparison({ videos }: VideoComparisonProps) {
           const rScore = ra.technique_scores[key] ?? 0
           const diff   = rScore - lScore
           const diffColor = diff > 0 ? 'text-brand-400' : diff < 0 ? 'text-red-400' : 'text-gray-500'
-
           return (
             <div key={key} className="flex items-center gap-3">
               <span className="text-xs text-gray-500 w-24 shrink-0 capitalize">{key.replace(/_/g, ' ')}</span>
@@ -126,10 +179,10 @@ export default function VideoComparison({ videos }: VideoComparisonProps) {
             </div>
           )
         })}
-        <p className="text-xs text-gray-600 pt-1">Gray = earlier · Green = later</p>
+        <p className="text-xs text-gray-600 pt-1">Gray = {formatDate(videoDate(left))} · Green = {formatDate(videoDate(right))}</p>
       </div>
 
-      {/* Issue tracking */}
+      {/* ── Issue Tracking ─────────────────────────────────────────────── */}
       <div className="bg-field-card border border-field-border rounded-xl p-4 space-y-2">
         <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Issue Tracking</p>
         {allIssues.length === 0 && (
@@ -142,7 +195,6 @@ export default function VideoComparison({ videos }: VideoComparisonProps) {
                         : inLeft  && !inRight ? 'resolved'
                         : inLeft  && inRight  ? 'persisting'
                         : 'unknown'
-
           return (
             <div key={i} className="flex items-start gap-2.5">
               <span className={`shrink-0 text-xs font-semibold px-1.5 py-0.5 rounded mt-0.5 ${
@@ -161,24 +213,24 @@ export default function VideoComparison({ videos }: VideoComparisonProps) {
         })}
       </div>
 
-      {/* Side-by-side video */}
+      {/* ── Side-by-side Playback ──────────────────────────────────────── */}
       {(left.public_url || right.public_url) && (
         <div className="bg-field-card border border-field-border rounded-xl overflow-hidden">
           <p className="text-xs text-gray-500 px-4 pt-3 pb-2">Side-by-side playback</p>
           <div className="grid grid-cols-2 gap-px bg-field-border">
             <div className="bg-black">
               {left.public_url
-                ? <video src={left.public_url}  controls muted className="w-full max-h-48 object-contain" preload="metadata" />
+                ? <video src={left.public_url} controls muted className="w-full max-h-48 object-contain" preload="metadata" />
                 : <div className="h-48 flex items-center justify-center text-gray-700 text-xs">No video</div>
               }
-              <p className="text-center text-xs text-gray-600 py-1">{formatDate(left.created_at)}</p>
+              <p className="text-center text-xs text-gray-600 py-1">{formatDate(videoDate(left))}</p>
             </div>
             <div className="bg-black">
               {right.public_url
                 ? <video src={right.public_url} controls muted className="w-full max-h-48 object-contain" preload="metadata" />
                 : <div className="h-48 flex items-center justify-center text-gray-700 text-xs">No video</div>
               }
-              <p className="text-center text-xs text-gray-600 py-1">{formatDate(right.created_at)}</p>
+              <p className="text-center text-xs text-gray-600 py-1">{formatDate(videoDate(right))}</p>
             </div>
           </div>
         </div>

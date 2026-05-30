@@ -234,6 +234,7 @@ export interface SessionVideo {
   drill_type:       DrillType | null
   notes:            string | null
   is_baseline:      boolean
+  recorded_at:      string | null  // user-set date the footage was shot (YYYY-MM-DD)
   created_at:       string
 }
 

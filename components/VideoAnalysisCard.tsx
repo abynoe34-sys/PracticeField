@@ -116,7 +116,9 @@ export default function VideoAnalysisCard({ video, position, onReanalyze, onDele
             )}
             <span className="text-xs text-gray-600 capitalize">{video.drill_type}</span>
           </div>
-          <p className="text-xs text-gray-500 mt-0.5">{formatDate(video.created_at)}</p>
+          <p className="text-xs text-gray-500 mt-0.5">
+            {formatDate(video.recorded_at ?? video.created_at)}
+          </p>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
