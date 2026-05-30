@@ -21,49 +21,6 @@ const DRILL_TYPES: { value: DrillType; label: string }[] = [
   { value: 'general',   label: 'General Practice' },
 ]
 
-// Extract N evenly-spaced frames from a video as base64 JPEG strings
-async function extractFrames(file: File, count = 8): Promise<string[]> {
-  return new Promise((resolve, reject) => {
-    const video = document.createElement('video')
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')!
-    const url = URL.createObjectURL(file)
-    const frames: string[] = []
-
-    video.preload = 'metadata'
-    video.muted = true
-    video.src = url
-
-    video.onloadedmetadata = () => {
-      canvas.width  = 640   // resize for API efficiency
-      canvas.height = Math.round(640 * (video.videoHeight / video.videoWidth))
-      const duration = video.duration
-      const interval = duration / (count + 1)
-      let captured = 0
-
-      const captureFrame = (time: number) => {
-        video.currentTime = time
-      }
-
-      video.onseeked = () => {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-        frames.push(canvas.toDataURL('image/jpeg', 0.7).split(',')[1]) // base64 only
-        captured++
-        if (captured < count) {
-          captureFrame(interval * (captured + 1))
-        } else {
-          URL.revokeObjectURL(url)
-          resolve(frames)
-        }
-      }
-
-      video.onerror = () => reject(new Error('Failed to load video'))
-      captureFrame(interval)
-    }
-
-    video.onerror = () => reject(new Error('Invalid video file'))
-  })
-}
 
 export default function VideoUpload({ playerId, coachId, sessionId, onUploaded }: VideoUploadProps) {
   const fileRef = useRef<HTMLInputElement>(null)
@@ -104,14 +61,9 @@ export default function VideoUpload({ playerId, coachId, sessionId, onUploaded }
     if (!file) return
 
     try {
-      // 1. Extract frames from the video
-      setStage('extracting')
-      setProgress(20)
-      const frames = await extractFrames(file, 8)
-      setProgress(40)
-
-      // 2. Upload video file to server
+      // 1. Upload video file to server
       setStage('uploading')
+      setProgress(20)
       const form = new FormData()
       form.append('file', file)
       form.append('player_id', playerId)
@@ -129,14 +81,14 @@ export default function VideoUpload({ playerId, coachId, sessionId, onUploaded }
         throw new Error(uploadJson.error ?? 'Upload failed')
       }
 
-      setProgress(70)
+      setProgress(50)
 
-      // 3. Run AI analysis with extracted frames
+      // 2. Run AI analysis — server downloads from storage and extracts frames via FFmpeg
       setStage('analyzing')
       const analyzeRes = await fetch('/api/videos/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ video_id: uploadJson.video.id, frames }),
+        body: JSON.stringify({ video_id: uploadJson.video.id }),
       })
 
       const analyzeJson = await analyzeRes.json()
@@ -170,7 +122,7 @@ export default function VideoUpload({ playerId, coachId, sessionId, onUploaded }
   const STAGE_LABELS: Record<typeof stage, string> = {
     idle:      '',
     ready:     '',
-    extracting:'Extracting frames…',
+    extracting:'Uploading video…',
     uploading: 'Uploading video…',
     analyzing: '🤖 AI analyzing technique…',
     done:      '✅ Analysis complete!',

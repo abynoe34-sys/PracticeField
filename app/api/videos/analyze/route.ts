@@ -1,35 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase'
 import { analyzeVideoFrames } from '@/lib/openai'
+import { extractFramesFromBuffer } from '@/lib/server-frames'
 import type { ExperienceLevel, VideoAnalysis } from '@/types'
 
-// Allow up to 60 seconds — GPT-4o vision with 8 frames can take 30–50s
+// Allow up to 60 seconds — download + FFmpeg extraction + GPT-4o vision
 export const maxDuration = 60
 
 // POST /api/videos/analyze
-// Body: { video_id, frames: string[] (base64 JPEGs) }
+// Body: { video_id }
+// Frames are now extracted server-side from Supabase Storage using FFmpeg
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { video_id, frames } = body as { video_id: string; frames: string[] }
+    const { video_id } = body as { video_id: string }
 
-    if (!video_id || !frames?.length) {
+    if (!video_id) {
       return NextResponse.json(
-        { error: 'video_id and frames array are required' },
-        { status: 400 }
-      )
-    }
-
-    if (frames.length > 12) {
-      return NextResponse.json(
-        { error: 'Maximum 12 frames per analysis' },
+        { error: 'video_id is required' },
         { status: 400 }
       )
     }
 
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(
-        { error: 'OpenAI API key not configured. Add OPENAI_API_KEY to .env.local to enable video analysis.' },
+        { error: 'OpenAI API key not configured. Add OPENAI_API_KEY to environment variables.' },
         { status: 503 }
       )
     }
@@ -54,7 +49,7 @@ export async function POST(req: NextRequest) {
       .eq('id', video.player_id)
       .single()
 
-    // Fetch baseline analysis for comparison (oldest video marked as baseline, or first video)
+    // Fetch baseline analysis for comparison
     const { data: priorVideos } = await db
       .from('session_videos')
       .select('analysis')
@@ -72,40 +67,55 @@ export async function POST(req: NextRequest) {
       .update({ analysis_status: 'processing' })
       .eq('id', video_id)
 
+    // ── Download video from Supabase Storage ─────────────────────────────────
+    let frames: string[]
+    try {
+      const { data: fileBlob, error: downloadError } = await db.storage
+        .from('session-videos')
+        .download(video.storage_path)
+
+      if (downloadError || !fileBlob) {
+        throw new Error(`Storage download failed: ${downloadError?.message ?? 'unknown'}`)
+      }
+
+      const videoBuffer = Buffer.from(await fileBlob.arrayBuffer())
+      const fileExt = (video.file_name as string).split('.').pop() ?? 'mp4'
+
+      console.log(`Extracting frames from ${video.file_name} (${(videoBuffer.length / 1024 / 1024).toFixed(1)} MB)`)
+      frames = extractFramesFromBuffer(videoBuffer, fileExt, 8)
+      console.log(`Extracted ${frames.length} frames`)
+    } catch (extractErr: unknown) {
+      const errMsg = extractErr instanceof Error ? extractErr.message : String(extractErr)
+      console.error('Frame extraction error:', errMsg)
+      await db.from('session_videos').update({ analysis_status: 'failed' }).eq('id', video_id)
+      return NextResponse.json({ error: `Frame extraction failed: ${errMsg}` }, { status: 500 })
+    }
+
+    // ── Run AI analysis ───────────────────────────────────────────────────────
     let analysis: VideoAnalysis
 
     try {
       analysis = await analyzeVideoFrames({
         frames,
-        playerName:       player?.name ?? 'Player',
-        position:         player?.position ?? null,
-        experienceLevel:  (player?.experience_level as ExperienceLevel) ?? 'beginner',
-        drillType:        video.drill_type ?? 'general',
-        label:            video.label ?? 'Practice drill',
+        playerName:      player?.name ?? 'Player',
+        position:        player?.position ?? null,
+        experienceLevel: (player?.experience_level as ExperienceLevel) ?? 'beginner',
+        drillType:       video.drill_type ?? 'general',
+        label:           video.label ?? 'Practice drill',
         baselineAnalysis,
       })
     } catch (aiError: unknown) {
       const errMsg = aiError instanceof Error ? aiError.message : String(aiError)
       const statusCode = (aiError as { status?: number })?.status
       console.error('AI analysis error:', errMsg, 'status:', statusCode)
-      await db
-        .from('session_videos')
-        .update({ analysis_status: 'failed' })
-        .eq('id', video_id)
-      return NextResponse.json(
-        { error: `AI analysis failed: ${errMsg}` },
-        { status: 500 }
-      )
+      await db.from('session_videos').update({ analysis_status: 'failed' }).eq('id', video_id)
+      return NextResponse.json({ error: `AI analysis failed: ${errMsg}` }, { status: 500 })
     }
 
-    // Save analysis result
+    // ── Save result ───────────────────────────────────────────────────────────
     const { data: updated, error: updateError } = await db
       .from('session_videos')
-      .update({
-        analysis_status: 'complete',
-        analysis,
-        frame_paths: [],  // frames were sent inline, not stored separately
-      })
+      .update({ analysis_status: 'complete', analysis, frame_paths: [] })
       .eq('id', video_id)
       .select()
       .single()
@@ -114,7 +124,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: updateError.message }, { status: 500 })
     }
 
-    // Auto-update the linked session with AI-detected issues as improvements
+    // Auto-update the linked session with AI-detected issues
     if (video.session_id && analysis.issues.length > 0) {
       const { data: session } = await db
         .from('sessions')
@@ -123,37 +133,26 @@ export async function POST(req: NextRequest) {
         .single()
 
       if (session) {
-        const newImprovements = [
-          ...new Set([
+        await db.from('sessions').update({
+          improvements: [...new Set([
             ...(session.improvements ?? []),
             ...analysis.issues
               .filter(i => i.severity === 'critical' || i.severity === 'high')
               .map(i => i.issue),
-          ]),
-        ]
-        const newRootCauses = {
-          ...(session.root_causes ?? {}),
-          ...Object.fromEntries(
-            analysis.issues
-              .filter(i => i.severity === 'critical' || i.severity === 'high')
-              .map(i => [i.issue, i.root_cause])
-          ),
-        }
-        const newStrengths = [
-          ...new Set([
+          ])],
+          root_causes: {
+            ...(session.root_causes ?? {}),
+            ...Object.fromEntries(
+              analysis.issues
+                .filter(i => i.severity === 'critical' || i.severity === 'high')
+                .map(i => [i.issue, i.root_cause])
+            ),
+          },
+          strengths: [...new Set([
             ...(session.strengths ?? []),
             ...analysis.strengths.map(s => s.strength),
-          ]),
-        ]
-
-        await db
-          .from('sessions')
-          .update({
-            improvements: newImprovements,
-            root_causes:  newRootCauses,
-            strengths:    newStrengths,
-          })
-          .eq('id', video.session_id)
+          ])],
+        }).eq('id', video.session_id)
       }
     }
 
