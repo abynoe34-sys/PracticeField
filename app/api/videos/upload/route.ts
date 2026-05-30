@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase'
 import { generateId } from '@/lib/utils'
 
+// Allow up to 60 seconds for large file uploads to Supabase Storage
+export const maxDuration = 60
+
 // POST /api/videos/upload
 // Receives multipart form data: file + metadata fields
 export async function POST(req: NextRequest) {

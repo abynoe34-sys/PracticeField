@@ -3,6 +3,9 @@ import { getAdminClient } from '@/lib/supabase'
 import { analyzeVideoFrames } from '@/lib/openai'
 import type { ExperienceLevel, VideoAnalysis } from '@/types'
 
+// Allow up to 60 seconds — GPT-4o vision with 8 frames can take 30–50s
+export const maxDuration = 60
+
 // POST /api/videos/analyze
 // Body: { video_id, frames: string[] (base64 JPEGs) }
 export async function POST(req: NextRequest) {
