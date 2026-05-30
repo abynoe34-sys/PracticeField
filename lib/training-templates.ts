@@ -8,6 +8,7 @@ import { findDLDrillsForPainPoint, dlDrillToExercise } from './position-drills/d
 import { findLBDrillsForPainPoint, lbDrillToExercise } from './position-drills/lb'
 import { findDBDrillsForPainPoint, dbDrillToExercise } from './position-drills/db'
 import { findOLBDrillsForPainPoint, olbDrillToExercise } from './position-drills/olb'
+import { findSTDrillsForPainPoint, stDrillToExercise } from './position-drills/specialist'
 
 // ─── Exercise Library ─────────────────────────────────────────────────────────
 // Curated by pain-point keywords. Used as fallback when OpenAI is unavailable.
@@ -626,6 +627,41 @@ function getDBMainExercises(level: ExperienceLevel, painPoints: string[]): Exerc
 }
 
 /**
+ * Specialist (K/P/LS) main exercises drawn from the curated specialist drill library.
+ */
+function getSTMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
+  const drillScores = new Map<string, { exercise: Exercise; score: number }>()
+
+  for (const pp of painPoints) {
+    for (const drill of findSTDrillsForPainPoint(pp)) {
+      const entry = drillScores.get(drill.name)
+      if (entry) {
+        entry.score += 1
+      } else {
+        drillScores.set(drill.name, { exercise: stDrillToExercise(drill), score: 1 })
+      }
+    }
+  }
+
+  const sorted = [...drillScores.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(({ exercise }) => exercise)
+
+  // Pad with strength/conditioning from the specialist library if pain points
+  // didn't surface enough drills
+  if (sorted.length < 4) {
+    const existing = new Set(sorted.map(e => e.name))
+    const filler = getGenericMainExercises(level, painPoints)
+      .filter(e => !existing.has(e.name))
+      .slice(0, 6 - sorted.length)
+    return [...sorted, ...filler]
+  }
+
+  return sorted
+}
+
+/**
  * Normalise any specific position code to the drill-library group it should
  * use.  Covers every value in the FootballPosition union type.
  *
@@ -636,6 +672,7 @@ function getDBMainExercises(level: ExperienceLevel, painPoints: string[]): Exerc
  * FB           → RB   (fullback uses the RB library)
  * S            → DB   (generic "safety" tag)
  *
+ * K / P / LS     → ST  (Specialists share one library)
  * QB and TE each have their own dedicated libraries and are NOT grouped.
  */
 export function normalizePosition(position: string | null | undefined): string | null {
@@ -657,8 +694,11 @@ export function normalizePosition(position: string | null | undefined): string |
   // Fullback → RB library
   if (p === 'FB') return 'RB'
 
+  // Specialists → ST library
+  if (['K', 'P', 'LS'].includes(p)) return 'ST'
+
   // Individual libraries: QB, RB, WR, TE — returned as-is
-  // No library: K, P, LS, Athlete — returned as-is (falls to generic)
+  // No library: Athlete — falls to generic
   return p
 }
 
@@ -688,6 +728,8 @@ export function getTemplateExercises(
     ? getLBMainExercises(level, painPoints)
     : pos === 'DB'
     ? getDBMainExercises(level, painPoints)
+    : pos === 'ST'
+    ? getSTMainExercises(level, painPoints)
     : getGenericMainExercises(level, painPoints)
 
   return [...warmups, ...main.slice(0, 8), ...cooldowns]

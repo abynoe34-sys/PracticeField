@@ -10,6 +10,7 @@ import { findDLDrillsForPainPoint } from './position-drills/dl'
 import { findLBDrillsForPainPoint } from './position-drills/lb'
 import { findDBDrillsForPainPoint } from './position-drills/db'
 import { findOLBDrillsForPainPoint } from './position-drills/olb'
+import { findSTDrillsForPainPoint } from './position-drills/specialist'
 
 let _client: OpenAI | null = null
 
@@ -48,8 +49,8 @@ export async function generateTrainingPlanAI(params: GeneratePlanParams): Promis
   // ILB → LB, CB/SS/FS → DB, FB → RB) so no position falls through to generic.
   let positionDrillContext = ''
   const posNorm = normalizePosition(params.position)
-  // OLB and ILB both normalise to LB; QB and TE keep individual libraries
-  const DRILL_LIBRARY_POSITIONS = ['RB','WR','QB','OL','TE','DL','LB','DB']
+  // OLB and ILB both normalise to LB; K/P/LS normalise to ST; QB and TE individual
+  const DRILL_LIBRARY_POSITIONS = ['RB','WR','QB','OL','TE','DL','LB','DB','ST']
   if (params.painPoints.length > 0 && posNorm && DRILL_LIBRARY_POSITIONS.includes(posNorm)) {
     const finder = posNorm === 'WR' ? findWRDrillsForPainPoint
       : posNorm === 'QB' ? findQBDrillsForPainPoint
@@ -58,6 +59,7 @@ export async function generateTrainingPlanAI(params: GeneratePlanParams): Promis
       : posNorm === 'DL' ? findDLDrillsForPainPoint
       : posNorm === 'LB' ? findLBDrillsForPainPoint
       : posNorm === 'DB' ? findDBDrillsForPainPoint
+      : posNorm === 'ST' ? findSTDrillsForPainPoint
       : findRBDrillsForPainPoint  // RB / FB fallback
     const seen = new Set<string>()
     const drillLines: string[] = []
