@@ -91,7 +91,7 @@ export default async function PlayerDetailPage({ params }: PlayerDetailProps) {
         <div className="bg-yellow-950 border border-yellow-800 rounded-xl p-4">
           <p className="text-yellow-300 font-semibold text-sm">⚠️ Plateau Detected</p>
           <p className="text-yellow-500 text-xs mt-1">
-            Same improvement areas for {plateau.weeks}+ weeks. Consider generating a new training plan to break the pattern.
+            Same improvement areas for {plateau.weeks}+ weeks. Consider asking the Virtual Training Coach for a new plan to break the pattern.
           </p>
           <Link
             href={`/${coachId}/players/${playerId}/plan`}
@@ -139,7 +139,7 @@ export default async function PlayerDetailPage({ params }: PlayerDetailProps) {
       {latestPlan && (
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-base font-semibold text-white">Current Training Plan</h2>
+            <h2 className="text-base font-semibold text-white">Virtual Training Plan</h2>
             <Link
               href={`/${coachId}/training-plans/${latestPlan.id}`}
               className="text-xs text-brand-400 hover:underline"

@@ -46,7 +46,7 @@ export default function LandingPage() {
           Practice Field
         </h1>
         <p className="text-lg text-gray-400">
-          Track performance. Generate training plans. Build better players.
+          Track performance. Get virtual training coaching. Build better players.
         </p>
         <p className="text-sm text-gray-600 mt-2">
           Built for American football coaches & players. No account required.
@@ -100,7 +100,7 @@ export default function LandingPage() {
       <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl w-full">
         {[
           { icon: '📋', title: 'Session Reviews', desc: 'Log strengths, weaknesses, and root causes after every practice.' },
-          { icon: '🤖', title: 'AI Training Plans', desc: 'Get expert exercise recommendations with sets, reps, and WHY it helps.' },
+          { icon: '🤖', title: 'Virtual Training Coach', desc: 'Get expert exercise recommendations with sets, reps, and WHY it helps.' },
           { icon: '📈', title: 'Progress Tracking', desc: 'Visual charts show trends, plateau detection, and when to pivot.' },
         ].map(f => (
           <div key={f.title} className="bg-field-card border border-field-border rounded-xl p-4">

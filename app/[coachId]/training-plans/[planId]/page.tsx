@@ -44,9 +44,9 @@ export default async function TrainingPlanPage({ params }: TrainingPlanPageProps
             {player?.name ?? 'Player'}
           </Link>
           <span>›</span>
-          <span className="text-gray-400">Training Plan</span>
+          <span className="text-gray-400">Virtual Training Plan</span>
         </div>
-        <h1 className="text-2xl font-bold text-white mt-1">Training Plan</h1>
+        <h1 className="text-2xl font-bold text-white mt-1">Virtual Training Plan</h1>
         {player && (
           <p className="text-gray-500 text-sm">
             {player.name}{player.position ? ` · ${player.position}` : ''}

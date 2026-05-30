@@ -88,7 +88,7 @@ export default async function SessionDetailPage({ params }: SessionDetailProps) 
           href={`/${coachId}/players/${playerId}/plan`}
           className="flex-1 bg-brand-600 hover:bg-brand-500 text-white font-semibold py-3 rounded-xl text-sm text-center transition-colors"
         >
-          🤖 Generate Training Plan
+          🤖 Virtual Training Coach
         </Link>
         <Link
           href={`/${coachId}/players/${playerId}`}

@@ -89,8 +89,8 @@ export default function GeneratePlanPage() {
         <Link href={`/${coachId}/players/${playerId}`} className="text-gray-500 hover:text-gray-300 text-sm">
           ← {player?.name}
         </Link>
-        <h1 className="text-2xl font-bold text-white mt-1">Generate Training Plan</h1>
-        <p className="text-gray-500 text-sm">AI builds a targeted plan based on performance gaps.</p>
+        <h1 className="text-2xl font-bold text-white mt-1">Virtual Training Coach</h1>
+        <p className="text-gray-500 text-sm">Builds a targeted plan based on your player's performance gaps.</p>
       </div>
 
       <form onSubmit={handleGenerate} className="bg-field-card border border-field-border rounded-xl p-5 space-y-5">
@@ -182,7 +182,7 @@ export default function GeneratePlanPage() {
           disabled={generating || painPoints.length === 0}
           className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl transition-colors"
         >
-          {generating ? '⚡ Generating…' : '🤖 Generate Training Plan'}
+          {generating ? '⚡ Generating…' : '🤖 Generate Virtual Plan'}
         </button>
       </form>
     </div>

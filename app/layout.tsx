@@ -3,7 +3,7 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: 'Practice Field — Football Performance Tracker',
-  description: 'Track player performance, generate AI training plans, and see progress over time.',
+  description: 'Track player performance, get virtual training coaching, and see progress over time.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

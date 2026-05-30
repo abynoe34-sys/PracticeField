@@ -139,7 +139,7 @@ export default function SettingsPage() {
         <ul className="space-y-1.5 text-xs text-gray-500">
           <li>• No account required — your Coach ID is your identity</li>
           <li>• Data is stored in Supabase (PostgreSQL)</li>
-          <li>• Training plans use GPT-4o mini (falls back to expert templates offline)</li>
+          <li>• Virtual Training Coach uses GPT-4o mini (falls back to expert templates offline)</li>
           <li>• Progress charts require 2+ data points per metric</li>
           <li>• Plateau detection triggers after 3 sessions with identical improvement areas</li>
         </ul>
