@@ -19,7 +19,13 @@ export function generateId(): string {
 // ─── Date Helpers ─────────────────────────────────────────────────────────────
 
 export function formatDate(dateStr: string): string {
-  const d = new Date(dateStr + 'T00:00:00')
+  // Date-only strings (YYYY-MM-DD) need T00:00:00 to avoid timezone shifts.
+  // Full timestamps from Supabase (e.g. "2026-05-30 20:59:33+00") parse directly.
+  const normalized = /^\d{4}-\d{2}-\d{2}$/.test(dateStr)
+    ? dateStr + 'T00:00:00'
+    : dateStr
+  const d = new Date(normalized)
+  if (isNaN(d.getTime())) return 'Unknown date'
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 

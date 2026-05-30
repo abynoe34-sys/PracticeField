@@ -57,14 +57,11 @@ export default function PlayerVideosPage() {
     return () => clearInterval(timer)
   }, [videos, coachId, playerId])
 
-  const handleUploaded = (video: SessionVideo) => {
-    setVideos(prev => [video, ...prev])
+  const handleUploaded = useCallback(async (_video: SessionVideo) => {
+    // Re-fetch all videos so the new clip gets a fresh signed URL for playback
+    await load()
     setTab('library')
-    // Start polling if analysis is pending
-    if (video.analysis_status === 'pending' || video.analysis_status === 'processing') {
-      setPollingIds(prev => new Set([...prev, video.id]))
-    }
-  }
+  }, [load])
 
   const handleDelete = async (videoId: string) => {
     if (!confirm('Delete this video and its analysis?')) return
