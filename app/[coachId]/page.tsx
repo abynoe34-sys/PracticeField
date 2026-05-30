@@ -65,9 +65,14 @@ export default async function DashboardPage({ params }: DashboardProps) {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-0.5">
-            Coach ID: <span className="text-brand-400 font-mono">{coachId}</span>
+          <h1 className="text-2xl font-bold text-white">
+            {coach.name ? `Welcome, ${coach.name}` : 'Dashboard'}
+          </h1>
+          {coach.team_name && (
+            <p className="text-brand-400 text-sm font-medium mt-0.5">{coach.team_name}</p>
+          )}
+          <p className="text-gray-500 text-xs mt-0.5">
+            Coach ID: <span className="text-gray-400 font-mono">{coachId}</span>
           </p>
         </div>
         <Link

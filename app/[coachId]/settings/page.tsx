@@ -1,20 +1,55 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 
 export default function SettingsPage() {
   const { coachId } = useParams<{ coachId: string }>()
   const [copied, setCopied] = useState(false)
 
+  // Profile fields
+  const [name, setName]         = useState('')
+  const [teamName, setTeamName] = useState('')
+  const [saving, setSaving]     = useState(false)
+  const [saved, setSaved]       = useState(false)
+  const [loadingProfile, setLoadingProfile] = useState(true)
+
   const coachUrl = typeof window !== 'undefined'
     ? `${window.location.origin}/${coachId}`
-    : `https://your-app.com/${coachId}`
+    : `https://practice-field.vercel.app/${coachId}`
+
+  // Load existing profile on mount
+  useEffect(() => {
+    fetch(`/api/coach?coachId=${coachId}`)
+      .then(r => r.json())
+      .then(({ coach }) => {
+        if (coach) {
+          setName(coach.name ?? '')
+          setTeamName(coach.team_name ?? '')
+        }
+      })
+      .finally(() => setLoadingProfile(false))
+  }, [coachId])
 
   const copyUrl = async () => {
     await navigator.clipboard.writeText(coachUrl)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const saveProfile = async () => {
+    setSaving(true)
+    try {
+      await fetch('/api/coach', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ coachId, name: name.trim(), team_name: teamName.trim() }),
+      })
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2500)
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -24,7 +59,54 @@ export default function SettingsPage() {
         <p className="text-gray-500 text-sm mt-0.5">Manage your coach workspace</p>
       </div>
 
-      {/* Coach ID */}
+      {/* ── Coach Profile ─────────────────────────────────────────── */}
+      <section className="bg-field-card border border-field-border rounded-xl p-5 space-y-4">
+        <h2 className="text-base font-semibold text-white">Coach Profile</h2>
+
+        {loadingProfile ? (
+          <p className="text-xs text-gray-500">Loading…</p>
+        ) : (
+          <>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-400 mb-1">
+                  Your Name
+                </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  placeholder="e.g. Coach Johnson"
+                  className="w-full bg-field-dark border border-field-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-gray-400 mb-1">
+                  Team Name
+                </label>
+                <input
+                  type="text"
+                  value={teamName}
+                  onChange={e => setTeamName(e.target.value)}
+                  placeholder="e.g. Lincoln High School Varsity"
+                  className="w-full bg-field-dark border border-field-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
+                />
+              </div>
+            </div>
+
+            <button
+              onClick={saveProfile}
+              disabled={saving}
+              className="bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+            >
+              {saving ? 'Saving…' : saved ? '✓ Saved!' : 'Save Profile'}
+            </button>
+          </>
+        )}
+      </section>
+
+      {/* ── Coach ID ──────────────────────────────────────────────── */}
       <section className="bg-field-card border border-field-border rounded-xl p-5 space-y-4">
         <h2 className="text-base font-semibold text-white">Your Coach ID</h2>
         <p className="text-xs text-gray-500">
@@ -51,7 +133,7 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      {/* About */}
+      {/* ── About ─────────────────────────────────────────────────── */}
       <section className="bg-field-card border border-field-border rounded-xl p-5 space-y-3">
         <h2 className="text-base font-semibold text-white">About Practice Field v1</h2>
         <ul className="space-y-1.5 text-xs text-gray-500">
@@ -63,7 +145,7 @@ export default function SettingsPage() {
         </ul>
       </section>
 
-      {/* Danger Zone */}
+      {/* ── Danger Zone ───────────────────────────────────────────── */}
       <section className="bg-red-950 border border-red-900 rounded-xl p-5 space-y-3">
         <h2 className="text-base font-semibold text-red-400">Data & Privacy</h2>
         <p className="text-xs text-red-500">

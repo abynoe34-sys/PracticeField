@@ -18,6 +18,7 @@ export interface Coach {
   coach_id: string          // human-readable code, e.g. ABC123XYZ
   name: string | null
   email: string | null
+  team_name: string | null
   sport: string
   created_at: string
 }
