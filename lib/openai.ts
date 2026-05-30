@@ -176,7 +176,9 @@ Your analysis must be:
 - HONEST: Grade strictly — a "B" means genuinely good technique, not just acceptable
 ${GRADE_RUBRIC}
 
-${positionCue}`
+${positionCue}
+
+IMPORTANT: You must ALWAYS respond with a valid JSON object. If video quality is poor or frames are unclear, still return the JSON structure with overall_grade "D", describe the quality issue in the summary, and include one issue with severity "low" explaining what would need to be visible for a proper analysis.`
 
   const userContent: OpenAI.Chat.ChatCompletionContentPart[] = [
     {
@@ -244,13 +246,14 @@ Respond ONLY with a single valid JSON object matching this exact structure (no m
   ]
 
   const response = await client.chat.completions.create({
-    model: 'gpt-4o',             // vision requires gpt-4o, not mini
+    model: 'gpt-4o',
     messages: [
       { role: 'system', content: systemPrompt },
       { role: 'user',   content: userContent },
     ],
-    temperature: 0.3,            // lower temp for consistent structured output
-    max_tokens: 4096,            // increased — detailed analysis with many issues can exceed 2500
+    temperature: 0.3,
+    max_tokens: 4096,
+    response_format: { type: 'json_object' }, // forces pure JSON — no prose, no markdown
   })
 
   const raw = response.choices[0]?.message?.content ?? ''
