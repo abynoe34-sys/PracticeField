@@ -8,6 +8,7 @@ import { findOLDrillsForPainPoint } from './position-drills/ol'
 import { findTEDrillsForPainPoint } from './position-drills/te'
 import { findDLDrillsForPainPoint } from './position-drills/dl'
 import { findLBDrillsForPainPoint } from './position-drills/lb'
+import { findDBDrillsForPainPoint } from './position-drills/db'
 
 let _client: OpenAI | null = null
 
@@ -44,13 +45,14 @@ export async function generateTrainingPlanAI(params: GeneratePlanParams): Promis
   // so the AI references real, coach-validated drill names and cues.
   let positionDrillContext = ''
   const posUpper = params.position?.toUpperCase()
-  if (params.painPoints.length > 0 && (posUpper === 'RB' || posUpper === 'WR' || posUpper === 'QB' || posUpper === 'OL' || posUpper === 'TE' || posUpper === 'DL' || posUpper === 'LB')) {
+  if (params.painPoints.length > 0 && (posUpper === 'RB' || posUpper === 'WR' || posUpper === 'QB' || posUpper === 'OL' || posUpper === 'TE' || posUpper === 'DL' || posUpper === 'LB' || posUpper === 'DB' || posUpper === 'CB' || posUpper === 'S')) {
     const finder = posUpper === 'WR' ? findWRDrillsForPainPoint
       : posUpper === 'QB' ? findQBDrillsForPainPoint
       : posUpper === 'OL' ? findOLDrillsForPainPoint
       : posUpper === 'TE' ? findTEDrillsForPainPoint
       : posUpper === 'DL' ? findDLDrillsForPainPoint
       : posUpper === 'LB' ? findLBDrillsForPainPoint
+      : (posUpper === 'DB' || posUpper === 'CB' || posUpper === 'S') ? findDBDrillsForPainPoint
       : findRBDrillsForPainPoint
     const seen = new Set<string>()
     const drillLines: string[] = []
@@ -147,8 +149,9 @@ const POSITION_CUES: Record<string, string> = {
   TE:  'Evaluate: stance alignment (in-line vs off-ball — is the stance appropriate for assignment?), release vs press (swim, rip, push-pull — does the TE get clean separation?), route stem and break sharpness (does the TE threaten the safety on vertical routes? does the TE hit proper crossing depth?), catch technique (hands first away from body, eyes on tip through catch, concentration under contact), blocking hand placement and sustain when in-line (same standard as OL), chip-and-release timing on pass protection assignments.',
   DL:  'Evaluate: pre-snap stance (hand position in shade — ball hand or man hand?), get-off timing and flatness of first step (rising or staying low?), hand fighting at the point of attack (who establishes inside grip first?), pass rush move setup and execution (does the DL close the distance before running the move?), block recognition and reaction (base vs double team vs reach — does the DL read correctly?), pad level through the block (staying low or getting stood up?), pursuit angle after the shed.',
   LB:  'Evaluate: pre-snap alignment and reads (correct gap assignment?), trigger quickness on run (does the LB fire on the right key or hesitate?), block defeat technique (shock and shed — or absorbed?), back-hip pursuit angle (inside leverage maintained?), pass drop footwork (45-degree angle or flat/straight back?), hip flip timing in zone-to-man transitions, zone assignment execution (correct window depth?), open-field tackling (hawk progression — buzz feet, hit position, wrap and drive?).',
-  CB:  'Evaluate: press alignment, backpedal mechanics, hip flip timing, zone technique, man-coverage leverage, ball-tracking.',
-  DB:  'Evaluate: alignment depth, backpedal, break on ball, angle of pursuit, zone assignment execution.',
+  CB:  'Evaluate: press alignment (inside/head-up/outside shade based on WR split?), backpedal mechanics (chin over toes, feet cutting the grass, butt leading?), cushion management (opening hips too early or too late?), hip flip / man turn timing (low elbow plane, lead toe at 180°?), bump and run jam effectiveness (punch the breastplate — not the arms), phase awareness (in-phase: look for ball; out-of-phase: play receiver\'s head and hands), zone funnel technique (jab-style jam, funnel inside), bail mechanics (1 yard outside receiver, key through to QB), stalk block defeat (fit, lockout, shed sequence), crack recognition and crack call. Reference drills: W Drill, Hip Turns, Bump & Run Mirror/Snake, Cushion/Turn, Phase Drill, Stalk Block Defeat, Crack Block Recognition.',
+  DB:  'Evaluate: pre-snap alignment and leverage (correct depth and shade for coverage call?), backpedal mechanics (chin over toes, feet cutting the grass, butt leading?), cushion management (opening hips too early or too late?), hip flip / man turn (low elbow plane — 90° or less), phase awareness (in-phase hip to hip: look for ball; out-of-phase trailing: play head and hands, smack far wrist), zone drop footwork (landmark depth, T-step or foot-fire on downhill breaks), run/pass read discipline (does the DB bite on play-action?), open-field tackling (shorten stride and sink hips on approach, press inside hip to flatten carrier\'s move), ball skills (tracking, highest-point catch, strip technique before tackle). Reference drills: W Drill, Hip Turns, Pedal and Turn, Phase Drill, Drop and Read, Bail Technique, Tip Drill, Stalk Block Defeat, Open Field Tackle.',
+  S:   'Evaluate: pre-snap alignment (correct depth for 1/4s, 1/2 field, or robber?), bounce technique (don\'t be cemented — stay on balls of feet), run/pass key reads (through uncovered linemen to backfield), high-tempo backpedal in 1/2 field (maintain cushion without flattening out), break timing (T-step or foot-fire on downhill breaks — not overrunning shallow throws), seam delivery (same-leg same-arm power base — cannot allow outside release by #2), alley support on run (Freddie/Rover support vs. counterpoint), interception at highest point, communication on crack blocks.',
   default: 'Evaluate overall athletic movement quality, technique consistency, and position-specific fundamentals.',
 }
 
