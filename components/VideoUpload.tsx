@@ -142,15 +142,10 @@ export default function VideoUpload({ playerId, coachId, sessionId, onUploaded }
       const analyzeJson = await analyzeRes.json()
 
       if (!analyzeRes.ok) {
-        // Analysis failed — surface the video but show a clear error so the user knows
+        // Analysis failed — video is saved in DB but don't navigate away; show the actual error
         console.warn('Analysis failed:', analyzeJson.error)
-        onUploaded(uploadJson.video)
         setStage('error')
-        setErrorMsg(
-          analyzeJson.error?.includes('OpenAI API key')
-            ? 'AI analysis is not configured on the server. Contact your coach admin to add the OpenAI API key in Vercel settings.'
-            : `Analysis failed: ${analyzeJson.error ?? 'Unknown error'}. Your video was saved — try re-uploading to retry analysis.`
-        )
+        setErrorMsg(`Analysis failed: ${analyzeJson.error ?? 'Unknown error'}`)
         return
       }
 

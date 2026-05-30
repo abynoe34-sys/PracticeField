@@ -3,9 +3,36 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 
+type OpenAITestResult = {
+  ok: boolean
+  reply?: string
+  error?: string
+  key_loaded?: string
+  model?: string
+  status?: number
+}
+
 export default function SettingsPage() {
   const { coachId } = useParams<{ coachId: string }>()
   const [copied, setCopied] = useState(false)
+
+  // OpenAI test
+  const [aiTesting, setAiTesting] = useState(false)
+  const [aiResult, setAiResult] = useState<OpenAITestResult | null>(null)
+
+  const testOpenAI = async () => {
+    setAiTesting(true)
+    setAiResult(null)
+    try {
+      const res = await fetch('/api/test-openai')
+      const data = await res.json()
+      setAiResult(data)
+    } catch {
+      setAiResult({ ok: false, error: 'Network error — could not reach test endpoint' })
+    } finally {
+      setAiTesting(false)
+    }
+  }
 
   // Profile fields
   const [name, setName]         = useState('')
@@ -143,6 +170,37 @@ export default function SettingsPage() {
           <li>• Progress charts require 2+ data points per metric</li>
           <li>• Plateau detection triggers after 3 sessions with identical improvement areas</li>
         </ul>
+      </section>
+
+      {/* ── AI Diagnostics ────────────────────────────────────────── */}
+      <section className="bg-field-card border border-field-border rounded-xl p-5 space-y-4">
+        <h2 className="text-base font-semibold text-white">AI Diagnostics</h2>
+        <p className="text-xs text-gray-500">
+          Test whether the OpenAI API key is correctly configured on the server.
+        </p>
+        <button
+          onClick={testOpenAI}
+          disabled={aiTesting}
+          className="bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+        >
+          {aiTesting ? '⏳ Testing…' : '🤖 Test OpenAI Connection'}
+        </button>
+        {aiResult && (
+          <div className={`rounded-lg px-4 py-3 text-sm border ${aiResult.ok ? 'bg-green-950 border-green-800 text-green-300' : 'bg-red-950 border-red-800 text-red-300'}`}>
+            {aiResult.ok ? (
+              <>
+                <p className="font-semibold">✅ OpenAI connected successfully</p>
+                <p className="text-xs mt-1 text-green-500">Model: {aiResult.model} · Key: {aiResult.key_loaded}</p>
+              </>
+            ) : (
+              <>
+                <p className="font-semibold">❌ OpenAI connection failed</p>
+                <p className="text-xs mt-1 text-red-400">{aiResult.error}</p>
+                {aiResult.key_loaded && <p className="text-xs mt-0.5 text-red-500">Key loaded: {aiResult.key_loaded}</p>}
+              </>
+            )}
+          </div>
+        )}
       </section>
 
       {/* ── Danger Zone ───────────────────────────────────────────── */}
