@@ -250,17 +250,35 @@ Respond ONLY with a single valid JSON object matching this exact structure (no m
       { role: 'user',   content: userContent },
     ],
     temperature: 0.3,            // lower temp for consistent structured output
-    max_tokens: 2500,
+    max_tokens: 4096,            // increased — detailed analysis with many issues can exceed 2500
   })
 
-  const raw = response.choices[0]?.message?.content ?? '{}'
-  const cleaned = raw.replace(/```json\n?|\n?```/g, '').trim()
+  const raw = response.choices[0]?.message?.content ?? ''
+  const finishReason = response.choices[0]?.finish_reason
+  console.log('OpenAI finish_reason:', finishReason, '| raw length:', raw.length)
+
+  if (!raw) {
+    console.error('OpenAI returned empty content')
+    return buildFallbackAnalysis(params)
+  }
+
+  // Strip markdown fences if present
+  let cleaned = raw.replace(/```json\n?|\n?```/g, '').trim()
+
+  // If GPT-4o wrapped the JSON in extra text, extract the first {...} block
+  if (!cleaned.startsWith('{')) {
+    const jsonStart = cleaned.indexOf('{')
+    const jsonEnd   = cleaned.lastIndexOf('}')
+    if (jsonStart !== -1 && jsonEnd !== -1) {
+      cleaned = cleaned.slice(jsonStart, jsonEnd + 1)
+    }
+  }
 
   try {
     return JSON.parse(cleaned) as VideoAnalysis
   } catch {
     // Return a safe fallback if parsing fails
-    console.error('Failed to parse video analysis JSON:', cleaned.slice(0, 200))
+    console.error('Failed to parse video analysis JSON. finish_reason:', finishReason, '| first 400 chars:', cleaned.slice(0, 400))
     return buildFallbackAnalysis(params)
   }
 }
