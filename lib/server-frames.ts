@@ -4,17 +4,32 @@ import { join } from 'path'
 import { tmpdir } from 'os'
 import { randomUUID } from 'crypto'
 
-// ffmpeg-static ships a prebuilt Linux x64 binary — works on Vercel's Node runtime
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const FFMPEG_PATH = require('ffmpeg-static') as string | null
+let _ffmpegBin: string | null = null
 
-// Ensure the binary is executable — Vercel can strip execute permissions on deploy
-function ensureExecutable(binPath: string) {
-  try {
-    chmodSync(binPath, 0o755)
-  } catch {
-    // /var/task is read-only on Vercel — if chmod fails the binary may already be executable
+/**
+ * Get the FFmpeg binary path, copying it to /tmp if needed.
+ * On Vercel, /var/task (node_modules) is read-only and webpack resolves paths
+ * at build time — copying to /tmp guarantees a writable, executable binary at runtime.
+ */
+function getFFmpegBin(): string {
+  if (_ffmpegBin) return _ffmpegBin
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const staticPath = require('ffmpeg-static') as string | null
+  console.log('ffmpeg-static resolved path:', staticPath)
+
+  if (!staticPath) throw new Error('ffmpeg-static package not found')
+
+  // Copy to /tmp so we can set the executable bit (node_modules may be read-only)
+  const tmpBin = join(tmpdir(), 'pf_ffmpeg')
+  if (!existsSync(tmpBin)) {
+    const binBuf = readFileSync(staticPath)
+    writeFileSync(tmpBin, binBuf, { mode: 0o755 })
+    console.log('FFmpeg binary copied to:', tmpBin)
   }
+
+  _ffmpegBin = tmpBin
+  return _ffmpegBin
 }
 
 /**
@@ -27,12 +42,8 @@ export function extractFramesFromBuffer(
   fileExt: string,
   count = 8
 ): string[] {
-  if (!FFMPEG_PATH) {
-    throw new Error('ffmpeg-static binary not found')
-  }
-
-  ensureExecutable(FFMPEG_PATH)
-  console.log('FFmpeg binary path:', FFMPEG_PATH, '| buffer size:', videoBuffer.length)
+  const FFMPEG_BIN = getFFmpegBin()
+  console.log('Using FFmpeg binary:', FFMPEG_BIN, '| buffer size:', videoBuffer.length)
 
   const id      = randomUUID()
   const tmp     = tmpdir()
@@ -47,7 +58,7 @@ export function extractFramesFromBuffer(
     // ── 1. Probe duration ──────────────────────────────────────────────────
     let duration = 7 // safe default for short clips
     try {
-      execFileSync(FFMPEG_PATH, ['-i', videoIn, '-f', 'null', '-'], {
+      execFileSync(FFMPEG_BIN, ['-i', videoIn, '-f', 'null', '-'], {
         stdio: ['ignore', 'ignore', 'pipe'],
         timeout: 15_000,
       })
@@ -71,7 +82,7 @@ export function extractFramesFromBuffer(
       const ts       = (interval * i).toFixed(3)
       const frameOut = join(tmp, `pf_${id}_${i}.jpg`)
       try {
-        execFileSync(FFMPEG_PATH, [
+        execFileSync(FFMPEG_BIN, [
           '-ss', ts,
           '-i',  videoIn,
           '-vframes', '1',
