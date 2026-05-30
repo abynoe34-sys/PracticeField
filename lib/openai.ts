@@ -1,6 +1,6 @@
 import OpenAI from 'openai'
 import type { Exercise, ExperienceLevel, VideoAnalysis, VideoComparison } from '@/types'
-import { getTemplateExercises } from './training-templates'
+import { getTemplateExercises, normalizePosition } from './training-templates'
 import { findRBDrillsForPainPoint } from './position-drills/rb'
 import { findWRDrillsForPainPoint } from './position-drills/wr'
 import { findQBDrillsForPainPoint } from './position-drills/qb'
@@ -44,18 +44,21 @@ export async function generateTrainingPlanAI(params: GeneratePlanParams): Promis
 
   // For position-specific players, pull relevant drills from the curated library
   // so the AI references real, coach-validated drill names and cues.
+  // normalizePosition maps specific variants (OT/OG/C → OL, DE/DT/NT → DL,
+  // ILB → LB, CB/SS/FS → DB, FB → RB) so no position falls through to generic.
   let positionDrillContext = ''
-  const posUpper = params.position?.toUpperCase()
-  if (params.painPoints.length > 0 && (posUpper === 'RB' || posUpper === 'WR' || posUpper === 'QB' || posUpper === 'OL' || posUpper === 'TE' || posUpper === 'DL' || posUpper === 'LB' || posUpper === 'OLB' || posUpper === 'DB' || posUpper === 'CB' || posUpper === 'S')) {
-    const finder = posUpper === 'WR' ? findWRDrillsForPainPoint
-      : posUpper === 'QB' ? findQBDrillsForPainPoint
-      : posUpper === 'OL' ? findOLDrillsForPainPoint
-      : posUpper === 'TE' ? findTEDrillsForPainPoint
-      : posUpper === 'DL' ? findDLDrillsForPainPoint
-      : posUpper === 'LB' ? findLBDrillsForPainPoint
-      : posUpper === 'OLB' ? findOLBDrillsForPainPoint
-      : (posUpper === 'DB' || posUpper === 'CB' || posUpper === 'S') ? findDBDrillsForPainPoint
-      : findRBDrillsForPainPoint
+  const posNorm = normalizePosition(params.position)
+  const DRILL_LIBRARY_POSITIONS = ['RB','WR','QB','OL','TE','DL','LB','OLB','DB']
+  if (params.painPoints.length > 0 && posNorm && DRILL_LIBRARY_POSITIONS.includes(posNorm)) {
+    const finder = posNorm === 'WR' ? findWRDrillsForPainPoint
+      : posNorm === 'QB' ? findQBDrillsForPainPoint
+      : posNorm === 'OL' ? findOLDrillsForPainPoint
+      : posNorm === 'TE' ? findTEDrillsForPainPoint
+      : posNorm === 'DL' ? findDLDrillsForPainPoint
+      : posNorm === 'LB' ? findLBDrillsForPainPoint
+      : posNorm === 'OLB' ? findOLBDrillsForPainPoint
+      : posNorm === 'DB' ? findDBDrillsForPainPoint
+      : findRBDrillsForPainPoint  // RB / FB fallback
     const seen = new Set<string>()
     const drillLines: string[] = []
     for (const pp of params.painPoints) {
@@ -68,8 +71,10 @@ export async function generateTrainingPlanAI(params: GeneratePlanParams): Promis
         }
       }
     }
+    // Use the original position label in the context so the AI knows e.g. "OT" not "OL"
+    const posLabel = params.position?.toUpperCase() ?? posNorm
     if (drillLines.length > 0) {
-      positionDrillContext = `\nCurated ${posUpper} Drill Library (prefer these drills when relevant):\n${drillLines.join('\n')}\n`
+      positionDrillContext = `\nCurated ${posLabel} (${posNorm} library) Drill Reference (prefer these drills when relevant):\n${drillLines.join('\n')}\n`
     }
   }
 

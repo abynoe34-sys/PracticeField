@@ -625,6 +625,40 @@ function getDBMainExercises(level: ExperienceLevel, painPoints: string[]): Exerc
   return sorted
 }
 
+/**
+ * Normalise any specific position code to the drill-library group it should
+ * use.  Covers every value in the FootballPosition union type.
+ *
+ * OT / OG / C  → OL   (all offensive-line variants share the OL library)
+ * DE / DT / NT → DL   (all defensive-line variants share the DL library)
+ * ILB          → LB   (inside LB uses the general LB library; OLB has its own)
+ * CB / SS / FS → DB   (all defensive-back variants share the DB library)
+ * FB           → RB   (fullback closest to RB)
+ * S            → DB   (generic "safety" tag)
+ */
+export function normalizePosition(position: string | null | undefined): string | null {
+  const p = position?.toUpperCase() ?? null
+  if (!p) return null
+
+  // Offensive line group
+  if (['OT', 'OG', 'C', 'OL'].includes(p)) return 'OL'
+
+  // Defensive line group
+  if (['DE', 'DT', 'NT', 'DL'].includes(p)) return 'DL'
+
+  // Linebacker group (OLB has its own library so keep it separate)
+  if (['ILB', 'LB'].includes(p)) return 'LB'
+
+  // Defensive back group
+  if (['CB', 'SS', 'FS', 'DB', 'S'].includes(p)) return 'DB'
+
+  // Fullback → RB library
+  if (p === 'FB') return 'RB'
+
+  // All other positions returned as-is (QB, RB, WR, TE, OLB, K, P, LS, Athlete)
+  return p
+}
+
 export function getTemplateExercises(
   level: ExperienceLevel,
   painPoints: string[],
@@ -634,7 +668,7 @@ export function getTemplateExercises(
   const warmups   = pickByCategory(EXERCISE_LIBRARY, 'warmup',   2, painPoints).map(toExercise)
   const cooldowns = pickByCategory(EXERCISE_LIBRARY, 'cooldown', 2, painPoints).map(toExercise)
 
-  const pos = position?.toUpperCase()
+  const pos = normalizePosition(position)
   const main = pos === 'RB'
     ? getRBMainExercises(level, painPoints)
     : pos === 'WR'
@@ -651,7 +685,7 @@ export function getTemplateExercises(
     ? getLBMainExercises(level, painPoints)
     : pos === 'OLB'
     ? getOLBMainExercises(level, painPoints)
-    : (pos === 'DB' || pos === 'CB' || pos === 'S')
+    : pos === 'DB'
     ? getDBMainExercises(level, painPoints)
     : getGenericMainExercises(level, painPoints)
 
