@@ -210,6 +210,51 @@ export const NB_DRILLS: NBDrillEntry[] = [
     ],
   },
 
+  // ── ZONE REACTION DRILLS (from GripBoost secondary resource) ─────────────
+
+  {
+    name: 'Running Stick Drill — NB Zone React',
+    category: 'footwork',
+    technique_area: 'zone_drop',
+    sets: 4, reps: 8, duration: null,
+    why: 'In Cover 2 and Cover 3 nickel packages the NB must sprint laterally into a zone, kill momentum with a hard outside-foot stick, flip the hips toward the QB, and immediately accelerate to the ball. This drill trains that exact sequence — momentum control into a hip flip without losing ground.',
+    coaching_cue: 'Stick the outside foot HARD — if you don\'t stick it you\'re drifting past the zone. Hips flip the second the foot lands.',
+    common_mistake: 'Taking a gather step after the stick before flipping — that extra step is the window the receiver catches and turns up in',
+    fixes: ['zone', 'zone drop', 'momentum', 'lateral', 'stick', 'hip flip', 'coverage', 'Cover 2', 'Cover 3', 'react', 'break', 'acceleration'],
+    progressions: ['Walk-through stick-and-flip form (stationary cone)', 'Half-speed 5-yard lateral sprint + stick + flip', 'Full-speed vs coach signal with live route'],
+    videos: [
+      { title: 'Running Stick Drill Defensive Back Zone Coverage', url: 'https://www.youtube.com/results?search_query=running+stick+drill+defensive+back+zone+coverage+hip+flip', duration: '~6 min' },
+    ],
+  },
+  {
+    name: 'Flip and Read — QB Eyes Break Drill',
+    category: 'footwork',
+    technique_area: 'zone_drop',
+    sets: 4, reps: 8, duration: null,
+    why: 'In zone coverage the NB backpedals to their landmark, flips the hips to face the QB, and breaks on the throw — not on the route. This drill isolates the backpedal-to-flip-to-read sequence so the NB breaks on QB\'s eyes rather than chasing the receiver\'s cuts.',
+    coaching_cue: 'Backpedal to your depth, flip and find the QB\'s eyes — your break comes off his shoulder turn, not the receiver\'s feet',
+    common_mistake: 'Breaking on the receiver\'s route stem instead of the QB\'s throw — gets caught flat-footed on back-shoulder and pump-fakes every time',
+    fixes: ['zone', 'zone drop', 'backpedal', 'QB read', 'read', 'flip', 'break', 'coverage', 'pump fake', 'reaction', 'timing'],
+    progressions: ['Backpedal + flip to landmark (no QB)', 'Backpedal + flip + react to coach throw signal', 'Full-speed vs live QB with receiver running route'],
+    videos: [
+      { title: 'Flip and Read Drill DB Zone Coverage QB Eyes', url: 'https://www.youtube.com/results?search_query=flip+read+drill+defensive+back+zone+coverage+QB+eyes', duration: '~7 min' },
+    ],
+  },
+  {
+    name: 'Sticks in the Box — Slant & Out Break Drill',
+    category: 'footwork',
+    technique_area: 'slot_coverage',
+    sets: 4, reps: 8, duration: null,
+    why: 'The slot WR\'s most dangerous routes — the slant, the dig, and the quick out — all break at 45 degrees between 3 and 8 yards. The NB must backpedal, plant the correct foot, and break at 45 degrees before the ball arrives. A wrong-foot plant kills break speed on every short throw.',
+    coaching_cue: 'Right foot to break left, left foot to break right — plant the outside foot and drive the opposite knee into the break',
+    common_mistake: 'Planting with the wrong foot and having to re-gather before the break — loses a full step of cushion on every slant and quick out',
+    fixes: ['slant', 'out route', 'quick out', 'dig', 'break', 'foot plant', '45 degree', 'backpedal', 'short route', 'coverage', 'slot', 'separation'],
+    progressions: ['Backpedal + 45° cone break (walk speed, correct foot focus)', 'Half-speed with coach direction call at break point', 'Full-speed vs live slot WR running slant / quick out'],
+    videos: [
+      { title: 'Sticks in the Box 45 Degree Break Drill Cornerback Nickelback', url: 'https://www.youtube.com/results?search_query=sticks+in+the+box+45+degree+break+drill+cornerback+defensive+back', duration: '~6 min' },
+    ],
+  },
+
   // ── CONDITIONING ─────────────────────────────────────────────────────────
 
   {
