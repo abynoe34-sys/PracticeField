@@ -11,6 +11,9 @@ import { findOLBDrillsForPainPoint, olbDrillToExercise } from './position-drills
 import { findSTDrillsForPainPoint, stDrillToExercise } from './position-drills/specialist'
 import { findFBDrillsForPainPoint, fbDrillToExercise } from './position-drills/fb'
 import { findNBDrillsForPainPoint, nbDrillToExercise } from './position-drills/nb'
+import { findCBDrillsForPainPoint, cbDrillToExercise } from './position-drills/cb'
+import { findSSDrillsForPainPoint, ssDrillToExercise } from './position-drills/ss'
+import { findFSDrillsForPainPoint, fsDrillToExercise } from './position-drills/fs'
 
 // ─── Exercise Library ─────────────────────────────────────────────────────────
 // Curated by pain-point keywords. Used as fallback when OpenAI is unavailable.
@@ -698,6 +701,105 @@ function getSTMainExercises(level: ExperienceLevel, painPoints: string[]): Exerc
 }
 
 /**
+ * Cornerback (CB) main exercises — outside press coverage, hip fluidity, phase awareness.
+ */
+function getCBMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
+  const drillScores = new Map<string, { exercise: Exercise; score: number }>()
+
+  for (const pp of painPoints) {
+    for (const drill of findCBDrillsForPainPoint(pp)) {
+      const entry = drillScores.get(drill.name)
+      if (entry) {
+        entry.score += 1
+      } else {
+        drillScores.set(drill.name, { exercise: cbDrillToExercise(drill), score: 1 })
+      }
+    }
+  }
+
+  const sorted = [...drillScores.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(({ exercise }) => exercise)
+
+  if (sorted.length < 4) {
+    const existing = new Set(sorted.map(e => e.name))
+    const filler = getGenericMainExercises(level, painPoints)
+      .filter(e => !existing.has(e.name))
+      .slice(0, 6 - sorted.length)
+    return [...sorted, ...filler]
+  }
+
+  return sorted
+}
+
+/**
+ * Strong Safety (SS) main exercises — block shedding, box tackling, run support.
+ */
+function getSSMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
+  const drillScores = new Map<string, { exercise: Exercise; score: number }>()
+
+  for (const pp of painPoints) {
+    for (const drill of findSSDrillsForPainPoint(pp)) {
+      const entry = drillScores.get(drill.name)
+      if (entry) {
+        entry.score += 1
+      } else {
+        drillScores.set(drill.name, { exercise: ssDrillToExercise(drill), score: 1 })
+      }
+    }
+  }
+
+  const sorted = [...drillScores.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(({ exercise }) => exercise)
+
+  if (sorted.length < 4) {
+    const existing = new Set(sorted.map(e => e.name))
+    const filler = getGenericMainExercises(level, painPoints)
+      .filter(e => !existing.has(e.name))
+      .slice(0, 6 - sorted.length)
+    return [...sorted, ...filler]
+  }
+
+  return sorted
+}
+
+/**
+ * Free Safety (FS) main exercises — deep zone, QB read, pursuit angle, ball skills.
+ */
+function getFSMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
+  const drillScores = new Map<string, { exercise: Exercise; score: number }>()
+
+  for (const pp of painPoints) {
+    for (const drill of findFSDrillsForPainPoint(pp)) {
+      const entry = drillScores.get(drill.name)
+      if (entry) {
+        entry.score += 1
+      } else {
+        drillScores.set(drill.name, { exercise: fsDrillToExercise(drill), score: 1 })
+      }
+    }
+  }
+
+  const sorted = [...drillScores.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(({ exercise }) => exercise)
+
+  if (sorted.length < 4) {
+    const existing = new Set(sorted.map(e => e.name))
+    const filler = getGenericMainExercises(level, painPoints)
+      .filter(e => !existing.has(e.name))
+      .slice(0, 6 - sorted.length)
+    return [...sorted, ...filler]
+  }
+
+  return sorted
+}
+
+/**
  * Nickelback (NB) main exercises — slot coverage, hybrid CB/LB skills.
  * NB is the 5th defensive back deployed in nickel packages, covering the slot WR.
  */
@@ -739,8 +841,11 @@ function getNBMainExercises(level: ExperienceLevel, painPoints: string[]): Exerc
  * DE / DT / NT / DL  → DL  (all defensive-line variants share the DL library)
  * ILB / MLB          → LB  (inside & middle linebackers share the LB library)
  * OLB                → OLB (edge defender — own pass-rush / contain library)
- * CB / SS / FS / DB  → DB  (all defensive-back variants share the DB library)
+ * CB                 → CB  (outside cover corner — own press/man/zone library)
+ * SS                 → SS  (box enforcer — own block-shed / run-support library)
+ * FS                 → FS  (center fielder — own deep-zone / QB-read library)
  * NB                 → NB  (Nickelback has its own slot-coverage library)
+ * DB / S             → DB  (generic fallback)
  * FB                 → FB  (Fullback: blocker-first, not runner-first)
  * S                  → DB  (generic "safety" tag)
  *
@@ -765,8 +870,13 @@ export function normalizePosition(position: string | null | undefined): string |
   // NB (Nickelback) → dedicated slot-coverage library (hybrid CB/LB)
   if (p === 'NB') return 'NB'
 
-  // Defensive back group — CB, SS, FS share the general DB library
-  if (['CB', 'SS', 'FS', 'DB', 'S'].includes(p)) return 'DB'
+  // Each DB position now has its own dedicated library
+  if (p === 'CB') return 'CB'
+  if (p === 'SS') return 'SS'
+  if (p === 'FS') return 'FS'
+
+  // Generic DB fallback (covers the plain 'DB' or 'S' label)
+  if (['DB', 'S'].includes(p)) return 'DB'
 
   // Fullback → FB library (blocker-first, not runner-first — different from RB)
   if (p === 'FB') return 'FB'
@@ -803,6 +913,12 @@ export function getTemplateExercises(
     ? getDLMainExercises(level, painPoints)
     : pos === 'LB'
     ? getLBMainExercises(level, painPoints)
+    : pos === 'CB'
+    ? getCBMainExercises(level, painPoints)
+    : pos === 'SS'
+    ? getSSMainExercises(level, painPoints)
+    : pos === 'FS'
+    ? getFSMainExercises(level, painPoints)
     : pos === 'DB'
     ? getDBMainExercises(level, painPoints)
     : pos === 'OLB'

@@ -210,6 +210,23 @@ export const NB_DRILLS: NBDrillEntry[] = [
     ],
   },
 
+  // ── SCREEN RECOGNITION ───────────────────────────────────────────────────
+
+  {
+    name: 'Screen Recognition & Rally Drill',
+    category: 'technique',
+    technique_area: 'slot_coverage',
+    sets: 3, reps: 8, duration: null,
+    why: 'Slot WRs are the primary screen receivers in the modern passing game — bubble screens, tunnel screens, and RB screens all attack the NB\'s zone. The NB must diagnose the screen immediately off OL releasing, navigate past the blocker, and make the tackle for minimal gain.',
+    coaching_cue: 'OL releasing = screen! Get flat, avoid the blocker, and rally to the catch point — don\'t let the blocker seal you inside',
+    common_mistake: 'Getting blocked by the releasing OL instead of flattening around them — turns a 2-yard screen into a 15-yard gain',
+    fixes: ['screen', 'screen pass', 'bubble screen', 'tunnel screen', 'block', 'OL release', 'diagnose', 'recognition', 'slot', 'tackle', 'coverage', 'rally'],
+    progressions: ['Walk-through OL-release key read', 'Half-speed screen with one blocker', 'Full-speed screen vs slot WR with pulling blockers'],
+    videos: [
+      { title: 'Screen Recognition Drill Nickelback Slot Coverage Football', url: 'https://www.youtube.com/results?search_query=screen+recognition+drill+nickelback+slot+coverage+football', duration: '~7 min' },
+    ],
+  },
+
   // ── ZONE REACTION DRILLS (from GripBoost secondary resource) ─────────────
 
   {
