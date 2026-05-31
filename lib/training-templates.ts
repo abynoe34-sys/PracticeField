@@ -9,6 +9,7 @@ import { findLBDrillsForPainPoint, lbDrillToExercise } from './position-drills/l
 import { findDBDrillsForPainPoint, dbDrillToExercise } from './position-drills/db'
 import { findOLBDrillsForPainPoint, olbDrillToExercise } from './position-drills/olb'
 import { findSTDrillsForPainPoint, stDrillToExercise } from './position-drills/specialist'
+import { findFBDrillsForPainPoint, fbDrillToExercise } from './position-drills/fb'
 
 // ─── Exercise Library ─────────────────────────────────────────────────────────
 // Curated by pain-point keywords. Used as fallback when OpenAI is unavailable.
@@ -627,6 +628,40 @@ function getDBMainExercises(level: ExperienceLevel, painPoints: string[]): Exerc
 }
 
 /**
+ * Fullback (FB) main exercises — blocker-first, ball-carrier second.
+ * FB is primarily a lead blocker and pass protector, not a runner.
+ */
+function getFBMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
+  const drillScores = new Map<string, { exercise: Exercise; score: number }>()
+
+  for (const pp of painPoints) {
+    for (const drill of findFBDrillsForPainPoint(pp)) {
+      const entry = drillScores.get(drill.name)
+      if (entry) {
+        entry.score += 1
+      } else {
+        drillScores.set(drill.name, { exercise: fbDrillToExercise(drill), score: 1 })
+      }
+    }
+  }
+
+  const sorted = [...drillScores.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(({ exercise }) => exercise)
+
+  if (sorted.length < 4) {
+    const existing = new Set(sorted.map(e => e.name))
+    const filler = getGenericMainExercises(level, painPoints)
+      .filter(e => !existing.has(e.name))
+      .slice(0, 6 - sorted.length)
+    return [...sorted, ...filler]
+  }
+
+  return sorted
+}
+
+/**
  * Specialist (K/P/LS) main exercises drawn from the curated specialist drill library.
  */
 function getSTMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
@@ -691,8 +726,8 @@ export function normalizePosition(position: string | null | undefined): string |
   // Defensive back group
   if (['CB', 'SS', 'FS', 'DB', 'S'].includes(p)) return 'DB'
 
-  // Fullback → RB library
-  if (p === 'FB') return 'RB'
+  // Fullback → FB library (blocker-first, not runner-first — different from RB)
+  if (p === 'FB') return 'FB'
 
   // Specialists → ST library
   if (['K', 'P', 'LS'].includes(p)) return 'ST'
@@ -728,6 +763,8 @@ export function getTemplateExercises(
     ? getLBMainExercises(level, painPoints)
     : pos === 'DB'
     ? getDBMainExercises(level, painPoints)
+    : pos === 'FB'
+    ? getFBMainExercises(level, painPoints)
     : pos === 'ST'
     ? getSTMainExercises(level, painPoints)
     : getGenericMainExercises(level, painPoints)
