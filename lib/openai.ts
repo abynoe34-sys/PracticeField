@@ -52,7 +52,7 @@ export async function generateTrainingPlanAI(params: GeneratePlanParams): Promis
   let positionDrillContext = ''
   const posNorm = normalizePosition(params.position)
   // OLB/ILB → LB; K/P/LS → ST; FB has its own blocker-first library; QB and TE individual
-  const DRILL_LIBRARY_POSITIONS = ['RB','WR','QB','OL','TE','DL','LB','DB','ST','FB','NB']
+  const DRILL_LIBRARY_POSITIONS = ['RB','WR','QB','OL','TE','DL','LB','OLB','DB','ST','FB','NB']
   if (params.painPoints.length > 0 && posNorm && DRILL_LIBRARY_POSITIONS.includes(posNorm)) {
     const finder = posNorm === 'WR' ? findWRDrillsForPainPoint
       : posNorm === 'QB' ? findQBDrillsForPainPoint
@@ -60,6 +60,7 @@ export async function generateTrainingPlanAI(params: GeneratePlanParams): Promis
       : posNorm === 'TE' ? findTEDrillsForPainPoint
       : posNorm === 'DL' ? findDLDrillsForPainPoint
       : posNorm === 'LB' ? findLBDrillsForPainPoint
+      : posNorm === 'OLB' ? findOLBDrillsForPainPoint
       : posNorm === 'DB' ? findDBDrillsForPainPoint
       : posNorm === 'ST' ? findSTDrillsForPainPoint
       : posNorm === 'FB' ? findFBDrillsForPainPoint

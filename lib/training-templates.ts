@@ -737,7 +737,8 @@ function getNBMainExercises(level: ExperienceLevel, painPoints: string[]): Exerc
  *
  * OT / OG / C        → OL  (all offensive-line variants share the OL library)
  * DE / DT / NT / DL  → DL  (all defensive-line variants share the DL library)
- * ILB / OLB / MLB    → LB  (all linebacker variants share the LB library)
+ * ILB / MLB          → LB  (inside & middle linebackers share the LB library)
+ * OLB                → OLB (edge defender — own pass-rush / contain library)
  * CB / SS / FS / DB  → DB  (all defensive-back variants share the DB library)
  * NB                 → NB  (Nickelback has its own slot-coverage library)
  * FB                 → FB  (Fullback: blocker-first, not runner-first)
@@ -756,8 +757,10 @@ export function normalizePosition(position: string | null | undefined): string |
   // Defensive line group
   if (['DE', 'DT', 'NT', 'DL'].includes(p)) return 'DL'
 
-  // Linebacker group — ILB, OLB, and MLB all use the general LB library
-  if (['ILB', 'OLB', 'LB', 'MLB'].includes(p)) return 'LB'
+  // Linebacker group — ILB and MLB share the general LB library
+  // OLB is an edge defender (pass rush / contain) — routes to its own library
+  if (['ILB', 'LB', 'MLB'].includes(p)) return 'LB'
+  if (p === 'OLB') return 'OLB'
 
   // NB (Nickelback) → dedicated slot-coverage library (hybrid CB/LB)
   if (p === 'NB') return 'NB'
@@ -802,6 +805,8 @@ export function getTemplateExercises(
     ? getLBMainExercises(level, painPoints)
     : pos === 'DB'
     ? getDBMainExercises(level, painPoints)
+    : pos === 'OLB'
+    ? getOLBMainExercises(level, painPoints)
     : pos === 'FB'
     ? getFBMainExercises(level, painPoints)
     : pos === 'ST'
