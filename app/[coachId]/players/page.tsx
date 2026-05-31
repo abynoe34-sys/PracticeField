@@ -17,7 +17,7 @@ const POSITIONS: FootballPosition[] = [
   // Secondary
   'CB','NB','SS','FS',
   // Specialists
-  'K','P','LS',
+  'K','P','LS','H','PR','KR',
   // Other
   'Athlete',
 ]

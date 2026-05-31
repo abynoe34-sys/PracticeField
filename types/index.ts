@@ -8,7 +8,7 @@ export type FootballPosition =
   | 'DE' | 'DT' | 'NT' | 'DL'
   | 'MLB' | 'LB' | 'ILB' | 'OLB'
   | 'CB' | 'NB' | 'SS' | 'FS' | 'DB'
-  | 'K' | 'P' | 'LS'
+  | 'K' | 'P' | 'LS' | 'H' | 'PR' | 'KR'
   | 'Athlete'
 
 // ─── Database Row Types ───────────────────────────────────────────────────────

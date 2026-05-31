@@ -1,7 +1,13 @@
 /**
- * Specialist Position Drill Library — K (Kicker), P (Punter), LS (Long Snapper)
- * Covers kicking mechanics, punting technique, snap accuracy, and the
- * shared athletic foundation all specialists need.
+ * Special Teams Specialist Drill Library
+ *
+ * Covers all six special-teams specialist positions:
+ *   K  — Kicker (field goals, PATs, kickoffs)
+ *   P  — Punter (4th-down field position)
+ *   LS — Long Snapper (punt snaps ≈15 yds; FG/PAT snaps ≈7-8 yds)
+ *   H  — Holder (catches snap, places ball laces-away for kicker)
+ *   PR — Punt Returner (fields punts, reads coverage, accelerates)
+ *   KR — Kick Returner (fields kickoffs, vision through wedge, ball security)
  */
 
 import type { Exercise } from '@/types'
@@ -25,6 +31,9 @@ export type STTechniqueArea =
   | 'directional_punting'  // P — coffin corner, pooch, directional control
   | 'snap_mechanics'       // LS — speed, spiral, accuracy
   | 'snap_and_block'       // LS — immediate post-snap protection
+  | 'hold_mechanics'       // H — snap timing, lace rotation, bad snap recovery
+  | 'return_mechanics'     // PR/KR — catch, secure, accelerate, decision-making
+  | 'return_vision'        // PR/KR — reading coverage lanes, wedge, finding seams
   | 'conditioning'         // All — leg strength, hip flexibility, core power
   | 'mental'               // All — routine, pressure, visualization
 
@@ -36,7 +45,7 @@ export interface STDrillEntry {
   name: string
   category: STDrillCategory
   technique_area: STTechniqueArea
-  specialist_type: 'K' | 'P' | 'LS' | 'ALL'  // who this drill is for
+  specialist_type: 'K' | 'P' | 'LS' | 'H' | 'PR' | 'KR' | 'ALL'  // who this drill is for
   sets: number | null
   reps: number | null
   duration: string | null
@@ -301,6 +310,195 @@ export const SPECIALIST_DRILLS: STDrillEntry[] = [
     progressions: ['Grip-only drill (toss to wall)', 'Kneeling spiral snaps to partner', 'Full-stance spiral snaps'],
     videos: [
       { title: 'Long Snapper Spiral Grip Technique', url: 'https://www.youtube.com/results?search_query=long+snapper+spiral+grip+technique+snap+mechanics', duration: '~6 min' },
+    ],
+  },
+
+  // ── HOLDER MECHANICS ─────────────────────────────────────────────────────
+
+  {
+    name: 'Snap-to-Spot Placement Drill (H)',
+    category: 'technique',
+    technique_area: 'hold_mechanics',
+    specialist_type: 'H',
+    sets: 5, reps: 15, duration: null,
+    why: 'The holder must catch the snap and place the ball laces-away in under 0.30 seconds. Any slower disrupts the kicker\'s timing. Placement speed and consistency are the entire job on field goals and PATs.',
+    coaching_cue: 'Catch and spin in one motion — the ball should be on the turf before you think about it',
+    common_mistake: 'Two separate actions — catching first, then finding the spot — costs critical tenths of a second and disrupts kicker timing',
+    fixes: ['placement', 'slow hold', 'timing', 'kicker timing', 'laces', 'fumble', 'handle', 'catch', 'snap', 'field goal', 'hold', 'holder'],
+    progressions: ['Slow-motion catch-and-place drill', 'Full-speed timed placement (0.3s target)', 'Full-speed with live snapper + kicker'],
+    videos: [
+      { title: 'Holder Snap to Spot Placement Drill Field Goal', url: 'https://www.youtube.com/results?search_query=football+holder+field+goal+placement+drill+snap', duration: '~7 min' },
+    ],
+  },
+  {
+    name: 'Lace Rotation & Ball Spin Drill (H)',
+    category: 'technique',
+    technique_area: 'hold_mechanics',
+    specialist_type: 'H',
+    sets: 4, reps: 15, duration: null,
+    why: 'Laces facing the kicker at contact causes a miss. The holder must rotate the ball laces-away in under 0.2 seconds on every snap — regardless of how the ball arrives from the snapper.',
+    coaching_cue: 'Catch with the right hand, spin with the left — laces always face away from the kicker at placement',
+    common_mistake: 'Forgetting to check lace direction under pressure — even occasional misses destroy kicker confidence and cost games',
+    fixes: ['laces', 'laces away', 'miss', 'pushed kick', 'hooks', 'hold', 'holder', 'consistency', 'field goal', 'lace rotation'],
+    progressions: ['Grip and spin drill with no snap', 'Catch-and-spin with partner throws from 7 yards', 'Full-speed with live snapper'],
+    videos: [
+      { title: 'Holder Lace Rotation Ball Spin Drill Football', url: 'https://www.youtube.com/results?search_query=football+holder+lace+rotation+ball+spin+drill', duration: '~6 min' },
+    ],
+  },
+  {
+    name: 'Bad Snap Recovery Drill (H)',
+    category: 'technique',
+    technique_area: 'hold_mechanics',
+    specialist_type: 'H',
+    sets: 3, reps: 10, duration: null,
+    why: 'A bad snap happens in games. The holder must field the ball from any direction — high, low, wide — and still get it down for the kicker. Practicing bad snaps is as important as practicing perfect ones.',
+    coaching_cue: 'Catch anything, get it down anywhere — a kick with imperfect placement beats a fumble or penalty every time',
+    common_mistake: 'Freezing or watching a bad snap sail by instead of moving to field it — only practising perfect snaps creates a fragile holder',
+    fixes: ['bad snap', 'fumble', 'high snap', 'wide snap', 'bobble', 'recover', 'hold', 'holder', 'block', 'off-target'],
+    progressions: ['Partner throws bad snaps from 7 yards at varying heights', 'Live snapper intentional off-target snaps', 'Full-speed with kicker approaching on approach'],
+    videos: [
+      { title: 'Holder Bad Snap Recovery Drill Football', url: 'https://www.youtube.com/results?search_query=football+holder+bad+snap+recovery+drill', duration: '~6 min' },
+    ],
+  },
+  {
+    name: 'Fake Field Goal Execution Drill (H)',
+    category: 'technique',
+    technique_area: 'hold_mechanics',
+    specialist_type: 'H',
+    sets: 3, reps: 8, duration: null,
+    why: 'On fake field goals the holder executes a pass or run. Holders who never practice the fake add zero deception to the special teams playbook and tip off the defense when a fake is called.',
+    coaching_cue: 'Pre-snap read: is the edge blocked? If the fake is on, catch clean and attack immediately — no hesitation',
+    common_mistake: 'Telegraphing the fake by shifting weight or moving feet before the snap — gives the defense a visual tell',
+    fixes: ['fake', 'fake field goal', 'pass', 'run', 'holder', 'trick play', 'scramble', 'two-point conversion'],
+    progressions: ['Walk-through fake passing routes', 'Half-speed snap-and-run or snap-and-throw', 'Full-speed fake with simulated coverage'],
+    videos: [
+      { title: 'Fake Field Goal Holder Pass Run Drill', url: 'https://www.youtube.com/results?search_query=fake+field+goal+holder+pass+run+drill+football', duration: '~7 min' },
+    ],
+  },
+
+  // ── PUNT RETURNER MECHANICS ───────────────────────────────────────────────
+
+  {
+    name: 'Ball Tracking & Catch Under Pressure (PR)',
+    category: 'technique',
+    technique_area: 'return_mechanics',
+    specialist_type: 'PR',
+    sets: 4, reps: 10, duration: null,
+    why: 'A muffed punt is a special-teams disaster — a turnover that often costs a touchdown. The PR must pick up the ball the instant it leaves the punter\'s foot and track it through the flight under bright lights, wind, and pressure.',
+    coaching_cue: 'Eyes up the moment the punter\'s leg swings — find the ball early and never lose it regardless of what is around you',
+    common_mistake: 'Looking at coverage first instead of the ball — loses the ball in the sky and muffs it at the last second',
+    fixes: ['muff', 'muffed', 'drop', 'ball tracking', 'fumble', 'catch', 'punt', 'return', 'ball handling', 'sun', 'lights'],
+    progressions: ['JUGS machine tracking drill', 'High-pop ball tracking with sun/light variation', 'Live punt tracking with full coverage'],
+    videos: [
+      { title: 'Punt Returner Ball Tracking Drill Muff Prevention', url: 'https://www.youtube.com/results?search_query=punt+returner+ball+tracking+drill+muff+prevention', duration: '~7 min' },
+    ],
+  },
+  {
+    name: 'Fair Catch vs. Return Decision Drill (PR)',
+    category: 'technique',
+    technique_area: 'return_mechanics',
+    specialist_type: 'PR',
+    sets: 3, reps: 10, duration: null,
+    why: 'The wrong decision on a punt — catching when you should fair catch, or fair catching when you had room — costs field position or creates a turnover. Decision speed must be trained under live pressure.',
+    coaching_cue: 'First thought: is a gunner within 5 yards? Yes → fair catch signal up immediately. No → catch and go.',
+    common_mistake: 'Deciding too late — calling fair catch when a gunner is not close costs 15+ yards of return yardage every time',
+    fixes: ['fair catch', 'decision', 'catch', 'muff', 'gunner', 'coverage', 'punt return', 'field position', 'signal'],
+    progressions: ['Walk-through decision reads with coach signals', 'Half-speed live punt with coverage reads', 'Full-speed punt with simulated coverage'],
+    videos: [
+      { title: 'Punt Returner Fair Catch Decision Drill', url: 'https://www.youtube.com/results?search_query=punt+returner+fair+catch+decision+drill+football', duration: '~6 min' },
+    ],
+  },
+  {
+    name: 'Acceleration Out of the Catch (PR)',
+    category: 'speed',
+    technique_area: 'return_mechanics',
+    specialist_type: 'PR',
+    sets: 4, reps: 8, duration: null,
+    why: 'The PR must secure the catch AND accelerate immediately — any pause after the catch gives coverage players time to close. The burst out of the catch mirrors a WR\'s explosion after a short pass.',
+    coaching_cue: 'Secure-and-go: the moment the ball is in your hands your feet are already moving north',
+    common_mistake: 'Standing still for half a second after the catch to "get set" before running — coverage closes those yards in that time',
+    fixes: ['acceleration', 'burst', 'slow start', 'punt return', 'coverage', 'return yards', 'stop feet', 'caught'],
+    progressions: ['Catch + 10-yard sprint (no coverage)', 'Catch + read 1 block + burst', 'Full-speed punt return with live coverage'],
+    videos: [
+      { title: 'Punt Returner Catch and Burst Acceleration Drill', url: 'https://www.youtube.com/results?search_query=punt+returner+catch+burst+acceleration+drill+football', duration: '~7 min' },
+    ],
+  },
+  {
+    name: 'Vision — Reading Coverage Lanes (PR)',
+    category: 'technique',
+    technique_area: 'return_vision',
+    specialist_type: 'PR',
+    sets: 3, reps: null, duration: '15 minutes',
+    why: 'A PR who drops their head and runs straight adds zero yards. A PR who reads the coverage lanes and sets up blocks adds 10–15 yards per return. Vision is the highest-leverage returner skill after ball security.',
+    coaching_cue: 'Head up at the catch — find the lane through the blockers BEFORE you commit to a cut',
+    common_mistake: 'Running full-speed into a crowd instead of setting up a cut first — coverage closes and the return is stuffed for a loss',
+    fixes: ['vision', 'lanes', 'read', 'blocks', 'return', 'punt return', 'coverage', 'cut', 'set up', 'no yards'],
+    progressions: ['Film study: identify lanes pre-snap', 'Cone-lane vision drill at walk speed', 'Full-speed punt return with blockers'],
+    videos: [
+      { title: 'Punt Returner Vision Reading Coverage Lanes Drill', url: 'https://www.youtube.com/results?search_query=punt+returner+vision+reading+coverage+lanes+drill', duration: '~8 min' },
+    ],
+  },
+
+  // ── KICK RETURNER MECHANICS ───────────────────────────────────────────────
+
+  {
+    name: 'Kick Tracking & Touchback Decision (KR)',
+    category: 'technique',
+    technique_area: 'return_mechanics',
+    specialist_type: 'KR',
+    sets: 4, reps: 10, duration: null,
+    why: 'A touchback decision must be made while the ball is still in the air. A KR who fields kicks landing 5+ yards deep in the end zone costs the offense 20–25 yards of field position per game.',
+    coaching_cue: 'Read the ball at the kicker\'s foot — if it clears 5 yards deep, wave it through. The end line is your friend.',
+    common_mistake: 'Catching out of instinct before reading depth — brings out kicks that should be touchbacks, costing the offense field position every game',
+    fixes: ['touchback', 'ball tracking', 'kick off', 'deep kick', 'field position', 'decision', 'end zone', 'return', 'judgment'],
+    progressions: ['Ball-flight depth read drill (judge 5-yard end-zone increments)', 'Live kickoffs with coach "in/out" signals', 'Full-speed kickoff returns with decision-making'],
+    videos: [
+      { title: 'Kick Returner Touchback Decision Ball Tracking Drill', url: 'https://www.youtube.com/results?search_query=kick+returner+touchback+decision+ball+tracking+drill', duration: '~7 min' },
+    ],
+  },
+  {
+    name: 'Setup Positioning & Communication (KR)',
+    category: 'technique',
+    technique_area: 'return_mechanics',
+    specialist_type: 'KR',
+    sets: 3, reps: 8, duration: null,
+    why: 'The KR must be in the right start position and communicate with the second returner on sky kicks to avoid confusion. Wrong pre-snap positioning means catching on the run instead of from a set base.',
+    coaching_cue: 'Set depth at 7 yards deep in the end zone — always move forward to adjust. Never catch drifting backward.',
+    common_mistake: 'Starting too shallow and drifting backward to catch the kick — impossible to accelerate while moving backward',
+    fixes: ['positioning', 'setup', 'kickoff', 'communication', 'sky kick', 'two returners', 'drift back', 'pre-snap', 'field position'],
+    progressions: ['Pre-kick setup walk-through with two returners', 'Communication drill with live sky kicks', 'Full-speed kickoff with positioning review'],
+    videos: [
+      { title: 'Kick Returner Setup Positioning Communication Drill', url: 'https://www.youtube.com/results?search_query=kick+returner+setup+positioning+communication+drill', duration: '~6 min' },
+    ],
+  },
+  {
+    name: 'Vision Through the Wedge — Finding the Seam (KR)',
+    category: 'technique',
+    technique_area: 'return_vision',
+    specialist_type: 'KR',
+    sets: 3, reps: 8, duration: null,
+    why: 'The biggest kickoff returns happen when the KR sets up the wedge correctly and reads which seam to hit. A KR who cuts laterally before the wedge kills the blocking advantage and shortens the return.',
+    coaching_cue: 'North-south first — attack the wedge and let your blockers open the seam. Don\'t cut until you see daylight.',
+    common_mistake: 'Cutting laterally before reaching the wedge — forces blockers to chase sideways and opens pursuit angles for coverage',
+    fixes: ['vision', 'wedge', 'cut', 'kick return', 'north-south', 'lateral', 'seam', 'return yards', 'coverage', 'blocking'],
+    progressions: ['Film study: blocking assignments and seams', 'Cone wedge vision drill at half speed', 'Full-speed kickoff return with blockers'],
+    videos: [
+      { title: 'Kick Returner Vision Through Wedge Seam Finding Drill', url: 'https://www.youtube.com/results?search_query=kick+returner+vision+wedge+seam+drill+football', duration: '~8 min' },
+    ],
+  },
+  {
+    name: 'Ball Security Gauntlet After Kickoff Catch (KR)',
+    category: 'technique',
+    technique_area: 'return_mechanics',
+    specialist_type: 'KR',
+    sets: 4, reps: 6, duration: null,
+    why: 'A kickoff is the only play where the ball carrier takes a high-speed collision almost immediately after catching. Ball security must be automatic — four-point carry locked in before any coverage player arrives.',
+    coaching_cue: 'Catch-tuck-explode: ball secured to your chest before your first step. Never carry it low running into traffic.',
+    common_mistake: 'Carrying with one arm while sprinting — completely vulnerable to punch-out tackles at kickoff collision speed',
+    fixes: ['ball security', 'fumble', 'kickoff', 'one arm', 'carry', 'tuck', 'coverage', 'hit', 'contact', 'secure', 'gauntlet'],
+    progressions: ['Gauntlet drill (punch-out simulation) at walk speed', 'Catch-and-tuck 20-yard burst', 'Full-speed kickoff catch with gauntlet contact'],
+    videos: [
+      { title: 'Kick Returner Ball Security Gauntlet Drill Football', url: 'https://www.youtube.com/results?search_query=kick+returner+ball+security+gauntlet+drill+football', duration: '~7 min' },
     ],
   },
 ]

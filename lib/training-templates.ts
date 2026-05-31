@@ -743,7 +743,7 @@ function getNBMainExercises(level: ExperienceLevel, painPoints: string[]): Exerc
  * FB                 → FB  (Fullback: blocker-first, not runner-first)
  * S                  → DB  (generic "safety" tag)
  *
- * K / P / LS → ST  (Specialists share one library)
+ * K / P / LS / H / PR / KR → ST  (All special-teams specialists share one library)
  * QB and TE each have their own dedicated libraries and are NOT grouped.
  */
 export function normalizePosition(position: string | null | undefined): string | null {
@@ -768,8 +768,8 @@ export function normalizePosition(position: string | null | undefined): string |
   // Fullback → FB library (blocker-first, not runner-first — different from RB)
   if (p === 'FB') return 'FB'
 
-  // Specialists → ST library
-  if (['K', 'P', 'LS'].includes(p)) return 'ST'
+  // Specialists → ST library (K, P, LS + H holder, PR punt returner, KR kick returner)
+  if (['K', 'P', 'LS', 'H', 'PR', 'KR'].includes(p)) return 'ST'
 
   // Individual libraries: QB, RB, WR, TE — returned as-is
   // No library: Athlete — falls to generic
