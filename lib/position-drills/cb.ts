@@ -23,8 +23,9 @@ export interface DrillVideoCB {
 export type CBTechniqueArea =
   | 'press_coverage'    // press alignment, jam, redirect release
   | 'man_coverage'      // trail technique, hip flip, phase awareness, vertical track
-  | 'zone_coverage'     // bail technique, zone funnel, cushion management
-  | 'ball_skills'       // tracking, high-point catch, tip drills
+  | 'zone_coverage'     // bail technique, zone funnel, cushion management, Cover 2
+  | 'backpedal'         // backpedal mechanics, pedal and turn, speed change, weave
+  | 'ball_skills'       // strip drill, high-point catch, straight ball
   | 'run_support'       // stalk block defeat, crack block recognition
   | 'conditioning'      // W drill, lateral quickness, agility
 
@@ -61,6 +62,37 @@ export const CB_DRILLS: CBDrillEntry[] = [
     progressions: ['W drill at 70% — technique focus', 'W drill at full speed', 'W drill vs live WR route'],
     videos: [
       { title: 'W Drill Cornerback Backpedal Break Agility', url: 'https://www.youtube.com/watch?v=OkN5JKFuXqU', duration: '~6 min' },
+    ],
+  },
+
+  // ── BACKPEDAL MECHANICS ───────────────────────────────────────────────────
+
+  {
+    name: 'Pedal and Turn',
+    category: 'footwork',
+    technique_area: 'backpedal',
+    sets: 4, reps: 6, duration: null,
+    why: 'The CB backpedals 8-10 yards, then on cue opens the near hip, rips the arm and shoulder through low, and sprints through the hash. The arm-rip through low forces a complete hip flip rather than an abbreviated bail — the foundation of the turn-and-run technique.',
+    coaching_cue: 'Open the near hip first, then rip the arm and shoulder through LOW — the shoulder following the arm forces the full flip',
+    common_mistake: 'Flipping the upper body without fully opening the hips first — produces a partial turn that bleeds speed on the sprint-out',
+    fixes: ['pedal and turn', 'backpedal', 'turn', 'open hips', 'hip flip', 'sprint', 'coverage', 'transition', 'rip'],
+    progressions: ['Walk-through arm-rip and hip open at landmark', 'Half-speed pedal + turn to 50% sprint', 'Full-speed both directions on signal'],
+    videos: [
+      { title: 'Pedal and Turn Drill Cornerback Backpedal Technique', url: 'https://www.youtube.com/results?search_query=pedal+and+turn+drill+cornerback+backpedal+hip+open+football', duration: '~6 min' },
+    ],
+  },
+  {
+    name: 'Speed Change Backpedal',
+    category: 'footwork',
+    technique_area: 'backpedal',
+    sets: 3, reps: null, duration: '20 yards each',
+    why: 'The CB must accelerate and decelerate within the backpedal as the WR changes stem speed. A CB who pedals at one constant speed telegraphs their break point and gets exploited by double-moves.',
+    coaching_cue: 'Match the WR\'s speed — if they slow their stem, you slow your pedal. If they burst, your pedal quickens.',
+    common_mistake: 'Pedaling at a fixed speed regardless of the receiver\'s stem tempo — creates a predictable break point the offense can exploit with a double-move',
+    fixes: ['backpedal', 'speed change', 'pedal', 'double move', 'tempo', 'stem', 'coverage', 'footwork', 'acceleration'],
+    progressions: ['Coach extends/pulls ball to signal speed (slow/fast pedal)', 'Mirror WR\'s stem changes in 1-on-1', 'Full-speed vs route with intentional speed variation'],
+    videos: [
+      { title: 'Speed Change Backpedal Drill Cornerback Football', url: 'https://www.youtube.com/results?search_query=speed+change+backpedal+drill+cornerback+football+acceleration', duration: '~6 min' },
     ],
   },
 
@@ -109,6 +141,35 @@ export const CB_DRILLS: CBDrillEntry[] = [
     ],
   },
 
+  {
+    name: 'Stem / Leverage Pedal',
+    category: 'technique',
+    technique_area: 'man_coverage',
+    sets: 3, reps: 8, duration: null,
+    why: 'The WR stems inside, pushes vertical, stems opposite, then breaks a route. The CB must maintain inside leverage through every stem without biting — a CB who loses leverage on a false stem gives up the preferred release lane before the route even starts.',
+    coaching_cue: 'Leverage doesn\'t change — your inside shade stays regardless of where they stem. Discipline on the stem.',
+    common_mistake: 'Shifting shade to match the WR\'s stem instead of maintaining leverage — gets manipulated into the wrong alignment before the break',
+    fixes: ['stem', 'leverage', 'inside leverage', 'pedal', 'route', 'fake', 'man coverage', 'coverage', 'alignment', 'shade'],
+    progressions: ['Coach calls stem direction — CB holds leverage (stationary)', 'Live WR stems with CB pedaling', 'Full-speed vs WR route after multiple stem changes'],
+    videos: [
+      { title: 'Stem Leverage Pedal Drill Cornerback Inside Shade', url: 'https://www.youtube.com/results?search_query=stem+leverage+pedal+drill+cornerback+inside+shade+football', duration: '~7 min' },
+    ],
+  },
+  {
+    name: 'Trail Technique — Outside Man Coverage',
+    category: 'technique',
+    technique_area: 'man_coverage',
+    sets: 3, reps: 8, duration: null,
+    why: 'The trail technique puts the CB 1 yard behind (arm\'s length) with inside leverage as the WR runs vertically. Honor inside fakes, be patient on outside fakes, and close the gap hard after 12-15 yards. The CB who closes too early gives up the fade; the CB who never closes gives up the comeback.',
+    coaching_cue: 'Arm\'s length, inside shade — honor the inside fake, be patient on the outside. You\'ll close at 12.',
+    common_mistake: 'Closing too early before 12-15 yards — gets thrown over the top on a vertical or converted fade when the CB tries to jump the comeback',
+    fixes: ['trail', 'trail technique', 'inside leverage', 'separation', 'coverage', 'vertical', 'man coverage', 'outside', 'fade', 'comeback'],
+    progressions: ['Walk-through spacing and leverage (arm\'s length check)', 'Trail at half-speed, close at 12 on signal', 'Full-speed trail vs WR running vertical/comeback/fade'],
+    videos: [
+      { title: 'Trail Technique Cornerback Outside Man Coverage Football', url: 'https://www.youtube.com/results?search_query=trail+technique+cornerback+outside+man+coverage+football', duration: '~7 min' },
+    ],
+  },
+
   // ── PRESS COVERAGE ────────────────────────────────────────────────────────
 
   {
@@ -154,6 +215,38 @@ export const CB_DRILLS: CBDrillEntry[] = [
     progressions: ['Walk-through bail alignment and key drill', 'Bail + react to QB throw signal', 'Full-speed bail vs live WR with QB'],
     videos: [
       { title: 'Bail Technique Drill Cornerback Zone Coverage Football', url: 'https://www.youtube.com/results?search_query=bail+technique+drill+cornerback+zone+coverage+football', duration: '~6 min' },
+    ],
+  },
+
+  {
+    name: 'Cover 2 Corner Break',
+    category: 'technique',
+    technique_area: 'zone_coverage',
+    sets: 3, reps: 8, duration: null,
+    why: 'In Cover 2 the CB jams at the LOS to funnel the WR inside, drops to 12 yards at the numbers, then breaks back over the top on the throw. This is the CB\'s specific zone assignment in a two-deep shell — owning the outside vertical without giving up the flat.',
+    coaching_cue: 'Collision, funnel inside, drop to depth at the numbers — break over the top of the cone on the throw. You own the outside vertical.',
+    common_mistake: 'Dropping straight back instead of to the numbers landmark — takes the CB out of position to break on both the fade and the comeback',
+    fixes: ['Cover 2', 'zone', 'cover 2 corner', 'drop', 'depth', 'collision', 'funnel', 'coverage', 'numbers', 'two-deep', 'fade', 'comeback'],
+    progressions: ['Walk-through jam + drop to landmark (no WR)', 'Half-speed Cover 2 corner drop on signal', 'Full-speed vs WR route with QB signal'],
+    videos: [
+      { title: 'Cover 2 Corner Break Drill Cornerback Zone Football', url: 'https://www.youtube.com/results?search_query=cover+2+corner+break+drill+cornerback+zone+coverage+football', duration: '~7 min' },
+    ],
+  },
+
+  // ── BALL SKILLS ───────────────────────────────────────────────────────────
+
+  {
+    name: 'Strip Drill — Forced Fumble Technique',
+    category: 'technique',
+    technique_area: 'ball_skills',
+    sets: 3, reps: 10, duration: null,
+    why: 'After the catch, the CB converts from coverage to ball-stripping before initiating the tackle. Ripping down and raking the ball out is a trainable technique — a forced fumble is one of the highest-value defensive plays in football, and CBs create the most of them.',
+    coaching_cue: 'Eyes to the receiver\'s hands on the catch — rip DOWN and rake before you wrap. Ball first, tackle second.',
+    common_mistake: 'Going straight into the tackle without attempting to strip — leaving a fumble opportunity on the table every single rep',
+    fixes: ['strip', 'strip drill', 'forced fumble', 'fumble', 'ball skills', 'punch', 'rake', 'tackle', 'ball security', 'after catch'],
+    progressions: ['Walk-through rip and rake on stationary partner', 'Strip drill on slow-moving ball carrier', 'Full-speed strip drill on live reception'],
+    videos: [
+      { title: 'Strip Drill Cornerback Forced Fumble Technique Football', url: 'https://www.youtube.com/results?search_query=strip+drill+cornerback+forced+fumble+technique+football', duration: '~6 min' },
     ],
   },
 

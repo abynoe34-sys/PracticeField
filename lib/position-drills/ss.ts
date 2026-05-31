@@ -113,6 +113,49 @@ export const SS_DRILLS: SSDrillEntry[] = [
     ],
   },
 
+  {
+    name: 'Inverted Safety Drop',
+    category: 'technique',
+    technique_area: 'zone_drop',
+    sets: 3, reps: 8, duration: null,
+    why: 'The SS aligns 5 yards from and 5 yards off the TE (5x5), drops to a landmark on QB movement, squares up, reads the QB\'s arm, and breaks to the throw. This is the specific technique for the walked-up (inverted) safety used in modern defenses — a position the SS must master to function in a variety of sub-packages.',
+    coaching_cue: 'Align 5x5 on the TE — drop to landmark on QB movement, square up, read the arm, break on the throw. You\'re not chasing the TE.',
+    common_mistake: 'Following the TE\'s route instead of dropping to the landmark — vacates the coverage zone and creates a void the offense targets',
+    fixes: ['inverted safety', 'inverted', 'drop', 'TE', 'landmark', 'safety', 'walked up', 'aligned', 'QB read', 'coverage', 'zone drop', 'sub package'],
+    progressions: ['Walk-through 5x5 alignment and landmark identification', 'Drop to landmark + react to coach arm signal', 'Full-speed inverted drop vs TE running routes'],
+    videos: [
+      { title: 'Inverted Safety Drop Drill Strong Safety Football', url: 'https://www.youtube.com/results?search_query=inverted+safety+drop+drill+strong+safety+5x5+TE+football', duration: '~7 min' },
+    ],
+  },
+  {
+    name: 'Quarters Safety Run Support — Contain / Cutback',
+    category: 'technique',
+    technique_area: 'run_support',
+    sets: 3, reps: 8, duration: null,
+    why: 'In Quarters coverage the front safety (SS on run side) fills outside to contain while the backside FS secures the cutback. Teaching the SS their specific contain assignment prevents over-pursuit that opens the cutback lane.',
+    coaching_cue: 'Front safety fills outside — contain the edge. Don\'t over-pursue inside or the cutback opens behind you.',
+    common_mistake: 'Chasing the ball to the inside and abandoning the contain assignment — bounces the ball outside untouched for a big gain',
+    fixes: ['quarters', 'run support', 'contain', 'fill', 'cutback', 'assignment', 'run defense', 'gap', 'front safety', 'edge'],
+    progressions: ['Walk-through front/backside assignment vs formation', 'Half-speed contain fill vs slow ball carrier', 'Full-speed Quarters run support vs live backfield'],
+    videos: [
+      { title: 'Quarters Safety Run Support Contain Cutback Strong Safety', url: 'https://www.youtube.com/results?search_query=quarters+safety+run+support+contain+cutback+strong+safety+football', duration: '~7 min' },
+    ],
+  },
+  {
+    name: 'Hip Explosion / Recoil Drill',
+    category: 'technique',
+    technique_area: 'run_support',
+    sets: 4, reps: 8, duration: null,
+    why: 'The SS and a ball carrier move toward each other. The SS delivers a blow from the hips then recoils — repeated 3 times, with the 3rd hit ending in a form tackle. This trains the SS to deliver punishment while staying in correct position, not lunge and miss.',
+    coaching_cue: 'Explode from the hips, not the arms — full extension then snap back. Third hit: wrap and drive through.',
+    common_mistake: 'Using arms-only impact without hip drive — gets absorbed by the ball carrier rather than delivering a true blow that disrupts the run',
+    fixes: ['hip explosion', 'tackling', 'blow', 'recoil', 'box', 'run support', 'physicality', 'contact', 'drive', 'hip drive', 'tackle'],
+    progressions: ['Bag hip explosion drill (3 reps, stationary)', 'Live partner hip explosion without tackle', 'Full-speed hip explosion + form tackle on 3rd rep'],
+    videos: [
+      { title: 'Hip Explosion Recoil Drill Strong Safety Tackling Football', url: 'https://www.youtube.com/results?search_query=hip+explosion+recoil+drill+strong+safety+tackling+football', duration: '~6 min' },
+    ],
+  },
+
   // ── BLITZ ─────────────────────────────────────────────────────────────────
 
   {
@@ -127,6 +170,21 @@ export const SS_DRILLS: SSDrillEntry[] = [
     progressions: ['Walk-through blitz path identification', 'Half-speed blitz vs stationary QB', 'Full-speed blitz vs live QB with protection'],
     videos: [
       { title: 'Strong Safety Box Blitz Path Drill Football Pass Rush', url: 'https://www.youtube.com/results?search_query=strong+safety+box+blitz+path+drill+football+pass+rush', duration: '~7 min' },
+    ],
+  },
+
+  {
+    name: 'Sled / Bag Blow Delivery',
+    category: 'strength',
+    technique_area: 'block_shedding',
+    sets: 4, reps: 8, duration: null,
+    why: 'The SS strikes the bag from a 2, 4, or 6-point stance on the whistle — toes planted, hands fully extending through the chest then recoiling rapidly. Builds correct hand placement and hip explosion for block destruction in the box.',
+    coaching_cue: 'Toes planted, hands through the chest, full extension — then snap back. It\'s punch-and-recoil, not push-and-lean.',
+    common_mistake: 'Leaning into the bag after the punch instead of recoiling — transfers weight forward and leaves the SS off-balance with no ability to shed and pursue',
+    fixes: ['sled', 'bag', 'blow delivery', 'hand placement', 'hip explosion', 'block defeat', 'punch', 'block shedding', 'recoil', 'extension'],
+    progressions: ['2-point stance punch to bag (technique focus)', 'Progress through 2, 4, 6-point stances', 'Full-speed bag blow with immediate shed and pursue'],
+    videos: [
+      { title: 'Sled Bag Blow Delivery Strong Safety Block Defeat Football', url: 'https://www.youtube.com/results?search_query=sled+bag+blow+delivery+strong+safety+block+defeat+football', duration: '~7 min' },
     ],
   },
 

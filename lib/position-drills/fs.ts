@@ -24,6 +24,7 @@ export interface DrillVideoFS {
 export type FSTechniqueArea =
   | 'qb_read'         // reading QB eyes, drop, intent; break timing
   | 'deep_zone'       // center field, deep half, deep third; cushion
+  | 'zone_coverage'   // Quarters, halves, Cover 3 drops; break on ball
   | 'over_top_help'   // rotating to help CB over the top of vertical routes
   | 'pursuit'         // angle pursuit, cross-field range, run support from deep
   | 'ball_skills'     // tracking, high-point catch, over-the-shoulder catch
@@ -125,6 +126,65 @@ export const FS_DRILLS: FSDrillEntry[] = [
     progressions: ['Hip-turn sprint to sideline (no ball)', 'Cross-field rotation on coach signal', 'Full-speed rotation vs live deep route to either corner'],
     videos: [
       { title: 'Free Safety Cross Field Range Rotation Drill Football', url: 'https://www.youtube.com/results?search_query=free+safety+cross+field+range+rotation+drill+football', duration: '~6 min' },
+    ],
+  },
+
+  // ── ZONE COVERAGE & BREAKS ───────────────────────────────────────────────
+
+  {
+    name: 'Quarters Technique — Post / Go Read',
+    category: 'technique',
+    technique_area: 'zone_coverage',
+    sets: 3, reps: 8, duration: null,
+    why: 'In Cover 4 (Quarters), the FS maintains 1.5-2 yards of inside leverage and stays with the route until it declares as a post or go. Keeping the inside attitude allows the FS to break hard on all other routes — giving up the inside gives up the entire deep middle.',
+    coaching_cue: 'Inside attitude on everything — hold leverage until the route declares. Don\'t give the post until you absolutely have to.',
+    common_mistake: 'Rotating to the outside on a go stem before the route declares — opens the post route directly behind the FS in the exact zone they\'re responsible for',
+    fixes: ['quarters', 'Cover 4', 'inside leverage', 'post', 'go route', 'deep zone', 'coverage', 'rotation', 'declare'],
+    progressions: ['Walk-through alignment and leverage check', 'React to post vs go declaration on signal', 'Full-speed vs WR running post/go/dig combinations'],
+    videos: [
+      { title: 'Quarters Technique Post Go Read Free Safety Football', url: 'https://www.youtube.com/results?search_query=quarters+technique+post+go+read+free+safety+football+Cover+4', duration: '~7 min' },
+    ],
+  },
+  {
+    name: 'Quarters Safety Run Support — Front / Backside',
+    category: 'technique',
+    technique_area: 'zone_coverage',
+    sets: 3, reps: 8, duration: null,
+    why: 'In Quarters coverage the front safety fills outside (contain) while the backside safety secures the C gap cutback. Without practiced gap assignments, both safeties over-pursue the ball and the cutback goes untouched.',
+    coaching_cue: 'Front safety: fill outside the box. Backside safety: C gap cutback — don\'t follow the ball.',
+    common_mistake: 'Both safeties over-pursuing the ball to the same side — leaves the backside cutback lane completely open for a big gain',
+    fixes: ['quarters', 'run support', 'contain', 'cutback', 'C gap', 'fill', 'assignment', 'run defense', 'backside', 'gap', 'front safety'],
+    progressions: ['Walk-through front/backside assignment identification', 'Half-speed run-support fill with one blocker', 'Full-speed Quarters run support vs live backfield'],
+    videos: [
+      { title: 'Quarters Safety Run Support Front Backside Football', url: 'https://www.youtube.com/results?search_query=quarters+safety+run+support+front+backside+coverage+football', duration: '~7 min' },
+    ],
+  },
+  {
+    name: 'Break on Ball — Halves / Thirds',
+    category: 'technique',
+    technique_area: 'zone_coverage',
+    sets: 4, reps: 8, duration: null,
+    why: 'The FS reads the QB\'s drop, pedals on the snap, and breaks at the proper angle to intercept at the ball\'s highest point. Breaking flat instead of at a 45-degree angle results in arriving at the ball when it is already past the apex — the WR wins every 50/50 ball.',
+    coaching_cue: 'Plant the outside foot when the QB\'s elbow comes forward — break at 45 degrees to the interception point, not toward the receiver',
+    common_mistake: 'Breaking flat toward the receiver rather than at 45 degrees to the interception point — arrives after the apex and misses the interception',
+    fixes: ['break on ball', 'ball break', 'interception', 'intercept', 'QB read', 'angle', 'highest point', 'coverage', 'plant', 'zone', 'halves'],
+    progressions: ['QB read drop + break on coach throw signal', 'Half-speed angled break to cone', 'Full-speed break vs live QB with receiver'],
+    videos: [
+      { title: 'Break on Ball Halves Thirds Free Safety Zone Coverage', url: 'https://www.youtube.com/results?search_query=break+on+ball+halves+thirds+free+safety+zone+coverage+football', duration: '~7 min' },
+    ],
+  },
+  {
+    name: 'Weave Drill — Lateral Leverage Backpedal',
+    category: 'footwork',
+    technique_area: 'deep_zone',
+    sets: 3, reps: null, duration: '20 yards each',
+    why: 'The FS backpedals while the coach directs with ball movement right to left. The FS adjusts lateral angle within the backpedal while maintaining leverage — training the continuous footwork adjustments the FS makes while tracking both the QB\'s eyes and the route simultaneously.',
+    coaching_cue: 'Head up on the coach\'s ball — your feet adjust automatically. Eyes lead, feet follow. Never cross your feet.',
+    common_mistake: 'Crossing the feet to move laterally instead of shuffling within the backpedal — creates a dead step and destroys break timing',
+    fixes: ['weave', 'backpedal', 'lateral', 'leverage', 'coverage', 'change direction', 'footwork', 'movement', 'ball tracking', 'zone'],
+    progressions: ['Coach ball slow directional cues (lateral weave)', 'Angle weave with faster direction changes', 'Full-speed weave with QB read on the break'],
+    videos: [
+      { title: 'Weave Drill Lateral Leverage Backpedal Free Safety Football', url: 'https://www.youtube.com/results?search_query=weave+drill+lateral+leverage+backpedal+free+safety+football', duration: '~6 min' },
     ],
   },
 

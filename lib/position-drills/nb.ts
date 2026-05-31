@@ -165,6 +165,20 @@ export const NB_DRILLS: NBDrillEntry[] = [
   // ── RUN SUPPORT & OPEN-FIELD TACKLING ─────────────────────────────────────
 
   {
+    name: 'Sideline Tackle — Use the Boundary',
+    category: 'technique',
+    technique_area: 'run_support',
+    sets: 3, reps: 8, duration: null,
+    why: 'When the NB is the last defender between the slot WR and the sideline after a catch, closing hard, shortening the stride, sinking the hips, and pressing the WR toward the boundary turns a 10-yard gain into a 3-yard gain. The sideline is an extra defender — using it is a skill.',
+    coaching_cue: 'Shorten stride on approach, sink the hips — press them to the sideline. The boundary is your teammate.',
+    common_mistake: 'Over-running the angle and allowing the WR to cut back inside — gives up the entire field when the sideline would have ended the play',
+    fixes: ['sideline tackle', 'tackle', 'sideline', 'slot', 'run after catch', 'open field', 'close', 'boundary', 'WR tackle', 'space'],
+    progressions: ['Approach and break-down drill toward sideline', 'Half-speed sideline tackle vs slow ball carrier', 'Full-speed sideline tackle with cut-back option'],
+    videos: [
+      { title: 'Sideline Tackle Drill Nickelback Use the Boundary Football', url: 'https://www.youtube.com/results?search_query=sideline+tackle+drill+nickelback+boundary+football', duration: '~6 min' },
+    ],
+  },
+  {
     name: 'Open-Field Tackle — Slot Run Support',
     category: 'technique',
     technique_area: 'run_support',
@@ -207,6 +221,37 @@ export const NB_DRILLS: NBDrillEntry[] = [
     progressions: ['Walk-through blitz path (identify gap, simulate arrival)', 'Blitz vs stationary QB', 'Full-speed blitz vs live QB with protection'],
     videos: [
       { title: 'Nickelback Slot Blitz Path Drill Football', url: 'https://www.youtube.com/results?search_query=nickelback+slot+blitz+path+drill+football', duration: '~7 min' },
+    ],
+  },
+
+  // ── DOMINATE POSITION & ADVANCED SLOT TECHNIQUES ─────────────────────────
+
+  {
+    name: 'Dominate Position — Three Jam Techniques',
+    category: 'technique',
+    technique_area: 'slot_coverage',
+    sets: 3, reps: 8, duration: null,
+    why: 'The NB has three techniques for maintaining position on the slot WR depending on speed and leverage: inside hand jam to slow a vertical route, body in front with hip pressure to redirect a crosser, and wrist slap to break the WR\'s stride and gain ground on a separator. Knowing all three and choosing the right one is what separates elite slot defenders.',
+    coaching_cue: 'Match the technique to what they\'re doing — inside jam for verticals, body position for crossers, wrist slap when they\'re gaining on you',
+    common_mistake: 'Using only one technique (typically the jam) in all situations — predictable and easily beaten by a WR who recognizes the tendency',
+    fixes: ['dominate position', 'jam', 'inside jam', 'body position', 'wrist slap', 'coverage', 'slot', 'technique', 'vertical', 'separation', 'crosser'],
+    progressions: ['Walk-through all three techniques in isolation', 'Coach calls technique based on route signal', 'Full-speed vs live slot WR mixing route types'],
+    videos: [
+      { title: 'Dominate Position Three Jam Techniques Nickelback Coverage', url: 'https://www.youtube.com/results?search_query=dominate+position+jam+technique+nickelback+slot+coverage+football', duration: '~7 min' },
+    ],
+  },
+  {
+    name: 'Post Sideline — Full Hip Rotation',
+    category: 'footwork',
+    technique_area: 'zone_drop',
+    sets: 3, reps: 8, duration: null,
+    why: 'Same as the Backpedal 45 drill, but the coach pump-fakes a throw in the opposite direction to force the NB to rotate hips and eyes all the way around. This trains the NB to complete the full hip rotation through a pump-fake — a pump-fake designed to freeze defenders mid-turn is one of the most common ways offenses exploit nickel packages.',
+    coaching_cue: 'Rotate your eyes ALL the way around — don\'t freeze on the pump fake. Hips follow eyes, eyes follow the ball.',
+    common_mistake: 'Freezing mid-turn on the pump-fake — stops the hip rotation and leaves the NB stuck between two responsibilities with neither covered',
+    fixes: ['post sideline', 'pump fake', 'hip rotation', 'backpedal', 'rotate', 'coverage', 'pivot', 'slot', 'freeze', 'full rotation'],
+    progressions: ['Backpedal 45 with no fake (establish base)', 'Add coach pump-fake to opposite side', 'Full-speed with live QB pump-fake sequence'],
+    videos: [
+      { title: 'Post Sideline Hip Rotation Drill Nickelback Pump Fake', url: 'https://www.youtube.com/results?search_query=post+sideline+hip+rotation+drill+nickelback+pump+fake+coverage', duration: '~6 min' },
     ],
   },
 
