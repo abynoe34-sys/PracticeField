@@ -6,9 +6,20 @@ import PlayerCard from '@/components/PlayerCard'
 import type { Player, Session, FootballPosition, ExperienceLevel } from '@/types'
 
 const POSITIONS: FootballPosition[] = [
-  'QB','RB','FB','WR','TE','OL','C','OG','OT',
-  'DE','DT','NT','LB','ILB','OLB','CB','SS','FS',
-  'K','P','LS','Athlete',
+  // Offense
+  'QB','RB','FB','WR','TE',
+  // Offensive Line
+  'OL','C','OG','OT',
+  // Defensive Line
+  'DE','DT','NT',
+  // Linebackers
+  'MLB','ILB','OLB',
+  // Secondary
+  'CB','NB','SS','FS',
+  // Specialists
+  'K','P','LS',
+  // Other
+  'Athlete',
 ]
 
 export default function PlayersPage() {

@@ -10,6 +10,7 @@ import { findDBDrillsForPainPoint, dbDrillToExercise } from './position-drills/d
 import { findOLBDrillsForPainPoint, olbDrillToExercise } from './position-drills/olb'
 import { findSTDrillsForPainPoint, stDrillToExercise } from './position-drills/specialist'
 import { findFBDrillsForPainPoint, fbDrillToExercise } from './position-drills/fb'
+import { findNBDrillsForPainPoint, nbDrillToExercise } from './position-drills/nb'
 
 // ─── Exercise Library ─────────────────────────────────────────────────────────
 // Curated by pain-point keywords. Used as fallback when OpenAI is unavailable.
@@ -697,17 +698,52 @@ function getSTMainExercises(level: ExperienceLevel, painPoints: string[]): Exerc
 }
 
 /**
+ * Nickelback (NB) main exercises — slot coverage, hybrid CB/LB skills.
+ * NB is the 5th defensive back deployed in nickel packages, covering the slot WR.
+ */
+function getNBMainExercises(level: ExperienceLevel, painPoints: string[]): Exercise[] {
+  const drillScores = new Map<string, { exercise: Exercise; score: number }>()
+
+  for (const pp of painPoints) {
+    for (const drill of findNBDrillsForPainPoint(pp)) {
+      const entry = drillScores.get(drill.name)
+      if (entry) {
+        entry.score += 1
+      } else {
+        drillScores.set(drill.name, { exercise: nbDrillToExercise(drill), score: 1 })
+      }
+    }
+  }
+
+  const sorted = [...drillScores.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8)
+    .map(({ exercise }) => exercise)
+
+  if (sorted.length < 4) {
+    const existing = new Set(sorted.map(e => e.name))
+    const filler = getGenericMainExercises(level, painPoints)
+      .filter(e => !existing.has(e.name))
+      .slice(0, 6 - sorted.length)
+    return [...sorted, ...filler]
+  }
+
+  return sorted
+}
+
+/**
  * Normalise any specific position code to the drill-library group it should
  * use.  Covers every value in the FootballPosition union type.
  *
- * OT / OG / C  → OL   (all offensive-line variants share the OL library)
- * DE / DT / NT  → DL   (all defensive-line variants share the DL library)
- * ILB / OLB    → LB   (all linebacker variants share the LB library)
- * CB / SS / FS → DB   (all defensive-back variants share the DB library)
- * FB           → RB   (fullback uses the RB library)
- * S            → DB   (generic "safety" tag)
+ * OT / OG / C        → OL  (all offensive-line variants share the OL library)
+ * DE / DT / NT / DL  → DL  (all defensive-line variants share the DL library)
+ * ILB / OLB / MLB    → LB  (all linebacker variants share the LB library)
+ * CB / SS / FS / DB  → DB  (all defensive-back variants share the DB library)
+ * NB                 → NB  (Nickelback has its own slot-coverage library)
+ * FB                 → FB  (Fullback: blocker-first, not runner-first)
+ * S                  → DB  (generic "safety" tag)
  *
- * K / P / LS     → ST  (Specialists share one library)
+ * K / P / LS → ST  (Specialists share one library)
  * QB and TE each have their own dedicated libraries and are NOT grouped.
  */
 export function normalizePosition(position: string | null | undefined): string | null {
@@ -720,10 +756,13 @@ export function normalizePosition(position: string | null | undefined): string |
   // Defensive line group
   if (['DE', 'DT', 'NT', 'DL'].includes(p)) return 'DL'
 
-  // Linebacker group — ILB and OLB both use the general LB library
-  if (['ILB', 'OLB', 'LB'].includes(p)) return 'LB'
+  // Linebacker group — ILB, OLB, and MLB all use the general LB library
+  if (['ILB', 'OLB', 'LB', 'MLB'].includes(p)) return 'LB'
 
-  // Defensive back group
+  // NB (Nickelback) → dedicated slot-coverage library (hybrid CB/LB)
+  if (p === 'NB') return 'NB'
+
+  // Defensive back group — CB, SS, FS share the general DB library
   if (['CB', 'SS', 'FS', 'DB', 'S'].includes(p)) return 'DB'
 
   // Fullback → FB library (blocker-first, not runner-first — different from RB)
@@ -767,6 +806,8 @@ export function getTemplateExercises(
     ? getFBMainExercises(level, painPoints)
     : pos === 'ST'
     ? getSTMainExercises(level, painPoints)
+    : pos === 'NB'
+    ? getNBMainExercises(level, painPoints)
     : getGenericMainExercises(level, painPoints)
 
   return [...warmups, ...main.slice(0, 8), ...cooldowns]

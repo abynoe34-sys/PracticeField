@@ -6,8 +6,8 @@ export type FootballPosition =
   | 'QB' | 'RB' | 'FB' | 'WR' | 'TE'
   | 'OL' | 'C' | 'OG' | 'OT'
   | 'DE' | 'DT' | 'NT' | 'DL'
-  | 'LB' | 'ILB' | 'OLB'
-  | 'CB' | 'SS' | 'FS' | 'DB'
+  | 'MLB' | 'LB' | 'ILB' | 'OLB'
+  | 'CB' | 'NB' | 'SS' | 'FS' | 'DB'
   | 'K' | 'P' | 'LS'
   | 'Athlete'
 
