@@ -36,6 +36,17 @@ export default function PlayersPage() {
   const [name, setName] = useState('')
   const [position, setPosition] = useState<FootballPosition | ''>('')
   const [level, setLevel] = useState<ExperienceLevel>('beginner')
+  const [dob, setDob] = useState('')
+  const [playerConsent, setPlayerConsent] = useState(false)
+  const [parentalEmail, setParentalEmail] = useState('')
+  const [trainingOptIn, setTrainingOptIn] = useState(false)
+
+  const isMinor = (() => {
+    if (!dob) return false
+    const cutoff = new Date()
+    cutoff.setFullYear(cutoff.getFullYear() - 18)
+    return new Date(dob) > cutoff
+  })()
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -70,6 +81,10 @@ export default function PlayersPage() {
         name: name.trim(),
         position: position || undefined,
         experience_level: level,
+        date_of_birth: dob || undefined,
+        player_consent: playerConsent,
+        parental_email: isMinor ? parentalEmail.trim() || undefined : undefined,
+        training_opt_in: trainingOptIn,
       }),
     })
     const json = await res.json()
@@ -81,6 +96,10 @@ export default function PlayersPage() {
     setName('')
     setPosition('')
     setLevel('beginner')
+    setDob('')
+    setPlayerConsent(false)
+    setParentalEmail('')
+    setTrainingOptIn(false)
     setShowForm(false)
     setSaving(false)
     load()
@@ -141,13 +160,75 @@ export default function PlayersPage() {
             </div>
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+              Date of Birth <span className="text-gray-500 font-normal">(optional)</span>
+            </label>
+            <input
+              type="date"
+              value={dob}
+              onChange={e => setDob(e.target.value)}
+              max={new Date().toISOString().split('T')[0]}
+              className="w-full bg-field-dark border border-field-border rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-600"
+            />
+            {isMinor && (
+              <p className="text-xs text-amber-400 mt-1">Player is under 18 — parental consent required.</p>
+            )}
+          </div>
+
+          {isMinor && (
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                Parent / Guardian Email *
+              </label>
+              <input
+                type="email"
+                value={parentalEmail}
+                onChange={e => setParentalEmail(e.target.value)}
+                placeholder="parent@example.com"
+                required={isMinor}
+                className="w-full bg-field-dark border border-field-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
+              />
+            </div>
+          )}
+
+          <div className="space-y-3 pt-1">
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={playerConsent}
+                onChange={e => setPlayerConsent(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-field-border bg-field-dark accent-brand-600 cursor-pointer"
+              />
+              <span className="text-xs text-gray-400 leading-relaxed">
+                {isMinor
+                  ? 'Parent / guardian has consented to this player being added and their performance data being recorded. *'
+                  : 'Player has consented to being added and their performance data being recorded. *'}
+              </span>
+            </label>
+
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={trainingOptIn}
+                onChange={e => setTrainingOptIn(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-field-border bg-field-dark accent-brand-600 cursor-pointer"
+              />
+              <span className="text-xs text-gray-400 leading-relaxed">
+                {isMinor
+                  ? 'Parent / guardian opts in to AI-powered training analysis for this player.'
+                  : 'Player opts in to AI-powered training analysis (video processing and recommendations).'}
+              </span>
+            </label>
+          </div>
+
           {formError && (
             <p className="text-sm text-red-400">{formError}</p>
           )}
 
           <button
             type="submit"
-            disabled={saving || !name.trim()}
+            disabled={saving || !name.trim() || !playerConsent || (isMinor && !parentalEmail.trim())}
             className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors"
           >
             {saving ? 'Adding…' : 'Add Player'}

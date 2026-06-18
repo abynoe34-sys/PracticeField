@@ -20,6 +20,8 @@ export interface Coach {
   email: string | null
   team_name: string | null
   sport: string
+  terms_version: string | null
+  terms_accepted_at: string | null
   created_at: string
 }
 
@@ -29,6 +31,31 @@ export interface Player {
   name: string
   position: FootballPosition | null
   experience_level: ExperienceLevel | null
+  date_of_birth: string | null          // ISO date YYYY-MM-DD
+  is_minor: boolean | null              // auto-computed from date_of_birth
+  consent_status: 'pending' | 'obtained' | 'refused' | 'withdrawn'
+  parental_consent_status: 'not_required' | 'pending' | 'obtained' | 'refused' | 'withdrawn'
+  training_opt_in: boolean
+  created_at: string
+}
+
+export type ConsentType =
+  | 'terms_of_service'
+  | 'privacy_policy'
+  | 'player_consent'
+  | 'parental_consent'
+  | 'training_opt_in'
+
+export interface ConsentRecord {
+  id: string
+  coach_id: string
+  player_id: string | null
+  consent_type: ConsentType
+  document_version: string
+  accepted: boolean
+  accepted_by_email: string | null
+  ip_address: string | null
+  user_agent: string | null
   created_at: string
 }
 
@@ -106,6 +133,10 @@ export interface CreatePlayerRequest {
   name: string
   position?: FootballPosition
   experience_level?: ExperienceLevel
+  date_of_birth?: string              // ISO date YYYY-MM-DD
+  player_consent: boolean             // player/guardian confirmed consent
+  parental_email?: string             // required when player is a minor
+  training_opt_in: boolean
 }
 
 export interface CreateSessionRequest {

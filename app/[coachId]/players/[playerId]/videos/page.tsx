@@ -12,10 +12,22 @@ export default function PlayerVideosPage() {
   const { coachId, playerId } = useParams<{ coachId: string; playerId: string }>()
 
   const [videos, setVideos]       = useState<SessionVideo[]>([])
-  const [player, setPlayer]       = useState<{ name: string; position: string | null } | null>(null)
+  const [player, setPlayer]       = useState<{
+    name: string
+    position: string | null
+    coach_id: string
+    is_minor: boolean | null
+    parental_consent_status: string
+  } | null>(null)
   const [loading, setLoading]     = useState(true)
   const [tab, setTab]             = useState<'library' | 'compare' | 'upload'>('library')
   const [pollingIds, setPollingIds] = useState<Set<string>>(new Set())
+
+  // Parental consent gate state
+  const [parentalEmail, setParentalEmail]           = useState('')
+  const [parentalConfirmed, setParentalConfirmed]   = useState(false)
+  const [parentalSaving, setParentalSaving]         = useState(false)
+  const [parentalError, setParentalError]           = useState<string | null>(null)
 
   const load = useCallback(async () => {
     const [vr, pr] = await Promise.all([
@@ -74,6 +86,33 @@ export default function PlayerVideosPage() {
     alert('To re-analyze, delete this video and upload the clip again. Frame extraction happens at upload time.')
   }
 
+  const grantParentalConsent = async () => {
+    if (!parentalEmail.trim() || !parentalConfirmed || !player) return
+    setParentalSaving(true)
+    setParentalError(null)
+    const res = await fetch(`/api/players/${playerId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        grant_parental_consent: true,
+        parental_email: parentalEmail.trim(),
+        coach_id: player.coach_id,
+      }),
+    })
+    const json = await res.json()
+    if (!res.ok) {
+      setParentalError(json.error ?? 'Failed to save parental consent.')
+      setParentalSaving(false)
+      return
+    }
+    // Re-fetch player so the gate disappears
+    await load()
+    setParentalSaving(false)
+  }
+
+  const needsParentalConsent =
+    player?.is_minor && player.parental_consent_status !== 'obtained'
+
   const completedVideos = videos.filter(v => v.analysis_status === 'complete')
 
   return (
@@ -108,14 +147,14 @@ export default function PlayerVideosPage() {
       {/* Tab bar */}
       <div className="flex border-b border-field-border">
         {[
-          { key: 'library', label: `Library (${videos.length})` },
-          { key: 'compare', label: `Progress Compare${completedVideos.length >= 2 ? '' : ' (2+ needed)'}` },
-          { key: 'upload',  label: '+ Upload New' },
+          { key: 'library', label: `Library (${videos.length})`, disabled: false },
+          { key: 'compare', label: `Progress Compare${completedVideos.length >= 2 ? '' : ' (2+ needed)'}`, disabled: completedVideos.length < 2 },
+          { key: 'upload',  label: needsParentalConsent ? '⚠ Consent Required' : '+ Upload New', disabled: false },
         ].map(t => (
           <button
             key={t.key}
             onClick={() => setTab(t.key as typeof tab)}
-            disabled={t.key === 'compare' && completedVideos.length < 2}
+            disabled={t.disabled}
             className={`flex-1 py-2.5 text-xs font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
               tab === t.key
                 ? 'text-brand-400 border-b-2 border-brand-500 -mb-px'
@@ -167,17 +206,67 @@ export default function PlayerVideosPage() {
 
       {/* Upload */}
       {tab === 'upload' && (
-        <div className="bg-field-card border border-field-border rounded-xl p-5">
-          <h2 className="text-base font-semibold text-white mb-1">Upload Practice Clip</h2>
-          <p className="text-gray-500 text-xs mb-4">
-            AI extracts frames from the video, analyzes technique, identifies root causes, and suggests training plan modifications. Issues are automatically added to the session review.
-          </p>
-          <VideoUpload
-            playerId={playerId}
-            coachId={coachId}
-            onUploaded={handleUploaded}
-          />
-        </div>
+        needsParentalConsent ? (
+          <div className="bg-field-card border border-amber-500/40 rounded-xl p-6 space-y-5">
+            <div>
+              <h2 className="text-base font-semibold text-amber-400 mb-1">Parental Consent Required</h2>
+              <p className="text-gray-400 text-sm">
+                {player?.name} is under 18. A parent or legal guardian must consent before any video can be uploaded
+                for this player.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">
+                Parent / Guardian Email *
+              </label>
+              <input
+                type="email"
+                value={parentalEmail}
+                onChange={e => setParentalEmail(e.target.value)}
+                placeholder="parent@example.com"
+                className="w-full bg-field-dark border border-field-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
+              />
+            </div>
+
+            <label className="flex items-start gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={parentalConfirmed}
+                onChange={e => setParentalConfirmed(e.target.checked)}
+                className="mt-0.5 h-4 w-4 rounded border-field-border bg-field-dark accent-brand-600 cursor-pointer"
+              />
+              <span className="text-xs text-gray-400 leading-relaxed">
+                I confirm that the parent or guardian at the email above has given permission for {player?.name}&apos;s
+                practice videos to be uploaded and analyzed by Practice Field&apos;s AI coaching system.
+              </span>
+            </label>
+
+            {parentalError && (
+              <p className="text-sm text-red-400">{parentalError}</p>
+            )}
+
+            <button
+              onClick={grantParentalConsent}
+              disabled={parentalSaving || !parentalEmail.trim() || !parentalConfirmed}
+              className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors"
+            >
+              {parentalSaving ? 'Saving…' : 'Confirm Parental Consent & Enable Uploads'}
+            </button>
+          </div>
+        ) : (
+          <div className="bg-field-card border border-field-border rounded-xl p-5">
+            <h2 className="text-base font-semibold text-white mb-1">Upload Practice Clip</h2>
+            <p className="text-gray-500 text-xs mb-4">
+              AI extracts frames from the video, analyzes technique, identifies root causes, and suggests training plan modifications. Issues are automatically added to the session review.
+            </p>
+            <VideoUpload
+              playerId={playerId}
+              coachId={coachId}
+              onUploaded={handleUploaded}
+            />
+          </div>
+        )
       )}
     </div>
   )

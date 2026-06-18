@@ -28,6 +28,33 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // Consent gate: player must have obtained consent before video can be uploaded
+    const db = getAdminClient()
+    const { data: player, error: playerError } = await db
+      .from('players')
+      .select('consent_status, parental_consent_status, is_minor')
+      .eq('id', playerId)
+      .eq('coach_id', coachId)
+      .single()
+
+    if (playerError || !player) {
+      return NextResponse.json({ error: 'Player not found.' }, { status: 404 })
+    }
+
+    if (player.consent_status !== 'obtained') {
+      return NextResponse.json(
+        { error: 'Cannot upload video: player consent has not been obtained.' },
+        { status: 403 }
+      )
+    }
+
+    if (player.is_minor && player.parental_consent_status !== 'obtained') {
+      return NextResponse.json(
+        { error: 'Cannot upload video: parental consent is required for players under 18.' },
+        { status: 403 }
+      )
+    }
+
     // Validate file type
     const allowed = ['video/mp4', 'video/quicktime', 'video/webm', 'video/x-msvideo']
     if (!allowed.includes(file.type)) {
@@ -42,7 +69,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'File too large. Max 500MB.' }, { status: 400 })
     }
 
-    const db = getAdminClient()
     const fileExt = file.name.split('.').pop() ?? 'mp4'
     const storagePath = `${coachId}/${playerId}/${generateId()}.${fileExt}`
 

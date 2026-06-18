@@ -8,15 +8,18 @@ export default function LandingPage() {
   const [loading, setLoading] = useState(false)
   const [coachIdInput, setCoachIdInput] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [termsAgreed, setTermsAgreed] = useState(false)
+  const [trainingOptIn, setTrainingOptIn] = useState(false)
 
   const startCoaching = async () => {
+    if (!termsAgreed) return
     setLoading(true)
     setError(null)
     try {
       const res = await fetch('/api/coach', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
+        body: JSON.stringify({ termsAgreed: true, trainingOptIn }),
       })
       const json = await res.json()
       if (!res.ok) {
@@ -55,9 +58,44 @@ export default function LandingPage() {
 
       {/* Actions */}
       <div className="w-full max-w-sm space-y-4">
+        <div className="space-y-3">
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={termsAgreed}
+              onChange={e => setTermsAgreed(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-field-border bg-field-card accent-brand-600 cursor-pointer"
+            />
+            <span className="text-xs text-gray-400 leading-relaxed">
+              I agree to the{' '}
+              <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-brand-400 underline hover:text-brand-300">
+                Terms of Service
+              </a>{' '}
+              and{' '}
+              <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-brand-400 underline hover:text-brand-300">
+                Privacy Policy
+              </a>
+              . <span className="text-gray-500">Required.</span>
+            </span>
+          </label>
+
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={trainingOptIn}
+              onChange={e => setTrainingOptIn(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-field-border bg-field-card accent-brand-600 cursor-pointer"
+            />
+            <span className="text-xs text-gray-400 leading-relaxed">
+              I opt in to AI-powered video analysis — uploaded practice clips will be processed to identify technique issues and generate training recommendations.{' '}
+              <span className="text-gray-500">Optional.</span>
+            </span>
+          </label>
+        </div>
+
         <button
           onClick={startCoaching}
-          disabled={loading}
+          disabled={loading || !termsAgreed}
           className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-60 text-white font-bold py-4 px-6 rounded-xl text-lg transition-colors"
         >
           {loading ? 'Creating your workspace…' : '⚡ Start Coaching'}
