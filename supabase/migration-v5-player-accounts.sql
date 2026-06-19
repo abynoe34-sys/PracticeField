@@ -192,7 +192,7 @@ LANGUAGE plpgsql
 SET search_path = public
 AS $$
 BEGIN
-  NEW.is_minor                        := (CURRENT_DATE - NEW.date_of_birth) < INTERVAL '18 years';
+  NEW.is_minor                        := AGE(NEW.date_of_birth) < INTERVAL '18 years';
   NEW.training_opt_in_requires_parent := NEW.is_minor;
 
   IF NEW.is_minor THEN
@@ -234,7 +234,7 @@ LANGUAGE plpgsql
 SET search_path = public
 AS $$
 BEGIN
-  NEW.is_minor                        := (CURRENT_DATE - NEW.date_of_birth) < INTERVAL '18 years';
+  NEW.is_minor                        := AGE(NEW.date_of_birth) < INTERVAL '18 years';
   NEW.training_opt_in_requires_parent := NEW.is_minor;
 
   -- Flag for admin review when a DOB correction reveals the player was a minor
