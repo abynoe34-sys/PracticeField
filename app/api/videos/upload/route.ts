@@ -1,61 +1,133 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAdminClient } from '@/lib/supabase'
+import { getAdminClient, getSupabaseClient } from '@/lib/supabase'
 import { generateId } from '@/lib/utils'
 
 // Allow up to 60 seconds for large file uploads to Supabase Storage
 export const maxDuration = 60
 
 // POST /api/videos/upload
-// Receives multipart form data: file + metadata fields
+// Receives multipart form data: file + metadata fields.
+//
+// Two mutually exclusive ownership paths — a request must supply exactly one:
+//
+//   Coach-managed player:  player_id + coach_id  (no player_account_id)
+//   Self-signup player:    player_account_id      (no player_id or coach_id)
+//
+// Supplying fields from both paths is rejected with 400 before any DB query.
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData()
 
-    const file      = formData.get('file') as File | null
-    const playerId  = formData.get('player_id') as string
-    const coachId   = formData.get('coach_id') as string
-    const sessionId = formData.get('session_id') as string | null
-    const label     = formData.get('label') as string | null
-    const drillType = formData.get('drill_type') as string | null
-    const notes     = formData.get('notes') as string | null
-    const isBaseline = formData.get('is_baseline') === 'true'
-    const recordedAt = formData.get('recorded_at') as string | null
+    const file            = formData.get('file') as File | null
+    const playerId        = formData.get('player_id') as string | null
+    const coachId         = formData.get('coach_id') as string | null
+    const playerAccountId = formData.get('player_account_id') as string | null
+    const sessionId       = formData.get('session_id') as string | null
+    const label           = formData.get('label') as string | null
+    const drillType       = formData.get('drill_type') as string | null
+    const notes           = formData.get('notes') as string | null
+    const isBaseline      = formData.get('is_baseline') === 'true'
+    const recordedAt      = formData.get('recorded_at') as string | null
 
-    if (!file || !playerId || !coachId) {
+    if (!file) {
+      return NextResponse.json({ error: 'file is required.' }, { status: 400 })
+    }
+
+    // ── Mutual exclusivity check ──────────────────────────────────────────────
+    // Mirrors the chk_sv_has_owner constraint in session_videos: a video must
+    // belong to exactly one owner type, never both.
+    if (playerAccountId && (playerId || coachId)) {
       return NextResponse.json(
-        { error: 'file, player_id, and coach_id are required' },
+        { error: 'player_account_id cannot be combined with player_id or coach_id.' },
+        { status: 400 }
+      )
+    }
+    if (!playerAccountId && (!playerId || !coachId)) {
+      return NextResponse.json(
+        { error: 'Either player_id + coach_id, or player_account_id is required.' },
         { status: 400 }
       )
     }
 
-    // Consent gate: player must have obtained consent before video can be uploaded
     const db = getAdminClient()
-    const { data: player, error: playerError } = await db
-      .from('players')
-      .select('consent_status, parental_consent_status, is_minor')
-      .eq('id', playerId)
-      .eq('coach_id', coachId)
-      .single()
 
-    if (playerError || !player) {
-      return NextResponse.json({ error: 'Player not found.' }, { status: 404 })
+    // ── Path A: coach-managed player ──────────────────────────────────────────
+    // Fresh DB query every request — consent_status and parental_consent_status
+    // come from the database row at this moment, never from the client.
+    if (playerId && coachId) {
+      const { data: player, error: playerError } = await db
+        .from('players')
+        .select('consent_status, parental_consent_status, is_minor')
+        .eq('id', playerId)
+        .eq('coach_id', coachId)
+        .single()
+
+      if (playerError || !player) {
+        return NextResponse.json({ error: 'Player not found.' }, { status: 404 })
+      }
+      if (player.consent_status !== 'obtained') {
+        return NextResponse.json(
+          { error: 'Cannot upload video: player consent has not been obtained.' },
+          { status: 403 }
+        )
+      }
+      if (player.is_minor && player.parental_consent_status !== 'obtained') {
+        return NextResponse.json(
+          { error: 'Cannot upload video: parental consent is required for players under 18.' },
+          { status: 403 }
+        )
+      }
     }
 
-    if (player.consent_status !== 'obtained') {
-      return NextResponse.json(
-        { error: 'Cannot upload video: player consent has not been obtained.' },
-        { status: 403 }
-      )
+    // ── Path B: self-signup player account ────────────────────────────────────
+    // Requires a valid Supabase Auth JWT in the Authorization header.
+    // Identity is verified before the account status check runs — status error
+    // messages are never visible to unauthenticated callers.
+    if (playerAccountId) {
+      const jwt = req.headers.get('authorization')?.replace('Bearer ', '')
+      if (!jwt) {
+        return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 })
+      }
+      const { data: { user }, error: authError } =
+        await getSupabaseClient().auth.getUser(jwt)
+      if (authError || !user) {
+        return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 })
+      }
+
+      // Fresh DB query — account_status read from the database at request time.
+      // auth_user_id cross-check ensures only the verified owner of this account
+      // can reach the status check below.
+      const { data: account, error: accountError } = await db
+        .from('player_accounts')
+        .select('account_status')
+        .eq('id', playerAccountId)
+        .eq('auth_user_id', user.id)
+        .single()
+
+      if (accountError || !account) {
+        return NextResponse.json({ error: 'Account not found.' }, { status: 404 })
+      }
+
+      // Both pending_minor_consent and restricted are explicitly rejected.
+      // There is no partial-access state — only 'active' may upload.
+      if (account.account_status === 'pending_minor_consent') {
+        return NextResponse.json(
+          { error: 'Account pending parental consent. Uploads are not permitted until a parent or guardian approves your account.' },
+          { status: 403 }
+        )
+      }
+      if (account.account_status === 'restricted') {
+        return NextResponse.json(
+          { error: 'Account restricted. Parental consent was declined. Contact your coach for assistance.' },
+          { status: 403 }
+        )
+      }
+      if (account.account_status !== 'active') {
+        return NextResponse.json({ error: 'Account is not active.' }, { status: 403 })
+      }
     }
 
-    if (player.is_minor && player.parental_consent_status !== 'obtained') {
-      return NextResponse.json(
-        { error: 'Cannot upload video: parental consent is required for players under 18.' },
-        { status: 403 }
-      )
-    }
-
-    // Validate file type
+    // ── File validation ───────────────────────────────────────────────────────
     const allowed = ['video/mp4', 'video/quicktime', 'video/webm', 'video/x-msvideo']
     if (!allowed.includes(file.type)) {
       return NextResponse.json(
@@ -63,16 +135,16 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       )
     }
-
-    // Max 500MB
     if (file.size > 524_288_000) {
       return NextResponse.json({ error: 'File too large. Max 500MB.' }, { status: 400 })
     }
 
+    // ── Storage upload ────────────────────────────────────────────────────────
     const fileExt = file.name.split('.').pop() ?? 'mp4'
-    const storagePath = `${coachId}/${playerId}/${generateId()}.${fileExt}`
+    const storagePath = playerAccountId
+      ? `player-accounts/${playerAccountId}/${generateId()}.${fileExt}`
+      : `${coachId}/${playerId}/${generateId()}.${fileExt}`
 
-    // Upload to Supabase Storage
     const bytes = await file.arrayBuffer()
     const { error: uploadError } = await db.storage
       .from('session-videos')
@@ -82,15 +154,20 @@ export async function POST(req: NextRequest) {
       })
 
     if (uploadError) {
-      return NextResponse.json({ error: `Storage upload failed: ${uploadError.message}` }, { status: 500 })
+      return NextResponse.json(
+        { error: `Storage upload failed: ${uploadError.message}` },
+        { status: 500 }
+      )
     }
 
-    // Insert metadata row
+    // ── session_videos row ────────────────────────────────────────────────────
+    // Ownership fields are mutually exclusive — matches chk_sv_has_owner in the DB.
     const { data: videoRow, error: dbError } = await db
       .from('session_videos')
       .insert({
-        player_id:       playerId,
-        coach_id:        coachId,
+        ...(playerAccountId
+          ? { player_account_id: playerAccountId }
+          : { player_id: playerId, coach_id: coachId }),
         session_id:      sessionId || null,
         storage_path:    storagePath,
         file_name:       file.name,
@@ -107,7 +184,6 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (dbError) {
-      // Clean up orphaned storage file
       await db.storage.from('session-videos').remove([storagePath])
       return NextResponse.json({ error: dbError.message }, { status: 500 })
     }
