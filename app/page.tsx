@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function LandingPage() {
   const router = useRouter()
@@ -132,6 +133,32 @@ export default function LandingPage() {
         {error && (
           <p className="text-sm text-red-400 text-center">{error}</p>
         )}
+      </div>
+
+      {/* Player entry point */}
+      <div className="w-full max-w-sm mt-6">
+        <div className="relative mb-5">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-field-border" />
+          </div>
+          <div className="relative flex justify-center text-xs text-gray-500">
+            <span className="px-2 bg-field-dark">Are you a player?</span>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Link
+            href="/player/signup"
+            className="flex-1 text-center bg-field-card border border-field-border hover:border-brand-600 text-white text-sm font-medium py-3 px-4 rounded-xl transition-colors"
+          >
+            Create player account
+          </Link>
+          <Link
+            href="/player/login"
+            className="flex-1 text-center bg-field-card border border-field-border hover:border-brand-600 text-white text-sm font-medium py-3 px-4 rounded-xl transition-colors"
+          >
+            Player sign in
+          </Link>
+        </div>
       </div>
 
       {/* Feature List */}
