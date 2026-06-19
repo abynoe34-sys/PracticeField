@@ -115,6 +115,7 @@ export async function POST(req: NextRequest) {
     const { data: linkData } = await db.auth.admin.generateLink({
       type: 'signup',
       email,
+      password,
       options: { redirectTo: `${APP_URL}/player/dashboard` },
     })
     const verificationLink = linkData?.properties?.action_link ?? `${APP_URL}/player/login`
