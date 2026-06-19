@@ -84,6 +84,12 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       )
     }
+    if (isMinor && parent_email.trim().toLowerCase() === email.trim().toLowerCase()) {
+      return NextResponse.json(
+        { error: 'Parent/guardian email must be different from your own email.' },
+        { status: 400 }
+      )
+    }
 
     const db = getAdminClient()
     const now = new Date().toISOString()

@@ -26,13 +26,20 @@ export default function PlayerSignupPage() {
   // Recomputed on every render from the current dateOfBirth value and new Date().
   const isMinor = isMinorFromDob(dateOfBirth)
 
+  // A minor supplying their own email as the parent email defeats the consent requirement.
+  const parentEmailSameAsPlayer =
+    isMinor &&
+    parentEmail.trim() !== '' &&
+    parentEmail.trim().toLowerCase() === email.trim().toLowerCase()
+
   const canSubmit =
     displayName.trim() &&
     email.trim() &&
     password.length >= 8 &&
     dateOfBirth &&
     termsAgreed &&
-    (!isMinor || parentEmail.trim())
+    (!isMinor || parentEmail.trim()) &&
+    !parentEmailSameAsPlayer
 
   const handleSubmit = async () => {
     setError(null)
@@ -186,8 +193,17 @@ export default function PlayerSignupPage() {
                   value={parentEmail}
                   onChange={e => setParentEmail(e.target.value)}
                   placeholder="parent@example.com"
-                  className="w-full bg-field-card border border-amber-700/50 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-amber-600"
+                  className={`w-full bg-field-card rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none transition-colors ${
+                    parentEmailSameAsPlayer
+                      ? 'border border-red-500 focus:border-red-400'
+                      : 'border border-amber-700/50 focus:border-amber-600'
+                  }`}
                 />
+                {parentEmailSameAsPlayer && (
+                  <p className="mt-1.5 text-xs text-red-400">
+                    Parent/guardian email must be different from your own email.
+                  </p>
+                )}
               </div>
             </div>
           )}
