@@ -37,3 +37,13 @@ Thumbs.db
 
 # Vercel / Render deploy artifacts
 .vercel
+
+# Calibration / ML pipeline — raw footage, stills, and model weights must not be committed
+scripts/*.png
+scripts/*.jpg
+scripts/*.jpeg
+scripts/*.mp4
+scripts/*.mov
+scripts/*.avi
+scripts/*.task
+*.pt
