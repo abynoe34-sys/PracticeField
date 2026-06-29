@@ -8,12 +8,13 @@ type Status = 'loading' | 'invalid' | 'ready' | 'confirmed' | 'declined'
 export default function ConsentPage() {
   const { token } = useParams<{ token: string }>()
 
-  const [status,       setStatus]       = useState<Status>('loading')
-  const [displayName,  setDisplayName]  = useState('')
-  const [coreConsent,  setCoreConsent]  = useState(false)
-  const [trainingOptIn, setTrainingOptIn] = useState(false)
-  const [submitting,   setSubmitting]   = useState(false)
-  const [submitError,  setSubmitError]  = useState<string | null>(null)
+  const [status,         setStatus]         = useState<Status>('loading')
+  const [displayName,    setDisplayName]    = useState('')
+  const [managedByCoach, setManagedByCoach] = useState(false)
+  const [coreConsent,    setCoreConsent]    = useState(false)
+  const [trainingOptIn,  setTrainingOptIn]  = useState(false)
+  const [submitting,     setSubmitting]     = useState(false)
+  const [submitError,    setSubmitError]    = useState<string | null>(null)
 
   useEffect(() => {
     fetch(`/api/consent/${token}`)
@@ -21,6 +22,7 @@ export default function ConsentPage() {
         if (!res.ok) { setStatus('invalid'); return }
         const data = await res.json()
         setDisplayName(data.display_name)
+        setManagedByCoach(data.managed_by_coach ?? false)
         setStatus('ready')
       })
       .catch(() => setStatus('invalid'))
@@ -126,9 +128,19 @@ export default function ConsentPage() {
           <div className="text-4xl mb-4">🏈</div>
           <h1 className="text-2xl font-bold text-white">Parental consent request</h1>
           <p className="text-sm text-gray-400 mt-2 leading-relaxed">
-            <span className="text-white font-medium">{displayName}</span> has signed up for
-            Practice Field and listed you as their parent or guardian. Please review and
-            respond below.
+            {managedByCoach ? (
+              <>
+                <span className="text-white font-medium">{displayName}</span> has been added to
+                Practice Field by their coach, and your email was provided as their parent or
+                guardian. Please review and respond below.
+              </>
+            ) : (
+              <>
+                <span className="text-white font-medium">{displayName}</span> has signed up for
+                Practice Field and listed you as their parent or guardian. Please review and
+                respond below.
+              </>
+            )}
           </p>
         </div>
 

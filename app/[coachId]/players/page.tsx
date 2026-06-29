@@ -202,24 +202,37 @@ export default function PlayersPage() {
               />
               <span className="text-xs text-gray-400 leading-relaxed">
                 {isMinor
-                  ? 'Parent / guardian has consented to this player being added and their performance data being recorded. *'
+                  ? 'The player is aware they are being added to Practice Field and their performance data will be recorded. *'
                   : 'Player has consented to being added and their performance data being recorded. *'}
               </span>
             </label>
 
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={trainingOptIn}
-                onChange={e => setTrainingOptIn(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded border-field-border bg-field-dark accent-brand-600 cursor-pointer"
-              />
-              <span className="text-xs text-gray-400 leading-relaxed">
-                {isMinor
-                  ? 'Parent / guardian opts in to AI-powered training analysis for this player.'
-                  : 'Player opts in to AI-powered training analysis (video processing and recommendations).'}
-              </span>
-            </label>
+            {/* Adults: coach collects training opt-in directly.
+                Minors: training opt-in is deferred — parent decides on the consent page. */}
+            {!isMinor && (
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={trainingOptIn}
+                  onChange={e => setTrainingOptIn(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 rounded border-field-border bg-field-dark accent-brand-600 cursor-pointer"
+                />
+                <span className="text-xs text-gray-400 leading-relaxed">
+                  Player opts in to AI-powered training analysis (video processing and recommendations).
+                </span>
+              </label>
+            )}
+
+            {isMinor && parentalEmail.trim() && (
+              <div className="bg-amber-950/30 border border-amber-700/40 rounded-lg px-3 py-2.5">
+                <p className="text-xs text-amber-300 leading-relaxed">
+                  A parental consent request will be emailed to{' '}
+                  <span className="font-medium">{parentalEmail.trim()}</span>. The player record
+                  will remain inactive for video uploads until the parent approves. Training
+                  opt-in will also be offered to the parent in that email.
+                </p>
+              </div>
+            )}
           </div>
 
           {formError && (
