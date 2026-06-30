@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import VideoUpload from '@/components/VideoUpload'
+import TwoClipUpload from '@/components/TwoClipUpload'
 import VideoAnalysisCard from '@/components/VideoAnalysisCard'
 import VideoComparison from '@/components/VideoComparison'
 import type { SessionVideo } from '@/types'
@@ -11,23 +12,32 @@ import type { SessionVideo } from '@/types'
 export default function PlayerVideosPage() {
   const { coachId, playerId } = useParams<{ coachId: string; playerId: string }>()
 
-  const [videos, setVideos]       = useState<SessionVideo[]>([])
-  const [player, setPlayer]       = useState<{
+  const [videos, setVideos]     = useState<SessionVideo[]>([])
+  const [player, setPlayer]     = useState<{
     name: string
     position: string | null
     coach_id: string
     is_minor: boolean | null
     parental_consent_status: string
+    parent_email: string | null
   } | null>(null)
-  const [loading, setLoading]     = useState(true)
-  const [tab, setTab]             = useState<'library' | 'compare' | 'upload'>('library')
+  const [loading, setLoading]   = useState(true)
+  const [tab, setTab]           = useState<'library' | 'compare' | 'upload'>('library')
   const [pollingIds, setPollingIds] = useState<Set<string>>(new Set())
 
-  // Parental consent gate state
-  const [parentalEmail, setParentalEmail]           = useState('')
-  const [parentalConfirmed, setParentalConfirmed]   = useState(false)
-  const [parentalSaving, setParentalSaving]         = useState(false)
-  const [parentalError, setParentalError]           = useState<string | null>(null)
+  // Upload mode
+  const [uploadMode, setUploadMode] = useState<'single' | 'two-clip'>('single')
+
+  // Two-clip (OL stance) session state
+  const [olSessionCreating, setOlSessionCreating] = useState(false)
+  const [olSessionError,    setOlSessionError]    = useState<string | null>(null)
+  const [olSessionId,       setOlSessionId]       = useState<string | null>(null)
+  const [olSuccess,         setOlSuccess]         = useState(false)
+
+  // Resend consent state
+  const [resendSaving, setResendSaving] = useState(false)
+  const [resendSent,   setResendSent]   = useState(false)
+  const [resendError,  setResendError]  = useState<string | null>(null)
 
   const load = useCallback(async () => {
     const [vr, pr] = await Promise.all([
@@ -70,7 +80,6 @@ export default function PlayerVideosPage() {
   }, [videos, coachId, playerId])
 
   const handleUploaded = useCallback(async (_video: SessionVideo) => {
-    // Re-fetch all videos so the new clip gets a fresh signed URL for playback
     await load()
     setTab('library')
   }, [load])
@@ -81,34 +90,72 @@ export default function PlayerVideosPage() {
     setVideos(prev => prev.filter(v => v.id !== videoId))
   }
 
-  const handleReanalyze = async (video: SessionVideo) => {
-    // Re-trigger analysis — user will need to re-upload frames (no server-side storage)
+  const handleReanalyze = async (_video: SessionVideo) => {
     alert('To re-analyze, delete this video and upload the clip again. Frame extraction happens at upload time.')
   }
 
-  const grantParentalConsent = async () => {
-    if (!parentalEmail.trim() || !parentalConfirmed || !player) return
-    setParentalSaving(true)
-    setParentalError(null)
-    const res = await fetch(`/api/players/${playerId}`, {
-      method: 'PATCH',
+  const resendConsent = async () => {
+    setResendSaving(true)
+    setResendSent(false)
+    setResendError(null)
+    const res = await fetch(`/api/players/${playerId}/resend-consent`, { method: 'POST' })
+    const json = await res.json()
+    if (!res.ok) {
+      setResendError(json.error ?? 'Failed to resend consent email.')
+      setResendSaving(false)
+      return
+    }
+    setResendSent(true)
+    setResendSaving(false)
+  }
+
+  // Creates a sessions row so TwoClipUpload has a valid session_id FK.
+  // Known gap: POST /api/sessions requires coach_id + player_id.
+  // Self-signup players (player_account_id only) cannot use this flow
+  // until the sessions table gains a player_account_id path.
+  const createOlSession = useCallback(async () => {
+    setOlSessionCreating(true)
+    setOlSessionError(null)
+    const res = await fetch('/api/sessions', {
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        grant_parental_consent: true,
-        parental_email: parentalEmail.trim(),
-        coach_id: player.coach_id,
+      body:    JSON.stringify({
+        coach_id:     coachId,
+        player_id:    playerId,
+        session_date: new Date().toISOString().slice(0, 10),
       }),
     })
     const json = await res.json()
     if (!res.ok) {
-      setParentalError(json.error ?? 'Failed to save parental consent.')
-      setParentalSaving(false)
+      setOlSessionError(json.error ?? 'Failed to create session.')
+      setOlSessionCreating(false)
       return
     }
-    // Re-fetch player so the gate disappears
-    await load()
-    setParentalSaving(false)
-  }
+    setOlSessionId(json.session.id)
+    setOlSessionCreating(false)
+  }, [coachId, playerId])
+
+  const switchToTwoClip = useCallback(async () => {
+    setUploadMode('two-clip')
+    if (!olSessionId) {
+      await createOlSession()
+    }
+  }, [olSessionId, createOlSession])
+
+  const resetOlSession = useCallback(() => {
+    // analysis_status of the completed session is 'ready' at this point —
+    // set by the upload route when the second clip is received.
+    // Resetting only clears local UI state; DB rows remain intact.
+    setOlSessionId(null)
+    setOlSuccess(false)
+    setOlSessionError(null)
+    setUploadMode('single')
+  }, [])
+
+  const handleBothUploaded = useCallback((_side: SessionVideo, _front: SessionVideo) => {
+    setOlSuccess(true)
+    load()
+  }, [load])
 
   const needsParentalConsent =
     player?.is_minor && player.parental_consent_status !== 'obtained'
@@ -207,64 +254,103 @@ export default function PlayerVideosPage() {
       {/* Upload */}
       {tab === 'upload' && (
         needsParentalConsent ? (
-          <div className="bg-field-card border border-amber-500/40 rounded-xl p-6 space-y-5">
+          <div className="bg-field-card border border-amber-500/40 rounded-xl p-6 space-y-4">
             <div>
-              <h2 className="text-base font-semibold text-amber-400 mb-1">Parental Consent Required</h2>
+              <h2 className="text-base font-semibold text-amber-400 mb-1">Parental Consent Pending</h2>
               <p className="text-gray-400 text-sm">
-                {player?.name} is under 18. A parent or legal guardian must consent before any video can be uploaded
-                for this player.
+                {player?.name} is under 18. A consent email was sent to{' '}
+                <span className="text-gray-300">{player?.parent_email ?? 'the parent'}</span>.
+                Uploads will unlock once the parent approves it.
               </p>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">
-                Parent / Guardian Email *
-              </label>
-              <input
-                type="email"
-                value={parentalEmail}
-                onChange={e => setParentalEmail(e.target.value)}
-                placeholder="parent@example.com"
-                className="w-full bg-field-dark border border-field-border rounded-lg px-3 py-2 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
-              />
-            </div>
-
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={parentalConfirmed}
-                onChange={e => setParentalConfirmed(e.target.checked)}
-                className="mt-0.5 h-4 w-4 rounded border-field-border bg-field-dark accent-brand-600 cursor-pointer"
-              />
-              <span className="text-xs text-gray-400 leading-relaxed">
-                I confirm that the parent or guardian at the email above has given permission for {player?.name}&apos;s
-                practice videos to be uploaded and analyzed by Practice Field&apos;s AI coaching system.
-              </span>
-            </label>
-
-            {parentalError && (
-              <p className="text-sm text-red-400">{parentalError}</p>
+            {resendSent ? (
+              <p className="text-sm text-green-400">Consent email resent. ✓</p>
+            ) : (
+              <>
+                {resendError && (
+                  <p className="text-sm text-red-400">{resendError}</p>
+                )}
+                <button
+                  onClick={resendConsent}
+                  disabled={resendSaving}
+                  className="w-full bg-field-dark border border-field-border hover:border-gray-600 disabled:opacity-50 text-gray-300 font-medium py-2.5 rounded-xl text-sm transition-colors"
+                >
+                  {resendSaving ? 'Sending…' : 'Resend consent email'}
+                </button>
+              </>
             )}
-
-            <button
-              onClick={grantParentalConsent}
-              disabled={parentalSaving || !parentalEmail.trim() || !parentalConfirmed}
-              className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl text-sm transition-colors"
-            >
-              {parentalSaving ? 'Saving…' : 'Confirm Parental Consent & Enable Uploads'}
-            </button>
           </div>
         ) : (
-          <div className="bg-field-card border border-field-border rounded-xl p-5">
-            <h2 className="text-base font-semibold text-white mb-1">Upload Practice Clip</h2>
-            <p className="text-gray-500 text-xs mb-4">
-              AI extracts frames from the video, analyzes technique, identifies root causes, and suggests training plan modifications. Issues are automatically added to the session review.
-            </p>
-            <VideoUpload
-              playerId={playerId}
-              coachId={coachId}
-              onUploaded={handleUploaded}
-            />
+          <div className="space-y-4">
+            {/* Mode selector */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => setUploadMode('single')}
+                className={`flex-1 py-2 text-xs font-medium rounded-lg border transition-colors ${
+                  uploadMode === 'single'
+                    ? 'bg-brand-600 border-brand-500 text-white'
+                    : 'bg-field-dark border-field-border text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                Single clip
+              </button>
+              <button
+                onClick={switchToTwoClip}
+                disabled={olSessionCreating}
+                className={`flex-1 py-2 text-xs font-medium rounded-lg border transition-colors disabled:opacity-50 ${
+                  uploadMode === 'two-clip'
+                    ? 'bg-brand-600 border-brand-500 text-white'
+                    : 'bg-field-dark border-field-border text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                {olSessionCreating ? 'Starting…' : 'OL Stance Analysis (2 clips)'}
+              </button>
+            </div>
+
+            {olSessionError && (
+              <p className="text-sm text-red-400">{olSessionError}</p>
+            )}
+
+            {uploadMode === 'single' && (
+              <div className="bg-field-card border border-field-border rounded-xl p-5">
+                <h2 className="text-base font-semibold text-white mb-1">Upload Practice Clip</h2>
+                <p className="text-gray-500 text-xs mb-4">
+                  AI extracts frames from the video, analyzes technique, identifies root causes, and suggests training plan modifications.
+                </p>
+                <VideoUpload
+                  playerId={playerId}
+                  coachId={coachId}
+                  onUploaded={handleUploaded}
+                />
+              </div>
+            )}
+
+            {uploadMode === 'two-clip' && olSessionId && !olSuccess && (
+              <TwoClipUpload
+                sessionId={olSessionId}
+                drillType="ol_stance_3point"
+                playerId={playerId}
+                coachId={coachId}
+                onBothUploaded={handleBothUploaded}
+              />
+            )}
+
+            {uploadMode === 'two-clip' && olSuccess && (
+              <div className="bg-field-card border border-green-500/40 rounded-xl p-6 text-center space-y-3">
+                <p className="text-2xl">✓</p>
+                <p className="text-green-400 font-semibold">Both clips submitted</p>
+                <p className="text-gray-500 text-sm">
+                  Side-view and front-view clips are ready for analysis.
+                </p>
+                <button
+                  onClick={resetOlSession}
+                  className="text-sm text-brand-400 hover:text-brand-300 transition-colors"
+                >
+                  Submit another session
+                </button>
+              </div>
+            )}
           </div>
         )
       )}

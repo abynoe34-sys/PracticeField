@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase'
-import { TERMS_VERSION } from '@/lib/constants'
 
 type RouteContext = { params: Promise<{ playerId: string }> }
 
@@ -25,48 +24,16 @@ export async function GET(_req: NextRequest, { params }: RouteContext) {
   }
 }
 
-// PATCH /api/players/[playerId] — update player info or grant parental consent
+// PATCH /api/players/[playerId] — update player info
 //
 // Normal update: { name?, position?, experience_level? }
-// Consent grant:  { grant_parental_consent: true, parental_email: string, coach_id: string }
+// Parental consent is handled exclusively via the /consent/[token] flow.
+// Use POST /api/players/[playerId]/resend-consent to resend the consent email.
 export async function PATCH(req: NextRequest, { params }: RouteContext) {
   try {
     const { playerId } = await params
     const body = await req.json()
     const db = getAdminClient()
-
-    if (body.grant_parental_consent) {
-      if (!body.parental_email || !body.coach_id) {
-        return NextResponse.json(
-          { error: 'parental_email and coach_id are required to grant parental consent.' },
-          { status: 400 }
-        )
-      }
-
-      const { data, error } = await db
-        .from('players')
-        .update({ parental_consent_status: 'obtained' })
-        .eq('id', playerId)
-        .select()
-        .single()
-
-      if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 })
-      }
-
-      await db.from('consent_records').insert({
-        coach_id: body.coach_id,
-        player_id: playerId,
-        consent_type: 'parental_consent',
-        document_version: TERMS_VERSION,
-        accepted: true,
-        accepted_by_email: body.parental_email,
-        ip_address: null,
-        user_agent: null,
-      })
-
-      return NextResponse.json({ player: data })
-    }
 
     const { data, error } = await db
       .from('players')

@@ -196,7 +196,9 @@ export interface ApiError {
 
 // ─── Video Analysis Types ─────────────────────────────────────────────────────
 
-export type AnalysisStatus = 'pending' | 'processing' | 'complete' | 'failed'
+export type AnalysisStatus =
+  | 'pending' | 'processing' | 'complete' | 'failed'          // legacy single-clip
+  | 'awaiting_both' | 'awaiting_side' | 'awaiting_front' | 'ready'  // two-clip
 export type OverallGrade   = 'A' | 'B' | 'C' | 'D'
 export type IssueSeverity  = 'critical' | 'high' | 'medium' | 'low'
 export type DrillType      = 'technique' | 'agility' | 'speed' | 'strength' | 'route' | 'coverage' | 'blocking' | 'general'
