@@ -14,6 +14,13 @@ export const maxDuration = 60
 //   Self-signup player:    player_account_id      (no player_id or coach_id)
 //
 // Supplying fields from both paths is rejected with 400 before any DB query.
+//
+// view_angle ('side' or 'front') is required on every request. The upload
+// route sets analysis_status on the session_videos row based on whether the
+// paired clip (same session_id, opposite view_angle) already exists:
+//   - Both clips present → 'ready'
+//   - Only this clip     → 'awaiting_side' or 'awaiting_front'
+//   - No session_id      → 'awaiting_both' (cannot pair without a session)
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData()
@@ -23,6 +30,7 @@ export async function POST(req: NextRequest) {
     const coachId         = formData.get('coach_id') as string | null
     const playerAccountId = formData.get('player_account_id') as string | null
     const sessionId       = formData.get('session_id') as string | null
+    const viewAngle       = formData.get('view_angle') as string | null
     const label           = formData.get('label') as string | null
     const drillType       = formData.get('drill_type') as string | null
     const notes           = formData.get('notes') as string | null
@@ -31,6 +39,16 @@ export async function POST(req: NextRequest) {
 
     if (!file) {
       return NextResponse.json({ error: 'file is required.' }, { status: 400 })
+    }
+
+    // ── view_angle validation ─────────────────────────────────────────────────
+    // Checked here alongside other input-validation 400s, before the consent
+    // gate. The consent gate below still runs before any DB or storage op.
+    if (!viewAngle || !['side', 'front'].includes(viewAngle)) {
+      return NextResponse.json(
+        { error: 'view_angle is required and must be "side" or "front".' },
+        { status: 400 }
+      )
     }
 
     // ── Mutual exclusivity check ──────────────────────────────────────────────
@@ -160,6 +178,17 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    // ── Determine initial analysis_status ─────────────────────────────────────
+    // Without a session_id we cannot pair clips, so status stays 'awaiting_both'.
+    // With a session_id we set the appropriate 'awaiting_X' here, then
+    // immediately check whether the paired clip exists and promote to 'ready'
+    // if so. The check is server-side — we never trust the client to report
+    // whether the paired clip exists.
+    const pairedView = viewAngle === 'side' ? 'front' : 'side'
+    const initialStatus = sessionId
+      ? (viewAngle === 'side' ? 'awaiting_front' : 'awaiting_side')
+      : 'awaiting_both'
+
     // ── session_videos row ────────────────────────────────────────────────────
     // Ownership fields are mutually exclusive — matches chk_sv_has_owner in the DB.
     const { data: videoRow, error: dbError } = await db
@@ -177,7 +206,8 @@ export async function POST(req: NextRequest) {
         notes:           notes || null,
         is_baseline:     isBaseline,
         recorded_at:     recordedAt || new Date().toISOString().split('T')[0],
-        analysis_status: 'pending',
+        view_angle:      viewAngle,
+        analysis_status: initialStatus,
         frame_paths:     [],
       })
       .select()
@@ -186,6 +216,34 @@ export async function POST(req: NextRequest) {
     if (dbError) {
       await db.storage.from('session-videos').remove([storagePath])
       return NextResponse.json({ error: dbError.message }, { status: 500 })
+    }
+
+    // ── Paired-clip check ─────────────────────────────────────────────────────
+    // Only possible when a session_id was supplied. Queries the DB directly —
+    // the client has no input into this decision.
+    if (sessionId) {
+      const { data: pairedClip } = await db
+        .from('session_videos')
+        .select('id')
+        .eq('session_id', sessionId)
+        .eq('view_angle', pairedView)
+        .limit(1)
+        .maybeSingle()
+
+      if (pairedClip) {
+        // Both clips now exist for this session. Mark every clip in this session
+        // that has a view_angle as ready (covers the case of re-uploads too).
+        await db
+          .from('session_videos')
+          .update({ analysis_status: 'ready' })
+          .eq('session_id', sessionId)
+          .not('view_angle', 'is', null)
+
+        return NextResponse.json(
+          { video: { ...videoRow, analysis_status: 'ready' }, session_ready: true },
+          { status: 201 }
+        )
+      }
     }
 
     return NextResponse.json({ video: videoRow }, { status: 201 })
