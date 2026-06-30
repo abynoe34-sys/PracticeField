@@ -2,19 +2,26 @@
 Validate a manually-curated *_clean.csv before it enters the calibration dataset.
 
 Usage:
-    py scripts/validate_clean_csv.py scripts/m1_results_good_clean.csv
+    py scripts/validate_clean_csv.py scripts/m1_results_good_clean.csv [...]
 
-Fails with a non-zero exit code and a clear error if the file contains any
-column name that could trace a measurement back to source footage or a
-real-world identity. Pass on a clean file, fail loudly on a dirty one.
+Runs two independent checks against each file:
 
-Run this immediately after creating or editing any *_clean.csv — it is the
-counterpart to the assert_clean_columns check that runs automatically inside
-m1_measure_stills.py on the raw output file.
+  1. Identity-leak guard (assert_clean_columns): fails if any column name
+     could trace a measurement back to source footage or a real-world identity.
+
+  2. Structure guard (assert_required_structure): fails if the required metadata
+     columns (drill, quality, view) are missing or contain invalid values.
+
+Fails with exit code 1 and a clear error if either check fails on any file.
+Pass on a clean file, fail loudly on a dirty one.
+
+Run this immediately after creating or editing any *_clean.csv.
 """
 
 import sys
 import csv
+
+# ── Identity-leak guard ───────────────────────────────────────────────────────
 
 _FORBIDDEN_EXACT = frozenset({
     'file', 'filename', 'filepath', 'path', 'source', 'src',
@@ -42,9 +49,60 @@ def assert_clean_columns(csv_path: str) -> None:
             "These columns can link a measurement back to source footage or an identity.\n"
             "Remove them before this file is used as training data."
         )
-    print(f"[OK] {csv_path}")
+    print(f"[OK privacy]    {csv_path}")
     print(f"     Columns: {cols}")
 
+
+# ── Structure guard ───────────────────────────────────────────────────────────
+
+REQUIRED_COLUMNS = frozenset({'drill', 'quality', 'view'})
+QUALITY_VALUES   = frozenset({'good', 'bad'})
+VIEW_VALUES      = frozenset({'side', 'front'})
+
+
+def assert_required_structure(csv_path: str) -> None:
+    with open(csv_path, newline='', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        col_set = frozenset(c.lower() for c in (reader.fieldnames or []))
+
+        missing = sorted(REQUIRED_COLUMNS - col_set)
+        if missing:
+            raise AssertionError(
+                f"\n[STRUCTURE] {csv_path!r} is missing required column(s): {missing}\n"
+                "Every calibration CSV must have: drill, quality, view."
+            )
+
+        bad_quality = set()
+        bad_view    = set()
+        for row in reader:
+            q = (row.get('quality') or '').strip()
+            v = (row.get('view')    or '').strip()
+            if q not in QUALITY_VALUES:
+                bad_quality.add(repr(q))
+            if v not in VIEW_VALUES:
+                bad_view.add(repr(v))
+
+    errors = []
+    if bad_quality:
+        errors.append(
+            f"  quality: invalid value(s) {sorted(bad_quality)}"
+            f" — allowed: {sorted(QUALITY_VALUES)}"
+        )
+    if bad_view:
+        errors.append(
+            f"  view: invalid value(s) {sorted(bad_view)}"
+            f" — allowed: {sorted(VIEW_VALUES)}"
+        )
+    if errors:
+        raise AssertionError(
+            f"\n[STRUCTURE] {csv_path!r} contains invalid column values:\n"
+            + "\n".join(errors)
+        )
+    print(f"[OK structure]  {csv_path}")
+    print(f"     drill / quality / view present and valid")
+
+
+# ── Entry point ───────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -58,8 +116,17 @@ if __name__ == "__main__":
         except FileNotFoundError:
             print(f"[ERROR] File not found: {path}")
             failed = True
+            continue
         except AssertionError as e:
             print(e)
             failed = True
+
+        try:
+            assert_required_structure(path)
+        except AssertionError as e:
+            print(e)
+            failed = True
+
+        print()
 
     sys.exit(1 if failed else 0)

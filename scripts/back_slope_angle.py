@@ -20,8 +20,12 @@ Signed back-slope angle convention
   the player faces in the frame.
 
 Outputs:
-  - CSV    : scripts/back_slope_angles.csv  (columns: frame, time_s, person, angle_deg, note)
+  - CSV    : scripts/back_slope_angles.csv
+             columns: frame, time_s, person, angle_deg, note, drill, quality, view
   - STDOUT : frame-by-frame table
+
+Usage:
+    py scripts/back_slope_angle.py --drill ol_stance_3point --quality good --view side
 
 Privacy enforcement
 -------------------
@@ -37,6 +41,7 @@ import sys
 import os
 import csv
 import math
+import argparse
 import cv2
 import numpy as np
 import mediapipe as mp
@@ -105,6 +110,15 @@ def back_slope_deg(lms):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Back-slope angle extractor")
+    parser.add_argument('--drill',   required=True,
+                        help='Drill/position label in snake_case (e.g. ol_stance_3point)')
+    parser.add_argument('--quality', required=True, choices=['good', 'bad'],
+                        help='Clip quality: good or bad')
+    parser.add_argument('--view',    required=True, choices=['side', 'front'],
+                        help='Camera angle: side or front')
+    args = parser.parse_args()
+
     success = False
     try:
         cap = cv2.VideoCapture(SOURCE_VIDEO)
@@ -159,6 +173,9 @@ def main():
                             "person":    p_idx,
                             "angle_deg": angle if angle is not None else "",
                             "note":      note,
+                            "drill":     args.drill,
+                            "quality":   args.quality,
+                            "view":      args.view,
                         })
                 else:
                     print(f"{frame_n:>6}  {time_s:>7.3f}  {'--':>6}  {'N/A':>10}  no_detection")
@@ -168,13 +185,17 @@ def main():
                         "person":    "",
                         "angle_deg": "",
                         "note":      "no_detection",
+                        "drill":     args.drill,
+                        "quality":   args.quality,
+                        "view":      args.view,
                     })
 
         cap.release()
 
         with open(OUTPUT_CSV, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(
-                f, fieldnames=["frame", "time_s", "person", "angle_deg", "note"]
+                f, fieldnames=["frame", "time_s", "person", "angle_deg", "note",
+                               "drill", "quality", "view"]
             )
             writer.writeheader()
             writer.writerows(rows)

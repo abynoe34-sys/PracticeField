@@ -13,8 +13,11 @@ Back-slope angle convention (signed):
   significantly less than 90 (forward-leaning torso).
 
 Output: scripts/m1_results_good.csv
-  columns: person, slope_deg, lean_from_vertical, higher, note
-  (source filenames are never written — assign position_label manually in the clean CSV)
+  columns: person, slope_deg, lean_from_vertical, higher, note, drill, quality, view
+  (source filenames are never written)
+
+Usage:
+    py scripts/m1_measure_stills.py --drill ol_stance_3point --quality good --view side
 
 Privacy enforcement
 -------------------
@@ -30,6 +33,7 @@ import sys
 import os
 import csv
 import math
+import argparse
 import cv2
 import mediapipe as mp
 from mediapipe.tasks.python        import BaseOptions
@@ -127,6 +131,15 @@ def slope(lms):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="M1 back-slope measurement on stills")
+    parser.add_argument('--drill',   required=True,
+                        help='Drill/position label in snake_case (e.g. ol_stance_3point)')
+    parser.add_argument('--quality', required=True, choices=['good', 'bad'],
+                        help='Clip quality: good or bad')
+    parser.add_argument('--view',    required=True, choices=['side', 'front'],
+                        help='Camera angle: side or front')
+    args = parser.parse_args()
+
     success = False
     source_paths = [f"{SCRIPTS}\\{fname}" for fname in STILLS]
 
@@ -171,6 +184,9 @@ def main():
                         "lean_from_vertical": lean if lean is not None else "",
                         "higher":             higher if higher else "",
                         "note":               note,
+                        "drill":              args.drill,
+                        "quality":            args.quality,
+                        "view":               args.view,
                     })
 
         if not rows:
@@ -179,7 +195,8 @@ def main():
         with open(OUTPUT_CSV, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(
                 f,
-                fieldnames=["person", "slope_deg", "lean_from_vertical", "higher", "note"]
+                fieldnames=["person", "slope_deg", "lean_from_vertical", "higher", "note",
+                            "drill", "quality", "view"]
             )
             writer.writeheader()
             writer.writerows(rows)
