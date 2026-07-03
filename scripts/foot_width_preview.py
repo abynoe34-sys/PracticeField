@@ -60,6 +60,14 @@ def main():
                         help='Clip quality: good or bad')
     parser.add_argument('--view',    required=True, choices=['side', 'front'],
                         help='Camera angle: side or front')
+    parser.add_argument('--fault-type', required=True,
+                        choices=['none', 'narrow_stance', 'stagger',
+                                 'head_down', 'forward_lean', 'sitting_back'],
+                        help='Primary fault demonstrated (use none for good-quality examples)')
+    parser.add_argument('--line-side',  required=True, choices=['left', 'right'],
+                        help='Side of the offensive line: left or right')
+    parser.add_argument('--position',   required=True, choices=['guard_tackle', 'center'],
+                        help='Position group: guard_tackle or center')
     args = parser.parse_args()
 
     image_path = args.image_path

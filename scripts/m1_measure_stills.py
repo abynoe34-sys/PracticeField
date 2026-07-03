@@ -46,9 +46,8 @@ SCRIPTS    = r"C:\Users\abyno\PracticeField\scripts"
 # Update STILLS for each new batch.
 # Filenames are used only for loading — they are never written to the output CSV.
 STILLS = [
-    "0606_rep1_7s.png",
-    "0606_rep1_8s.png",
-    "0606_rep1_9s.png",
+    "Bad stance 3.jpg",
+    "Bad stance 4.jpg",
 ]
 
 L_SHOULDER, R_SHOULDER = 11, 12
@@ -132,12 +131,20 @@ def slope(lms):
 
 def main():
     parser = argparse.ArgumentParser(description="M1 back-slope measurement on stills")
-    parser.add_argument('--drill',   required=True,
+    parser.add_argument('--drill',      required=True,
                         help='Drill/position label in snake_case (e.g. ol_stance_3point)')
-    parser.add_argument('--quality', required=True, choices=['good', 'bad'],
+    parser.add_argument('--quality',    required=True, choices=['good', 'bad'],
                         help='Clip quality: good or bad')
-    parser.add_argument('--view',    required=True, choices=['side', 'front'],
+    parser.add_argument('--view',       required=True, choices=['side', 'front'],
                         help='Camera angle: side or front')
+    parser.add_argument('--fault-type', required=True,
+                        choices=['none', 'narrow_stance', 'stagger',
+                                 'head_down', 'forward_lean', 'sitting_back'],
+                        help='Primary fault demonstrated (use none for good-quality examples)')
+    parser.add_argument('--line-side',  required=True, choices=['left', 'right'],
+                        help='Side of the offensive line: left or right')
+    parser.add_argument('--position',   required=True, choices=['guard_tackle', 'center'],
+                        help='Position group: guard_tackle or center')
     args = parser.parse_args()
 
     success = False
@@ -187,6 +194,9 @@ def main():
                         "drill":              args.drill,
                         "quality":            args.quality,
                         "view":               args.view,
+                        "fault_type":         args.fault_type,
+                        "line_side":          args.line_side,
+                        "position":           args.position,
                     })
 
         if not rows:
@@ -196,7 +206,7 @@ def main():
             writer = csv.DictWriter(
                 f,
                 fieldnames=["person", "slope_deg", "lean_from_vertical", "higher", "note",
-                            "drill", "quality", "view"]
+                            "drill", "quality", "view", "fault_type", "line_side", "position"]
             )
             writer.writeheader()
             writer.writerows(rows)

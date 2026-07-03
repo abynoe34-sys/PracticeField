@@ -111,12 +111,20 @@ def back_slope_deg(lms):
 
 def main():
     parser = argparse.ArgumentParser(description="Back-slope angle extractor")
-    parser.add_argument('--drill',   required=True,
+    parser.add_argument('--drill',      required=True,
                         help='Drill/position label in snake_case (e.g. ol_stance_3point)')
-    parser.add_argument('--quality', required=True, choices=['good', 'bad'],
+    parser.add_argument('--quality',    required=True, choices=['good', 'bad'],
                         help='Clip quality: good or bad')
-    parser.add_argument('--view',    required=True, choices=['side', 'front'],
+    parser.add_argument('--view',       required=True, choices=['side', 'front'],
                         help='Camera angle: side or front')
+    parser.add_argument('--fault-type', required=True,
+                        choices=['none', 'narrow_stance', 'stagger',
+                                 'head_down', 'forward_lean', 'sitting_back'],
+                        help='Primary fault demonstrated (use none for good-quality examples)')
+    parser.add_argument('--line-side',  required=True, choices=['left', 'right'],
+                        help='Side of the offensive line: left or right')
+    parser.add_argument('--position',   required=True, choices=['guard_tackle', 'center'],
+                        help='Position group: guard_tackle or center')
     args = parser.parse_args()
 
     success = False
@@ -168,26 +176,32 @@ def main():
                         ang_str = f"{angle:.2f}" if angle is not None else "N/A"
                         print(f"{frame_n:>6}  {time_s:>7.3f}  {p_idx:>6}  {ang_str:>10}  {note}")
                         rows.append({
-                            "frame":     frame_n,
-                            "time_s":    time_s,
-                            "person":    p_idx,
-                            "angle_deg": angle if angle is not None else "",
-                            "note":      note,
-                            "drill":     args.drill,
-                            "quality":   args.quality,
-                            "view":      args.view,
+                            "frame":      frame_n,
+                            "time_s":     time_s,
+                            "person":     p_idx,
+                            "angle_deg":  angle if angle is not None else "",
+                            "note":       note,
+                            "drill":      args.drill,
+                            "quality":    args.quality,
+                            "view":       args.view,
+                            "fault_type": args.fault_type,
+                            "line_side":  args.line_side,
+                            "position":   args.position,
                         })
                 else:
                     print(f"{frame_n:>6}  {time_s:>7.3f}  {'--':>6}  {'N/A':>10}  no_detection")
                     rows.append({
-                        "frame":     frame_n,
-                        "time_s":    time_s,
-                        "person":    "",
-                        "angle_deg": "",
-                        "note":      "no_detection",
-                        "drill":     args.drill,
-                        "quality":   args.quality,
-                        "view":      args.view,
+                        "frame":      frame_n,
+                        "time_s":     time_s,
+                        "person":     "",
+                        "angle_deg":  "",
+                        "note":       "no_detection",
+                        "drill":      args.drill,
+                        "quality":    args.quality,
+                        "view":       args.view,
+                        "fault_type": args.fault_type,
+                        "line_side":  args.line_side,
+                        "position":   args.position,
                     })
 
         cap.release()
@@ -195,7 +209,8 @@ def main():
         with open(OUTPUT_CSV, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(
                 f, fieldnames=["frame", "time_s", "person", "angle_deg", "note",
-                               "drill", "quality", "view"]
+                               "drill", "quality", "view",
+                               "fault_type", "line_side", "position"]
             )
             writer.writeheader()
             writer.writerows(rows)

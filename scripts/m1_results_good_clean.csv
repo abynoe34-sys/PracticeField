@@ -1,4 +1,4 @@
-person,slope_deg,lean_from_vertical,higher,note,drill,quality,view
-0,174.86,95.14,hips,ok,ol_stance_3point,good,side
-0,-147.74,57.74,shoulders,ok,ol_stance_3point,good,side
-1,167.45,102.55,hips,ok,ol_stance_3point,good,side
+person,slope_deg,lean_from_vertical,higher,note,drill,quality,view,fault_type,line_side,position
+0,174.86,95.14,hips,ok,ol_stance_3point,good,side,none,right,guard_tackle
+0,-147.74,57.74,shoulders,ok,ol_stance_3point,good,side,none,right,guard_tackle
+1,167.45,102.55,hips,ok,ol_stance_3point,good,side,none,right,guard_tackle

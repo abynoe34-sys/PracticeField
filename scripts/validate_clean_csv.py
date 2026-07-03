@@ -55,9 +55,12 @@ def assert_clean_columns(csv_path: str) -> None:
 
 # ── Structure guard ───────────────────────────────────────────────────────────
 
-REQUIRED_COLUMNS = frozenset({'drill', 'quality', 'view'})
-QUALITY_VALUES   = frozenset({'good', 'bad'})
-VIEW_VALUES      = frozenset({'side', 'front'})
+REQUIRED_COLUMNS  = frozenset({'drill', 'quality', 'view', 'fault_type', 'line_side', 'position'})
+QUALITY_VALUES    = frozenset({'good', 'bad'})
+VIEW_VALUES       = frozenset({'side', 'front'})
+FAULT_TYPE_VALUES = frozenset({'none', 'narrow_stance', 'stagger', 'head_down', 'forward_lean', 'sitting_back'})
+LINE_SIDE_VALUES  = frozenset({'left', 'right'})
+POSITION_VALUES   = frozenset({'guard_tackle', 'center'})
 
 
 def assert_required_structure(csv_path: str) -> None:
@@ -69,18 +72,30 @@ def assert_required_structure(csv_path: str) -> None:
         if missing:
             raise AssertionError(
                 f"\n[STRUCTURE] {csv_path!r} is missing required column(s): {missing}\n"
-                "Every calibration CSV must have: drill, quality, view."
+                "Every calibration CSV must have: drill, quality, view, fault_type, line_side, position."
             )
 
-        bad_quality = set()
-        bad_view    = set()
+        bad_quality    = set()
+        bad_view       = set()
+        bad_fault_type = set()
+        bad_line_side  = set()
+        bad_position   = set()
         for row in reader:
-            q = (row.get('quality') or '').strip()
-            v = (row.get('view')    or '').strip()
-            if q not in QUALITY_VALUES:
+            q  = (row.get('quality')    or '').strip()
+            v  = (row.get('view')       or '').strip()
+            ft = (row.get('fault_type') or '').strip()
+            ls = (row.get('line_side')  or '').strip()
+            po = (row.get('position')   or '').strip()
+            if q  not in QUALITY_VALUES:
                 bad_quality.add(repr(q))
-            if v not in VIEW_VALUES:
+            if v  not in VIEW_VALUES:
                 bad_view.add(repr(v))
+            if ft not in FAULT_TYPE_VALUES:
+                bad_fault_type.add(repr(ft))
+            if ls not in LINE_SIDE_VALUES:
+                bad_line_side.add(repr(ls))
+            if po not in POSITION_VALUES:
+                bad_position.add(repr(po))
 
     errors = []
     if bad_quality:
@@ -93,13 +108,28 @@ def assert_required_structure(csv_path: str) -> None:
             f"  view: invalid value(s) {sorted(bad_view)}"
             f" — allowed: {sorted(VIEW_VALUES)}"
         )
+    if bad_fault_type:
+        errors.append(
+            f"  fault_type: invalid value(s) {sorted(bad_fault_type)}"
+            f" — allowed: {sorted(FAULT_TYPE_VALUES)}"
+        )
+    if bad_line_side:
+        errors.append(
+            f"  line_side: invalid value(s) {sorted(bad_line_side)}"
+            f" — allowed: {sorted(LINE_SIDE_VALUES)}"
+        )
+    if bad_position:
+        errors.append(
+            f"  position: invalid value(s) {sorted(bad_position)}"
+            f" — allowed: {sorted(POSITION_VALUES)}"
+        )
     if errors:
         raise AssertionError(
             f"\n[STRUCTURE] {csv_path!r} contains invalid column values:\n"
             + "\n".join(errors)
         )
     print(f"[OK structure]  {csv_path}")
-    print(f"     drill / quality / view present and valid")
+    print(f"     drill / quality / view / fault_type / line_side / position present and valid")
 
 
 # ── Entry point ───────────────────────────────────────────────────────────────
