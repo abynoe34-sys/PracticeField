@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient, getSupabaseClient } from '@/lib/supabase'
 import { generateId } from '@/lib/utils'
+import { inngest } from '@/lib/inngest'
 
 // Allow up to 60 seconds for large file uploads to Supabase Storage
 export const maxDuration = 60
@@ -15,12 +16,12 @@ export const maxDuration = 60
 //
 // Supplying fields from both paths is rejected with 400 before any DB query.
 //
-// view_angle ('side' or 'front') is required on every request. The upload
-// route sets analysis_status on the session_videos row based on whether the
-// paired clip (same session_id, opposite view_angle) already exists:
-//   - Both clips present → 'ready'
-//   - Only this clip     → 'awaiting_side' or 'awaiting_front'
-//   - No session_id      → 'awaiting_both' (cannot pair without a session)
+// view_angle ('side' or 'front') is required on every request. Sessions
+// support any number of clips per view. 'ready' is set when at least one
+// clip of each view exists for the session — not exactly one of each.
+//   - Both views represented → all view-tagged clips promoted to 'ready'
+//   - Only one view present  → 'awaiting_side' or 'awaiting_front'
+//   - No session_id          → 'awaiting_both' (cannot pair without a session)
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData()
@@ -180,10 +181,9 @@ export async function POST(req: NextRequest) {
 
     // ── Determine initial analysis_status ─────────────────────────────────────
     // Without a session_id we cannot pair clips, so status stays 'awaiting_both'.
-    // With a session_id we set the appropriate 'awaiting_X' here, then
-    // immediately check whether the paired clip exists and promote to 'ready'
-    // if so. The check is server-side — we never trust the client to report
-    // whether the paired clip exists.
+    // With a session_id, set 'awaiting_X' here, then check whether the opposite
+    // view already has any clips. If so, all view-tagged clips in the session are
+    // promoted to 'ready'. Check is server-side — client has no input into this.
     const pairedView = viewAngle === 'side' ? 'front' : 'side'
     const initialStatus = sessionId
       ? (viewAngle === 'side' ? 'awaiting_front' : 'awaiting_side')
@@ -238,6 +238,20 @@ export async function POST(req: NextRequest) {
           .update({ analysis_status: 'ready' })
           .eq('session_id', sessionId)
           .not('view_angle', 'is', null)
+
+        // Fire the analysis job. Sent after both the insert and the status
+        // promotion have succeeded — never before. Consent gate ran above.
+        await inngest.send({
+          name: 'analysis/session.ready',
+          data: {
+            session_id:        sessionId,
+            ...(playerAccountId
+              ? { player_account_id: playerAccountId }
+              : { player_id: playerId }),
+            drill_type:        drillType || 'general',
+            triggered_at:      new Date().toISOString(),
+          },
+        })
 
         return NextResponse.json(
           { video: { ...videoRow, analysis_status: 'ready' }, session_ready: true },
