@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+mediapipe
+opencv-python-headless
+numpy
+supabase
+python-dotenv
+httpx
+requests
