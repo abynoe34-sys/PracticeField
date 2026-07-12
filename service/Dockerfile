@@ -4,6 +4,8 @@ FROM python:3.11-slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1 \
     libglib2.0-0 \
+    libgles2 \
+    libegl1 \
     wget \
  && rm -rf /var/lib/apt/lists/*
 
@@ -18,6 +20,8 @@ RUN wget -q -O pose_landmarker_heavy.task \
     https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_heavy/float16/1/pose_landmarker_heavy.task
 
 COPY . .
+
+ENV MEDIAPIPE_MODEL_PATH=/app/pose_landmarker_heavy.task
 
 EXPOSE 8000
 

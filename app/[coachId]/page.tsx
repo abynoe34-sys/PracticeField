@@ -52,7 +52,9 @@ export default async function DashboardPage({ params }: DashboardProps) {
   const sessionList: Session[] = sessions ?? []
 
   // Map sessions to players
+  // Coach dashboard only shows coach-managed sessions; player_id is always set here.
   const sessionsByPlayer = sessionList.reduce<Record<string, Session[]>>((acc, s) => {
+    if (!s.player_id) return acc
     if (!acc[s.player_id]) acc[s.player_id] = []
     acc[s.player_id].push(s)
     return acc

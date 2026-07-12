@@ -152,7 +152,7 @@ export default function PlayerVideosPage() {
     setUploadMode('single')
   }, [])
 
-  const handleBothUploaded = useCallback((_side: SessionVideo, _front: SessionVideo) => {
+  const handleSessionReady = useCallback((_sides: SessionVideo[], _fronts: SessionVideo[]) => {
     setOlSuccess(true)
     load()
   }, [load])
@@ -332,7 +332,7 @@ export default function PlayerVideosPage() {
                 drillType="ol_stance_3point"
                 playerId={playerId}
                 coachId={coachId}
-                onBothUploaded={handleBothUploaded}
+                onSessionReady={handleSessionReady}
               />
             )}
 

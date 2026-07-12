@@ -1,0 +1,11 @@
+frame,time_s,person,angle_deg,note
+1,0.033,,,no_detection
+2,0.067,,,no_detection
+3,0.1,,,no_detection
+4,0.133,,,no_detection
+5,0.167,,,no_detection
+6,0.2,,,no_detection
+7,0.233,,,no_detection
+8,0.267,,,no_detection
+9,0.3,,,no_detection
+10,0.333,,,no_detection

@@ -62,7 +62,9 @@ export default function PlayersPage() {
 
   useEffect(() => { load() }, [load])
 
+  // Coach players page only shows coach-managed sessions; player_id is always set here.
   const sessionsByPlayer = sessions.reduce<Record<string, Session[]>>((acc, s) => {
+    if (!s.player_id) return acc
     if (!acc[s.player_id]) acc[s.player_id] = []
     acc[s.player_id].push(s)
     return acc

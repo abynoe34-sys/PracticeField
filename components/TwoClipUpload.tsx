@@ -5,23 +5,26 @@ import type { SessionVideo } from '@/types'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type ClipStatus = 'idle' | 'selected' | 'uploading' | 'uploaded' | 'failed'
+// The active slot tracks one in-progress upload at a time per view.
+// Completed uploads accumulate in ViewState.uploaded.
+type ActiveSlot =
+  | { status: 'idle' }
+  | { status: 'selected'; file: File }
+  | { status: 'uploading'; file: File }
+  | { status: 'failed'; error: string }
 
-interface ClipState {
-  status:  ClipStatus
-  file:    File | null
-  video:   SessionVideo | null
-  error:   string | null
+interface ViewState {
+  uploaded: SessionVideo[]
+  active:   ActiveSlot
 }
 
-const BLANK_CLIP: ClipState = { status: 'idle', file: null, video: null, error: null }
+const BLANK_VIEW: ViewState = { uploaded: [], active: { status: 'idle' } }
 
+// NOTE: This component is named TwoClipUpload for historical reasons but
+// supports any number of clips per view. Rename decision deferred to owner.
 interface TwoClipUploadProps {
   // sessionId must reference an existing sessions.id row — FK enforced in DB.
-  // The calling page is responsible for creating the session before rendering
-  // this component and passing the resulting ID here.
   sessionId:        string
-  // Required — prevents silent mislabeling if reused for a different drill.
   drillType:        string
   // Coach-managed path: supply both playerId + coachId
   playerId?:        string
@@ -29,139 +32,148 @@ interface TwoClipUploadProps {
   // Self-signup path: supply playerAccountId + authToken
   playerAccountId?: string
   authToken?:       string
-  onBothUploaded:   (sideVideo: SessionVideo, frontVideo: SessionVideo) => void
+  // Called when at least one side and one front clip have been uploaded.
+  onSessionReady:   (sideVideos: SessionVideo[], frontVideos: SessionVideo[]) => void
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const MAX_BYTES   = 524_288_000  // 500 MB
+const MAX_BYTES    = 524_288_000
 const ALLOWED_MIME = ['video/mp4', 'video/quicktime', 'video/webm', 'video/x-msvideo']
 
-const ANGLE_DESCRIPTIONS: Record<'side' | 'front', { heading: string; body: string }> = {
+const ANGLE_META: Record<'side' | 'front', { heading: string; body: string }> = {
   side: {
     heading: 'Side view',
-    body:    'Camera at hip height, square to your side. Your full body should be visible — head through feet, nothing cut off.',
+    body:    'Camera at hip height, square to your side. Full body visible — head through feet, nothing cut off.',
   },
   front: {
     heading: 'Front view',
-    body:    'Camera at hip height, facing straight at you. Full body in frame — feet flat on the ground, top of helmet visible.',
+    body:    'Camera at hip height, facing straight at you. Full body in frame — feet flat on ground, top of helmet visible.',
   },
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function validateFile(f: File): string | null {
-  if (!ALLOWED_MIME.includes(f.type)) {
-    return 'Wrong file type — use MP4, MOV, WebM, or AVI.'
-  }
-  if (f.size > MAX_BYTES) {
-    return 'File too large — maximum size is 500 MB.'
-  }
+  if (!ALLOWED_MIME.includes(f.type)) return 'Wrong file type — use MP4, MOV, WebM, or AVI.'
+  if (f.size > MAX_BYTES) return 'File too large — maximum size is 500 MB.'
   return null
 }
 
-// ── Sub-component: single clip step ──────────────────────────────────────────
+// ── Sub-component: one view section ──────────────────────────────────────────
 
-interface ClipStepProps {
-  step:      1 | 2
-  angle:     'side' | 'front'
-  clip:      ClipState
-  locked:    boolean
-  fileRef:   React.RefObject<HTMLInputElement>
-  onPick:    (f: File) => void
-  onUpload:  () => void
-  onReset:   () => void
+interface ViewSectionProps {
+  angle:    'side' | 'front'
+  state:    ViewState
+  fileRef:  React.RefObject<HTMLInputElement>
+  onPick:   (f: File) => void
+  onUpload: () => void
+  onReset:  () => void
 }
 
-function ClipStep({ step, angle, clip, locked, fileRef, onPick, onUpload, onReset }: ClipStepProps) {
+function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset }: ViewSectionProps) {
   const [dragOver, setDragOver] = useState(false)
-  const { heading, body } = ANGLE_DESCRIPTIONS[angle]
+  const { heading, body } = ANGLE_META[angle]
+  const { uploaded, active } = state
+  const count       = uploaded.length
+  const hasUploaded = count > 0
 
-  const statusChip: Record<ClipStatus, { label: string; cls: string }> = {
-    idle:      { label: 'Waiting',          cls: 'text-gray-500'  },
-    selected:  { label: 'Ready to upload',  cls: 'text-brand-400' },
-    uploading: { label: 'Uploading…',       cls: 'text-brand-400' },
-    uploaded:  { label: 'Uploaded',         cls: 'text-green-400' },
-    failed:    { label: 'Failed',           cls: 'text-red-400'   },
-  }
-
-  const { label: chipLabel, cls: chipCls } = statusChip[clip.status]
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setDragOver(false)
-    const f = e.dataTransfer.files[0]
-    if (f) onPick(f)
-  }
-
-  const borderCls = clip.status === 'uploaded'
-    ? 'border-green-800'
-    : clip.status === 'failed'
-      ? 'border-red-900'
-      : 'border-field-border'
-
-  const containerCls = locked && clip.status === 'idle'
-    ? 'opacity-50 pointer-events-none'
-    : ''
+  const borderCls =
+    hasUploaded          ? 'border-green-800' :
+    active.status === 'failed' ? 'border-red-900'  : 'border-field-border'
 
   return (
-    <div className={`bg-field-card border ${borderCls} rounded-xl p-5 space-y-3 transition-colors ${containerCls}`}>
+    <div className={`bg-field-card border ${borderCls} rounded-xl p-5 space-y-3 transition-colors`}>
+
+      {/* Always-present hidden file input — shared by dropzone click and "Add another" button */}
+      <input
+        ref={fileRef}
+        type="file"
+        accept="video/*"
+        className="hidden"
+        onChange={e => { const f = e.target.files?.[0]; if (f) onPick(f) }}
+      />
 
       {/* Header row */}
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2.5">
           <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-            clip.status === 'uploaded'
+            hasUploaded
               ? 'bg-green-900 text-green-300'
               : 'bg-field-dark text-gray-400 border border-field-border'
           }`}>
-            {clip.status === 'uploaded' ? '✓' : step}
+            {hasUploaded ? count : '·'}
           </span>
-          <span className="text-sm font-semibold text-white">{heading}</span>
+          <span className="text-sm font-semibold text-white">
+            {heading}
+            {hasUploaded && (
+              <span className="text-gray-500 font-normal ml-1.5">
+                ({count} uploaded)
+              </span>
+            )}
+          </span>
         </div>
-        <span className={`text-xs font-medium ${chipCls}`}>{chipLabel}</span>
+
+        {/* "Add another" only shown when at least one clip is uploaded and slot is idle */}
+        {hasUploaded && active.status === 'idle' && (
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="text-xs text-brand-400 hover:text-brand-300 transition-colors"
+          >
+            + Add another
+          </button>
+        )}
       </div>
 
       {/* Angle description */}
       <p className="text-xs text-gray-500 leading-relaxed pl-8">{body}</p>
 
-      {/* ── Idle / locked ── */}
-      {clip.status === 'idle' && (
-        locked ? (
-          <p className="text-xs text-gray-600 text-center py-3">Complete Step 1 first</p>
-        ) : (
-          <div
-            onDrop={handleDrop}
-            onDragOver={e => { e.preventDefault(); setDragOver(true) }}
-            onDragLeave={() => setDragOver(false)}
-            onClick={() => fileRef.current?.click()}
-            className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
-              dragOver
-                ? 'border-brand-500 bg-brand-950'
-                : 'border-field-border hover:border-brand-700 hover:bg-field-dark'
-            }`}
-          >
-            <p className="text-sm text-gray-400">Drop clip here or <span className="text-brand-400">browse</span></p>
-            <p className="text-xs text-gray-600 mt-1">MP4, MOV, WebM, AVI · max 500 MB</p>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="video/*"
-              className="hidden"
-              onChange={e => { const f = e.target.files?.[0]; if (f) onPick(f) }}
-            />
-          </div>
-        )
+      {/* Uploaded clip list */}
+      {hasUploaded && (
+        <ul className="pl-8 space-y-1">
+          {uploaded.map(v => (
+            <li key={v.id} className="flex items-center gap-2 text-xs">
+              <span className="text-green-400">✓</span>
+              <span className="text-gray-400 truncate">{v.file_name ?? v.label ?? 'Clip'}</span>
+            </li>
+          ))}
+        </ul>
       )}
 
-      {/* ── Selected — file preview + upload button ── */}
-      {clip.status === 'selected' && clip.file && (
-        <div className="space-y-3">
+      {/* Drop zone — only shown when no uploads yet and slot is idle */}
+      {active.status === 'idle' && !hasUploaded && (
+        <div
+          onDrop={e => {
+            e.preventDefault()
+            setDragOver(false)
+            const f = e.dataTransfer.files[0]
+            if (f) onPick(f)
+          }}
+          onDragOver={e => { e.preventDefault(); setDragOver(true) }}
+          onDragLeave={() => setDragOver(false)}
+          onClick={() => fileRef.current?.click()}
+          className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
+            dragOver
+              ? 'border-brand-500 bg-brand-950'
+              : 'border-field-border hover:border-brand-700 hover:bg-field-dark'
+          }`}
+        >
+          <p className="text-sm text-gray-400">
+            Drop clip here or <span className="text-brand-400">browse</span>
+          </p>
+          <p className="text-xs text-gray-600 mt-1">MP4, MOV, WebM, AVI · max 500 MB</p>
+        </div>
+      )}
+
+      {/* Selected — file preview + upload button */}
+      {active.status === 'selected' && (
+        <div className="pl-8 space-y-3">
           <div className="flex items-center gap-3 bg-field-dark border border-field-border rounded-lg px-3 py-2.5">
             <span className="text-xl">🎬</span>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-white truncate">{clip.file.name}</p>
-              <p className="text-xs text-gray-500">{(clip.file.size / 1024 / 1024).toFixed(1)} MB</p>
+              <p className="text-sm text-white truncate">{active.file.name}</p>
+              <p className="text-xs text-gray-500">{(active.file.size / 1024 / 1024).toFixed(1)} MB</p>
             </div>
             <button
               type="button"
@@ -175,32 +187,24 @@ function ClipStep({ step, angle, clip, locked, fileRef, onPick, onUpload, onRese
             onClick={onUpload}
             className="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors"
           >
-            Upload {heading} clip
+            Upload {heading.toLowerCase()} clip
           </button>
         </div>
       )}
 
-      {/* ── Uploading ── */}
-      {clip.status === 'uploading' && (
-        <div className="flex items-center gap-3 py-2 px-1">
+      {/* Uploading */}
+      {active.status === 'uploading' && (
+        <div className="pl-8 flex items-center gap-3 py-2">
           <div className="w-4 h-4 border-2 border-brand-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
           <p className="text-sm text-gray-400">Uploading…</p>
         </div>
       )}
 
-      {/* ── Uploaded ── */}
-      {clip.status === 'uploaded' && (
-        <div className="flex items-center gap-2 py-1 px-1">
-          <span className="text-green-400 text-base leading-none">✓</span>
-          <p className="text-sm text-green-400">Clip received</p>
-        </div>
-      )}
-
-      {/* ── Failed — error + retry ── */}
-      {clip.status === 'failed' && (
-        <div className="space-y-2.5">
+      {/* Failed */}
+      {active.status === 'failed' && (
+        <div className="pl-8 space-y-2.5">
           <p className="text-sm text-red-400 bg-red-950 border border-red-900 rounded-lg px-3 py-2 leading-snug">
-            {clip.error}
+            {active.error}
           </p>
           <button
             onClick={onReset}
@@ -217,10 +221,10 @@ function ClipStep({ step, angle, clip, locked, fileRef, onPick, onUpload, onRese
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function TwoClipUpload(props: TwoClipUploadProps) {
-  const { onBothUploaded, sessionId, drillType } = props
+  const { onSessionReady, sessionId, drillType } = props
 
-  const [side,  setSide]  = useState<ClipState>(BLANK_CLIP)
-  const [front, setFront] = useState<ClipState>(BLANK_CLIP)
+  const [side,  setSide]  = useState<ViewState>(BLANK_VIEW)
+  const [front, setFront] = useState<ViewState>(BLANK_VIEW)
 
   const sideRef  = useRef<HTMLInputElement>(null!)
   const frontRef = useRef<HTMLInputElement>(null!)
@@ -231,32 +235,32 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
     const setter = angle === 'side' ? setSide : setFront
     const err = validateFile(f)
     if (err) {
-      setter({ status: 'failed', file: null, video: null, error: err })
+      setter(prev => ({ ...prev, active: { status: 'failed', error: err } }))
       return
     }
-    setter({ status: 'selected', file: f, video: null, error: null })
+    setter(prev => ({ ...prev, active: { status: 'selected', file: f } }))
   }
 
-  const resetClip = (angle: 'side' | 'front') => {
+  const resetActive = (angle: 'side' | 'front') => {
     const setter = angle === 'side' ? setSide : setFront
-    setter(BLANK_CLIP)
-    // Also clear the file input so the same file can be re-selected
-    const ref = angle === 'side' ? sideRef : frontRef
+    const ref    = angle === 'side' ? sideRef  : frontRef
+    setter(prev => ({ ...prev, active: { status: 'idle' } }))
     if (ref.current) ref.current.value = ''
   }
 
   // ── Upload ─────────────────────────────────────────────────────────────────
 
   const uploadClip = async (angle: 'side' | 'front') => {
-    const clip   = angle === 'side' ? side : front
+    const view   = angle === 'side' ? side  : front
     const setter = angle === 'side' ? setSide : setFront
-    if (!clip.file) return
+    if (view.active.status !== 'selected') return
+    const file = view.active.file
 
-    setter(prev => ({ ...prev, status: 'uploading', error: null }))
+    setter(prev => ({ ...prev, active: { status: 'uploading', file } }))
 
     try {
       const form = new FormData()
-      form.append('file',       clip.file)
+      form.append('file',       file)
       form.append('session_id', sessionId)
       form.append('view_angle', angle)
       form.append('drill_type', drillType)
@@ -269,39 +273,37 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
       }
 
       const headers: HeadersInit = {}
-      if (props.authToken) {
-        headers['Authorization'] = `Bearer ${props.authToken}`
-      }
+      if (props.authToken) headers['Authorization'] = `Bearer ${props.authToken}`
 
       const res  = await fetch('/api/videos/upload', { method: 'POST', body: form, headers })
       const json = await res.json()
-
-      if (!res.ok) {
-        throw new Error(json.error ?? 'Upload failed.')
-      }
+      if (!res.ok) throw new Error(json.error ?? 'Upload failed.')
 
       const uploaded: SessionVideo = json.video
-      setter({ status: 'uploaded', file: clip.file, video: uploaded, error: null })
-
+      setter(prev => ({
+        uploaded: [...prev.uploaded, uploaded],
+        active:   { status: 'idle' },
+      }))
     } catch (err) {
       setter(prev => ({
         ...prev,
-        status: 'failed',
-        error:  err instanceof Error ? err.message : 'Upload failed. Please try again.',
+        active: {
+          status: 'failed',
+          error:  err instanceof Error ? err.message : 'Upload failed. Please try again.',
+        },
       }))
     }
   }
 
   // ── Derived state ──────────────────────────────────────────────────────────
 
-  const sideUploaded  = side.status  === 'uploaded'
-  const frontUploaded = front.status === 'uploaded'
-  const bothUploaded  = sideUploaded && frontUploaded
+  // Session is ready when at least one clip of each view has been uploaded.
+  const sideReady  = side.uploaded.length  >= 1
+  const frontReady = front.uploaded.length >= 1
+  const canSubmit  = sideReady && frontReady
 
   const handleSubmit = () => {
-    if (side.video && front.video) {
-      onBothUploaded(side.video, front.video)
-    }
+    if (canSubmit) onSessionReady(side.uploaded, front.uploaded)
   }
 
   // ── Render ─────────────────────────────────────────────────────────────────
@@ -309,52 +311,43 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
   return (
     <div className="space-y-4">
 
-      {/* Progress indicator */}
-      <div className="flex items-center gap-2 text-xs text-gray-500">
-        <span className={sideUploaded ? 'text-green-400 font-medium' : 'text-gray-400'}>
-          1 · Side view
+      {/* Status summary */}
+      <div className="flex items-center gap-3 text-xs">
+        <span className={sideReady  ? 'text-green-400 font-medium' : 'text-gray-500'}>
+          Side {sideReady  ? `(${side.uploaded.length})` : '(none yet)'}
         </span>
-        <span className="text-gray-700">→</span>
-        <span className={frontUploaded ? 'text-green-400 font-medium' : 'text-gray-400'}>
-          2 · Front view
-        </span>
-        <span className="text-gray-700">→</span>
-        <span className={bothUploaded ? 'text-brand-400 font-medium' : 'text-gray-600'}>
-          Submit
+        <span className="text-gray-700">·</span>
+        <span className={frontReady ? 'text-green-400 font-medium' : 'text-gray-500'}>
+          Front {frontReady ? `(${front.uploaded.length})` : '(none yet)'}
         </span>
       </div>
 
-      {/* Step 1 — side */}
-      <ClipStep
-        step={1}
+      <ViewSection
         angle="side"
-        clip={side}
-        locked={false}
+        state={side}
         fileRef={sideRef}
         onPick={f  => pickFile('side', f)}
         onUpload={() => uploadClip('side')}
-        onReset={() => resetClip('side')}
+        onReset={() => resetActive('side')}
       />
 
-      {/* Step 2 — front */}
-      <ClipStep
-        step={2}
+      <ViewSection
         angle="front"
-        clip={front}
-        locked={!sideUploaded}
+        state={front}
         fileRef={frontRef}
         onPick={f  => pickFile('front', f)}
         onUpload={() => uploadClip('front')}
-        onReset={() => resetClip('front')}
+        onReset={() => resetActive('front')}
       />
 
-      {/* Submit */}
       <button
         onClick={handleSubmit}
-        disabled={!bothUploaded}
+        disabled={!canSubmit}
         className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl text-sm transition-colors"
       >
-        {bothUploaded ? 'Submit for Analysis' : 'Upload both clips to continue'}
+        {canSubmit
+          ? 'Submit for Analysis'
+          : 'Upload at least one side and one front clip to continue'}
       </button>
 
     </div>

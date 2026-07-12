@@ -61,8 +61,9 @@ export interface ConsentRecord {
 
 export interface Session {
   id: string
-  player_id: string
-  coach_id: string
+  player_id: string | null
+  coach_id: string | null
+  player_account_id: string | null
   session_date: string      // ISO date string YYYY-MM-DD
   strengths: string[]
   improvements: string[]
@@ -140,8 +141,9 @@ export interface CreatePlayerRequest {
 }
 
 export interface CreateSessionRequest {
-  player_id: string
-  coach_id: string
+  player_id?: string
+  coach_id?: string
+  player_account_id?: string
   session_date: string
   strengths: string[]
   improvements: string[]
