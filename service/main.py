@@ -181,22 +181,32 @@ def analyse(req: AnalyseRequest):
             pass
 
     # ── Write results back to session_videos ──────────────────────────────────
-    result = db.table("session_videos") \
+    side_result = db.table("session_videos") \
         .update({"analysis": aggregated, "analysis_status": "complete"}) \
         .eq("session_id", req.session_id) \
         .eq("view_angle", "side") \
         .execute()
 
-    if hasattr(result, "error") and result.error:
-        raise HTTPException(status_code=500, detail=f"DB write failed: {result.error}")
+    if hasattr(side_result, "error") and side_result.error:
+        raise HTTPException(status_code=500, detail=f"DB write failed: {side_result.error}")
 
     log.info("session %s side-view analysis written to DB", req.session_id)
 
-    # ── Front-view processing ─────────────────────────────────────────────────
+    # ── Front-view: mark complete (analysis stays null — result lives on side row) ──
+    # Front-view biomechanical processing is not yet implemented, but the row
+    # must be marked 'complete' so the UI does not show a permanently-spinning state.
     log.info(
-        "front-view processing not yet implemented — skipping front clip for session %s",
+        "front-view processing not yet implemented — marking front row complete for session %s",
         req.session_id,
     )
+    front_result = db.table("session_videos") \
+        .update({"analysis_status": "complete"}) \
+        .eq("session_id", req.session_id) \
+        .eq("view_angle", "front") \
+        .execute()
+
+    if hasattr(front_result, "error") and front_result.error:
+        raise HTTPException(status_code=500, detail=f"Front-view DB write failed: {front_result.error}")
 
     return {
         "status":     "complete",

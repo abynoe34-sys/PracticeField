@@ -140,6 +140,18 @@ export default function VideoAnalysisCard({ video, position, onReanalyze, onDele
       </div>
 
       {/* Analysis Status */}
+      {video.analysis_status === 'awaiting_both' && (
+        <div className="px-4 py-3 text-sm text-gray-500">⏳ Waiting for both clips to be uploaded before analysis can start…</div>
+      )}
+      {video.analysis_status === 'awaiting_front' && (
+        <div className="px-4 py-3 text-sm text-gray-500">⏳ Side clip uploaded — waiting for front-view clip to pair…</div>
+      )}
+      {video.analysis_status === 'awaiting_side' && (
+        <div className="px-4 py-3 text-sm text-gray-500">⏳ Front clip uploaded — waiting for side-view clip to pair…</div>
+      )}
+      {video.analysis_status === 'ready' && (
+        <div className="px-4 py-3 text-sm text-brand-400 animate-pulse">⏳ Both clips ready — queued for analysis…</div>
+      )}
       {video.analysis_status === 'pending' && (
         <div className="px-4 py-3 text-sm text-gray-500">⏳ Awaiting analysis…</div>
       )}

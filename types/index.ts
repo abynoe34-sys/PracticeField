@@ -264,6 +264,7 @@ export interface SessionVideo {
   file_size_bytes:  number | null
   duration_seconds: number | null
   thumbnail_path:   string | null
+  view_angle:       'side' | 'front' | null
   analysis_status:  AnalysisStatus
   analysis:         VideoAnalysis | null
   frame_paths:      string[]
