@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Header, Depends
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from supabase import create_client, Client
+from supabase import create_client, Client, ClientOptions
 
 load_dotenv()
 
@@ -30,7 +30,26 @@ _model_error: str | None = None
 def get_supabase() -> Client:
     if not SUPABASE_URL or not SUPABASE_KEY:
         raise RuntimeError("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set")
-    return create_client(SUPABASE_URL, SUPABASE_KEY)
+    # sb_secret_ keys are not JWTs. supabase-py sends the key on both:
+    #   apiKey: <key>              ← correct, Supabase accepts this
+    #   Authorization: Bearer <key> ← Supabase rejects non-JWT here
+    #
+    # Fix (two steps, both required):
+    # 1. Pass Authorization="" in ClientOptions so Client.create skips its
+    #    auto-auth re-injection (it only fires when options.headers["Authorization"]
+    #    is None, not when it is present but empty).
+    # 2. Pop the key after construction so the header is fully absent from
+    #    requests rather than sent as an empty value.
+    #
+    # _listen_to_auth_events would re-add Bearer on SIGNED_IN/TOKEN_REFRESHED,
+    # but those events never fire for a service-role client with no user session.
+    client = create_client(
+        SUPABASE_URL,
+        SUPABASE_KEY,
+        options=ClientOptions(headers={"Authorization": ""}),
+    )
+    client.options.headers.pop("Authorization", None)
+    return client
 
 
 @asynccontextmanager
@@ -67,6 +86,41 @@ def health():
     if _landmarker is None:
         return {"status": "error", "detail": "model not yet loaded"}
     return {"status": "ok", "model": "loaded"}
+
+
+# ── Supabase connectivity test ────────────────────────────────────────────────
+
+@app.get("/test-supabase", dependencies=[Depends(require_secret)])
+def test_supabase():
+    """
+    Exercises two real Supabase operations using the configured service key:
+      1. DB query  — SELECT 1 row from session_videos (proves PostgREST auth works)
+      2. Storage   — list files in the top level of SUPABASE_STORAGE_BUCKET
+                     (proves Storage auth works)
+    Returns the raw results so you can confirm the key is genuinely accepted.
+    """
+    db = get_supabase()
+    results: dict = {}
+
+    # ── DB query ──────────────────────────────────────────────────────────────
+    try:
+        row = db.table("session_videos").select("id, session_id, analysis_status").limit(1).execute()
+        results["db"] = {"ok": True, "rows": row.data}
+    except Exception as exc:
+        results["db"] = {"ok": False, "error": str(exc)}
+
+    # ── Storage list ──────────────────────────────────────────────────────────
+    if not STORAGE_BUCKET:
+        results["storage"] = {"ok": False, "error": "SUPABASE_STORAGE_BUCKET not set"}
+    else:
+        try:
+            files = db.storage.from_(STORAGE_BUCKET).list()
+            results["storage"] = {"ok": True, "bucket": STORAGE_BUCKET, "top_level_items": len(files), "sample": files[:3]}
+        except Exception as exc:
+            results["storage"] = {"ok": False, "error": str(exc)}
+
+    overall = all(v.get("ok") for v in results.values())
+    return {"status": "ok" if overall else "error", "checks": results}
 
 
 # ── Analyse ───────────────────────────────────────────────────────────────────
