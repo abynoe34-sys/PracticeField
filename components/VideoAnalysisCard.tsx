@@ -92,11 +92,20 @@ function IssueRow({ issue }: { issue: TechniqueIssue }) {
   )
 }
 
+// Discriminate between the GPT-4o structured result (has 'summary') and the
+// raw Python pose-measurement payload (has 'slope_deg_mean' etc, no 'summary').
+// Both land in the same analysis column; only the structured result can be
+// rendered by the full card UI.
+function isStructuredAnalysis(a: VideoAnalysis | null): a is VideoAnalysis {
+  return !!a && typeof (a as unknown as Record<string, unknown>).summary === 'string'
+}
+
 export default function VideoAnalysisCard({ video, position, onReanalyze, onDelete }: VideoAnalysisCardProps) {
   const [videoOpen, setVideoOpen] = useState(false)
   const [tab, setTab] = useState<'issues' | 'scores' | 'plan'>('issues')
 
-  const analysis: VideoAnalysis | null = video.analysis
+  const rawAnalysis = video.analysis
+  const analysis: VideoAnalysis | null = isStructuredAnalysis(rawAnalysis) ? rawAnalysis : null
   const grade = analysis?.overall_grade ?? null
   const gradeStyle = grade ? (GRADE_STYLES[grade] ?? GRADE_STYLES.C) : null
   const trend = analysis?.comparison?.trend ?? 'baseline'
@@ -166,6 +175,19 @@ export default function VideoAnalysisCard({ video, position, onReanalyze, onDele
               Retry →
             </button>
           )}
+        </div>
+      )}
+
+      {/* Raw pose measurements (Python service output, no GPT-4o pass yet) */}
+      {video.analysis_status === 'complete' && rawAnalysis && !analysis && (
+        <div className="px-4 py-4 space-y-2">
+          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Pose Measurements</p>
+          {Object.entries(rawAnalysis as unknown as Record<string, unknown>).map(([k, v]) => (
+            <div key={k} className="flex justify-between text-xs">
+              <span className="text-gray-500">{k.replace(/_/g, ' ')}</span>
+              <span className="text-white font-mono">{typeof v === 'number' ? v.toFixed(2) : String(v)}</span>
+            </div>
+          ))}
         </div>
       )}
 

@@ -144,7 +144,12 @@ export function generateTrainingPlanTemplate(params: GeneratePlanParams): Exerci
   return getTemplateExercises(params.experienceLevel, params.painPoints, params.position)
 }
 
-// ─── Video Analysis ───────────────────────────────────────────────────────────
+// ─── Video Analysis (DEPRECATED 2026-07-14) ───────────────────────────────────
+// analyzeVideoFrames() is no longer called from any active code path.
+// The single-clip vision pipeline was disabled due to cost (~$0.018/call, 2.5× target)
+// and superseded by the two-clip MediaPipe path + planned GPT-4o text feedback writer.
+// Keep this function — the prompt structure, position cues, and VideoAnalysis JSON schema
+// are directly reusable for the text-based writer. Do not delete without review.
 
 export interface AnalyzeVideoParams {
   frames: string[]           // base64-encoded JPEG frames (6–10 recommended)

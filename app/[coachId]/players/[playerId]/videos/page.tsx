@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import VideoUpload from '@/components/VideoUpload'
 import TwoClipUpload from '@/components/TwoClipUpload'
 import VideoAnalysisCard from '@/components/VideoAnalysisCard'
 import VideoComparison from '@/components/VideoComparison'
@@ -24,9 +23,6 @@ export default function PlayerVideosPage() {
   const [loading, setLoading]   = useState(true)
   const [tab, setTab]           = useState<'library' | 'compare' | 'upload'>('library')
   const [pollingIds, setPollingIds] = useState<Set<string>>(new Set())
-
-  // Upload mode
-  const [uploadMode, setUploadMode] = useState<'single' | 'two-clip'>('single')
 
   // Two-clip (OL stance) session state
   const [olSessionCreating, setOlSessionCreating] = useState(false)
@@ -136,7 +132,6 @@ export default function PlayerVideosPage() {
   }, [coachId, playerId])
 
   const switchToTwoClip = useCallback(async () => {
-    setUploadMode('two-clip')
     if (!olSessionId) {
       await createOlSession()
     }
@@ -149,7 +144,6 @@ export default function PlayerVideosPage() {
     setOlSessionId(null)
     setOlSuccess(false)
     setOlSessionError(null)
-    setUploadMode('single')
   }, [])
 
   const handleSessionReady = useCallback((_sides: SessionVideo[], _fronts: SessionVideo[]) => {
@@ -283,50 +277,27 @@ export default function PlayerVideosPage() {
           </div>
         ) : (
           <div className="space-y-4">
-            {/* Mode selector */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => setUploadMode('single')}
-                className={`flex-1 py-2 text-xs font-medium rounded-lg border transition-colors ${
-                  uploadMode === 'single'
-                    ? 'bg-brand-600 border-brand-500 text-white'
-                    : 'bg-field-dark border-field-border text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                Single clip
-              </button>
-              <button
-                onClick={switchToTwoClip}
-                disabled={olSessionCreating}
-                className={`flex-1 py-2 text-xs font-medium rounded-lg border transition-colors disabled:opacity-50 ${
-                  uploadMode === 'two-clip'
-                    ? 'bg-brand-600 border-brand-500 text-white'
-                    : 'bg-field-dark border-field-border text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                {olSessionCreating ? 'Starting…' : 'OL Stance Analysis (2 clips)'}
-              </button>
-            </div>
-
             {olSessionError && (
               <p className="text-sm text-red-400">{olSessionError}</p>
             )}
 
-            {uploadMode === 'single' && (
-              <div className="bg-field-card border border-field-border rounded-xl p-5">
-                <h2 className="text-base font-semibold text-white mb-1">Upload Practice Clip</h2>
-                <p className="text-gray-500 text-xs mb-4">
-                  AI extracts frames from the video, analyzes technique, identifies root causes, and suggests training plan modifications.
+            {!olSuccess && !olSessionId && (
+              <div className="bg-field-card border border-field-border rounded-xl p-6 text-center space-y-4">
+                <p className="text-white font-semibold text-sm">OL Stance Analysis</p>
+                <p className="text-gray-500 text-xs">
+                  Upload a side-view and front-view clip. AI will analyze stance, lean angle, and technique.
                 </p>
-                <VideoUpload
-                  playerId={playerId}
-                  coachId={coachId}
-                  onUploaded={handleUploaded}
-                />
+                <button
+                  onClick={switchToTwoClip}
+                  disabled={olSessionCreating}
+                  className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
+                >
+                  {olSessionCreating ? 'Starting…' : 'Start Analysis Session'}
+                </button>
               </div>
             )}
 
-            {uploadMode === 'two-clip' && olSessionId && !olSuccess && (
+            {olSessionId && !olSuccess && (
               <TwoClipUpload
                 sessionId={olSessionId}
                 drillType="ol_stance_3point"
@@ -336,7 +307,7 @@ export default function PlayerVideosPage() {
               />
             )}
 
-            {uploadMode === 'two-clip' && olSuccess && (
+            {olSuccess && (
               <div className="bg-field-card border border-green-500/40 rounded-xl p-6 text-center space-y-3">
                 <p className="text-2xl">✓</p>
                 <p className="text-green-400 font-semibold">Both clips submitted</p>

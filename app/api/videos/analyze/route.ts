@@ -1,3 +1,9 @@
+// DEPRECATED 2026-07-14: Single-clip GPT-4o vision pipeline.
+// Cost ~$0.018/call (2.5× the $0.007 target); superseded by two-clip MediaPipe path
+// (TwoClipUpload → Inngest → Python service) with a planned GPT-4o text feedback step.
+// Route is kept intact — analyzeVideoFrames() and extractFramesFromBuffer() logic is
+// reference material for the text feedback writer. Do not delete without review.
+// Nothing in the active codebase calls this route as of 2026-07-14.
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase'
 import { analyzeVideoFrames } from '@/lib/openai'

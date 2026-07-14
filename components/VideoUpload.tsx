@@ -1,3 +1,7 @@
+// DEPRECATED 2026-07-14: Single-clip upload UI removed from coach-facing pages.
+// The /api/videos/analyze call (step 4 below) is disabled. This component is no longer
+// rendered anywhere. Kept for reference — analyzeVideoFrames() logic may be reused in
+// the planned GPT-4o text feedback writer for the two-clip pipeline.
 'use client'
 
 import { useState, useRef, useCallback } from 'react'
@@ -110,23 +114,10 @@ export default function VideoUpload({ playerId, coachId, sessionId, onUploaded }
 
       setProgress(60)
 
-      // 4. Run AI analysis — server downloads from storage and extracts frames via FFmpeg
-      setStage('analyzing')
-      const analyzeRes = await fetch('/api/videos/analyze', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ video_id: confirmJson.video.id }),
-      })
-      const analyzeJson = await analyzeRes.json()
-
-      if (!analyzeRes.ok) {
-        console.warn('Analysis failed:', analyzeJson.error)
-        setStage('error')
-        setErrorMsg(`Analysis failed: ${analyzeJson.error ?? 'Unknown error'}`)
-        return
-      }
-
-      onUploaded(analyzeJson.video)
+      // Step 4 (single-clip GPT-4o vision) disabled 2026-07-14.
+      // Cost was ~$0.018/call (2.5× target); superseded by two-clip MediaPipe + planned
+      // GPT-4o text feedback writer. See /api/videos/analyze for the route that was called.
+      onUploaded(confirmJson.video)
       setProgress(100)
       setStage('done')
     } catch (err) {
