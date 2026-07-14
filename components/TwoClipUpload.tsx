@@ -259,27 +259,46 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
     setter(prev => ({ ...prev, active: { status: 'uploading', file } }))
 
     try {
-      const form = new FormData()
-      form.append('file',       file)
-      form.append('session_id', sessionId)
-      form.append('view_angle', angle)
-      form.append('drill_type', drillType)
+      // 1. Presign — consent gate runs server-side, returns a signed upload URL
+      const presignHeaders: HeadersInit = { 'Content-Type': 'application/json' }
+      if (props.authToken) presignHeaders['Authorization'] = `Bearer ${props.authToken}`
 
-      if (props.playerAccountId) {
-        form.append('player_account_id', props.playerAccountId)
-      } else if (props.playerId && props.coachId) {
-        form.append('player_id', props.playerId)
-        form.append('coach_id',  props.coachId)
-      }
+      const presignRes = await fetch('/api/videos/presign', {
+        method:  'POST',
+        headers: presignHeaders,
+        body: JSON.stringify({
+          session_id:  sessionId,
+          view_angle:  angle,
+          drill_type:  drillType,
+          file_name:   file.name,
+          file_type:   file.type,
+          file_size:   file.size,
+          ...(props.playerAccountId
+            ? { player_account_id: props.playerAccountId }
+            : { player_id: props.playerId, coach_id: props.coachId }),
+        }),
+      })
+      const presignJson = await presignRes.json()
+      if (!presignRes.ok) throw new Error(presignJson.error ?? 'Could not start upload.')
 
-      const headers: HeadersInit = {}
-      if (props.authToken) headers['Authorization'] = `Bearer ${props.authToken}`
+      // 2. Upload directly to Supabase Storage — bypasses the Next.js API entirely
+      const storageRes = await fetch(presignJson.signedUrl, {
+        method:  'PUT',
+        headers: { 'Content-Type': file.type },
+        body:    file,
+      })
+      if (!storageRes.ok) throw new Error(`Storage upload failed (${storageRes.status})`)
 
-      const res  = await fetch('/api/videos/upload', { method: 'POST', body: form, headers })
-      const json = await res.json()
-      if (!res.ok) throw new Error(json.error ?? 'Upload failed.')
+      // 3. Confirm — write the DB row now that the file is in storage
+      const confirmRes = await fetch('/api/videos/confirm', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ storage_path: presignJson.storagePath, ...presignJson.meta }),
+      })
+      const confirmJson = await confirmRes.json()
+      if (!confirmRes.ok) throw new Error(confirmJson.error ?? 'Upload failed.')
 
-      const uploaded: SessionVideo = json.video
+      const uploaded: SessionVideo = confirmJson.video
       setter(prev => ({
         uploaded: [...prev.uploaded, uploaded],
         active:   { status: 'idle' },

@@ -62,41 +62,64 @@ export default function VideoUpload({ playerId, coachId, sessionId, onUploaded }
     if (!file) return
 
     try {
-      // 1. Upload video file to server
+      // 1. Presign — consent gate + validation run server-side, get a signed URL
       setStage('uploading')
+      setProgress(10)
+      const presignRes = await fetch('/api/videos/presign', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          player_id:   playerId,
+          coach_id:    coachId,
+          session_id:  sessionId ?? null,
+          label:       label || file.name,
+          drill_type:  drillType,
+          notes,
+          is_baseline: isBaseline,
+          recorded_at: recordedAt,
+          file_name:   file.name,
+          file_type:   file.type,
+          file_size:   file.size,
+        }),
+      })
+      const presignJson = await presignRes.json()
+      if (!presignRes.ok) throw new Error(presignJson.error ?? 'Could not start upload')
+
       setProgress(20)
-      const form = new FormData()
-      form.append('file', file)
-      form.append('player_id', playerId)
-      form.append('coach_id', coachId)
-      if (sessionId) form.append('session_id', sessionId)
-      form.append('label', label || file.name)
-      form.append('drill_type', drillType)
-      form.append('notes', notes)
-      form.append('is_baseline', String(isBaseline))
-      form.append('recorded_at', recordedAt)
 
-      const uploadRes = await fetch('/api/videos/upload', { method: 'POST', body: form })
-      const uploadJson = await uploadRes.json()
-
-      if (!uploadRes.ok) {
-        throw new Error(uploadJson.error ?? 'Upload failed')
+      // 2. Upload directly to Supabase Storage — bypasses the Next.js API entirely
+      const storageRes = await fetch(presignJson.signedUrl, {
+        method:  'PUT',
+        headers: { 'Content-Type': file.type },
+        body:    file,
+      })
+      if (!storageRes.ok) {
+        throw new Error(`Storage upload failed (${storageRes.status})`)
       }
 
       setProgress(50)
 
-      // 2. Run AI analysis — server downloads from storage and extracts frames via FFmpeg
+      // 3. Confirm — write the DB row now that the file is in storage
+      const confirmRes = await fetch('/api/videos/confirm', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ storage_path: presignJson.storagePath, ...presignJson.meta }),
+      })
+      const confirmJson = await confirmRes.json()
+      if (!confirmRes.ok) throw new Error(confirmJson.error ?? 'Upload failed')
+
+      setProgress(60)
+
+      // 4. Run AI analysis — server downloads from storage and extracts frames via FFmpeg
       setStage('analyzing')
       const analyzeRes = await fetch('/api/videos/analyze', {
-        method: 'POST',
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ video_id: uploadJson.video.id }),
+        body: JSON.stringify({ video_id: confirmJson.video.id }),
       })
-
       const analyzeJson = await analyzeRes.json()
 
       if (!analyzeRes.ok) {
-        // Analysis failed — video is saved in DB but don't navigate away; show the actual error
         console.warn('Analysis failed:', analyzeJson.error)
         setStage('error')
         setErrorMsg(`Analysis failed: ${analyzeJson.error ?? 'Unknown error'}`)
