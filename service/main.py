@@ -181,8 +181,17 @@ def analyse(req: AnalyseRequest):
             pass
 
     # ── Write results back to session_videos ──────────────────────────────────
+    # fault_type/line_side/position are persisted here (not just passed through
+    # to this request) so the /feedback route can read them back by session_id
+    # without needing them re-supplied at feedback-generation time.
     side_result = db.table("session_videos") \
-        .update({"analysis": aggregated, "analysis_status": "complete"}) \
+        .update({
+            "analysis":        aggregated,
+            "analysis_status": "complete",
+            "fault_type":      req.fault_type,
+            "line_side":       req.line_side,
+            "position":        req.position,
+        }) \
         .eq("session_id", req.session_id) \
         .eq("view_angle", "side") \
         .execute()
