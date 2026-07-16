@@ -1,10 +1,18 @@
 # Practice Field — Claude Code Context
 
-> Last updated: 2026-07-14 (session that fixed upload architecture, Inngest sync, session page caching, disabled single-clip vision pipeline)
+> Last updated: 2026-07-15 (session that built the GPT-4o text feedback writer)
+
+## Next Session Priorities
+
+1. **Apply migration-v10 and review GPT-4o feedback output quality** — the feedback writer is built but the migration hasn't been applied and no real session has been run through `POST /feedback` yet. Apply `supabase/migration-v10-feedback-column.sql`, deploy the Python service with `OPENAI_API_KEY` and `ADMIN_SECRET` set, trigger it against a completed session with `curl -X POST .../feedback -H "X-Admin-Secret: ..." -d '{"session_id":"..."}'`, and read the actual output before deciding whether/how to surface it in the UI. Nothing calls this route automatically — see "What Was Fixed This Session".
+
+2. **Define calibration rules and fault types for positions beyond OL** — this is a blocking gap: the only fault taxonomy that exists (`forward_lean`, `sitting_back`, `stagger`, `head_down`, `narrow_stance`) is specific to the OL 3-point stance. No equivalent exists for WR, DB, LB, QB, or any other position. This blocks both calibration filming and meaningful GPT-4o feedback for any non-OL player. `service/feedback.py` is structured to take a `position` argument and look up cues from a `POSITION_CUES` dict, but only `guard_tackle`/`center` have entries — extend that dict (and add a matching fault taxonomy) rather than re-architecting the call shape.
+
+---
 
 ## Architecture Overview
 
-**Stack:** Next.js 14 App Router (Vercel) · Supabase (Postgres + Auth + Storage, project ID `kzyxheyobuoqtwmdjwau`) · Python FastAPI service (Railway) · Inngest v4 (job orchestration) · Resend (transactional email) · OpenAI GPT-4o (text feedback — planned; vision pipeline disabled)
+**Stack:** Next.js 14 App Router (Vercel) · Supabase (Postgres + Auth + Storage, project ID `kzyxheyobuoqtwmdjwau`) · Python FastAPI service (Railway) · Inngest v4 (job orchestration) · Resend (transactional email) · OpenAI `gpt-4o-mini` (text feedback writer, admin-gated; vision pipeline disabled)
 
 ### Two-clip OL Stance pipeline (active)
 
@@ -23,8 +31,22 @@ TwoClipUpload.tsx
 ```
 
 Produces: `slope_deg_mean`, `lean_from_vertical_mean`, `detection_rate`, `reliable`, etc.  
-Missing: GPT-4o feedback pass — raw numbers are NOT the structured VideoAnalysis shape  
-Status: end-to-end working; GPT-4o text feedback step is a known planned addition
+Status: end-to-end working through `analysis_status: complete`.
+
+### GPT-4o text feedback writer (built 2026-07-15, not yet wired to auto-run)
+
+```
+POST /feedback  (Python service, X-Admin-Secret header — separate secret from /analyse's X-Service-Secret)
+  body: { session_id }
+  → reads session_videos.analysis + fault_type/line_side/position from the side-view row
+  → service/feedback.py: build_prompt() + generate_feedback()
+  → gpt-4o-mini, text-only prompt (no images — only the numeric measurements), json_object response
+  → writes result to session_videos.feedback (new JSONB column, migration-v10, NOT YET APPLIED)
+```
+
+Not called anywhere automatically — Inngest's `ol-stance-analysis` function stops after `/analyse`. This is intentional: dev/admin-only until output quality is reviewed (see Next Session Priorities). Trigger manually with curl once the migration is applied and env vars are set.
+
+`fault_type`/`line_side`/`position` are now persisted on the side-view row by `/analyse` (previously dropped — see old Gotcha, now fixed) so `/feedback` can read them back by `session_id` alone.
 
 ### Single-clip GPT-4o Vision pipeline (DISABLED 2026-07-14)
 
@@ -118,7 +140,14 @@ The `analysis` JSONB column is written by two pipelines producing different JSON
 
 ---
 
-## What Was Fixed This Session
+## What Was Fixed This Session (2026-07-15)
+
+- **GPT-4o text feedback writer built** — new `service/feedback.py` (`build_prompt()`, `generate_feedback()`) and a new `POST /feedback` route in `service/main.py`, gated by a fresh `X-Admin-Secret` header/dependency (`require_admin`, separate from `require_secret` which gates `/analyse`). Text-only prompt built from the raw MediaPipe measurements (`slope_deg_mean`, `lean_from_vertical_mean`, `higher_majority`, `detection_rate`, `reliable`) plus `fault_type`/`line_side`/`position` context; `gpt-4o-mini`, `response_format: json_object`. Skips the API call entirely and returns a fixed fallback if a clip had zero usable pose detections (nothing for the model to reason about). **Not yet run against a real session or applied to the DB — see Next Session Priorities.**
+- **`fault_type`/`line_side`/`position` now persisted by `/analyse`** — previously these were passed from Inngest to the Python service but never written back to the row (old outstanding item). Now included in the side-view row's update in `/analyse`, so `/feedback` can read them back by `session_id` without needing them re-supplied.
+- **`supabase/migration-v10-feedback-column.sql`** — adds the `feedback` JSONB column to `session_videos`. **Not yet applied to the DB.**
+- **`service/requirements.txt`** — added `openai==1.59.6`.
+
+### Previous session (2026-07-14) — upload architecture, Inngest sync, session page caching, single-clip pipeline disabled
 
 - **Signed-URL upload architecture** — replaced multipart POST through Vercel with presign + direct-to-Storage + confirm pattern. Files: `app/api/videos/presign/route.ts` (new), `app/api/videos/confirm/route.ts` (new), `components/VideoUpload.tsx`, `components/TwoClipUpload.tsx`
 - **Front-view row stuck at 'processing'** — `service/main.py` now marks the front-view row `complete` after the side-view write
@@ -127,15 +156,15 @@ The `analysis` JSONB column is written by two pipelines producing different JSON
 - **VideoAnalysisCard raw measurements crash** — added `isStructuredAnalysis()` type guard; card renders pose-measurement key/value table instead of crashing
 - **`view_angle` field missing from TypeScript type** — added `view_angle: 'side' | 'front' | null` to `SessionVideo` interface in `types/index.ts`
 - **VideoAnalysisCard awaiting statuses** — added render cases for `awaiting_both`, `awaiting_front`, `awaiting_side`, `ready`
-- **Single-clip vision pipeline disabled** — removed "Single clip" mode selector from videos page; `/api/videos/analyze` and `analyzeVideoFrames()` marked deprecated, kept for reference. Decision: cost was ~$0.018/call (2.5× $0.007 target); superseded by two-clip MediaPipe path + planned GPT-4o text feedback writer. Existing analyzed videos retain their `session_videos.analysis` data intact.
+- **Single-clip vision pipeline disabled** — removed "Single clip" mode selector from videos page; `/api/videos/analyze` and `analyzeVideoFrames()` marked deprecated, kept for reference. Decision: cost was ~$0.018/call (2.5× $0.007 target); superseded by two-clip MediaPipe path + GPT-4o text feedback writer. Existing analyzed videos retain their `session_videos.analysis` data intact.
 - **Supabase key migration complete** — both keys rotated to new format and legacy JWT keys fully disabled in Supabase (Settings → API Keys → Legacy → "Disable JWT-based API keys"). `NEXT_PUBLIC_SUPABASE_ANON_KEY` → `sb_publishable_...` format (no code change needed); `SUPABASE_SERVICE_ROLE_KEY` → `sb_secret_...` format (requires Authorization-header fix in `service/main.py`, already applied — see Gotcha #5). Verified live: coach dashboard and player signup both confirmed working after legacy key disable.
 
 ---
 
 ## What's Still Outstanding
 
-**GPT-4o text feedback pass for two-clip OL sessions**  
-The Python service writes raw MediaPipe measurements; no GPT-4o call converts them to structured coaching feedback. Planned: admin-only route, text-only prompt with measurements, `gpt-4o-mini`, `json_object` response. Gate: dev/admin-only until output quality is reviewed.
+**GPT-4o text feedback writer built but unverified**  
+`POST /feedback` exists (see "GPT-4o text feedback writer" above) but `migration-v10-feedback-column.sql` hasn't been applied, `OPENAI_API_KEY`/`ADMIN_SECRET` haven't been confirmed set on Railway, and no real session has been run through it. Nobody has read actual model output yet — quality is unverified. Not wired into the UI (`VideoAnalysisCard.tsx` doesn't read the `feedback` column) and not called automatically by the Inngest pipeline; both are deliberate until quality is reviewed.
 
 **Resend custom domain**  
 All transactional emails send from `onboarding@resend.dev`. Real delivery requires a verified custom domain in Resend. FROM address must be updated in three files (see Gotcha #6).
@@ -143,11 +172,20 @@ All transactional emails send from `onboarding@resend.dev`. Real delivery requir
 **Front-view biomechanical analysis**  
 Python service skips front-view clip entirely (log: "front-view processing not yet implemented"). Front-view row gets `analysis_status: complete` with `analysis: null`.
 
-**fault_type / line_side / position fields never persisted or displayed**  
-These columns exist in `session_videos` and the Inngest event passes them to Python, but Python never writes them back. No UI reads them.
+**fault_type / line_side / position persisted but still not displayed**  
+As of 2026-07-15, `/analyse` writes these back to the side-view row (see "What Was Fixed This Session"). No UI reads them yet.
 
 **`supabase/migration-v3-drills-feedback.sql` unapplied, safe to delete**  
 Creates `drills`, `videos`, `feedback_notes` tables + drill-library bucket. Never applied; no code references it. Decision to delete pending.
+
+**No calibration rules or fault types for positions beyond OL**  
+The entire fault taxonomy (`forward_lean`, `sitting_back`, `stagger`, `head_down`, `narrow_stance`) is OL 3-point stance-specific. No equivalent exists for WR, DB, LB, QB, or any other position — this blocks calibration filming and meaningful GPT-4o feedback for all non-OL players. `service/feedback.py`'s `FAULT_TYPE_CUES`/`POSITION_CUES` dicts and `generate_feedback(measurements, fault_type, line_side, position)` signature are already position-parameterized — extending to other positions means adding dict entries and a matching fault taxonomy, not re-architecting the call shape. See Next Session Priority 2.
+
+**`getOrCreateCoach()` can create coach with no consent trail**  
+`app/[coachId]/page.tsx` calls `getOrCreateCoach()` which can silently create a coach row with no `terms_version` and no `consent_records` row, reachable via direct URL navigation. Decision on fix approach (block navigation vs silent-capture-and-flag) not yet made.
+
+**Session list ordering on player detail page lacks clear timestamp indication**  
+Session list does not clearly indicate chronological order or timestamps, causing confusion during testing when identifying the most recent session among several from the same day. Low priority polish item.
 
 ---
 
@@ -155,9 +193,11 @@ Creates `drills`, `videos`, `feedback_notes` tables + drill-library bucket. Neve
 
 | File | Purpose |
 |---|---|
-| `service/main.py` | Python analysis service: FastAPI endpoints, MediaPipe processing, Supabase writes, sb_secret_ fix |
+| `service/main.py` | Python analysis service: FastAPI endpoints (`/analyse`, `/feedback`), MediaPipe processing, Supabase writes, sb_secret_ fix |
 | `service/pose_utils.py` | MediaPipe pose landmark extraction, side-view slope calculation |
 | `service/measurements.py` | `aggregate_side_measurements()` — filters frames, computes slope stats |
+| `service/feedback.py` | GPT-4o text feedback writer: `build_prompt()`, `generate_feedback()`, `FAULT_TYPE_CUES`/`POSITION_CUES` |
+| `supabase/migration-v10-feedback-column.sql` | Adds `feedback` JSONB column to `session_videos`. **Not yet applied.** |
 | `app/api/videos/presign/route.ts` | Step 1 of upload: consent gate + signed URL issuance |
 | `app/api/videos/confirm/route.ts` | Step 2 of upload: DB row insert + paired-clip check + Inngest fire |
 | `app/api/videos/upload/route.ts` | **Deprecated** — no longer called, kept for reference |
@@ -194,5 +234,7 @@ Creates `drills`, `videos`, `feedback_notes` tables + drill-library bucket. Neve
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY` — `sb_secret_...` format; requires the Authorization-header fix in `get_supabase()` (see Gotcha #5)
 - `SUPABASE_STORAGE_BUCKET` — value: `session-videos`
-- `SERVICE_SECRET` — shared secret matching `ANALYSIS_SERVICE_SECRET` on Vercel
+- `SERVICE_SECRET` — shared secret matching `ANALYSIS_SERVICE_SECRET` on Vercel; gates `/analyse`
+- `ADMIN_SECRET` — **new 2026-07-15**, gates `/feedback` (`X-Admin-Secret` header); deliberately separate from `SERVICE_SECRET` so the feedback route isn't reachable by anything that only has the Inngest-facing secret. Not yet set on Railway — required before `/feedback` will return anything but a 500.
+- `OPENAI_API_KEY` — **new 2026-07-15**, used by `service/feedback.py`. Not yet set on Railway.
 - `MEDIAPIPE_MODEL_PATH` — set by Dockerfile to `/app/pose_landmarker_heavy.task`; leave blank in Railway dashboard

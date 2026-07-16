@@ -14,6 +14,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 log = logging.getLogger(__name__)
 
 SERVICE_SECRET   = os.environ.get("SERVICE_SECRET", "")
+ADMIN_SECRET     = os.environ.get("ADMIN_SECRET", "")
 SUPABASE_URL     = os.environ.get("SUPABASE_URL", "")
 SUPABASE_KEY     = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 STORAGE_BUCKET   = os.environ.get("SUPABASE_STORAGE_BUCKET", "")
@@ -75,6 +76,13 @@ def require_secret(x_service_secret: str = Header(default="")):
         raise HTTPException(status_code=500, detail="SERVICE_SECRET not configured")
     if x_service_secret != SERVICE_SECRET:
         raise HTTPException(status_code=401, detail="Invalid or missing X-Service-Secret header")
+
+
+def require_admin(x_admin_secret: str = Header(default="")):
+    if not ADMIN_SECRET:
+        raise HTTPException(status_code=500, detail="ADMIN_SECRET not configured")
+    if x_admin_secret != ADMIN_SECRET:
+        raise HTTPException(status_code=401, detail="Invalid or missing X-Admin-Secret header")
 
 
 # ── Health ────────────────────────────────────────────────────────────────────
@@ -222,4 +230,70 @@ def analyse(req: AnalyseRequest):
         "session_id": req.session_id,
         "side":       aggregated,
         "front":      None,
+    }
+
+
+# ── Feedback (GPT-4o text writer, admin-gated) ─────────────────────────────────
+#
+# Converts the raw MediaPipe measurements already written to session_videos.analysis
+# into coaching feedback via gpt-4o-mini. Separate from /analyse and gated by its
+# own X-Admin-Secret header (not X-Service-Secret) because this is a dev/admin-only
+# step until output quality has been reviewed — it is not called automatically as
+# part of the Inngest pipeline.
+
+class FeedbackRequest(BaseModel):
+    session_id: str
+
+
+@app.post("/feedback", dependencies=[Depends(require_admin)])
+def feedback(req: FeedbackRequest):
+    log.info("received feedback request for session %s", req.session_id)
+
+    from feedback import generate_feedback
+
+    db = get_supabase()
+
+    row_result = db.table("session_videos") \
+        .select("analysis, analysis_status, fault_type, line_side, position") \
+        .eq("session_id", req.session_id) \
+        .eq("view_angle", "side") \
+        .limit(1) \
+        .execute()
+
+    rows = row_result.data or []
+    if not rows:
+        raise HTTPException(status_code=404, detail="no side-view row found for this session")
+
+    row = rows[0]
+    if row["analysis_status"] != "complete" or not row["analysis"]:
+        raise HTTPException(
+            status_code=409,
+            detail=f"side-view analysis not complete (status: {row['analysis_status']})",
+        )
+
+    try:
+        result = generate_feedback(
+            measurements=row["analysis"],
+            fault_type=row.get("fault_type") or "none",
+            line_side=row.get("line_side") or "right",
+            position=row.get("position") or "guard_tackle",
+        )
+    except RuntimeError as exc:
+        raise HTTPException(status_code=502, detail=str(exc))
+
+    write_result = db.table("session_videos") \
+        .update({"feedback": result}) \
+        .eq("session_id", req.session_id) \
+        .eq("view_angle", "side") \
+        .execute()
+
+    if hasattr(write_result, "error") and write_result.error:
+        raise HTTPException(status_code=500, detail=f"DB write failed: {write_result.error}")
+
+    log.info("session %s feedback written to DB", req.session_id)
+
+    return {
+        "status":     "complete",
+        "session_id": req.session_id,
+        "feedback":   result,
     }
