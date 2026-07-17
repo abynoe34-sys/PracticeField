@@ -253,6 +253,25 @@ export interface VideoAnalysis {
   position_context:        string        // position-specific coaching notes
 }
 
+// Output shape of the Python service's POST /feedback route (service/feedback.py).
+// Distinct from VideoAnalysis: text-only (no frames_analyzed/technique_scores/
+// comparison — nothing derived from images), so issues have no timestamp_hint.
+export interface StanceFeedbackIssue {
+  issue:         string
+  root_cause:    string
+  severity:      IssueSeverity   // same 'critical'|'high'|'medium'|'low' vocabulary as TechniqueIssue
+  coaching_cue:  string
+  drill_fix:     string
+}
+
+export interface StanceFeedback {
+  overall_grade:      OverallGrade
+  summary:             string
+  issues:              StanceFeedbackIssue[]
+  strengths:           TechniqueStrength[]   // same {strength, evidence} shape feedback.py returns
+  position_context:    string
+}
+
 export interface SessionVideo {
   id:               string
   session_id:       string | null
@@ -267,6 +286,7 @@ export interface SessionVideo {
   view_angle:       'side' | 'front' | null
   analysis_status:  AnalysisStatus
   analysis:         VideoAnalysis | null
+  feedback:         StanceFeedback | null
   frame_paths:      string[]
   label:            string | null
   drill_type:       DrillType | null

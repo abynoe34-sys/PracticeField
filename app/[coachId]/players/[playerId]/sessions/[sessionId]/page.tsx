@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { getAdminClient } from '@/lib/supabase'
 import { formatDate } from '@/lib/utils'
 import VideoAnalysisCard from '@/components/VideoAnalysisCard'
+import FeedbackCard from '@/components/FeedbackCard'
 import type { SessionVideo } from '@/types'
 
 interface SessionDetailProps {
@@ -122,6 +123,7 @@ export default async function SessionDetailPage({ params }: SessionDetailProps) 
                   video={video}
                   position={player.position ?? null}
                 />
+                <FeedbackCard feedback={video.feedback} />
                 {frontClip?.public_url && (
                   <details className="group">
                     <summary className="text-xs text-gray-600 cursor-pointer hover:text-gray-400 transition-colors px-1">
