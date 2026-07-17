@@ -178,17 +178,9 @@ export default function VideoAnalysisCard({ video, position, onReanalyze, onDele
         </div>
       )}
 
-      {/* Raw pose measurements (Python service output, no GPT-4o pass yet) */}
-      {video.analysis_status === 'complete' && rawAnalysis && !analysis && (
-        <div className="px-4 py-4 space-y-2">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">Pose Measurements</p>
-          {Object.entries(rawAnalysis as unknown as Record<string, unknown>).map(([k, v]) => (
-            <div key={k} className="flex justify-between text-xs">
-              <span className="text-gray-500">{k.replace(/_/g, ' ')}</span>
-              <span className="text-white font-mono">{typeof v === 'number' ? v.toFixed(2) : String(v)}</span>
-            </div>
-          ))}
-        </div>
+      {/* Complete, but nothing to show yet — no structured analysis and /feedback hasn't run */}
+      {video.analysis_status === 'complete' && !analysis && !video.feedback && (
+        <div className="px-4 py-3 text-sm text-gray-500">✓ Analysis complete — feedback pending</div>
       )}
 
       {/* Full Analysis */}
