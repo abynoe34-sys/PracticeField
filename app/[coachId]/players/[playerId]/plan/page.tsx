@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import type { Player, Session, SessionVideo, ExperienceLevel } from '@/types'
+import { isStructuredAnalysis } from '@/components/VideoAnalysisCard'
 
 type PainPointSource = 'video' | 'session' | 'manual'
 
@@ -38,53 +39,72 @@ export default function GeneratePlanPage() {
   const [useAI, setUseAI] = useState(true)
 
   const load = useCallback(async () => {
-    const [pr, sr, vr] = await Promise.all([
-      fetch(`/api/players/${playerId}`),
-      fetch(`/api/sessions?coachId=${coachId}&playerId=${playerId}`),
-      fetch(`/api/videos?coachId=${coachId}&playerId=${playerId}`),
-    ])
-    const [pd, sd, vd] = await Promise.all([pr.json(), sr.json(), vr.json()])
+    try {
+      const [pr, sr, vr] = await Promise.all([
+        fetch(`/api/players/${playerId}`),
+        fetch(`/api/sessions?coachId=${coachId}&playerId=${playerId}`),
+        fetch(`/api/videos?coachId=${coachId}&playerId=${playerId}`),
+      ])
+      const [pd, sd, vd] = await Promise.all([pr.json(), sr.json(), vr.json()])
 
-    const p: Player = pd.player
-    setPlayer(p)
-    setLevel(p.experience_level ?? 'beginner')
-
-    const sessionList: Session[] = sd.sessions ?? []
-
-    // ── All issues from all completed videos (de-duped), severity ordered ──
-    const videos: SessionVideo[] = vd.videos ?? []
-    const latestAnalysed = videos.find(v => v.analysis_status === 'complete' && v.analysis) ?? null
-    setLatestVideo(latestAnalysed)
-
-    const videoIssues: string[] = latestAnalysed?.analysis?.issues
-      .sort((a, b) => {
-        const order: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 }
-        return (order[a.severity] ?? 4) - (order[b.severity] ?? 4)
-      })
-      .map(i => i.issue) ?? []
-
-    // ── Session improvements from latest session ──────────────────────────
-    const sessionImprovements: string[] = sessionList[0]?.improvements.slice(0, 5) ?? []
-
-    // ── Build suggestion list — video first, then session (de-duped) ───────
-    const seen = new Set<string>()
-    const pool: Suggestion[] = []
-
-    for (const issue of videoIssues) {
-      if (!seen.has(issue)) {
-        seen.add(issue)
-        pool.push({ text: issue, source: 'video' })
+      const p: Player | undefined = pd.player
+      if (!p) {
+        setError(pd.error ?? 'Player not found.')
+        return
       }
-    }
-    for (const imp of sessionImprovements) {
-      if (!seen.has(imp)) {
-        seen.add(imp)
-        pool.push({ text: imp, source: 'session' })
-      }
-    }
+      setPlayer(p)
+      setLevel(p.experience_level ?? 'beginner')
 
-    setSuggestions(pool)
-    setLoading(false)
+      const sessionList: Session[] = sd.sessions ?? []
+
+      // ── All issues from all completed videos (de-duped), severity ordered ──
+      // Only videos with the structured GPT-4o shape have an `issues` array —
+      // the two-clip pipeline's raw MediaPipe measurements (analysis_status
+      // 'complete' but analysis = {slope_deg_mean, ...}) do not, and treating
+      // them as structured crashed this whole page (see CLAUDE.md Gotcha #8).
+      const videos: SessionVideo[] = vd.videos ?? []
+      const latestAnalysed = videos.find(
+        v => v.analysis_status === 'complete' && isStructuredAnalysis(v.analysis)
+      ) ?? null
+      setLatestVideo(latestAnalysed)
+
+      let videoIssues: string[] = []
+      if (latestAnalysed && isStructuredAnalysis(latestAnalysed.analysis)) {
+        videoIssues = [...latestAnalysed.analysis.issues]
+          .sort((a, b) => {
+            const order: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 }
+            return (order[a.severity] ?? 4) - (order[b.severity] ?? 4)
+          })
+          .map(i => i.issue)
+      }
+
+      // ── Session improvements from latest session ──────────────────────────
+      const sessionImprovements: string[] = sessionList[0]?.improvements.slice(0, 5) ?? []
+
+      // ── Build suggestion list — video first, then session (de-duped) ───────
+      const seen = new Set<string>()
+      const pool: Suggestion[] = []
+
+      for (const issue of videoIssues) {
+        if (!seen.has(issue)) {
+          seen.add(issue)
+          pool.push({ text: issue, source: 'video' })
+        }
+      }
+      for (const imp of sessionImprovements) {
+        if (!seen.has(imp)) {
+          seen.add(imp)
+          pool.push({ text: imp, source: 'session' })
+        }
+      }
+
+      setSuggestions(pool)
+    } catch (err) {
+      console.error('Failed to load plan page data', err)
+      setError('Failed to load player data. Please refresh and try again.')
+    } finally {
+      setLoading(false)
+    }
   }, [coachId, playerId])
 
   useEffect(() => { load() }, [load])

@@ -1,6 +1,6 @@
 # Practice Field — Claude Code Context
 
-> Last updated: 2026-07-17 (session that built and tested the GPT-4o `/feedback` route end-to-end, fixed fault_type/line_side/position persistence, rotated OPENAI_API_KEY after accidental exposure)
+> Last updated: 2026-07-17 (session that built and tested the GPT-4o `/feedback` route end-to-end, fixed fault_type/line_side/position persistence, rotated OPENAI_API_KEY after accidental exposure, and fixed a production-breaking crash on the Virtual Training Coach plan page)
 
 ## Next Session Priorities
 
@@ -74,7 +74,7 @@ POST /feedback  (Python/Railway service, service/main.py)
 
 ### VideoAnalysisCard handles both analysis shapes
 
-`components/VideoAnalysisCard.tsx` uses `isStructuredAnalysis()` type guard (checks for presence of the `summary` string field) to discriminate between the two `analysis`-column payloads. **Note:** the new `feedback` column is deliberately separate from `analysis` specifically to avoid this guard — the feedback shape also has a `summary` field and would false-positive if written into `analysis`.
+`components/VideoAnalysisCard.tsx` exports `isStructuredAnalysis()` (checks for presence of the `summary` string field) to discriminate between the two `analysis`-column payloads. Now exported (was module-private) so other pages can reuse the same guard — see Gotcha #8's "bitten twice" note. **Note:** the new `feedback` column is deliberately separate from `analysis` specifically to avoid this guard — the feedback shape also has a `summary` field and would false-positive if written into `analysis`.
 
 ### Upload architecture (signed URL — critical)
 
@@ -116,6 +116,8 @@ Unchanged — same convention now applies to the new `feedback` column.
 ### 8. session_videos.analysis column holds two incompatible shapes
 Unchanged. **Extended this session:** `feedback` is a *third*, separate JSONB column specifically to avoid a shape collision with `isStructuredAnalysis()` — do not write feedback output into `analysis`.
 
+**This gotcha has now bitten twice.** Originally the guard was applied only in `VideoAnalysisCard.tsx`. On 2026-07-17 it was found that `app/[coachId]/players/[playerId]/plan/page.tsx` read `analysis.issues.sort(...)` with no guard, throwing a `TypeError` on the raw-measurement shape (which has no `issues` key). Because `load()` had no try/catch, `setLoading(false)` never ran and the page hung silently on "Loading…" forever — in production, for essentially every player, since every two-clip session produces the raw shape. Fixed by exporting `isStructuredAnalysis()` from `VideoAnalysisCard.tsx` and applying it in the plan page, plus wrapping `load()` in try/catch/finally so any future error surfaces instead of hanging silently. Verified against two players locally (session `2a740dec-572e-4d42-ad52-4713a2a793f3`'s player, and the "john" / `FG8Q7KLS2` player who originally reproduced the production hang) — both load correctly now. **Any code that reads the `analysis` field MUST apply `isStructuredAnalysis()` first** — treat this as a hard rule, not a suggestion. See the outstanding audit item below.
+
 ### 9. NEW — API keys pasted with embedded newlines break outbound HTTP calls
 `OPENAI_API_KEY` on Railway was originally pasted with a literal newline character embedded mid-string (likely from a password manager or notes app that appended a trailing line break on copy). This produced `httpcore.LocalProtocolError: Illegal header value` on every OpenAI call — surfaced misleadingly as a generic `openai.APIConnectionError: Connection error` at the top level, which sent debugging down the wrong path (DNS/SSL) for a while before the real cause was found in the full traceback.
 
@@ -136,11 +138,14 @@ Encountered a real (brief) GitHub outage on 2026-07-16 that blocked both Vercel 
 - **New env vars set (Railway):** `OPENAI_API_KEY`, `ADMIN_SECRET` — both required for `/feedback` to function.
 - **OPENAI_API_KEY rotated** on both Vercel and Railway after the old key was exposed with an embedded newline (see Gotcha #9). Old key revoked on OpenAI's dashboard.
 - **Note:** `ADMIN_SECRET` value was also visible in a debugging screenshot during this session (PowerShell terminal output shown to get help). Low real-world risk (gates only the `/feedback` admin route, no financial exposure), but **should be regenerated** before considering this fully closed out — not yet done as of this doc update.
-- **Git history:** three commits, in order — `fix: persist fault_type/line_side/position on /analyse write`, `feat: add /feedback route for GPT-4o stance feedback`, `chore: untrack __pycache__` (plus a `.gitignore` addition for `__pycache__/` and `*.pyc`).
+- **Production-breaking crash fixed on the Virtual Training Coach plan page** — `app/[coachId]/players/[playerId]/plan/page.tsx` crashed on load for essentially every player (see Gotcha #8's "bitten twice" note) because it read `analysis.issues` without the `isStructuredAnalysis()` guard. Symptom in production: page stuck on "Loading…" forever, no error shown, because the resulting `TypeError` was thrown outside any try/catch and `setLoading(false)` never ran. Fixed by exporting the guard and applying it, plus adding try/catch/finally around the page's data load.
+- **Git history:** four commits, in order — `fix: persist fault_type/line_side/position on /analyse write`, `feat: add /feedback route for GPT-4o stance feedback`, `chore: untrack __pycache__` (plus a `.gitignore` addition for `__pycache__/` and `*.pyc`), `fix: guard plan page against raw-measurement analysis shape and silent load failures`.
 
 ---
 
 ## What's Still Outstanding
+
+**AUDIT: find any other unguarded `analysis` reads** — Gotcha #8 has now caused a real production hang twice (`VideoAnalysisCard`, then the plan page). Both known spots are fixed, but if two places missed the `isStructuredAnalysis()` guard, a third may exist. Do a repo-wide search for every place the `analysis` field is read/dereferenced and confirm each applies the guard before touching shape-specific fields like `.issues`, `.summary`, `.scores`, `.plan`. Low effort, high value — prevents the next silent hang.
 
 **`/feedback` prompt refinement** — see Next Session Priority 1. Hallucination on null position data is the most urgent piece; output shape divergence from original plan needs a deliberate decision.
 
@@ -181,10 +186,11 @@ Encountered a real (brief) GitHub outage on 2026-07-16 that blocked both Vercel 
 | `lib/inngest.ts` | Inngest client, app ID `practice-field` |
 | `lib/jobs/ol-stance-analysis.ts` | Inngest function: validates session, marks processing, calls Python /analyse — **check here first for Priority 2 (position NULL investigation)** |
 | `lib/server-frames.ts` | **Deprecated 2026-07-14** — FFmpeg frame extraction for single-clip path; kept for reference |
-| `components/VideoAnalysisCard.tsx` | Renders both structured VideoAnalysis and raw Python measurements via `isStructuredAnalysis()`. Does not yet render the new `feedback` column — not wired into UI. |
+| `components/VideoAnalysisCard.tsx` | Renders both structured VideoAnalysis and raw Python measurements via `isStructuredAnalysis()` (now exported — reused by the plan page, see Gotcha #8). Does not yet render the new `feedback` column — not wired into UI. |
 | `components/VideoUpload.tsx` | **Deprecated 2026-07-14** — single-clip upload UI; no longer rendered |
 | `components/TwoClipUpload.tsx` | Two-clip OL stance upload UI: presign → Storage PUT → confirm (×2) |
 | `app/[coachId]/players/[playerId]/sessions/[sessionId]/page.tsx` | Session results page — `force-dynamic`, fetches videos, renders VideoAnalysisCard per drill |
+| `app/[coachId]/players/[playerId]/plan/page.tsx` | Virtual Training Coach plan builder. **Fixed 2026-07-17** — crashed for essentially every player reading `analysis.issues` without `isStructuredAnalysis()`; see Gotcha #8. |
 | `app/[coachId]/players/[playerId]/videos/page.tsx` | Coach video library + upload tab (two-clip only as of 2026-07-14) |
 | `app/api/inngest/route.ts` | Inngest serve endpoint — must be synced manually in Inngest dashboard after deploy |
 | `types/index.ts` | `VideoAnalysis`, `SessionVideo` (includes `view_angle`), `AnalysisStatus` — **does not yet include a `feedback` field on the SessionVideo type; add when wiring into UI** |

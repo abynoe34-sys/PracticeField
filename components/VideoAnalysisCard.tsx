@@ -96,7 +96,7 @@ function IssueRow({ issue }: { issue: TechniqueIssue }) {
 // raw Python pose-measurement payload (has 'slope_deg_mean' etc, no 'summary').
 // Both land in the same analysis column; only the structured result can be
 // rendered by the full card UI.
-function isStructuredAnalysis(a: VideoAnalysis | null): a is VideoAnalysis {
+export function isStructuredAnalysis(a: VideoAnalysis | null): a is VideoAnalysis {
   return !!a && typeof (a as unknown as Record<string, unknown>).summary === 'string'
 }
 
