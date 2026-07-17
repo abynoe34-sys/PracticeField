@@ -272,11 +272,15 @@ def feedback(req: FeedbackRequest):
         )
 
     try:
+        # Pass fault_type/line_side/position through as-is, including None —
+        # do NOT substitute a default. Substituting a real value for missing
+        # data is what let a NULL position produce the exact same confident
+        # language as a real one; feedback.py hedges explicitly on None.
         result = generate_feedback(
             measurements=row["analysis"],
-            fault_type=row.get("fault_type") or "none",
-            line_side=row.get("line_side") or "right",
-            position=row.get("position") or "guard_tackle",
+            fault_type=row.get("fault_type"),
+            line_side=row.get("line_side"),
+            position=row.get("position"),
         )
     except RuntimeError as exc:
         raise HTTPException(status_code=502, detail=str(exc))

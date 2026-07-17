@@ -44,10 +44,31 @@ FAULT_TYPE_CUES = {
     "sitting_back":  "This clip targets SITTING BACK — weight shifted onto the heels, hips dropped back rather than loaded forward.",
 }
 
+# "none" above is a real, recorded calibration value (coach explicitly tagged
+# this clip as not targeting a fault) — that's different from the value being
+# genuinely missing/unrecorded, which needs its own explicit hedge so the
+# model can't quietly treat "unknown" the same as a known value.
+FAULT_TYPE_UNKNOWN_CUE = (
+    "Fault type for this clip is UNKNOWN (not recorded upstream). Do not claim to "
+    "target, rule out, or imply any specific fault type — describe only what the "
+    "measurements themselves show."
+)
+
 POSITION_CUES = {
     "guard_tackle": "Player is a Guard or Tackle. In a proper 3-point stance, hips should sit slightly higher than shoulders (positive slope_deg), weight loaded onto the down hand, ready to fire out low and long.",
     "center":       "Player is a Center. Stance must also accommodate a clean, one-handed snap — the down-hand/snap-hand relationship limits how far forward weight can load compared to a Guard/Tackle stance, but hips should still sit at or slightly above shoulder height.",
 }
+
+POSITION_UNKNOWN_CUE = (
+    "Player position is UNKNOWN (not recorded upstream). Do NOT name or imply a "
+    "specific position anywhere in your response — no \"guard\", \"tackle\", \"center\", "
+    "or similar. Use only position-neutral language: \"this stance\", \"a 3-point stance\". "
+    "This restriction applies to position_context too."
+)
+
+LINE_SIDE_UNKNOWN_CUE = (
+    "Line side filmed is UNKNOWN (not recorded upstream) — do not state or assume left or right."
+)
 
 GRADE_RUBRIC = """
 Grading rubric:
@@ -71,14 +92,38 @@ def _measurements_summary(m: dict) -> str:
     return "\n".join(lines)
 
 
-def build_prompt(measurements: dict, fault_type: str, line_side: str, position: str) -> str:
-    fault_cue    = FAULT_TYPE_CUES.get(fault_type, FAULT_TYPE_CUES["none"])
-    position_cue = POSITION_CUES.get(position, POSITION_CUES["guard_tackle"])
+def build_prompt(
+    measurements: dict,
+    fault_type: str | None,
+    line_side: str | None,
+    position: str | None,
+) -> str:
+    """
+    fault_type/line_side/position are Optional — pass through the raw DB
+    value (including None) rather than substituting a default. Substituting
+    a concrete fallback (e.g. treating missing position as "guard_tackle")
+    is exactly the bug this hedges against: it made known and unknown data
+    produce identical, equally-confident language. None here means
+    genuinely unrecorded, and gets an explicit "do not guess" instruction
+    instead of being silently treated as a real value.
+    """
+    fault_cue    = FAULT_TYPE_CUES.get(fault_type, FAULT_TYPE_UNKNOWN_CUE) if fault_type else FAULT_TYPE_UNKNOWN_CUE
+    position_cue = POSITION_CUES.get(position, POSITION_UNKNOWN_CUE) if position else POSITION_UNKNOWN_CUE
+    line_side_cue = f"Line side filmed: {line_side}." if line_side else LINE_SIDE_UNKNOWN_CUE
+
+    position_context_instruction = (
+        f'one sentence connecting the grade to the {position} stance requirements'
+        if position else
+        'one sentence connecting the grade to general 3-point stance requirements — '
+        'do NOT name or imply a specific position here'
+    )
 
     return f"""You are an expert offensive line coach evaluating a 3-point stance from MediaPipe pose measurements. You do NOT have the video — only the numeric measurements below. Do not invent visual details you cannot know from these numbers (no comments on hand placement, eye level, or anything not derivable from the slope/lean angles).
 
+IMPORTANT: Some context below may be marked UNKNOWN. Only state specifics (position, line side, fault type) that are explicitly given as known — never guess, name, or imply a specific value for anything marked UNKNOWN, anywhere in your response including position_context.
+
 {position_cue}
-Line side filmed: {line_side}
+{line_side_cue}
 {fault_cue}
 {GRADE_RUBRIC}
 
@@ -104,7 +149,7 @@ Respond ONLY with a single valid JSON object matching this exact structure (no m
       "evidence": "which measurement supports this"
     }}
   ],
-  "position_context": "one sentence connecting the grade to the {position} stance requirements"
+  "position_context": "{position_context_instruction}"
 }}
 
 If reliable is false, still return the structure above but grade conservatively, keep issues to at most one low-severity entry noting detection was unreliable, and say so explicitly in the summary."""
@@ -126,7 +171,12 @@ def _no_detection_fallback() -> dict:
     }
 
 
-def generate_feedback(measurements: dict, fault_type: str, line_side: str, position: str) -> dict:
+def generate_feedback(
+    measurements: dict,
+    fault_type: str | None,
+    line_side: str | None,
+    position: str | None,
+) -> dict:
     """
     Calls gpt-4o-mini with a text-only prompt built from raw MediaPipe
     measurements and returns the parsed feedback JSON object.
