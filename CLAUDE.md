@@ -1,16 +1,16 @@
 # Practice Field — Claude Code Context
 
-> Last updated: 2026-07-17 (session that built and tested the GPT-4o `/feedback` route end-to-end, fixed fault_type/line_side/position persistence, rotated OPENAI_API_KEY after accidental exposure, wired `/feedback` output into the session results page, hid raw pose measurements from athletes, and fixed a production-breaking crash on the Virtual Training Coach plan page)
+> Last updated: 2026-07-17 (session that built and tested the GPT-4o `/feedback` route end-to-end, fixed fault_type/line_side/position persistence, rotated OPENAI_API_KEY after accidental exposure, wired `/feedback` output into the session results page, hid raw pose measurements from athletes, fixed a production-breaking crash on the Virtual Training Coach plan page, fixed the null-data hallucination bug, and made feedback generation automatic)
 
 ## Next Session Priorities
 
-1. **Refine the `/feedback` prompt language** — the route is live and returns coherent output, but real-output review surfaced two problems worth fixing before this goes anywhere near a real coach:
-   - **Hallucination risk on missing data:** a test call against a session with `position: NULL` still returned confident, specific language — `"This stance does not meet the necessary requirements for a guard or tackle..."` — inventing position-specific detail the data didn't support. The prompt needs an explicit instruction to avoid position-specific claims when `position` is null (or `line_side`/`fault_type` are null), and fall back to generic phrasing.
-   - **Output shape drifted from spec:** the original plan (this doc + a separate chat session) called for a simple `summary` + `faults[]` shape. What's actually implemented in `service/feedback.py` returns a richer shape — `overall_grade`, `summary`, `issues[]` (with `issue`/`root_cause`/`severity`/`coaching_cue`/`drill_fix`), `strengths[]`, `position_context`. This isn't necessarily wrong — it's more actionable — but it's a real divergence worth a deliberate decision (keep it, simplify it, or something in between) rather than an accidental one. Also untested: whether `strengths[]` ever actually populates, or defaults to empty whenever severity is high (only tested against one bad-stance session so far).
+1. **Run the live end-to-end verification for auto-generated feedback** — Phase 2 (auto-trigger) is implemented and unit/logic-verified (see "What Was Fixed"), but the one check that genuinely requires the live deployed stack — upload a fresh two-clip session through the real app and confirm `feedback` populates automatically with zero manual curl calls — has not been run yet. Do this before treating auto-generation as fully proven. Also worth re-triggering `/analyse` on an already-uploaded clip (real `storage_path` values exist from prior test sessions) as a cheaper alternative to a brand-new upload if that's easier.
 
-2. **Investigate why `position` is NULL on tested sessions** — the persistence fix (this session) should write `fault_type`/`line_side`/`position` to the side-view row on `/analyse`, but the test session (`2a740dec-572e-4d42-ad52-4713a2a793f3`) had `position: NULL` despite going through `/analyse` after the fix deployed. Need to determine: is `position` actually being passed into the Inngest event / `/analyse` call from the Next.js side at all (i.e. is this a real upstream data gap — nobody records position when a coach films), or is there a bug in the persistence write itself? Check `lib/jobs/ol-stance-analysis.ts` and whatever calls it to confirm `position` is even being sent.
+2. **Investigate why `position` is NULL on some tested sessions** — still open, still exactly as scoped before. Note: this is now lower-stakes than it was — the 2026-07-17 hedging fix (see below) makes a NULL position *safe* to serve (no more invented "guard or tackle" language), it just doesn't explain *why* it's null on some rows and not others (compare `2a740dec-...`, NULL, vs `2a525837-...`, correctly populated — both went through `/analyse` after the persistence fix). Check `lib/jobs/ol-stance-analysis.ts` and whatever calls it to confirm `position` is actually being sent from the Next.js side.
 
-3. **Expand the fault taxonomy — now bigger in scope than previously framed.** Note: this was always intentionally deferred work, not a blocker discovered late. This session's goal was proving the full pipeline end-to-end (upload → measurement → feedback) works at all, even with incomplete calibration knowledge — that's now done. Good-vs-bad calibration data collection is pending and will be provided separately; the taxonomy work below depends on it and isn't expected to start until that data exists. Originally scoped as "positions beyond OL" (WR, DB, LB, QB), but this session surfaced that it's actually two separate axes:
+3. **Decide on `/feedback` output shape** — still open. The original plan (this doc + a separate chat session) called for a simple `summary` + `faults[]` shape; what's actually implemented in `service/feedback.py` returns a richer shape (`overall_grade`, `summary`, `issues[]`, `strengths[]`, `position_context`). Not necessarily wrong — more actionable — but a real divergence worth a deliberate decision rather than an accidental one. Also still untested: whether `strengths[]` ever actually populates, or defaults to empty whenever severity is high.
+
+4. **Expand the fault taxonomy — now bigger in scope than previously framed.** Note: this was always intentionally deferred work, not a blocker discovered late. Good-vs-bad calibration data collection is pending and will be provided separately; the taxonomy work below depends on it and isn't expected to start until that data exists. Originally scoped as "positions beyond OL" (WR, DB, LB, QB), but turned out to be two separate axes:
    - **More positions** (WR, DB, LB, QB, etc.) — original scope, still fully open, no calibration rules exist beyond OL.
    - **Technique beyond stance** — the current taxonomy (`forward_lean`, `sitting_back`, `stagger`, `head_down`, `narrow_stance`) is not just OL-specific, it's *stance-specific*. Any future work on technique during a drill, rep, or movement (not just the initial stance) has no taxonomy at all, for any position, including OL.
 
@@ -40,20 +40,38 @@ TwoClipUpload.tsx
 
 Produces: `slope_deg_mean`, `lean_from_vertical_mean`, `detection_rate`, `reliable`, etc., plus (as of this session) persisted `fault_type`, `line_side`, `position` on the side-view row.
 
-### GPT-4o feedback writer (`/feedback` route — live, admin-gated)
+### GPT-4o feedback writer — now generates automatically (as of 2026-07-17)
 
 ```
-POST /feedback  (Python/Railway service, service/main.py)
-  → gated by X-Admin-Secret header (require_admin dependency, main.py:81-85)
+Auto-trigger (new): inside POST /analyse, immediately after the side-view row's
+  analysis is written — same process, uses the measurements/fault_type/line_side/
+  position already in memory, no re-fetch or extra network hop.
+  → best-effort, wrapped in try/except: an OpenAI failure is logged and swallowed,
+    never affects the analysis write (which already succeeded above it) or the
+    front-view write (which happens after it)
+  → skipped entirely (not even the zero-detection fallback) when there's no usable
+    pose data — feedback just stays null, same as the existing "feedback pending" UI state
+
+Manual (unchanged): POST /feedback  (Python/Railway service, service/main.py)
+  → gated by X-Admin-Secret header (require_admin dependency)
   → body: { "session_id": "<uuid>" }
-  → looks up side-view session_videos row server-side (analysis, fault_type, line_side, position)
-  → service/feedback.py: builds text-only prompt from raw measurements + fault_type/line_side/position context
+  → still works for re-generating feedback on any session (e.g. after a prompt change)
+
+Both paths converge on the same service/feedback.py:
+  → build_prompt()/generate_feedback() build a text-only prompt from raw measurements +
+    fault_type/line_side/position — each of the three is Optional; None gets an explicit
+    "this is UNKNOWN, do not guess/name/imply a value" instruction rather than being
+    silently substituted with a default (see the 2026-07-17 hedging fix below)
   → calls gpt-4o-mini, response_format json_object
-  → skips the OpenAI call and returns a fixed fallback if zero usable pose detections (won't hallucinate from nothing)
-  → writes result to session_videos.feedback (JSONB, side-view row only — separate column from `analysis`, does NOT trip isStructuredAnalysis())
+  → writes result to session_videos.feedback (JSONB, side-view row only — separate
+    column from `analysis`, does NOT trip isStructuredAnalysis())
 ```
 
-**Status:** tested end-to-end successfully on 2026-07-17 against session `2a740dec-572e-4d42-ad52-4713a2a793f3` — returned coherent, well-structured output. **Known issue:** hallucinated position-specific language despite `position` being NULL on the test row (see Next Session Priority 1). **Now wired into the UI** — `components/FeedbackCard.tsx` renders the `feedback` column on the session results page, alongside `VideoAnalysisCard`. Still only reachable server-side via the admin-gated route — nothing in the UI triggers `/feedback` itself, so most sessions show a "feedback pending" placeholder until an admin calls the route manually.
+**Hedging fix (2026-07-17):** the real root cause of the hallucination issue was in `main.py`, not the prompt — the `/feedback` route coerced NULL `fault_type`/`line_side`/`position` to concrete fallback values (e.g. NULL `position` → the literal string `"guard_tackle"`) *before* `feedback.py` ever saw them, so the model never actually knew data was missing. Fixed by passing `None` through as-is and adding explicit UNKNOWN cues in `feedback.py`. Verified live against both sessions from the original report: `2a525837-...` (`position: guard_tackle`) still gets grounded position language in `position_context`; `2a740dec-...` (`position: NULL`) now produces zero mentions of guard/tackle/center anywhere in the output.
+
+**Auto-generation (2026-07-17):** implemented and logic-verified (bad-key failure confirmed caught, doesn't affect the analysis write), but the live end-to-end check — a real upload through the deployed app, confirming `feedback` populates with no manual curl call — hasn't been run yet. See Next Session Priority 1.
+
+**Wired into the UI** — `components/FeedbackCard.tsx` renders the `feedback` column on the session results page, alongside `VideoAnalysisCard`. Sessions without feedback yet (auto-generation failed, or predate this change) still show the "feedback pending" placeholder.
 
 **Output shape actually implemented** (differs from originally-planned simple shape):
 ```json
@@ -147,7 +165,9 @@ Encountered a real (brief) GitHub outage on 2026-07-16 that blocked both Vercel 
 - **Production-breaking crash fixed on the Virtual Training Coach plan page** — `app/[coachId]/players/[playerId]/plan/page.tsx` crashed on load for essentially every player (see Gotcha #8's "bitten twice" note) because it read `analysis.issues` without the `isStructuredAnalysis()` guard. Symptom in production: page stuck on "Loading…" forever, no error shown, because the resulting `TypeError` was thrown outside any try/catch and `setLoading(false)` never ran. Fixed by exporting the guard and applying it, plus adding try/catch/finally around the page's data load.
 - **`/feedback` output wired into the UI** — `StanceFeedback`/`StanceFeedbackIssue` types added to `types/index.ts` (matching what `service/feedback.py` actually returns: `severity` is `critical|high|medium|low` reusing `IssueSeverity`, `strengths` are `{strength, evidence}` objects reusing `TechniqueStrength` — not the guessed-at shapes from an early outside-the-repo draft). New `components/FeedbackCard.tsx` renders it. Wired into the session results page alongside `VideoAnalysisCard`. Verified live against a real session, dark-theme styling consistent with the rest of the app.
 - **Raw pose measurements hidden from `VideoAnalysisCard`** — internal MediaPipe debugging data (slope angles, detection rate) has no business being shown to a coach or athlete; replaced with a "feedback pending" placeholder for the common not-yet-triggered case.
-- **Git history:** eight commits this session, in order — `fix: persist fault_type/line_side/position on /analyse write`, `feat: add /feedback route for GPT-4o stance feedback`, `chore: untrack __pycache__` (`.gitignore` addition for `__pycache__/`/`*.pyc`), `docs: refresh CLAUDE.md for 2026-07-17 session`, `feat: render /feedback output in session results page`, `chore: add dev server launch config for browser preview tooling`, `feat: hide raw pose measurements from VideoAnalysisCard`, `fix: guard plan page against raw-measurement analysis shape and silent load failures`.
+- **Null-data hallucination bug fixed (Phase 1 of the auto-feedback build)** — root cause was in `main.py`, not the prompt: the `/feedback` route coerced NULL `fault_type`/`line_side`/`position` to concrete fallback values (NULL `position` → `"guard_tackle"`) before `feedback.py` ever saw them. `main.py` now passes `None` through; `feedback.py` adds explicit "this is UNKNOWN, do not guess" cues for each of the three. Verified live against both sessions from the original bug report — the NULL-position session now produces zero mentions of guard/tackle/center anywhere in the output, where it previously invented them.
+- **Feedback generation made automatic (Phase 2)** — `POST /analyse` now calls `generate_feedback()` in-process right after writing the side-view analysis, using the already-in-memory measurements/context (no re-fetch). Best-effort: wrapped in try/except so an OpenAI failure never affects the analysis write or the front-view write. Skipped entirely on zero-detection clips (nothing useful to auto-write). The manual `POST /feedback` route is unchanged and still works for re-generation. **Not yet verified end-to-end against the live deployed stack** — see Next Session Priority 1.
+- **Git history:** ten commits this session, in order — `fix: persist fault_type/line_side/position on /analyse write`, `feat: add /feedback route for GPT-4o stance feedback`, `chore: untrack __pycache__` (`.gitignore` addition for `__pycache__/`/`*.pyc`), `docs: refresh CLAUDE.md for 2026-07-17 session`, `feat: render /feedback output in session results page`, `chore: add dev server launch config for browser preview tooling`, `feat: hide raw pose measurements from VideoAnalysisCard`, `fix: guard plan page against raw-measurement analysis shape and silent load failures`, `fix: stop hedging failure on null fault_type/line_side/position in /feedback`, `feat: auto-generate feedback inline after /analyse completes`.
 
 ---
 
@@ -155,15 +175,15 @@ Encountered a real (brief) GitHub outage on 2026-07-16 that blocked both Vercel 
 
 **AUDIT: find any other unguarded `analysis` reads** — Gotcha #8 has now caused a real production hang twice (`VideoAnalysisCard`, then the plan page). Both known spots are fixed, but if two places missed the `isStructuredAnalysis()` guard, a third may exist. Do a repo-wide search for every place the `analysis` field is read/dereferenced and confirm each applies the guard before touching shape-specific fields like `.issues`, `.summary`, `.scores`, `.plan`. Low effort, high value — prevents the next silent hang.
 
-**`/feedback` prompt refinement** — see Next Session Priority 1. Hallucination on null position data is the most urgent piece; output shape divergence from original plan needs a deliberate decision.
+**Live end-to-end verification of auto-generated feedback** — see Next Session Priority 1. Implemented and logic-verified; not yet proven against a real upload through the deployed app.
 
-**Why is `position` NULL on tested sessions** — see Next Session Priority 2.
+**Why is `position` NULL on some tested sessions** — see Next Session Priority 2. Now safe-to-serve regardless (hedging fix), but the root cause is still unknown.
 
-**Fault taxonomy — now understood to be two axes, not one** — see Next Session Priority 3. Positions beyond OL, *and* technique beyond stance, both need calibration rules from scratch.
+**`/feedback` output shape divergence from original plan** — see Next Session Priority 3.
+
+**Fault taxonomy — now understood to be two axes, not one** — see Next Session Priority 4. Positions beyond OL, *and* technique beyond stance, both need calibration rules from scratch.
 
 **`ADMIN_SECRET` should be rotated** — exposed in a debugging screenshot this session (see "What Was Fixed" above). Not done yet.
-
-**`/feedback` still requires manual admin trigger** — the UI is wired (`FeedbackCard.tsx`), but nothing in the app calls the `/feedback` route itself; it's a deliberate dev/admin-only gate via curl/PowerShell + `X-Admin-Secret`. Most sessions will show "feedback pending" until this changes. Revisit once prompt quality (Priority 1) is settled — no point automating a prompt that still hallucinates.
 
 **Resend custom domain** — unchanged, still outstanding. All transactional emails send from `onboarding@resend.dev`.
 
@@ -181,8 +201,8 @@ Encountered a real (brief) GitHub outage on 2026-07-16 that blocked both Vercel 
 
 | File | Purpose |
 |---|---|
-| `service/main.py` | Python analysis service: FastAPI endpoints, MediaPipe processing, Supabase writes, sb_secret_ fix, **`/feedback` route (new)**, `require_admin` dependency |
-| `service/feedback.py` | **New.** Builds the GPT-4o-mini prompt from raw measurements + fault_type/line_side/position, calls OpenAI, returns structured feedback. Zero-detection fallback guard. |
+| `service/main.py` | Python analysis service: FastAPI endpoints, MediaPipe processing, Supabase writes, sb_secret_ fix, `/feedback` route + `require_admin` dependency, and (as of 2026-07-17) auto-generates feedback inline inside `/analyse` — best-effort, try/except-wrapped, skipped on zero-detection |
+| `service/feedback.py` | Builds the GPT-4o-mini prompt from raw measurements + fault_type/line_side/position, calls OpenAI, returns structured feedback. Zero-detection fallback guard. All three of fault_type/line_side/position are Optional — `None` gets an explicit "UNKNOWN, do not guess" cue rather than a silently-substituted default (the 2026-07-17 hedging fix). |
 | `service/pose_utils.py` | MediaPipe pose landmark extraction, side-view slope calculation |
 | `service/measurements.py` | `aggregate_side_measurements()` — filters frames, computes slope stats |
 | `supabase/migration-v10-feedback-column.sql` | **New, applied.** Adds `feedback` JSONB column to `session_videos`. |
