@@ -209,6 +209,42 @@ def analyse(req: AnalyseRequest):
 
     log.info("session %s side-view analysis written to DB", req.session_id)
 
+    # ── Auto-generate feedback (best-effort, non-blocking) ──────────────────────
+    # Feedback is an add-on, never a hard dependency. The analysis above has
+    # already succeeded and been written by this point — nothing below this
+    # line may cause /analyse to fail or leave the session in a half-written
+    # state. Any failure (OpenAI error, timeout, bad JSON) is logged and
+    # swallowed; the side-view row simply keeps feedback: null, same as any
+    # session where /feedback hasn't been triggered yet.
+    #
+    # Skipped entirely (not even generating the zero-detection fallback text)
+    # when there's no usable pose data — nothing useful to auto-write, and the
+    # existing "feedback pending" UI placeholder already covers this case.
+    # The manual POST /feedback route is untouched and still works for
+    # re-generating feedback on any session, auto-generated or not.
+    if aggregated.get("slope_deg_mean") is not None or aggregated.get("lean_from_vertical_mean") is not None:
+        try:
+            from feedback import generate_feedback
+            feedback_result = generate_feedback(
+                measurements=aggregated,
+                fault_type=req.fault_type,
+                line_side=req.line_side,
+                position=req.position,
+            )
+            fb_write = db.table("session_videos") \
+                .update({"feedback": feedback_result}) \
+                .eq("session_id", req.session_id) \
+                .eq("view_angle", "side") \
+                .execute()
+            if hasattr(fb_write, "error") and fb_write.error:
+                log.error("session %s: feedback generated but DB write failed: %s", req.session_id, fb_write.error)
+            else:
+                log.info("session %s: feedback auto-generated and written", req.session_id)
+        except Exception as exc:
+            log.error("session %s: auto-feedback generation failed, continuing without it: %s", req.session_id, exc)
+    else:
+        log.info("session %s: skipping auto-feedback — no usable pose detections", req.session_id)
+
     # ── Front-view: mark complete (analysis stays null — result lives on side row) ──
     # Front-view biomechanical processing is not yet implemented, but the row
     # must be marked 'complete' so the UI does not show a permanently-spinning state.
