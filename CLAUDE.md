@@ -1,6 +1,6 @@
 # Practice Field — Claude Code Context
 
-> Last updated: 2026-07-17 (session that built and tested the GPT-4o `/feedback` route end-to-end, fixed fault_type/line_side/position persistence, rotated OPENAI_API_KEY after accidental exposure, and fixed a production-breaking crash on the Virtual Training Coach plan page)
+> Last updated: 2026-07-17 (session that built and tested the GPT-4o `/feedback` route end-to-end, fixed fault_type/line_side/position persistence, rotated OPENAI_API_KEY after accidental exposure, wired `/feedback` output into the session results page, hid raw pose measurements from athletes, and fixed a production-breaking crash on the Virtual Training Coach plan page)
 
 ## Next Session Priorities
 
@@ -53,7 +53,7 @@ POST /feedback  (Python/Railway service, service/main.py)
   → writes result to session_videos.feedback (JSONB, side-view row only — separate column from `analysis`, does NOT trip isStructuredAnalysis())
 ```
 
-**Status:** tested end-to-end successfully on 2026-07-17 against session `2a740dec-572e-4d42-ad52-4713a2a793f3` — returned coherent, well-structured output. **Known issue:** hallucinated position-specific language despite `position` being NULL on the test row (see Next Session Priority 1). Not wired into any UI yet — output only reachable via direct API call.
+**Status:** tested end-to-end successfully on 2026-07-17 against session `2a740dec-572e-4d42-ad52-4713a2a793f3` — returned coherent, well-structured output. **Known issue:** hallucinated position-specific language despite `position` being NULL on the test row (see Next Session Priority 1). **Now wired into the UI** — `components/FeedbackCard.tsx` renders the `feedback` column on the session results page, alongside `VideoAnalysisCard`. Still only reachable server-side via the admin-gated route — nothing in the UI triggers `/feedback` itself, so most sessions show a "feedback pending" placeholder until an admin calls the route manually.
 
 **Output shape actually implemented** (differs from originally-planned simple shape):
 ```json
@@ -75,6 +75,12 @@ POST /feedback  (Python/Railway service, service/main.py)
 ### VideoAnalysisCard handles both analysis shapes
 
 `components/VideoAnalysisCard.tsx` exports `isStructuredAnalysis()` (checks for presence of the `summary` string field) to discriminate between the two `analysis`-column payloads. Now exported (was module-private) so other pages can reuse the same guard — see Gotcha #8's "bitten twice" note. **Note:** the new `feedback` column is deliberately separate from `analysis` specifically to avoid this guard — the feedback shape also has a `summary` field and would false-positive if written into `analysis`.
+
+**Raw pose measurements no longer shown to end users (2026-07-17).** The card used to render the raw MediaPipe measurement dump (`slope_deg_mean`, `detection_rate`, etc.) whenever a video had `analysis_status: 'complete'` but no structured analysis. That block was removed — it's internal debugging data, not something a coach or athlete needs. Replaced with a simple `"✓ Analysis complete — feedback pending"` message for the common case where `/feedback` hasn't been triggered yet.
+
+### FeedbackCard renders the /feedback output
+
+`components/FeedbackCard.tsx` — new, separate from `VideoAnalysisCard`/`isStructuredAnalysis()` since it reads the `feedback` column directly (no shape-collision risk). Renders grade badge, summary, issues (severity-styled to match `VideoAnalysisCard`'s dark theme), strengths, `position_context`, and a caveat banner noting the known hallucination issue (Priority 1). Returns `null` when `feedback` is null, so it's safe to render unconditionally for every side-view video. Wired into `app/[coachId]/players/[playerId]/sessions/[sessionId]/page.tsx` alongside `VideoAnalysisCard`.
 
 ### Upload architecture (signed URL — critical)
 
@@ -139,7 +145,9 @@ Encountered a real (brief) GitHub outage on 2026-07-16 that blocked both Vercel 
 - **OPENAI_API_KEY rotated** on both Vercel and Railway after the old key was exposed with an embedded newline (see Gotcha #9). Old key revoked on OpenAI's dashboard.
 - **Note:** `ADMIN_SECRET` value was also visible in a debugging screenshot during this session (PowerShell terminal output shown to get help). Low real-world risk (gates only the `/feedback` admin route, no financial exposure), but **should be regenerated** before considering this fully closed out — not yet done as of this doc update.
 - **Production-breaking crash fixed on the Virtual Training Coach plan page** — `app/[coachId]/players/[playerId]/plan/page.tsx` crashed on load for essentially every player (see Gotcha #8's "bitten twice" note) because it read `analysis.issues` without the `isStructuredAnalysis()` guard. Symptom in production: page stuck on "Loading…" forever, no error shown, because the resulting `TypeError` was thrown outside any try/catch and `setLoading(false)` never ran. Fixed by exporting the guard and applying it, plus adding try/catch/finally around the page's data load.
-- **Git history:** four commits, in order — `fix: persist fault_type/line_side/position on /analyse write`, `feat: add /feedback route for GPT-4o stance feedback`, `chore: untrack __pycache__` (plus a `.gitignore` addition for `__pycache__/` and `*.pyc`), `fix: guard plan page against raw-measurement analysis shape and silent load failures`.
+- **`/feedback` output wired into the UI** — `StanceFeedback`/`StanceFeedbackIssue` types added to `types/index.ts` (matching what `service/feedback.py` actually returns: `severity` is `critical|high|medium|low` reusing `IssueSeverity`, `strengths` are `{strength, evidence}` objects reusing `TechniqueStrength` — not the guessed-at shapes from an early outside-the-repo draft). New `components/FeedbackCard.tsx` renders it. Wired into the session results page alongside `VideoAnalysisCard`. Verified live against a real session, dark-theme styling consistent with the rest of the app.
+- **Raw pose measurements hidden from `VideoAnalysisCard`** — internal MediaPipe debugging data (slope angles, detection rate) has no business being shown to a coach or athlete; replaced with a "feedback pending" placeholder for the common not-yet-triggered case.
+- **Git history:** eight commits this session, in order — `fix: persist fault_type/line_side/position on /analyse write`, `feat: add /feedback route for GPT-4o stance feedback`, `chore: untrack __pycache__` (`.gitignore` addition for `__pycache__/`/`*.pyc`), `docs: refresh CLAUDE.md for 2026-07-17 session`, `feat: render /feedback output in session results page`, `chore: add dev server launch config for browser preview tooling`, `feat: hide raw pose measurements from VideoAnalysisCard`, `fix: guard plan page against raw-measurement analysis shape and silent load failures`.
 
 ---
 
@@ -155,7 +163,7 @@ Encountered a real (brief) GitHub outage on 2026-07-16 that blocked both Vercel 
 
 **`ADMIN_SECRET` should be rotated** — exposed in a debugging screenshot this session (see "What Was Fixed" above). Not done yet.
 
-**`/feedback` not wired into any UI** — deliberately, per the original dev/admin-only gate. Revisit once prompt quality (Priority 1) is settled.
+**`/feedback` still requires manual admin trigger** — the UI is wired (`FeedbackCard.tsx`), but nothing in the app calls the `/feedback` route itself; it's a deliberate dev/admin-only gate via curl/PowerShell + `X-Admin-Secret`. Most sessions will show "feedback pending" until this changes. Revisit once prompt quality (Priority 1) is settled — no point automating a prompt that still hallucinates.
 
 **Resend custom domain** — unchanged, still outstanding. All transactional emails send from `onboarding@resend.dev`.
 
@@ -186,16 +194,18 @@ Encountered a real (brief) GitHub outage on 2026-07-16 that blocked both Vercel 
 | `lib/inngest.ts` | Inngest client, app ID `practice-field` |
 | `lib/jobs/ol-stance-analysis.ts` | Inngest function: validates session, marks processing, calls Python /analyse — **check here first for Priority 2 (position NULL investigation)** |
 | `lib/server-frames.ts` | **Deprecated 2026-07-14** — FFmpeg frame extraction for single-clip path; kept for reference |
-| `components/VideoAnalysisCard.tsx` | Renders both structured VideoAnalysis and raw Python measurements via `isStructuredAnalysis()` (now exported — reused by the plan page, see Gotcha #8). Does not yet render the new `feedback` column — not wired into UI. |
+| `components/VideoAnalysisCard.tsx` | Renders structured VideoAnalysis; raw Python measurements now show a "feedback pending" placeholder instead of a raw dump (2026-07-17). Exports `isStructuredAnalysis()` — reused by the plan page. |
+| `components/FeedbackCard.tsx` | **New.** Renders the `feedback` column (GPT-4o output) on the session results page. Returns `null` if `feedback` is null. |
 | `components/VideoUpload.tsx` | **Deprecated 2026-07-14** — single-clip upload UI; no longer rendered |
 | `components/TwoClipUpload.tsx` | Two-clip OL stance upload UI: presign → Storage PUT → confirm (×2) |
-| `app/[coachId]/players/[playerId]/sessions/[sessionId]/page.tsx` | Session results page — `force-dynamic`, fetches videos, renders VideoAnalysisCard per drill |
+| `app/[coachId]/players/[playerId]/sessions/[sessionId]/page.tsx` | Session results page — `force-dynamic`, fetches videos, renders `VideoAnalysisCard` + `FeedbackCard` per drill |
 | `app/[coachId]/players/[playerId]/plan/page.tsx` | Virtual Training Coach plan builder. **Fixed 2026-07-17** — crashed for essentially every player reading `analysis.issues` without `isStructuredAnalysis()`; see Gotcha #8. |
 | `app/[coachId]/players/[playerId]/videos/page.tsx` | Coach video library + upload tab (two-clip only as of 2026-07-14) |
 | `app/api/inngest/route.ts` | Inngest serve endpoint — must be synced manually in Inngest dashboard after deploy |
-| `types/index.ts` | `VideoAnalysis`, `SessionVideo` (includes `view_angle`), `AnalysisStatus` — **does not yet include a `feedback` field on the SessionVideo type; add when wiring into UI** |
+| `types/index.ts` | `VideoAnalysis`, `SessionVideo` (includes `view_angle`, `feedback: StanceFeedback \| null`), `AnalysisStatus`, `StanceFeedback`/`StanceFeedbackIssue` (new — matches `service/feedback.py`'s actual output shape) |
 | `service/Dockerfile` | Railway container — includes libgles2/libegl1, wget for model, ENV MODEL_PATH |
 | `service/requirements.txt` | Pinned exact versions (mediapipe==0.10.35, supabase==2.31.0, openai==1.59.6, etc.) |
+| `.claude/launch.json` | **New.** Dev server launch config (`npm run dev`, port 3000) for browser preview tooling. |
 
 ## Environment Variables (complete list)
 
