@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAdminClient } from '@/lib/supabase'
+import { getAdminClient, getSupabaseClient } from '@/lib/supabase'
 import { inngest } from '@/lib/inngest'
+import { requireCoachSession } from '@/lib/require-coach'
+
+// Derived server-side from the actual uploaded file's extension — never
+// trusted from the client. storage_path is authoritative: the signed URL
+// from /presign only accepts an upload landing at that exact path, so its
+// extension reflects what was truly validated and stored, not a claim.
+const PHOTO_EXTENSIONS = ['jpg', 'jpeg', 'png']
+
+function deriveMediaType(storagePath: string): 'video' | 'photo' {
+  const ext = storagePath.split('.').pop()?.toLowerCase() ?? ''
+  return PHOTO_EXTENSIONS.includes(ext) ? 'photo' : 'video'
+}
 
 // POST /api/videos/confirm
 //
@@ -11,6 +23,13 @@ import { inngest } from '@/lib/inngest'
 // This is the tail of the old /api/videos/upload route — the consent gate
 // ran in /presign, so it is not repeated here. The signed URL enforces that
 // the file lands at the correct storage_path; only that path is accepted.
+//
+// Ownership (strengthened 2026-07-19, photo upload build) — same fix as
+// /presign: the coach-managed path previously trusted `coach_id` from the
+// body outright. This route is a separate request from /presign (nothing
+// stops a client from calling it directly with a forged body), so it
+// re-derives and re-verifies ownership independently rather than trusting
+// presign's echoed meta.
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -18,7 +37,6 @@ export async function POST(req: NextRequest) {
     const {
       storage_path:      storagePath,
       player_id:         playerId,
-      coach_id:          coachId,
       player_account_id: playerAccountId,
       session_id:        sessionId,
       view_angle:        viewAngle,
@@ -34,8 +52,71 @@ export async function POST(req: NextRequest) {
     if (!storagePath) {
       return NextResponse.json({ error: 'storage_path is required.' }, { status: 400 })
     }
+    if (playerAccountId && playerId) {
+      return NextResponse.json(
+        { error: 'player_account_id cannot be combined with player_id.' },
+        { status: 400 }
+      )
+    }
+    if (!playerAccountId && !playerId) {
+      return NextResponse.json(
+        { error: 'Either player_id (coach-managed) or player_account_id (self-signup) is required.' },
+        { status: 400 }
+      )
+    }
 
     const db = getAdminClient()
+    let coachId: string | null = null
+
+    // ── Path A: coach-managed player — coachId is session-derived, then
+    //    confirmed to actually own playerId via a fresh DB read ──────────────
+    if (playerId) {
+      const auth = await requireCoachSession()
+      if ('error' in auth) return auth.error
+      coachId = auth.coachId
+
+      // Same 404-vs-403 distinction as /presign — fetched without a coach_id
+      // filter so a cross-owner attempt returns 403, not a masking 404.
+      const { data: player, error: playerError } = await db
+        .from('players')
+        .select('id, coach_id')
+        .eq('id', playerId)
+        .single()
+
+      if (playerError || !player) {
+        return NextResponse.json({ error: 'Player not found.' }, { status: 404 })
+      }
+      if (player.coach_id !== coachId) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      }
+    }
+
+    // ── Path B: self-signup player account — same JWT self-verification as
+    //    /presign ────────────────────────────────────────────────────────────
+    if (playerAccountId) {
+      const jwt = req.headers.get('authorization')?.replace('Bearer ', '')
+      if (!jwt) {
+        return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 })
+      }
+      const { data: { user }, error: authError } =
+        await getSupabaseClient().auth.getUser(jwt)
+      if (authError || !user) {
+        return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 })
+      }
+
+      const { data: account, error: accountError } = await db
+        .from('player_accounts')
+        .select('id')
+        .eq('id', playerAccountId)
+        .eq('auth_user_id', user.id)
+        .single()
+
+      if (accountError || !account) {
+        return NextResponse.json({ error: 'Account not found.' }, { status: 404 })
+      }
+    }
+
+    const mediaType = deriveMediaType(storagePath)
 
     // ── Determine initial analysis_status (same logic as the old upload route) ─
     const pairedView    = viewAngle === 'side' ? 'front' : 'side'
@@ -61,6 +142,7 @@ export async function POST(req: NextRequest) {
         recorded_at:     recordedAt || new Date().toISOString().split('T')[0],
         view_angle:      viewAngle  || null,
         analysis_status: initialStatus,
+        media_type:      mediaType,
         frame_paths:     [],
       })
       .select()

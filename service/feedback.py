@@ -79,7 +79,7 @@ def _measurements_summary(m: dict) -> str:
         f"- higher_majority: {m.get('higher_majority')} (which of hips/shoulders sat higher across the majority of frames)",
         f"- frame_count: {m.get('frame_count')}, detected_frame_count: {m.get('detected_frame_count')}",
         f"- detection_rate: {m.get('detection_rate')}",
-        f"- reliable: {m.get('reliable')} (False means detection_rate was below 50% — treat findings as low-confidence and say so in the summary)",
+        f"- reliable: {m.get('reliable')} (False means this measurement is low-confidence — either detection was too inconsistent across a video's frames, or it came from a single photo rather than a multi-frame video. Either way, treat findings as low-confidence and say so in the summary)",
     ]
     return "\n".join(lines)
 

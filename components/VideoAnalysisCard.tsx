@@ -122,6 +122,9 @@ export default function VideoAnalysisCard({ video, position, onReanalyze, onDele
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <p className="text-sm font-semibold text-white truncate">{video.label ?? 'Video'}</p>
+            <span className="text-xs" title={video.media_type === 'photo' ? 'Analyzed from a single photo' : 'Analyzed from video'}>
+              {video.media_type === 'photo' ? '📷' : '🎬'}
+            </span>
             {video.is_baseline && (
               <span className="text-xs bg-blue-950 text-blue-400 border border-blue-800 px-1.5 py-0.5 rounded">
                 Baseline

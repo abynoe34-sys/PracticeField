@@ -38,8 +38,22 @@ interface TwoClipUploadProps {
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const MAX_BYTES    = 524_288_000
-const ALLOWED_MIME = ['video/mp4', 'video/quicktime', 'video/webm', 'video/x-msvideo']
+// Photos (Feature A — analyzed stance photos) flow into the exact same
+// pipeline as video, just as a single-frame input — see
+// BUILD_SPEC_photo_upload.md. Capped much lower than video's 500MB ceiling
+// since a phone photo has no legitimate reason to approach that size.
+const MAX_VIDEO_BYTES = 524_288_000
+const MAX_PHOTO_BYTES = 20_971_520 // 20MB
+const ALLOWED_VIDEO_MIME = ['video/mp4', 'video/quicktime', 'video/webm', 'video/x-msvideo']
+const ALLOWED_PHOTO_MIME = ['image/jpeg', 'image/png']
+
+type MediaType = 'video' | 'photo'
+
+function mediaTypeOf(f: File): MediaType | null {
+  if (ALLOWED_VIDEO_MIME.includes(f.type)) return 'video'
+  if (ALLOWED_PHOTO_MIME.includes(f.type)) return 'photo'
+  return null
+}
 
 const ANGLE_META: Record<'side' | 'front', { heading: string; body: string }> = {
   side: {
@@ -54,9 +68,21 @@ const ANGLE_META: Record<'side' | 'front', { heading: string; body: string }> = 
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function validateFile(f: File): string | null {
-  if (!ALLOWED_MIME.includes(f.type)) return 'Wrong file type — use MP4, MOV, WebM, or AVI.'
-  if (f.size > MAX_BYTES) return 'File too large — maximum size is 500 MB.'
+// requiredType is set once the OTHER slot already has a clip — side and front
+// must be the same media_type for a given session (a mixed pair would leave
+// the analysis path ambiguous: which running mode does the Python service
+// use?). Enforced here client-side; lib/jobs/ol-stance-analysis.ts also
+// re-checks this server-side as a backstop before calling /analyse.
+function validateFile(f: File, requiredType: MediaType | null): string | null {
+  const type = mediaTypeOf(f)
+  if (!type) return 'Wrong file type — use MP4, MOV, WebM, AVI (video) or JPEG, PNG (photo).'
+  if (requiredType && type !== requiredType) {
+    return `This session already has a ${requiredType} clip — side and front must both be ${requiredType === 'video' ? 'videos' : 'photos'}, not a mix.`
+  }
+  const maxBytes = type === 'photo' ? MAX_PHOTO_BYTES : MAX_VIDEO_BYTES
+  if (f.size > maxBytes) {
+    return `File too large — maximum size is ${type === 'photo' ? '20 MB' : '500 MB'}.`
+  }
   return null
 }
 
@@ -89,7 +115,7 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset }: ViewS
       <input
         ref={fileRef}
         type="file"
-        accept="video/*"
+        accept="video/*,image/jpeg,image/png"
         className="hidden"
         onChange={e => { const f = e.target.files?.[0]; if (f) onPick(f) }}
       />
@@ -135,6 +161,7 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset }: ViewS
           {uploaded.map(v => (
             <li key={v.id} className="flex items-center gap-2 text-xs">
               <span className="text-green-400">✓</span>
+              <span>{v.media_type === 'photo' ? '📷' : '🎬'}</span>
               <span className="text-gray-400 truncate">{v.file_name ?? v.label ?? 'Clip'}</span>
             </li>
           ))}
@@ -160,9 +187,9 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset }: ViewS
           }`}
         >
           <p className="text-sm text-gray-400">
-            Drop clip here or <span className="text-brand-400">browse</span>
+            Drop clip or photo here or <span className="text-brand-400">browse</span>
           </p>
-          <p className="text-xs text-gray-600 mt-1">MP4, MOV, WebM, AVI · max 500 MB</p>
+          <p className="text-xs text-gray-600 mt-1">Video: MP4, MOV, WebM, AVI · max 500 MB — Photo: JPEG, PNG · max 20 MB</p>
         </div>
       )}
 
@@ -170,7 +197,7 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset }: ViewS
       {active.status === 'selected' && (
         <div className="pl-8 space-y-3">
           <div className="flex items-center gap-3 bg-field-dark border border-field-border rounded-lg px-3 py-2.5">
-            <span className="text-xl">🎬</span>
+            <span className="text-xl">{mediaTypeOf(active.file) === 'photo' ? '📷' : '🎬'}</span>
             <div className="flex-1 min-w-0">
               <p className="text-sm text-white truncate">{active.file.name}</p>
               <p className="text-xs text-gray-500">{(active.file.size / 1024 / 1024).toFixed(1)} MB</p>
@@ -220,6 +247,18 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset }: ViewS
 
 // ── Main component ────────────────────────────────────────────────────────────
 
+// The OTHER slot's already-committed media type (from an uploaded clip, or a
+// file merely selected/uploading) — used to reject a mismatched pick before
+// it ever reaches the server. Uploaded clips take priority since they're the
+// only state that's actually durable.
+function establishedMediaType(view: ViewState): MediaType | null {
+  if (view.uploaded.length > 0) return view.uploaded[0].media_type
+  if (view.active.status === 'selected' || view.active.status === 'uploading') {
+    return mediaTypeOf(view.active.file)
+  }
+  return null
+}
+
 export default function TwoClipUpload(props: TwoClipUploadProps) {
   const { onSessionReady, sessionId, drillType } = props
 
@@ -232,8 +271,9 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
   // ── File picking ───────────────────────────────────────────────────────────
 
   const pickFile = (angle: 'side' | 'front', f: File) => {
-    const setter = angle === 'side' ? setSide : setFront
-    const err = validateFile(f)
+    const setter    = angle === 'side' ? setSide : setFront
+    const otherView = angle === 'side' ? front   : side
+    const err = validateFile(f, establishedMediaType(otherView))
     if (err) {
       setter(prev => ({ ...prev, active: { status: 'failed', error: err } }))
       return

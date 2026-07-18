@@ -74,3 +74,45 @@ def aggregate_side_measurements(frames: list[dict]) -> dict:
         "detection_rate":          round(detection_rate, 3),
         "reliable":                reliable,
     }
+
+
+def aggregate_single_frame_measurement(frame: dict) -> dict:
+    """
+    Aggregate a single photo frame (Feature A — analyzed stance photos) into
+    the exact same summary shape aggregate_side_measurements() produces, so
+    every downstream consumer (service/feedback.py, session_videos.analysis,
+    VideoAnalysisCard) can treat a photo-derived result identically to a
+    video-derived one without a parallel shape to handle.
+
+    Deliberately does NOT reuse aggregate_side_measurements()'s
+    detection_rate >= 0.5 formula for `reliable`: a single sample can never
+    earn the same confidence as a multi-frame video's majority vote,
+    regardless of whether that one frame happened to detect cleanly.
+    `reliable` is always False here, by design — this is the conservative
+    signal BUILD_SPEC_photo_upload.md calls for ("a photo must not report
+    the same confidence a clean multi-frame video would"). It's also the
+    exact flag service/feedback.py's prompt already hedges on ("if reliable
+    is false, keep the summary and issues conservative") — reused as-is
+    rather than duplicated for photos.
+    """
+    detected = frame["note"] != "no_detection"
+    detection_rate = 1.0 if detected else 0.0
+
+    if not detected:
+        log.warning("single-frame photo: no pose detected")
+
+    slope  = frame["slope_deg"]          if frame["visibility_ok"] else None
+    lean   = frame["lean_from_vertical"] if frame["visibility_ok"] else None
+    higher = frame["higher"]             if frame["visibility_ok"] else None
+
+    return {
+        "slope_deg_mean":          slope,
+        "slope_deg_min":           slope,
+        "slope_deg_max":           slope,
+        "lean_from_vertical_mean": lean,
+        "higher_majority":         higher,
+        "frame_count":             1,
+        "detected_frame_count":    1 if detected else 0,
+        "detection_rate":          detection_rate,
+        "reliable":                False,  # conservative by design — see docstring
+    }

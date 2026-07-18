@@ -39,7 +39,7 @@ export const olStanceAnalysis = inngest.createFunction(
 
       const { data: rows, error } = await db
         .from('session_videos')
-        .select('id, view_angle, analysis_status, storage_path, drill_type')
+        .select('id, view_angle, analysis_status, storage_path, drill_type, media_type')
         .eq('session_id', session_id)
         .not('view_angle', 'is', null)
 
@@ -76,12 +76,27 @@ export const olStanceAnalysis = inngest.createFunction(
         )
       }
 
+      // Feature A (analyzed stance photos) server-side backstop: TwoClipUpload.tsx
+      // already prevents picking a mismatched pair client-side, but this is a
+      // fresh DB read, not the event payload — the same "never trust, always
+      // re-verify" discipline this step already applies to pairing/readiness.
+      // A mixed pair has no well-defined analysis path (which MediaPipe running
+      // mode would /analyse even use?), so it's rejected rather than guessed at.
+      const sideMediaType  = sideClips[0].media_type  as string
+      const frontMediaType = frontClips[0].media_type as string
+      if (sideMediaType !== frontMediaType) {
+        throw new NonRetriableError(
+          `side and front clips have different media_type (${sideMediaType} vs ${frontMediaType}) — a session's pair must be all-video or all-photo`
+        )
+      }
+
       return {
         sideCount:      sideClips.length,
         frontCount:     frontClips.length,
         sideClipPath:   sideClips[0].storage_path  as string,
         frontClipPath:  frontClips[0].storage_path as string,
         drillType:      (sideClips[0].drill_type ?? data.drill_type) as string,
+        mediaType:      sideMediaType,
       }
     })
 
@@ -130,6 +145,7 @@ export const olStanceAnalysis = inngest.createFunction(
         fault_type:      data.fault_type  ?? 'none',
         line_side:       data.line_side   ?? 'right',
         position:        data.position    ?? 'guard_tackle',
+        media_type:      clips.mediaType,
       }
 
       console.log(

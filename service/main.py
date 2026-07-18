@@ -23,8 +23,12 @@ MODEL_PATH     = os.getenv(
     os.path.join(os.path.dirname(__file__), "..", "scripts", "pose_landmarker_heavy.task")
 )
 
-# Loaded once at startup, shared across requests.
+# Loaded once at startup, shared across requests. Two landmarker instances —
+# MediaPipe's running_mode is fixed at creation, so VIDEO (existing video
+# path) and IMAGE (Feature A photo path, BUILD_SPEC_photo_upload.md) each
+# need their own. See pose_utils.load_model()/load_model_image().
 _landmarker = None
+_landmarker_image = None
 _model_error: str | None = None
 
 
@@ -55,17 +59,21 @@ def get_supabase() -> Client:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global _landmarker, _model_error
+    global _landmarker, _landmarker_image, _model_error
     try:
-        from pose_utils import load_model
+        from pose_utils import load_model, load_model_image
         _landmarker = load_model(MODEL_PATH)
-        log.info("MediaPipe model loaded successfully: %s", MODEL_PATH)
+        log.info("MediaPipe VIDEO-mode model loaded successfully: %s", MODEL_PATH)
+        _landmarker_image = load_model_image(MODEL_PATH)
+        log.info("MediaPipe IMAGE-mode model loaded successfully: %s", MODEL_PATH)
     except Exception as exc:
         _model_error = str(exc)
         log.error("Failed to load MediaPipe model: %s", exc)
     yield
     if _landmarker is not None:
         _landmarker.close()
+    if _landmarker_image is not None:
+        _landmarker_image.close()
 
 
 app = FastAPI(title="Practice Field Analysis Service", lifespan=lifespan)
@@ -91,9 +99,9 @@ def require_admin(x_admin_secret: str = Header(default="")):
 def health():
     if _model_error:
         return {"status": "error", "detail": _model_error}
-    if _landmarker is None:
+    if _landmarker is None or _landmarker_image is None:
         return {"status": "error", "detail": "model not yet loaded"}
-    return {"status": "ok", "model": "loaded"}
+    return {"status": "ok", "model": "loaded", "video_mode": "loaded", "image_mode": "loaded"}
 
 
 # ── Supabase connectivity test ────────────────────────────────────────────────
@@ -141,31 +149,39 @@ class AnalyseRequest(BaseModel):
     fault_type:      str
     line_side:       str
     position:        str
+    # Feature A (analyzed stance photos, BUILD_SPEC_photo_upload.md). Default
+    # "video" preserves behavior for any event already in flight when this
+    # field was added — every caller (lib/jobs/ol-stance-analysis.ts) sends
+    # it explicitly going forward, read back from session_videos.media_type.
+    media_type:      str = "video"
 
 
 @app.post("/analyse", dependencies=[Depends(require_secret)])
 def analyse(req: AnalyseRequest):
-    log.info("received analysis request for session %s", req.session_id)
+    log.info("received analysis request for session %s (media_type=%s)", req.session_id, req.media_type)
 
-    if _landmarker is None:
+    if _landmarker is None or _landmarker_image is None:
         raise HTTPException(status_code=503, detail="model not loaded — service not ready")
 
     if not STORAGE_BUCKET:
         raise HTTPException(status_code=500, detail="SUPABASE_STORAGE_BUCKET not configured")
 
-    from pose_utils import process_video_side
-    from measurements import aggregate_side_measurements
+    from pose_utils import process_video_side, process_image_side
+    from measurements import aggregate_side_measurements, aggregate_single_frame_measurement
+
+    is_photo = req.media_type == "photo"
 
     db = get_supabase()
 
     # ── Side-view processing ──────────────────────────────────────────────────
-    # storage_path is the full object path within the bucket (coach_id/session_id/clip.mp4).
-    # The bucket name comes from the env var — never from the path itself.
+    # storage_path is the full object path within the bucket (coach_id/session_id/clip.mp4
+    # for video, or .jpg/.png for a photo). The bucket name comes from the env
+    # var — never from the path itself.
     log.info("downloading side clip from bucket '%s': %s", STORAGE_BUCKET, req.side_clip_path)
 
     raw_bytes = db.storage.from_(STORAGE_BUCKET).download(req.side_clip_path)
 
-    suffix = os.path.splitext(req.side_clip_path)[-1] or ".mp4"
+    suffix = os.path.splitext(req.side_clip_path)[-1] or (".jpg" if is_photo else ".mp4")
     tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
     try:
         tmp.write(raw_bytes)
@@ -173,8 +189,12 @@ def analyse(req: AnalyseRequest):
         tmp.close()
         log.info("side clip written to temp file: %s", tmp.name)
 
-        frames      = process_video_side(tmp.name, _landmarker)
-        aggregated  = aggregate_side_measurements(frames)
+        if is_photo:
+            frame      = process_image_side(tmp.name, _landmarker_image)
+            aggregated = aggregate_single_frame_measurement(frame)
+        else:
+            frames     = process_video_side(tmp.name, _landmarker)
+            aggregated = aggregate_side_measurements(frames)
         log.info(
             "side aggregation for session %s: slope_mean=%.2f reliable=%s",
             req.session_id,

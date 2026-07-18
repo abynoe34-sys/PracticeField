@@ -283,6 +283,7 @@ export interface SessionVideo {
   duration_seconds: number | null
   thumbnail_path:   string | null
   view_angle:       'side' | 'front' | null
+  media_type:       'video' | 'photo'
   analysis_status:  AnalysisStatus
   analysis:         VideoAnalysis | null
   feedback:         StanceFeedback | null
