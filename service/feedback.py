@@ -70,14 +70,6 @@ LINE_SIDE_UNKNOWN_CUE = (
     "Line side filmed is UNKNOWN (not recorded upstream) — do not state or assume left or right."
 )
 
-GRADE_RUBRIC = """
-Grading rubric:
-A = Technically sound stance, minor refinements only, college/pro level execution
-B = Good fundamentals with 1-2 correctable flaws, improving trajectory
-C = Visible technique breakdowns affecting performance, needs focused work
-D = Fundamental errors present, safety or effectiveness concerns"""
-
-
 def _measurements_summary(m: dict) -> str:
     lines = [
         f"- slope_deg_mean: {m.get('slope_deg_mean')} (positive = hips higher than shoulders, correct loaded 3-point stance; near zero or negative = hips level with or below shoulders)",
@@ -112,9 +104,9 @@ def build_prompt(
     line_side_cue = f"Line side filmed: {line_side}." if line_side else LINE_SIDE_UNKNOWN_CUE
 
     position_context_instruction = (
-        f'one sentence connecting the grade to the {position} stance requirements'
+        f'one sentence connecting the assessment to the {position} stance requirements'
         if position else
-        'one sentence connecting the grade to general 3-point stance requirements — '
+        'one sentence connecting the assessment to general 3-point stance requirements — '
         'do NOT name or imply a specific position here'
     )
 
@@ -125,14 +117,12 @@ IMPORTANT: Some context below may be marked UNKNOWN. Only state specifics (posit
 {position_cue}
 {line_side_cue}
 {fault_cue}
-{GRADE_RUBRIC}
 
 Measurements (aggregated across the clip):
 {_measurements_summary(measurements)}
 
 Respond ONLY with a single valid JSON object matching this exact structure (no markdown):
 {{
-  "overall_grade": "A"|"B"|"C"|"D",
   "summary": "2-3 sentence assessment grounded only in the measurements above",
   "issues": [
     {{
@@ -152,12 +142,11 @@ Respond ONLY with a single valid JSON object matching this exact structure (no m
   "position_context": "{position_context_instruction}"
 }}
 
-If reliable is false, still return the structure above but grade conservatively, keep issues to at most one low-severity entry noting detection was unreliable, and say so explicitly in the summary."""
+If reliable is false, still return the structure above but keep the summary and issues conservative, limit issues to at most one low-severity entry noting detection was unreliable, and say so explicitly in the summary."""
 
 
 def _no_detection_fallback() -> dict:
     return {
-        "overall_grade": "D",
         "summary": "No usable pose detections in this clip — slope and lean angles could not be computed. Re-film with the player clearly visible from the side.",
         "issues": [{
             "issue": "No pose detected",

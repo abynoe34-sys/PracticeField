@@ -26,17 +26,8 @@ const SEVERITY_STYLES: Record<string, string> = {
   low:      'bg-gray-800 text-gray-400 border-gray-700',
 }
 
-const GRADE_STYLES: Record<string, { bg: string; text: string }> = {
-  A: { bg: 'bg-brand-900',  text: 'text-brand-300' },
-  B: { bg: 'bg-blue-900',   text: 'text-blue-300' },
-  C: { bg: 'bg-yellow-900', text: 'text-yellow-300' },
-  D: { bg: 'bg-red-900',    text: 'text-red-400' },
-}
-
 export default function FeedbackCard({ feedback }: FeedbackCardProps) {
   if (!feedback) return null
-
-  const gradeStyle = GRADE_STYLES[feedback.overall_grade] ?? GRADE_STYLES.C
 
   return (
     <div className="bg-field-card border border-field-border rounded-xl overflow-hidden">
@@ -50,13 +41,8 @@ export default function FeedbackCard({ feedback }: FeedbackCardProps) {
       </div>
 
       {/* Header */}
-      <div className="px-4 py-3 flex items-center justify-between gap-3 border-b border-field-border">
+      <div className="px-4 py-3 border-b border-field-border">
         <p className="text-sm font-semibold text-white">AI Feedback</p>
-        <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${gradeStyle.bg}`}>
-          <span className={`text-base font-black leading-none ${gradeStyle.text}`}>
-            {feedback.overall_grade}
-          </span>
-        </div>
       </div>
 
       <div className="px-4 py-4 space-y-4">

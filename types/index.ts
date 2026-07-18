@@ -265,7 +265,6 @@ export interface StanceFeedbackIssue {
 }
 
 export interface StanceFeedback {
-  overall_grade:      OverallGrade
   summary:             string
   issues:              StanceFeedbackIssue[]
   strengths:           TechniqueStrength[]   // same {strength, evidence} shape feedback.py returns
