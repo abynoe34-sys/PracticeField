@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase'
+import { requireCoachSession } from '@/lib/require-coach'
 
 type RouteContext = { params: Promise<{ sessionId: string }> }
 
@@ -25,11 +26,33 @@ export async function GET(_req: NextRequest, { params }: RouteContext) {
 }
 
 // PATCH /api/sessions/[sessionId] — update session notes/areas
+//
+// Ownership added 2026-07-18 (unified accounts) — this route previously had
+// no ownership check at all (a known, already-documented gap; see CLAUDE.md
+// Gotcha #11's outstanding-audit note). coachId is derived from the
+// session via requireCoachSession(), matching the DELETE route below.
 export async function PATCH(req: NextRequest, { params }: RouteContext) {
   try {
+    const auth = await requireCoachSession()
+    if ('error' in auth) return auth.error
+    const { coachId } = auth
+
     const { sessionId } = await params
     const body = await req.json()
     const db = getAdminClient()
+
+    const { data: existing, error: fetchError } = await db
+      .from('sessions')
+      .select('coach_id')
+      .eq('id', sessionId)
+      .single()
+
+    if (fetchError || !existing) {
+      return NextResponse.json({ error: 'Session not found' }, { status: 404 })
+    }
+    if (existing.coach_id !== coachId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
 
     const { data, error } = await db
       .from('sessions')
@@ -40,6 +63,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
         notes: body.notes,
       })
       .eq('id', sessionId)
+      .eq('coach_id', coachId)
       .select()
       .single()
 
@@ -55,9 +79,9 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
 
 const STORAGE_BUCKET = 'session-videos'
 
-// DELETE /api/sessions/[sessionId]?coachId=X — hard-delete a session: its
-// video files in Storage, both session_videos rows (side + front), and the
-// parent sessions row.
+// DELETE /api/sessions/[sessionId] — hard-delete a session: its video files
+// in Storage, both session_videos rows (side + front), and the parent
+// sessions row.
 //
 // Storage-first (required order): video files are removed from Storage
 // before any DB row is touched. If storage deletion fails, nothing is
@@ -66,19 +90,19 @@ const STORAGE_BUCKET = 'session-videos'
 // failure is logged clearly (files are already gone; those rows now need
 // manual reconciliation) rather than silently swallowed.
 //
-// Ownership: verified against a fresh DB read of the session's own
-// coach_id, never trusted from the client. Coach-managed sessions only —
+// Ownership (strengthened 2026-07-18, unified accounts): coachId is now
+// derived from the caller's verified session (requireCoachSession()), not
+// a client-supplied ?coachId= query param. Coach-managed sessions only —
 // a session with no coach_id (self-signup, owned via player_account_id
 // instead) is refused, matching this app's ownership model
 // (chk_sv_has_owner on session_videos).
-export async function DELETE(req: NextRequest, { params }: RouteContext) {
+export async function DELETE(_req: NextRequest, { params }: RouteContext) {
   try {
-    const { sessionId } = await params
-    const coachId = req.nextUrl.searchParams.get('coachId')
+    const auth = await requireCoachSession()
+    if ('error' in auth) return auth.error
+    const { coachId } = auth
 
-    if (!coachId) {
-      return NextResponse.json({ error: 'coachId is required' }, { status: 400 })
-    }
+    const { sessionId } = await params
 
     const db = getAdminClient()
 

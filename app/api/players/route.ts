@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase'
+import { requireCoachSession } from '@/lib/require-coach'
 import { Resend } from 'resend'
 import { TERMS_VERSION } from '@/lib/constants'
 import crypto from 'crypto'
@@ -9,13 +10,14 @@ const resend = new Resend(process.env.RESEND_API_KEY)
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? 'https://practice-field.vercel.app'
 const FROM = 'Practice Field <onboarding@resend.dev>'
 
-// GET /api/players?coachId=X — list all players for a coach
+// GET /api/players — list all players for the authenticated coach.
+// coachId is derived from the session (requireCoachSession), not a query
+// param — see lib/require-coach.ts.
 export async function GET(req: NextRequest) {
   try {
-    const coachId = req.nextUrl.searchParams.get('coachId')
-    if (!coachId) {
-      return NextResponse.json({ error: 'coachId is required' }, { status: 400 })
-    }
+    const auth = await requireCoachSession()
+    if ('error' in auth) return auth.error
+    const { coachId } = auth
 
     const db = getAdminClient()
     const { data, error } = await db
@@ -43,10 +45,14 @@ export async function GET(req: NextRequest) {
 // checkbox — the parent confirms directly by email.
 export async function POST(req: NextRequest) {
   try {
+    const auth = await requireCoachSession()
+    if ('error' in auth) return auth.error
+    const { coachId } = auth
+
     const body: CreatePlayerRequest = await req.json()
 
-    if (!body.coach_id || !body.name) {
-      return NextResponse.json({ error: 'coach_id and name are required' }, { status: 400 })
+    if (!body.name) {
+      return NextResponse.json({ error: 'name is required' }, { status: 400 })
     }
 
     if (!body.player_consent) {
@@ -85,7 +91,7 @@ export async function POST(req: NextRequest) {
     const { data, error } = await db
       .from('players')
       .insert({
-        coach_id:                body.coach_id,
+        coach_id:                coachId,
         name:                    body.name.trim(),
         position:                body.position ?? null,
         experience_level:        body.experience_level ?? 'beginner',
@@ -129,7 +135,7 @@ export async function POST(req: NextRequest) {
     }
     const consentRows: ConsentRow[] = [
       {
-        coach_id:          body.coach_id,
+        coach_id:          coachId,
         player_id:         data.id,
         consent_type:      'player_consent',
         document_version:  TERMS_VERSION,
@@ -144,7 +150,7 @@ export async function POST(req: NextRequest) {
     // For minors, training_opt_in is deferred to the parent consent page.
     if (!isMinor && body.training_opt_in) {
       consentRows.push({
-        coach_id:          body.coach_id,
+        coach_id:          coachId,
         player_id:         data.id,
         consent_type:      'training_opt_in',
         document_version:  TERMS_VERSION,

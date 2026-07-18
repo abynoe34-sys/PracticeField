@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase'
+import { requireCoachSession } from '@/lib/require-coach'
 
 type RouteContext = { params: Promise<{ playerId: string }> }
 
@@ -29,11 +30,33 @@ export async function GET(_req: NextRequest, { params }: RouteContext) {
 // Normal update: { name?, position?, experience_level? }
 // Parental consent is handled exclusively via the /consent/[token] flow.
 // Use POST /api/players/[playerId]/resend-consent to resend the consent email.
+//
+// Ownership added 2026-07-18 (unified accounts) — this route previously had
+// no ownership check at all (a known, already-documented gap; see CLAUDE.md
+// Gotcha #11's outstanding-audit note). coachId is derived from the
+// session via requireCoachSession(), matching the DELETE route below.
 export async function PATCH(req: NextRequest, { params }: RouteContext) {
   try {
+    const auth = await requireCoachSession()
+    if ('error' in auth) return auth.error
+    const { coachId } = auth
+
     const { playerId } = await params
     const body = await req.json()
     const db = getAdminClient()
+
+    const { data: existing, error: fetchError } = await db
+      .from('players')
+      .select('coach_id')
+      .eq('id', playerId)
+      .single()
+
+    if (fetchError || !existing) {
+      return NextResponse.json({ error: 'Player not found' }, { status: 404 })
+    }
+    if (existing.coach_id !== coachId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
 
     const { data, error } = await db
       .from('players')
@@ -43,6 +66,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
         experience_level: body.experience_level,
       })
       .eq('id', playerId)
+      .eq('coach_id', coachId)
       .select()
       .single()
 
@@ -58,20 +82,22 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
 
 const STORAGE_BUCKET = 'session-videos'
 
-// DELETE /api/players/[playerId]?coachId=X — hard-delete a coach-managed
-// player: all their video files in Storage, all session_videos rows, all
-// sessions rows, and the player row itself.
+// DELETE /api/players/[playerId] — hard-delete a coach-managed player: all
+// their video files in Storage, all session_videos rows, all sessions
+// rows, and the player row itself.
 //
 // Storage-first (required order): every video file this player has is
 // removed from Storage before any DB row is touched. If storage deletion
 // fails, nothing is deleted. If a DB delete fails after storage succeeded,
 // the failure is logged clearly rather than silently swallowed.
 //
-// Ownership: verified against a fresh DB read of the player's own
-// coach_id, never trusted from the client. Every subsequent query is also
-// scoped by coach_id, not just player_id — defense in depth so a cascade
-// can never reach across an ownership boundary even in a hypothetical
-// data-integrity edge case.
+// Ownership (strengthened 2026-07-18, unified accounts): coachId is now
+// derived from the caller's verified session (requireCoachSession()), not
+// a client-supplied ?coachId= query param — a coachId can no longer be
+// spoofed by simply passing a different value. Every subsequent query is
+// also scoped by coach_id, not just player_id — defense in depth so a
+// cascade can never reach across an ownership boundary even in a
+// hypothetical data-integrity edge case.
 //
 // This route only ever operates on the `players` table, which holds
 // coach-managed players exclusively — self-signup players live entirely in
@@ -83,14 +109,13 @@ const STORAGE_BUCKET = 'session-videos'
 // which would have silently destroyed them), so deleting the player row
 // below automatically nulls the link and retains the record — required
 // for compliance regardless of which code path deletes the player.
-export async function DELETE(req: NextRequest, { params }: RouteContext) {
+export async function DELETE(_req: NextRequest, { params }: RouteContext) {
   try {
-    const { playerId } = await params
-    const coachId = req.nextUrl.searchParams.get('coachId')
+    const auth = await requireCoachSession()
+    if ('error' in auth) return auth.error
+    const { coachId } = auth
 
-    if (!coachId) {
-      return NextResponse.json({ error: 'coachId is required' }, { status: 400 })
-    }
+    const { playerId } = await params
 
     const db = getAdminClient()
 

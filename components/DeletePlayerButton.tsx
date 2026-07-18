@@ -33,7 +33,7 @@ export default function DeletePlayerButton({ coachId, playerId, playerName, sess
 
     setDeleting(true)
     try {
-      const res = await fetch(`/api/players/${playerId}?coachId=${encodeURIComponent(coachId)}`, {
+      const res = await fetch(`/api/players/${playerId}`, {
         method: 'DELETE',
       })
       const json = await res.json()

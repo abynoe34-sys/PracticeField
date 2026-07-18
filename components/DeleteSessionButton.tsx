@@ -3,7 +3,9 @@
 // Hard-deletes a session (both video rows, both storage files, the parent
 // sessions row) via DELETE /api/sessions/[sessionId]. Server-side route
 // does the actual ownership check and storage-first delete sequence — this
-// component only confirms and calls it.
+// component only confirms and calls it. No coachId is sent to the API
+// (2026-07-18, unified accounts): the route derives it from the caller's
+// session cookie instead, which same-origin fetch() sends automatically.
 //
 // Confirm dialog names what's being deleted, per the build spec: not a bare
 // "Are you sure?", not type-to-confirm. A plain browser confirm() is
@@ -34,7 +36,7 @@ export default function DeleteSessionButton({ coachId, playerId, sessionId, sess
 
     setDeleting(true)
     try {
-      const res = await fetch(`/api/sessions/${sessionId}?coachId=${encodeURIComponent(coachId)}`, {
+      const res = await fetch(`/api/sessions/${sessionId}`, {
         method: 'DELETE',
       })
       const json = await res.json()
