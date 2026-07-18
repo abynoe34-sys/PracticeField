@@ -19,8 +19,16 @@ interface FeedbackCardProps {
 
 // Same critical/high/medium/low vocabulary and dark-theme treatment as
 // SEVERITY_STYLES in VideoAnalysisCard.tsx — kept in sync with it.
+//
+// Brand rollout (2026-07-18): "critical" deliberately does NOT reuse
+// brand-600 (#EC3D50, the single accent used for every CTA on this same
+// page). Two reds side by side — one meaning "click here", one meaning
+// "this is broken" — read as visual noise, not urgency. brand-700/
+// brand-red-deep (#C9384D) is a distinct, deeper red reserved for this
+// severity tier only. Per BRAND_SPEC §5, severity is also always paired
+// with the uppercase text label, never conveyed by color alone.
 const SEVERITY_STYLES: Record<string, string> = {
-  critical: 'bg-red-950 text-red-400 border-red-800',
+  critical: 'bg-brand-950 text-brand-300 border-brand-700',
   high:     'bg-orange-950 text-orange-400 border-orange-800',
   medium:   'bg-yellow-950 text-yellow-400 border-yellow-800',
   low:      'bg-gray-800 text-gray-400 border-gray-700',
@@ -30,7 +38,7 @@ export default function FeedbackCard({ feedback }: FeedbackCardProps) {
   if (!feedback) return null
 
   return (
-    <div className="bg-field-card border border-field-border rounded-xl overflow-hidden">
+    <div className="bg-field-card border border-field-border rounded-md overflow-hidden">
       {/* Caveat banner — remove once prompt hallucination issue (CLAUDE.md
           Priority 1) is resolved and this has been validated against more
           than one test session. */}
@@ -54,7 +62,7 @@ export default function FeedbackCard({ feedback }: FeedbackCardProps) {
             {feedback.issues.map((issue, i) => {
               const sev = SEVERITY_STYLES[issue.severity] ?? SEVERITY_STYLES.low
               return (
-                <div key={i} className={`rounded-lg border px-3 py-2 ${sev}`}>
+                <div key={i} className={`rounded-md border px-3 py-2 ${sev}`}>
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-sm font-medium">{issue.issue}</span>
                     <span className="text-[10px] font-bold uppercase tracking-wide opacity-75 shrink-0">

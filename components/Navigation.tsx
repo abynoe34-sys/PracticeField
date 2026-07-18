@@ -36,14 +36,16 @@ export default function Navigation({ coachId }: NavigationProps) {
       <div className="max-w-5xl mx-auto px-4">
         <div className="flex items-center justify-between h-14">
 
-          {/* Brand / Logo */}
+          {/* Brand / Logo — frameless mark (2026-07-18 brand rollout). NOT
+              public/logo.png, which has a white rounded card baked into the
+              asset — that shouldn't bleed into the dark nav surface. */}
           <Link href={base} className="flex items-center gap-2.5 shrink-0">
             <Image
-              src="/logo.png"
+              src="/practice-field-mark.png"
               alt="Practice Field"
               width={32}
               height={32}
-              className="rounded object-contain"
+              className="rounded-md object-contain"
               priority
             />
             <span className="hidden sm:inline font-bold text-white text-base tracking-tight">
@@ -51,34 +53,39 @@ export default function Navigation({ coachId }: NavigationProps) {
             </span>
           </Link>
 
-          {/* Nav links */}
+          {/* Nav links — active state is a thin angled red underline
+              (BRAND_SPEC §3's "flag/chevron motif", used sparingly) rather
+              than a solid fill, so red stays a single sparing accent. */}
           <div className="flex items-center gap-1">
             {links.map(link => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
+                  'relative flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
                   pathname === link.href
-                    ? 'bg-brand-600 text-white'
-                    : 'text-gray-400 hover:text-white hover:bg-field-card'
+                    ? 'text-white'
+                    : 'text-field-muted hover:text-white hover:bg-field-card'
                 )}
               >
                 <span className="text-base">{link.icon}</span>
                 <span className="hidden sm:inline">{link.label}</span>
+                {pathname === link.href && (
+                  <span className="absolute left-2 right-2 -bottom-0.5 h-0.5 bg-brand-500 -skew-x-12" />
+                )}
               </Link>
             ))}
           </div>
 
           {/* Coach ID chip + sign out */}
           <div className="flex items-center gap-2">
-            <span className="hidden md:flex items-center gap-1.5 bg-field-card border border-field-border rounded-lg px-2.5 py-1 text-xs text-gray-400">
+            <span className="hidden md:flex items-center gap-1.5 bg-field-card border border-field-border rounded-md px-2.5 py-1 text-xs text-field-muted">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-400 inline-block"></span>
               {coachId}
             </span>
             <button
               onClick={logout}
-              className="text-xs text-gray-500 hover:text-white px-2 py-1.5 rounded-lg hover:bg-field-card transition-colors"
+              className="text-xs text-field-muted hover:text-white px-2 py-1.5 rounded-md hover:bg-field-card transition-colors"
             >
               Log out
             </button>

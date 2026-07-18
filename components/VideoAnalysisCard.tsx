@@ -19,8 +19,12 @@ const GRADE_STYLES: Record<string, { bg: string; text: string; label: string }> 
   D: { bg: 'bg-red-900',    text: 'text-red-400',    label: 'Poor'       },
 }
 
+// Brand rollout (2026-07-18): "critical" uses brand-red-deep (#C9384D), not
+// brand-600 (#EC3D50, the CTA accent used elsewhere on this same card) — see
+// the matching note in FeedbackCard.tsx's SEVERITY_STYLES, which this must
+// stay in sync with (CLAUDE.md Gotcha #8's "bitten twice" note).
 const SEVERITY_STYLES: Record<string, string> = {
-  critical: 'bg-red-950 text-red-400 border-red-800',
+  critical: 'bg-brand-950 text-brand-300 border-brand-700',
   high:     'bg-orange-950 text-orange-400 border-orange-800',
   medium:   'bg-yellow-950 text-yellow-400 border-yellow-800',
   low:      'bg-gray-800 text-gray-400 border-gray-700',
@@ -309,7 +313,7 @@ export default function VideoAnalysisCard({ video, position, onReanalyze, onDele
                       <div key={i} className="border border-field-border rounded-lg p-3 space-y-1">
                         <div className="flex items-start gap-2">
                           <span className={`shrink-0 text-xs font-bold px-1.5 py-0.5 rounded border mt-0.5 ${
-                            mod.priority === 'urgent' ? 'bg-red-950 text-red-400 border-red-800' :
+                            mod.priority === 'urgent' ? 'bg-brand-950 text-brand-300 border-brand-700' :
                             mod.priority === 'recommended' ? 'bg-yellow-950 text-yellow-400 border-yellow-800' :
                             'bg-gray-800 text-gray-400 border-gray-700'
                           }`}>

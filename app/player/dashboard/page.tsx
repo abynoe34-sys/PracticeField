@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 import { getSupabaseClient } from '@/lib/supabase'
 
@@ -144,7 +145,7 @@ export default function PlayerDashboard() {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center px-4 bg-field-dark">
         <div className="w-full max-w-sm space-y-4">
-          <div className="bg-amber-950/40 border border-amber-700/50 rounded-xl p-7 text-center space-y-3">
+          <div className="bg-amber-950/40 border border-amber-700/50 rounded-md p-7 text-center space-y-3">
             <div className="text-4xl">⏳</div>
             <h1 className="text-xl font-bold text-white">Your account is almost ready</h1>
             <p className="text-sm text-amber-200 leading-relaxed">
@@ -175,7 +176,7 @@ export default function PlayerDashboard() {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center px-4 bg-field-dark">
         <div className="w-full max-w-sm space-y-4">
-          <div className="bg-red-950/40 border border-red-700/50 rounded-xl p-7 text-center space-y-3">
+          <div className="bg-red-950/40 border border-red-700/50 rounded-md p-7 text-center space-y-3">
             <div className="text-4xl">🚫</div>
             <h1 className="text-xl font-bold text-white">Account restricted</h1>
             <p className="text-sm text-red-200 leading-relaxed">
@@ -205,8 +206,9 @@ export default function PlayerDashboard() {
 
       <header className="border-b border-field-border px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
+          <Image src="/practice-field-mark.png" alt="" width={28} height={28} className="rounded-md" />
           <span className="text-white font-bold">Practice Field</span>
-          <span className="text-gray-600 text-sm hidden sm:inline">
+          <span className="text-field-muted text-sm hidden sm:inline">
             Welcome, {account?.display_name}
           </span>
         </div>
@@ -229,7 +231,7 @@ export default function PlayerDashboard() {
         <div className="flex items-center justify-between">
           <h2 className="text-white font-semibold">My Videos</h2>
           <label
-            className={`cursor-pointer bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors ${
+            className={`cursor-pointer bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium px-4 py-2 rounded-md transition-colors ${
               uploading ? 'opacity-60 pointer-events-none' : ''
             }`}
           >
@@ -250,7 +252,7 @@ export default function PlayerDashboard() {
 
         {/* Video list */}
         {videos.length === 0 ? (
-          <div className="bg-field-card border border-field-border rounded-xl p-10 text-center">
+          <div className="bg-field-card border border-field-border rounded-md p-10 text-center">
             <p className="text-gray-500 text-sm">
               No videos yet. Upload your first practice clip above.
             </p>
@@ -260,7 +262,7 @@ export default function PlayerDashboard() {
             {videos.map(v => (
               <div
                 key={v.id}
-                className="bg-field-card border border-field-border rounded-xl p-4 flex items-center gap-4"
+                className="bg-field-card border border-field-border rounded-md p-4 flex items-center gap-4"
               >
                 <div className="flex-1 min-w-0">
                   <p className="text-white text-sm font-medium truncate">

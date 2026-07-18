@@ -30,7 +30,7 @@ export default function PlayerCard({ player, latestSession, sessionCount = 0, co
   return (
     <Link
       href={`/${coachId}/players/${player.id}`}
-      className="block bg-field-card border border-field-border rounded-xl p-4 hover:border-brand-600 transition-colors group"
+      className="block bg-field-card border border-field-border rounded-md p-4 hover:border-brand-600 transition-colors group"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
@@ -59,7 +59,7 @@ export default function PlayerCard({ player, latestSession, sessionCount = 0, co
       {latestSession?.improvements && latestSession.improvements.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1">
           {latestSession.improvements.slice(0, 2).map((imp, i) => (
-            <span key={i} className="text-xs bg-red-950 text-red-400 border border-red-900 px-1.5 py-0.5 rounded">
+            <span key={i} className="text-xs bg-brand-950 text-brand-300 border border-brand-800 px-1.5 py-0.5 rounded">
               {imp.length > 24 ? imp.slice(0, 24) + '…' : imp}
             </span>
           ))}

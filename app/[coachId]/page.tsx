@@ -66,7 +66,7 @@ export default async function DashboardPage({ params }: DashboardProps) {
         </div>
         <Link
           href={`/${coachId}/players`}
-          className="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors"
+          className="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-4 py-2 rounded-md text-sm transition-colors"
         >
           + Add Player
         </Link>
@@ -85,7 +85,7 @@ export default async function DashboardPage({ params }: DashboardProps) {
           }).length, icon: '📅' },
           { label: 'Active Plans', value: 0, icon: '🤖' },
         ].map(stat => (
-          <div key={stat.label} className="bg-field-card border border-field-border rounded-xl p-4">
+          <div key={stat.label} className="bg-field-card border border-field-border rounded-md p-4">
             <p className="text-2xl mb-1">{stat.icon}</p>
             <p className="text-2xl font-bold text-white">{stat.value}</p>
             <p className="text-xs text-gray-500">{stat.label}</p>
@@ -103,13 +103,13 @@ export default async function DashboardPage({ params }: DashboardProps) {
         </div>
 
         {playerList.length === 0 ? (
-          <div className="bg-field-card border border-dashed border-field-border rounded-xl p-8 text-center">
+          <div className="bg-field-card border border-dashed border-field-border rounded-md p-8 text-center">
             <p className="text-3xl mb-2">🏈</p>
             <p className="text-gray-400 font-medium">No players yet</p>
             <p className="text-gray-600 text-sm mt-1">Add your first player to get started</p>
             <Link
               href={`/${coachId}/players`}
-              className="inline-block mt-4 bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+              className="inline-block mt-4 bg-brand-600 hover:bg-brand-500 text-white text-sm font-semibold px-4 py-2 rounded-md transition-colors"
             >
               Add First Player
             </Link>
@@ -140,7 +140,7 @@ export default async function DashboardPage({ params }: DashboardProps) {
                 <Link
                   key={session.id}
                   href={`/${coachId}/players/${session.player_id}/sessions/${session.id}`}
-                  className="flex items-center justify-between bg-field-card border border-field-border rounded-xl px-4 py-3 hover:border-brand-600 transition-colors"
+                  className="flex items-center justify-between bg-field-card border border-field-border rounded-md px-4 py-3 hover:border-brand-600 transition-colors"
                 >
                   <div>
                     <p className="text-sm font-medium text-white">{player?.name ?? 'Unknown Player'}</p>
@@ -148,7 +148,7 @@ export default async function DashboardPage({ params }: DashboardProps) {
                   </div>
                   <div className="flex gap-1.5">
                     {session.improvements.slice(0, 2).map((imp, i) => (
-                      <span key={i} className="text-xs bg-red-950 text-red-400 border border-red-900 px-1.5 py-0.5 rounded hidden sm:inline">
+                      <span key={i} className="text-xs bg-brand-950 text-brand-300 border border-brand-800 px-1.5 py-0.5 rounded hidden sm:inline">
                         {imp.length > 16 ? imp.slice(0, 16) + '…' : imp}
                       </span>
                     ))}
