@@ -131,6 +131,35 @@ Unchanged.
 
 ---
 
+## Brand & Design System (2026-07-18)
+
+Applied from `BRAND_SPEC_practice_field.md` (owner-provided handoff doc, not committed to the repo — kept in Downloads). The spec's authoritative colors were sampled directly from the official logo (`practice_field_logo_960.png`).
+
+**Tokens live in `tailwind.config.ts`**, reconciled into the existing `brand-*`/`field-*` scales rather than adding a parallel system — the entire app already used these two token families in ~30 files, so retuning them re-skins the whole app coherently:
+
+- `brand-600` = `#EC3D50` — THE brand red, single accent for buttons/links/active states/focus rings (this is what "primary action" resolves to everywhere: `bg-brand-600 hover:bg-brand-500`).
+- `brand-700` = `brand.red-deep` = `#C9384D` — a deliberately distinct deeper red. See "Red collision" below.
+- `brand.navy` / `brand.plum` / `brand.maroon` = `#072743` / `#33253F` / `#652945` — the three gradient stops, also usable directly (`bg-brand-navy`, etc.).
+- Full `brand` 50–950 numeric scale interpolated around `#EC3D50` so every existing `brand-400`/`brand-300`/`brand-900` usage (links, badges, hover states) stays in the red family instead of the old indigo.
+- `field.dark` = `#0B0E1A`, `field.card` = `#1C1830`, `field.border` = `#3A3050` — nudged from the old navy-only values toward the spec's plum-navy family (previously more indigo-navy, now visibly related to the gradient).
+- `field.muted` = `#A99FB5` — new; used for secondary/muted text on the surfaces touched this rollout (login/signup/landing/dashboards). Older pages still mostly use stock Tailwind `gray-*` for muted text — harmless, just not yet migrated (low priority, cosmetic).
+- `backgroundImage['brand-gradient']` = `linear-gradient(135deg, #072743 0%, #33253F 55%, #652945 100%)` — the signature gradient, applied via `bg-brand-gradient`.
+
+**Where the gradient vs. flat surfaces are used**, per spec §4: `bg-brand-gradient` on `/`, `/login`, `/signup` only (hero/auth surfaces). Everywhere else (coach dashboard, player dashboard, session/player detail pages, FeedbackCard, etc.) uses the flat `field-dark`/`field-card` surfaces so dense content stays readable — the gradient is an accent, not every background.
+
+**Shape language**: buttons/inputs/cards on the touched surfaces (login, signup, landing, dashboards, Navigation, FeedbackCard, VideoAnalysisCard) use `rounded-md` (6px) instead of the old `rounded-xl`/`rounded-2xl` (12–16px), per the spec's "small border radii (2–6px), not pill-round everything." Pages not explicitly in this rollout (videos, sessions, plan, settings, consent, terms, training-plans, etc.) still use the old larger radii — cosmetic, not urgent, pick up naturally if/when those pages get touched.
+
+**Logo**: `public/practice-field-mark.png` — copied from the spec's frameless `practice_field_logo_960.png` deliverable. **Do not use `public/logo.png`** for any new UI — it's the old version with a white rounded card baked into the asset, which the spec explicitly says should not bleed into the dark UI. `public/logo.png` is only still referenced by `PROJECT_HANDOVER_2026-06-30.md` (a doc, not code) — left alone. Note the new asset is a raster PNG with the dark gradient background baked into the square image (not transparent) — at nav size (32px) this reads fine against the dark nav bar; a transparent SVG mark is explicitly out-of-scope/later in the spec itself, not a regression introduced here.
+
+**Two judgment calls the spec flagged explicitly** — both resolved and documented here so they aren't re-litigated:
+
+1. **Red collision (severity-critical vs. brand accent).** Once `brand-600` became the actual brand red, `FeedbackCard.tsx`'s and `VideoAnalysisCard.tsx`'s `SEVERITY_STYLES.critical` (previously stock Tailwind `red-950/red-400/red-800`, coincidentally similar hue) would have sat right next to CTA buttons using the exact same red-family accent on the same page — "this is broken" and "click here" wearing the same color. **Resolved by splitting them**: `brand-600` (`#EC3D50`) stays reserved for brand/action only; `SEVERITY_STYLES.critical` in both components (they're documented as required to stay in sync, see Gotcha #8) now uses `bg-brand-950 text-brand-300 border-brand-700` — `brand-700`/`brand-red-deep` is `#C9384D`, the spec's own suggested deep-red value. Also applied to the one other literal duplicate of that old class string: the `mod.priority === 'urgent'` badge in `VideoAnalysisCard`'s plan tab. Severity is still always paired with an uppercase text label (never color alone), per the spec's accessibility guardrail.
+2. **Logo asset — frameless, not the white-card version.** Confirmed the provided `practice_field_logo_960.png` has no white rounded card (visually inspected before use) and used it everywhere a mark appears in-app (Navigation, login, signup, landing hero, player dashboard header). The old `public/logo.png` (white-card version) was left in place but is no longer referenced by any component.
+
+**Verified live**, not just typechecked: real disposable coach + player accounts signed up and logged in through `/signup`/`/login`/dashboards; computed styles read back via `getComputedStyle()` confirmed every touched surface resolves to the exact configured hex values (gradient stops, `#EC3D50` buttons, `#1C1830` cards, `#3A3050` borders, `6px` radii, the `#C9384D` severity-critical split, the skewed red active-nav underline). All disposable test fixtures cleaned up afterward via the established append-only-trigger-safe pattern (Gotcha #15), confirmed gone via zero-count sweeps.
+
+---
+
 ## Critical Gotchas — Do Not Re-Debug
 
 ### 1. Vercel 4.5 MB request body limit
