@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { getSupabaseClient } from '@/lib/supabase'
 
 interface NavigationProps {
   coachId: string
@@ -11,7 +12,18 @@ interface NavigationProps {
 
 export default function Navigation({ coachId }: NavigationProps) {
   const pathname = usePathname()
+  const router = useRouter()
   const base = `/${coachId}`
+
+  // Added 2026-07-18 (unified accounts) — coaches previously had no sign-out
+  // at all, since they had no real session to sign out of. router.refresh()
+  // after signOut() (not just push) so the app/[coachId]/layout.tsx server
+  // check re-runs against the now-cleared session on next navigation.
+  const logout = async () => {
+    await getSupabaseClient().auth.signOut()
+    router.push('/login')
+    router.refresh()
+  }
 
   const links = [
     { href: base,               label: 'Dashboard', icon: '⚡' },
@@ -58,12 +70,18 @@ export default function Navigation({ coachId }: NavigationProps) {
             ))}
           </div>
 
-          {/* Coach ID chip */}
+          {/* Coach ID chip + sign out */}
           <div className="flex items-center gap-2">
             <span className="hidden md:flex items-center gap-1.5 bg-field-card border border-field-border rounded-lg px-2.5 py-1 text-xs text-gray-400">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-400 inline-block"></span>
               {coachId}
             </span>
+            <button
+              onClick={logout}
+              className="text-xs text-gray-500 hover:text-white px-2 py-1.5 rounded-lg hover:bg-field-card transition-colors"
+            >
+              Log out
+            </button>
           </div>
 
         </div>

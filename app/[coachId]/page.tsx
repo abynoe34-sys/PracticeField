@@ -9,33 +9,20 @@ interface DashboardProps {
   params: Promise<{ coachId: string }>
 }
 
-async function getOrCreateCoach(coachId: string) {
-  const db = getAdminClient()
-  const { data } = await db
-    .from('coaches')
-    .select('*')
-    .eq('coach_id', coachId)
-    .single()
-
-  if (!data) {
-    // Auto-create coach on first visit
-    const { data: created, error } = await db
-      .from('coaches')
-      .insert({ coach_id: coachId, sport: 'american_football' })
-      .select()
-      .single()
-
-    if (error) return null
-    return created
-  }
-  return data
-}
-
 export default async function DashboardPage({ params }: DashboardProps) {
   const { coachId } = await params
   const db = getAdminClient()
 
-  const coach = await getOrCreateCoach(coachId)
+  // No auto-create here — app/[coachId]/layout.tsx already verified this
+  // coachId belongs to the authenticated session before this page ran.
+  // A missing row at this point would mean the layout's check and this
+  // query disagree, which shouldn't happen; notFound() rather than
+  // silently fabricating a row is the correct failure mode.
+  const { data: coach } = await db
+    .from('coaches')
+    .select('*')
+    .eq('coach_id', coachId)
+    .single()
   if (!coach) redirect('/')
 
   // Fetch players and their recent sessions in parallel
