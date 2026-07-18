@@ -6,6 +6,7 @@ import { getAdminClient } from '@/lib/supabase'
 import { formatDate } from '@/lib/utils'
 import VideoAnalysisCard from '@/components/VideoAnalysisCard'
 import FeedbackCard from '@/components/FeedbackCard'
+import SessionAutoRefresh from '@/components/SessionAutoRefresh'
 import type { SessionVideo } from '@/types'
 
 interface SessionDetailProps {
@@ -42,8 +43,21 @@ export default async function SessionDetailPage({ params }: SessionDetailProps) 
 
   const rootCauses: Record<string, string> = session.root_causes ?? {}
 
+  // Drives SessionAutoRefresh: keep polling while any side video hasn't
+  // reached a terminal status yet (or none exist — a clip may still be
+  // uploading). 'complete' is terminal regardless of feedback, since
+  // feedback generation is best-effort and may never arrive.
+  const anyFailed = sideVideos.some(v => v.analysis_status === 'failed')
+  const anyInProgress =
+    sideVideos.length === 0 ||
+    sideVideos.some(v => v.analysis_status !== 'complete' && v.analysis_status !== 'failed')
+  const pollStatus: 'processing' | 'complete' | 'failed' =
+    anyInProgress ? 'processing' : anyFailed ? 'failed' : 'complete'
+  const feedbackPending = sideVideos.some(v => v.analysis_status === 'complete' && !v.feedback)
+
   return (
     <div className="max-w-xl mx-auto space-y-6">
+      <SessionAutoRefresh status={pollStatus} feedbackPending={feedbackPending} />
       {/* Breadcrumb */}
       <div>
         <div className="flex items-center gap-1.5 text-sm text-gray-500">
