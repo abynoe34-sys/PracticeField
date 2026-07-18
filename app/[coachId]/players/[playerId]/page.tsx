@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { getAdminClient } from '@/lib/supabase'
 import { formatDate, detectPlateau } from '@/lib/utils'
 import PerformanceChart from '@/components/PerformanceChart'
+import DeletePlayerButton from '@/components/DeletePlayerButton'
 import type { Session, ProgressMetric } from '@/types'
 
 interface PlayerDetailProps {
@@ -83,6 +84,12 @@ export default async function PlayerDetailPage({ params }: PlayerDetailProps) {
           >
             🤖 Generate Plan
           </Link>
+          <DeletePlayerButton
+            coachId={coachId}
+            playerId={playerId}
+            playerName={player.name}
+            sessionCount={sessionList.length}
+          />
         </div>
       </div>
 
