@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import PlayerSignupForm from '@/components/PlayerSignupForm'
 import CoachSignupForm from '@/components/CoachSignupForm'
 
@@ -15,14 +16,22 @@ export default function SignupPage() {
   const [role, setRole] = useState<Role>(null)
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-field-dark">
+    <main className="min-h-screen flex flex-col items-center justify-center px-4 py-12 bg-brand-gradient">
       <div className="w-full max-w-sm space-y-6">
         <div className="text-center">
-          <Link href="/" className="text-sm text-brand-400 hover:text-brand-300">
+          <Image
+            src="/practice-field-mark.png"
+            alt="Practice Field"
+            width={72}
+            height={72}
+            className="mx-auto rounded-md"
+            priority
+          />
+          <Link href="/" className="text-sm text-white/70 hover:text-white mt-4 inline-block">
             ← Back to Practice Field
           </Link>
-          <h1 className="text-3xl font-bold text-white mt-4">Create your account</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-3xl font-bold text-white mt-2">Create your account</h1>
+          <p className="text-sm text-white/60 mt-1">
             {role === null && 'Are you signing up as a coach or a player?'}
             {role === 'coach' && 'Coach account — manage your players and their progress.'}
             {role === 'player' && 'Player account — track your own progress and get AI coaching feedback.'}
@@ -33,14 +42,14 @@ export default function SignupPage() {
           <div className="flex gap-3">
             <button
               onClick={() => setRole('coach')}
-              className="flex-1 bg-field-card border border-field-border hover:border-brand-600 text-white font-semibold py-6 rounded-xl text-center transition-colors"
+              className="flex-1 bg-field-card border border-field-border hover:border-brand-600 text-white font-semibold py-6 rounded-md text-center transition-colors"
             >
               <div className="text-3xl mb-2">🏈</div>
               I&apos;m a Coach
             </button>
             <button
               onClick={() => setRole('player')}
-              className="flex-1 bg-field-card border border-field-border hover:border-brand-600 text-white font-semibold py-6 rounded-xl text-center transition-colors"
+              className="flex-1 bg-field-card border border-field-border hover:border-brand-600 text-white font-semibold py-6 rounded-md text-center transition-colors"
             >
               <div className="text-3xl mb-2">🙋</div>
               I&apos;m a Player
@@ -52,7 +61,7 @@ export default function SignupPage() {
           <>
             <button
               onClick={() => setRole(null)}
-              className="text-xs text-gray-500 hover:text-gray-300"
+              className="text-xs text-white/60 hover:text-white"
             >
               ← Choose a different role
             </button>
@@ -60,9 +69,9 @@ export default function SignupPage() {
           </>
         )}
 
-        <p className="text-center text-xs text-gray-600">
+        <p className="text-center text-xs text-white/50">
           Already have an account?{' '}
-          <Link href="/login" className="text-brand-400 hover:text-brand-300">
+          <Link href="/login" className="text-white hover:underline">
             Log in
           </Link>
         </p>

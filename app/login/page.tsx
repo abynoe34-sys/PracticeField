@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { getSupabaseClient } from '@/lib/supabase'
 
 // Unified sign-in entry point (2026-07-18). One form for both roles — after
@@ -61,56 +62,64 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center px-4 bg-field-dark">
+    <main className="min-h-screen flex flex-col items-center justify-center px-4 bg-brand-gradient">
       <div className="w-full max-w-sm space-y-5">
         <div className="text-center">
-          <Link href="/" className="text-sm text-brand-400 hover:text-brand-300">
+          <Image
+            src="/practice-field-mark.png"
+            alt="Practice Field"
+            width={72}
+            height={72}
+            className="mx-auto rounded-md"
+            priority
+          />
+          <Link href="/" className="text-sm text-white/70 hover:text-white mt-4 inline-block">
             ← Back to Practice Field
           </Link>
-          <h1 className="text-3xl font-bold text-white mt-4">Log in</h1>
-          <p className="text-sm text-gray-500 mt-1">Works for both coach and player accounts.</p>
+          <h1 className="text-3xl font-bold text-white mt-2">Log in</h1>
+          <p className="text-sm text-white/60 mt-1">Works for both coach and player accounts.</p>
         </div>
 
         <div className="space-y-3">
           <div>
-            <label className="block text-xs text-gray-400 mb-1">Email</label>
+            <label className="block text-xs text-white/70 mb-1">Email</label>
             <input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleLogin()}
               placeholder="you@example.com"
-              className="w-full bg-field-card border border-field-border rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
+              className="w-full bg-field-card border border-field-border rounded-md px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
             />
           </div>
           <div>
-            <label className="block text-xs text-gray-400 mb-1">Password</label>
+            <label className="block text-xs text-white/70 mb-1">Password</label>
             <input
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleLogin()}
               placeholder="Your password"
-              className="w-full bg-field-card border border-field-border rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
+              className="w-full bg-field-card border border-field-border rounded-md px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
             />
           </div>
         </div>
 
         {error && (
-          <p className="text-sm text-red-400 text-center">{error}</p>
+          <p className="text-sm text-brand-300 text-center">{error}</p>
         )}
 
         <button
           onClick={handleLogin}
           disabled={loading || !email.trim() || !password}
-          className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-60 text-white font-bold py-4 px-6 rounded-xl text-lg transition-colors"
+          className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-60 text-white font-bold py-4 px-6 rounded-md text-lg transition-colors"
         >
           {loading ? 'Logging in…' : 'Log in'}
         </button>
 
-        <p className="text-center text-xs text-gray-600">
+        <p className="text-center text-xs text-white/50">
           Don&apos;t have an account?{' '}
-          <Link href="/signup" className="text-brand-400 hover:text-brand-300">
+          <Link href="/signup" className="text-white hover:underline">
             Sign up
           </Link>
         </p>

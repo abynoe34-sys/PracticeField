@@ -55,7 +55,7 @@ export default function CoachSignupForm() {
       <div className="w-full max-w-sm text-center space-y-4">
         <div className="text-5xl">✅</div>
         <h1 className="text-2xl font-bold text-white">Check your email</h1>
-        <p className="text-sm text-gray-400 leading-relaxed">
+        <p className="text-sm text-white/70 leading-relaxed">
           We sent a verification link to{' '}
           <span className="text-white font-medium">{email}</span>.
           Click it to activate your account, then log in.
@@ -71,46 +71,46 @@ export default function CoachSignupForm() {
     <div className="w-full max-w-sm space-y-5">
       <div className="space-y-3">
         <div>
-          <label className="block text-xs text-gray-400 mb-1">Your name</label>
+          <label className="block text-xs text-white/70 mb-1">Your name</label>
           <input
             type="text"
             value={name}
             onChange={e => setName(e.target.value)}
             placeholder="Coach name (optional)"
-            className="w-full bg-field-card border border-field-border rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
+            className="w-full bg-field-card border border-field-border rounded-md px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
           />
         </div>
 
         <div>
-          <label className="block text-xs text-gray-400 mb-1">Team name</label>
+          <label className="block text-xs text-white/70 mb-1">Team name</label>
           <input
             type="text"
             value={teamName}
             onChange={e => setTeamName(e.target.value)}
             placeholder="Team name (optional)"
-            className="w-full bg-field-card border border-field-border rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
+            className="w-full bg-field-card border border-field-border rounded-md px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
           />
         </div>
 
         <div>
-          <label className="block text-xs text-gray-400 mb-1">Email</label>
+          <label className="block text-xs text-white/70 mb-1">Email</label>
           <input
             type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             placeholder="you@example.com"
-            className="w-full bg-field-card border border-field-border rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
+            className="w-full bg-field-card border border-field-border rounded-md px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
           />
         </div>
 
         <div>
-          <label className="block text-xs text-gray-400 mb-1">Password</label>
+          <label className="block text-xs text-white/70 mb-1">Password</label>
           <input
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             placeholder="At least 8 characters"
-            className="w-full bg-field-card border border-field-border rounded-xl px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
+            className="w-full bg-field-card border border-field-border rounded-md px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
           />
         </div>
 
@@ -121,30 +121,30 @@ export default function CoachSignupForm() {
             onChange={e => setTermsAgreed(e.target.checked)}
             className="mt-0.5 h-4 w-4 rounded border-field-border bg-field-card accent-brand-600 cursor-pointer"
           />
-          <span className="text-xs text-gray-400 leading-relaxed">
+          <span className="text-xs text-white/70 leading-relaxed">
             I agree to the{' '}
             <a href="/terms" target="_blank" rel="noopener noreferrer"
-               className="text-brand-400 underline hover:text-brand-300">
+               className="text-white underline hover:text-white/80">
               Terms of Service
             </a>{' '}
             and{' '}
             <a href="/privacy" target="_blank" rel="noopener noreferrer"
-               className="text-brand-400 underline hover:text-brand-300">
+               className="text-white underline hover:text-white/80">
               Privacy Policy
             </a>
-            .{' '}<span className="text-gray-500">Required.</span>
+            .{' '}<span className="text-white/50">Required.</span>
           </span>
         </label>
       </div>
 
       {error && (
-        <p className="text-sm text-red-400 text-center">{error}</p>
+        <p className="text-sm text-brand-300 text-center">{error}</p>
       )}
 
       <button
         onClick={handleSubmit}
         disabled={loading || !canSubmit}
-        className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-60 text-white font-bold py-4 px-6 rounded-xl text-lg transition-colors"
+        className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-60 text-white font-bold py-4 px-6 rounded-md text-lg transition-colors"
       >
         {loading ? 'Creating your account…' : 'Create coach account'}
       </button>
