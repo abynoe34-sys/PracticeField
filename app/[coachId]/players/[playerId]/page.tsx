@@ -4,7 +4,8 @@ import { getAdminClient } from '@/lib/supabase'
 import { formatDate, detectPlateau } from '@/lib/utils'
 import PerformanceChart from '@/components/PerformanceChart'
 import DeletePlayerButton from '@/components/DeletePlayerButton'
-import type { Session, ProgressMetric } from '@/types'
+import ReferencePhotosSection from '@/components/ReferencePhotosSection'
+import type { Session, ProgressMetric, ReferencePhoto } from '@/types'
 
 interface PlayerDetailProps {
   params: Promise<{ coachId: string; playerId: string }>
@@ -21,15 +22,25 @@ export default async function PlayerDetailPage({ params }: PlayerDetailProps) {
   const { coachId, playerId } = await params
   const db = getAdminClient()
 
-  const [{ data: player }, { data: sessions }, { data: metrics }, { data: plans }] =
+  const [{ data: player }, { data: sessions }, { data: metrics }, { data: plans }, { data: rawPhotos }] =
     await Promise.all([
       db.from('players').select('*').eq('id', playerId).single(),
       db.from('sessions').select('*').eq('player_id', playerId).order('session_date', { ascending: false }),
       db.from('progress_metrics').select('*').eq('player_id', playerId).order('measured_at'),
       db.from('training_plans').select('*').eq('player_id', playerId).order('created_at', { ascending: false }),
+      db.from('reference_photos').select('*').eq('player_id', playerId).order('created_at', { ascending: false }),
     ])
 
   if (!player) notFound()
+
+  const referencePhotos: ReferencePhoto[] = await Promise.all(
+    (rawPhotos ?? []).map(async (p) => {
+      const { data: signed } = await db.storage
+        .from('session-videos')
+        .createSignedUrl(p.storage_path, 3600)
+      return { ...p, public_url: signed?.signedUrl ?? null } as ReferencePhoto
+    })
+  )
 
   const sessionList: Session[] = sessions ?? []
   const metricList: ProgressMetric[] = metrics ?? []
@@ -168,6 +179,15 @@ export default async function PlayerDetailPage({ params }: PlayerDetailProps) {
           </div>
         </section>
       )}
+
+      {/* Reference Photos */}
+      <section>
+        <ReferencePhotosSection
+          initialPhotos={referencePhotos}
+          coachId={coachId}
+          playerId={playerId}
+        />
+      </section>
 
       {/* Session History */}
       <section>

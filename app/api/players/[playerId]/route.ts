@@ -144,9 +144,26 @@ export async function DELETE(_req: NextRequest, { params }: RouteContext) {
       return NextResponse.json({ error: videosError.message }, { status: 500 })
     }
 
-    const storagePaths = (videos ?? [])
-      .map(v => v.storage_path)
-      .filter((p): p is string => !!p)
+    // Reference photos (Feature B, BUILD_SPEC_photo_upload.md) — a separate
+    // table from session_videos (see migration-v14), so a separate gather
+    // step. reference_photos' FKs are ON DELETE CASCADE, which would clean
+    // up the DB rows automatically, but NOT the Storage objects — Postgres
+    // FK cascade only touches rows, never Storage. Explicit storage-first
+    // cleanup here is required for the same reason it's required for videos.
+    const { data: refPhotos, error: refPhotosError } = await db
+      .from('reference_photos')
+      .select('id, storage_path')
+      .eq('player_id', playerId)
+      .eq('coach_id', coachId)
+
+    if (refPhotosError) {
+      return NextResponse.json({ error: refPhotosError.message }, { status: 500 })
+    }
+
+    const storagePaths = [
+      ...(videos ?? []).map(v => v.storage_path),
+      ...(refPhotos ?? []).map(p => p.storage_path),
+    ].filter((p): p is string => !!p)
 
     // ── Storage-first delete ─────────────────────────────────────────────────
     if (storagePaths.length > 0) {
@@ -166,7 +183,7 @@ export async function DELETE(_req: NextRequest, { params }: RouteContext) {
       }
     }
 
-    // ── DB rows: session_videos, sessions, then the player row ─────────────
+    // ── DB rows: session_videos, reference_photos, sessions, then the player row ─
     const { error: videosDeleteError } = await db
       .from('session_videos')
       .delete()
@@ -180,6 +197,23 @@ export async function DELETE(_req: NextRequest, { params }: RouteContext) {
       )
       return NextResponse.json(
         { error: `Storage files deleted but database cleanup failed: ${videosDeleteError.message}. This needs manual reconciliation.` },
+        { status: 500 }
+      )
+    }
+
+    const { error: refPhotosDeleteError } = await db
+      .from('reference_photos')
+      .delete()
+      .eq('player_id', playerId)
+      .eq('coach_id', coachId)
+
+    if (refPhotosDeleteError) {
+      console.error(
+        `[DELETE /api/players/${playerId}] storage files deleted but reference_photos DB delete failed — needs manual reconciliation`,
+        refPhotosDeleteError
+      )
+      return NextResponse.json(
+        { error: `Storage files deleted but database cleanup failed: ${refPhotosDeleteError.message}. This needs manual reconciliation.` },
         { status: 500 }
       )
     }
@@ -218,7 +252,7 @@ export async function DELETE(_req: NextRequest, { params }: RouteContext) {
       )
     }
 
-    return NextResponse.json({ success: true, deletedVideoFiles: storagePaths.length })
+    return NextResponse.json({ success: true, deletedFiles: storagePaths.length })
   } catch (err) {
     console.error('DELETE /api/players/[playerId] failed', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

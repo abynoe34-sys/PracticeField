@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 import { getSupabaseClient } from '@/lib/supabase'
+import ReferencePhotosSection from '@/components/ReferencePhotosSection'
+import type { ReferencePhoto } from '@/types'
 
 type AccountStatus = 'pending_minor_consent' | 'active' | 'restricted'
 
@@ -35,6 +37,7 @@ export default function PlayerDashboard() {
   const [session,     setSession]     = useState<Session | null>(null)
   const [account,     setAccount]     = useState<PlayerAccount | null>(null)
   const [videos,      setVideos]      = useState<VideoRow[]>([])
+  const [refPhotos,   setRefPhotos]   = useState<ReferencePhoto[]>([])
   const [pageLoading, setPageLoading] = useState(true)
   const [uploading,   setUploading]   = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
@@ -75,6 +78,14 @@ export default function PlayerDashboard() {
           if (vRes.ok) {
             const { videos: vids } = await vRes.json()
             setVideos(vids ?? [])
+          }
+
+          const pRes = await fetch(`/api/reference-photos?playerAccountId=${acc.id}`, {
+            headers: { Authorization: `Bearer ${sess.access_token}` },
+          })
+          if (pRes.ok) {
+            const { photos } = await pRes.json()
+            setRefPhotos(photos ?? [])
           }
         }
 
@@ -297,6 +308,13 @@ export default function PlayerDashboard() {
             ))}
           </div>
         )}
+
+        {/* Reference Photos */}
+        <ReferencePhotosSection
+          initialPhotos={refPhotos}
+          playerAccountId={account?.id}
+          authToken={session?.access_token}
+        />
 
       </div>
     </main>

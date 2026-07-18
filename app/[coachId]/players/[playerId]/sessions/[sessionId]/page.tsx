@@ -8,7 +8,8 @@ import VideoAnalysisCard from '@/components/VideoAnalysisCard'
 import FeedbackCard from '@/components/FeedbackCard'
 import SessionAutoRefresh from '@/components/SessionAutoRefresh'
 import DeleteSessionButton from '@/components/DeleteSessionButton'
-import type { SessionVideo } from '@/types'
+import ReferencePhotosSection from '@/components/ReferencePhotosSection'
+import type { SessionVideo, ReferencePhoto } from '@/types'
 
 interface SessionDetailProps {
   params: Promise<{ coachId: string; playerId: string; sessionId: string }>
@@ -18,13 +19,23 @@ export default async function SessionDetailPage({ params }: SessionDetailProps) 
   const { coachId, playerId, sessionId } = await params
   const db = getAdminClient()
 
-  const [{ data: session }, { data: player }, { data: rawVideos }] = await Promise.all([
+  const [{ data: session }, { data: player }, { data: rawVideos }, { data: rawPhotos }] = await Promise.all([
     db.from('sessions').select('*').eq('id', sessionId).single(),
     db.from('players').select('*').eq('id', playerId).single(),
     db.from('session_videos').select('*').eq('session_id', sessionId).order('created_at', { ascending: true }),
+    db.from('reference_photos').select('*').eq('session_id', sessionId).order('created_at', { ascending: false }),
   ])
 
   if (!session || !player) notFound()
+
+  const referencePhotos: ReferencePhoto[] = await Promise.all(
+    (rawPhotos ?? []).map(async (p) => {
+      const { data: signed } = await db.storage
+        .from('session-videos')
+        .createSignedUrl(p.storage_path, 3600)
+      return { ...p, public_url: signed?.signedUrl ?? null } as ReferencePhoto
+    })
+  )
 
   // Generate signed URLs and separate side/front clips
   const allVideos: SessionVideo[] = await Promise.all(
@@ -167,6 +178,16 @@ export default async function SessionDetailPage({ params }: SessionDetailProps) 
           })}
         </section>
       )}
+
+      {/* Reference Photos */}
+      <section>
+        <ReferencePhotosSection
+          initialPhotos={referencePhotos}
+          coachId={coachId}
+          playerId={playerId}
+          sessionId={sessionId}
+        />
+      </section>
 
       {/* Actions */}
       <div className="flex gap-3">

@@ -134,9 +134,24 @@ export async function DELETE(_req: NextRequest, { params }: RouteContext) {
       return NextResponse.json({ error: videosError.message }, { status: 500 })
     }
 
-    const storagePaths = (videos ?? [])
-      .map(v => v.storage_path)
-      .filter((p): p is string => !!p)
+    // Reference photos (Feature B) — separate table, separate gather step.
+    // Same reasoning as the player-delete route: reference_photos' FKs are
+    // ON DELETE CASCADE, which cleans up the DB rows automatically, but not
+    // the Storage objects — that still needs explicit storage-first cleanup.
+    const { data: refPhotos, error: refPhotosError } = await db
+      .from('reference_photos')
+      .select('id, storage_path')
+      .eq('session_id', sessionId)
+      .eq('coach_id', coachId)
+
+    if (refPhotosError) {
+      return NextResponse.json({ error: refPhotosError.message }, { status: 500 })
+    }
+
+    const storagePaths = [
+      ...(videos ?? []).map(v => v.storage_path),
+      ...(refPhotos ?? []).map(p => p.storage_path),
+    ].filter((p): p is string => !!p)
 
     // ── Storage-first delete ─────────────────────────────────────────────────
     if (storagePaths.length > 0) {
@@ -174,6 +189,23 @@ export async function DELETE(_req: NextRequest, { params }: RouteContext) {
       )
     }
 
+    const { error: refPhotosDeleteError } = await db
+      .from('reference_photos')
+      .delete()
+      .eq('session_id', sessionId)
+      .eq('coach_id', coachId)
+
+    if (refPhotosDeleteError) {
+      console.error(
+        `[DELETE /api/sessions/${sessionId}] storage files deleted but reference_photos DB delete failed — needs manual reconciliation`,
+        refPhotosDeleteError
+      )
+      return NextResponse.json(
+        { error: `Storage files deleted but database cleanup failed: ${refPhotosDeleteError.message}. This needs manual reconciliation.` },
+        { status: 500 }
+      )
+    }
+
     const { error: sessionDeleteError } = await db
       .from('sessions')
       .delete()
@@ -191,7 +223,7 @@ export async function DELETE(_req: NextRequest, { params }: RouteContext) {
       )
     }
 
-    return NextResponse.json({ success: true, deletedVideoFiles: storagePaths.length })
+    return NextResponse.json({ success: true, deletedFiles: storagePaths.length })
   } catch (err) {
     console.error('DELETE /api/sessions/[sessionId] failed', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

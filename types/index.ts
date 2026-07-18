@@ -296,6 +296,21 @@ export interface SessionVideo {
   created_at:       string
 }
 
+// Feature B (BUILD_SPEC_photo_upload.md) — plain reference image, NOT
+// analyzed. Deliberately a separate type/table from SessionVideo; see
+// migration-v14's comment and CLAUDE.md Gotcha #8's lineage.
+export interface ReferencePhoto {
+  id:                 string
+  player_id:          string | null
+  coach_id:           string | null
+  player_account_id:  string | null
+  session_id:         string | null
+  storage_path:       string
+  public_url:         string | null
+  caption:            string | null
+  created_at:         string
+}
+
 export interface UploadVideoRequest {
   player_id:   string
   coach_id:    string
