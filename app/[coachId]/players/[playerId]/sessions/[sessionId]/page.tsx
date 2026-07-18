@@ -7,6 +7,7 @@ import { formatDate } from '@/lib/utils'
 import VideoAnalysisCard from '@/components/VideoAnalysisCard'
 import FeedbackCard from '@/components/FeedbackCard'
 import SessionAutoRefresh from '@/components/SessionAutoRefresh'
+import DeleteSessionButton from '@/components/DeleteSessionButton'
 import type { SessionVideo } from '@/types'
 
 interface SessionDetailProps {
@@ -67,9 +68,17 @@ export default async function SessionDetailPage({ params }: SessionDetailProps) 
           <span>›</span>
           <span className="text-gray-400">Session</span>
         </div>
-        <h1 className="text-2xl font-bold text-white mt-1">
-          {formatDate(session.session_date)}
-        </h1>
+        <div className="flex items-center justify-between mt-1">
+          <h1 className="text-2xl font-bold text-white">
+            {formatDate(session.session_date)}
+          </h1>
+          <DeleteSessionButton
+            coachId={coachId}
+            playerId={playerId}
+            sessionId={sessionId}
+            sessionLabel={formatDate(session.session_date)}
+          />
+        </div>
       </div>
 
       {/* Strengths */}
