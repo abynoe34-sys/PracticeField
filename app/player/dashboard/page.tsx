@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import type { Session } from '@supabase/supabase-js'
+import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 import { getSupabaseClient } from '@/lib/supabase'
 
 type AccountStatus = 'pending_minor_consent' | 'active' | 'restricted'
@@ -42,7 +42,7 @@ export default function PlayerDashboard() {
     const supabase = getSupabaseClient()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, sess) => {
+      async (_event: AuthChangeEvent, sess: Session | null) => {
         if (!sess) {
           router.push('/player/login')
           return
