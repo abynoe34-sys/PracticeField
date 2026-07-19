@@ -6,6 +6,7 @@ import { getAdminClient } from '@/lib/supabase'
 import { formatDate } from '@/lib/utils'
 import VideoAnalysisCard from '@/components/VideoAnalysisCard'
 import FeedbackPanel from '@/components/FeedbackPanel'
+import FrontMeasurements from '@/components/FrontMeasurements'
 import SessionAutoRefresh from '@/components/SessionAutoRefresh'
 import DeleteSessionButton from '@/components/DeleteSessionButton'
 import ReferencePhotosSection from '@/components/ReferencePhotosSection'
@@ -166,6 +167,7 @@ export default async function SessionDetailPage({ params }: SessionDetailProps) 
                   showFeedbackState={false}
                 />
                 <FeedbackPanel video={video} sessionId={sessionId} />
+                <FrontMeasurements analysis={frontClip?.analysis} />
                 {frontClip?.public_url && (
                   <details className="group">
                     <summary className="text-xs text-gray-600 cursor-pointer hover:text-gray-400 transition-colors px-1">

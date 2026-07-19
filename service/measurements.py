@@ -76,6 +76,72 @@ def aggregate_side_measurements(frames: list[dict]) -> dict:
     }
 
 
+# ── Front-view aggregation (item 6 — mechanical half only) ─────────────────────
+
+_FRONT_NUMERIC_KEYS = (
+    "stance_width_ratio", "knee_ankle_width_ratio", "shoulder_tilt_deg",
+    "hip_tilt_deg", "shoulder_hip_tilt_diff_deg", "lateral_offset_ratio",
+    "wrist_height_diff",
+)
+
+
+def _front_summary(valid: list[dict], total: int, detected: int, reliable: bool) -> dict:
+    """Build the front-view raw-measurement summary from valid person-0 rows."""
+    def mean(key):
+        vals = [r[key] for r in valid if r.get(key) is not None]
+        return round(sum(vals) / len(vals), 3) if vals else None
+
+    down_hands = [r["down_hand"] for r in valid if r.get("down_hand") is not None]
+    down_hand_majority = None
+    if down_hands:
+        down_hand_majority = "left" if down_hands.count("left") >= down_hands.count("right") else "right"
+
+    out = {f"{k}_mean": mean(k) for k in _FRONT_NUMERIC_KEYS}
+    out.update({
+        # 'view' marks this as the front raw-measurement shape; combined with
+        # the absence of a 'summary' field it can never be mistaken for the
+        # structured GPT-4o analysis (isStructuredAnalysis stays false —
+        # Gotcha #8 safe).
+        "view":                 "front",
+        "down_hand_majority":   down_hand_majority,
+        "frame_count":          total,
+        "detected_frame_count": detected,
+        "detection_rate":       round(detected / total, 3) if total > 0 else 0.0,
+        "reliable":             reliable,
+    })
+    return out
+
+
+def aggregate_front_measurements(frames: list[dict]) -> dict:
+    """
+    Aggregate per-frame front-view geometry (from pose_utils.process_video_front)
+    into a raw-measurement summary. Same reliability rule as the side video
+    path: reliable when detection_rate >= 0.5. NO fault judgment — just the
+    averaged mechanical metrics.
+    """
+    total = len(frames)
+    person0 = [r for r in frames if r.get("person") == 0 and r["visibility_ok"]]
+    detected = [r for r in frames if r["note"] != "no_detection"]
+    detection_rate = len(detected) / total if total > 0 else 0.0
+    reliable = detection_rate >= LOW_DETECTION_THRESHOLD
+    if not reliable:
+        log.warning("front detection_rate=%.2f < %.2f — results may not be trustworthy",
+                    detection_rate, LOW_DETECTION_THRESHOLD)
+    return _front_summary(person0, total, len(detected), reliable)
+
+
+def aggregate_single_frame_front_measurement(frame: dict) -> dict:
+    """
+    Single front photo → front raw-measurement summary. reliable is ALWAYS
+    False (same conservative-by-design rule as the single-frame side path):
+    one sample can't earn a multi-frame video's confidence, regardless of how
+    cleanly it detected.
+    """
+    detected = frame["note"] != "no_detection"
+    valid = [frame] if frame.get("visibility_ok") else []
+    return _front_summary(valid, 1, 1 if detected else 0, False)
+
+
 def aggregate_single_frame_measurement(frame: dict) -> dict:
     """
     Aggregate a single photo frame (Feature A — analyzed stance photos) into

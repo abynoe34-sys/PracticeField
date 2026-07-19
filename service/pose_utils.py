@@ -27,6 +27,9 @@ log = logging.getLogger(__name__)
 # Landmark indices (MediaPipe BlazePose 33-point)
 L_SHOULDER, R_SHOULDER = 11, 12
 L_HIP,      R_HIP      = 23, 24
+L_KNEE,     R_KNEE     = 25, 26
+L_ANKLE,    R_ANKLE    = 27, 28
+L_WRIST,    R_WRIST    = 15, 16
 NOSE                   = 0
 MIN_VIS = 0.25
 
@@ -130,6 +133,140 @@ def _lean_from_vertical(lms) -> tuple[float | None, str | None]:
     lean = round(math.degrees(math.atan2(horiz_disp, vert_disp)), 2)
     higher = "shoulders" if sy < hy else "hips"
     return lean, higher
+
+
+# ── Front-view metrics (item 6 — mechanical half only) ─────────────────────────
+# These are the things a FRONT camera can see that the side view can't: left↔
+# right symmetry and squareness. Deliberately raw geometry only — NO
+# fault-judgment / thresholds / cues (that's the deferred calibration ruleset,
+# for both angles together). All scale-invariant (ratios / angles) so they
+# don't depend on how far the camera was.
+
+def _front_metrics(lms) -> dict | None:
+    """
+    Compute front-view geometry for one person's landmarks, or None if the
+    core landmarks (shoulders/hips/knees/ankles) are below MIN_VIS.
+
+    Tilts use abs() on the horizontal component so they're mirror-safe (0° =
+    level; sign indicates which side sits lower in the image). Ratios are
+    normalised by shoulder width so they're camera-distance-independent.
+    """
+    core = [L_SHOULDER, R_SHOULDER, L_HIP, R_HIP, L_KNEE, R_KNEE, L_ANKLE, R_ANKLE]
+    if any((lms[i].visibility or 0.0) < MIN_VIS for i in core):
+        return None
+
+    ls, rs = lms[L_SHOULDER], lms[R_SHOULDER]
+    lh, rh = lms[L_HIP],      lms[R_HIP]
+    lk, rk = lms[L_KNEE],     lms[R_KNEE]
+    la, ra = lms[L_ANKLE],    lms[R_ANKLE]
+
+    shoulder_w = abs(ls.x - rs.x)
+    if shoulder_w < 1e-6:
+        return None
+    ankle_w = abs(la.x - ra.x)
+    knee_w  = abs(lk.x - rk.x)
+
+    shoulder_tilt = round(math.degrees(math.atan2(rs.y - ls.y, abs(rs.x - ls.x) or 1e-6)), 2)
+    hip_tilt      = round(math.degrees(math.atan2(rh.y - lh.y, abs(rh.x - lh.x) or 1e-6)), 2)
+
+    shoulder_mid_x = (ls.x + rs.x) / 2
+    ankle_mid_x    = (la.x + ra.x) / 2
+
+    metrics = {
+        # stance width: ankle separation relative to shoulder width. ~1.0 =
+        # feet about shoulder-width; <1 narrow, >1 wide.
+        "stance_width_ratio":         round(ankle_w / shoulder_w, 3),
+        # knees relative to ankles: <1 means knees closer together than the
+        # feet (a caving-in / valgus tendency); ~1 = tracking over the feet.
+        "knee_ankle_width_ratio":     round(knee_w / ankle_w, 3) if ankle_w > 1e-6 else None,
+        # shoulder / hip line tilt off horizontal (deg); 0 = level.
+        "shoulder_tilt_deg":          shoulder_tilt,
+        "hip_tilt_deg":               hip_tilt,
+        "shoulder_hip_tilt_diff_deg": round(shoulder_tilt - hip_tilt, 2),
+        # lateral balance: shoulder midpoint vs ankle midpoint, normalised by
+        # shoulder width. ~0 = centred over the base; large = leaning to a side.
+        "lateral_offset_ratio":       round((shoulder_mid_x - ankle_mid_x) / shoulder_w, 3),
+    }
+
+    # Down hand (3-point stance): only when both wrists are visible enough.
+    lw, rw = lms[L_WRIST], lms[R_WRIST]
+    if (lw.visibility or 0.0) >= MIN_VIS and (rw.visibility or 0.0) >= MIN_VIS:
+        metrics["wrist_height_diff"] = round(lw.y - rw.y, 3)  # y grows downward
+        metrics["down_hand"] = "left" if lw.y > rw.y else "right"
+    else:
+        metrics["wrist_height_diff"] = None
+        metrics["down_hand"] = None
+
+    return metrics
+
+
+def _front_row(frame_n: int, time_s: float, p_idx, lms) -> dict:
+    m = _front_metrics(lms) if lms is not None else None
+    row = {
+        "frame":         frame_n,
+        "time_s":        time_s,
+        "person":        p_idx,
+        "visibility_ok": m is not None,
+        "note":          "ok" if m is not None else ("no_detection" if lms is None else "low_vis"),
+    }
+    # Flatten metrics to top level so aggregation can average them directly,
+    # mirroring how the side rows expose slope_deg etc.
+    for k in ("stance_width_ratio", "knee_ankle_width_ratio", "shoulder_tilt_deg",
+              "hip_tilt_deg", "shoulder_hip_tilt_diff_deg", "lateral_offset_ratio",
+              "wrist_height_diff", "down_hand"):
+        row[k] = (m or {}).get(k)
+    return row
+
+
+def process_video_front(video_path: str, landmarker: PoseLandmarker) -> list[dict]:
+    """
+    Front-view counterpart to process_video_side — VIDEO mode, per-frame front
+    geometry rows (see _front_row). Same temporal-tracking landmarker contract.
+    """
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        raise RuntimeError(f"Cannot open video: {video_path}")
+
+    fps          = cap.get(cv2.CAP_PROP_FPS) or 30.0
+    ms_per_frame = 1000.0 / fps
+    rows: list[dict] = []
+    frame_n = 0
+    try:
+        while True:
+            ok, frame = cap.read()
+            if not ok:
+                break
+            frame_n += 1
+            rgb    = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
+            result = landmarker.detect_for_video(mp_img, int(frame_n * ms_per_frame))
+            time_s = round(frame_n / fps, 3)
+            if result.pose_landmarks:
+                for p_idx, lms in enumerate(result.pose_landmarks):
+                    rows.append(_front_row(frame_n, time_s, p_idx, lms))
+            else:
+                rows.append(_front_row(frame_n, time_s, None, None))
+    finally:
+        cap.release()
+
+    log.info("front video complete: %d frame rows from %d frames", len(rows), frame_n)
+    return rows
+
+
+def process_image_front(image_path: str, landmarker: PoseLandmarker) -> dict:
+    """
+    Front-view counterpart to process_image_side — IMAGE mode, single front
+    geometry row. `landmarker` must be the IMAGE-mode instance.
+    """
+    img = cv2.imread(image_path)
+    if img is None:
+        raise RuntimeError(f"Cannot open image: {image_path}")
+    rgb    = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
+    result = landmarker.detect(mp_img)
+    if result.pose_landmarks:
+        return _front_row(1, 0.0, 0, result.pose_landmarks[0])
+    return _front_row(1, 0.0, None, None)
 
 
 def process_video_side(video_path: str, landmarker: PoseLandmarker) -> list[dict]:

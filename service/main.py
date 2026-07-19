@@ -171,8 +171,15 @@ def analyse(req: AnalyseRequest):
     if not STORAGE_BUCKET:
         raise HTTPException(status_code=500, detail="SUPABASE_STORAGE_BUCKET not configured")
 
-    from pose_utils import process_video_side, process_image_side
-    from measurements import aggregate_side_measurements, aggregate_single_frame_measurement
+    from pose_utils import (
+        load_model,
+        process_video_side, process_image_side,
+        process_video_front, process_image_front,
+    )
+    from measurements import (
+        aggregate_side_measurements, aggregate_single_frame_measurement,
+        aggregate_front_measurements, aggregate_single_frame_front_measurement,
+    )
 
     is_photo = req.media_type == "photo"
 
@@ -198,7 +205,22 @@ def analyse(req: AnalyseRequest):
             frame      = process_image_side(tmp.name, _landmarker_image)
             aggregated = aggregate_single_frame_measurement(frame)
         else:
-            frames     = process_video_side(tmp.name, _landmarker)
+            # Fresh VIDEO-mode landmarker per video (item 6 bug fix). A VIDEO
+            # landmarker is stateful — it requires monotonically increasing
+            # timestamps across calls and carries pose-tracking state between
+            # frames. Reusing one global instance across two videos in a
+            # request (side then front) threw "Input timestamp must be
+            # monotonically increasing" (front restarts timestamps below the
+            # side clip's end); reusing it across requests would do the same
+            # for the 2nd+ session's side clip, and either way tracking state
+            # would bleed between videos. A per-video instance is the correct
+            # MediaPipe usage. IMAGE mode (photos) is stateless, so the shared
+            # _landmarker_image is fine.
+            side_lm = load_model(MODEL_PATH)
+            try:
+                frames = process_video_side(tmp.name, side_lm)
+            finally:
+                side_lm.close()
             aggregated = aggregate_side_measurements(frames)
         log.info(
             "side aggregation for session %s: slope_mean=%.2f reliable=%s",
@@ -294,15 +316,54 @@ def analyse(req: AnalyseRequest):
             .eq("view_angle", "side") \
             .execute()
 
-    # ── Front-view: mark complete (analysis stays null — result lives on side row) ──
-    # Front-view biomechanical processing is not yet implemented, but the row
-    # must be marked 'complete' so the UI does not show a permanently-spinning state.
-    log.info(
-        "front-view processing not yet implemented — marking front row complete for session %s",
-        req.session_id,
-    )
+    # ── Front-view: mechanical measurements (item 6) ───────────────────────────
+    # The front clip now gets real front-view geometry (stance width, shoulder/
+    # hip tilt, knee alignment, lateral balance, down hand) written to its own
+    # analysis column — the RAW measurement shape (no 'summary' field, so
+    # isStructuredAnalysis() stays false; Gotcha #8 safe). This is the
+    # MECHANICAL half only: measurements exist and are stored, NO fault
+    # judgment (that's the deferred calibration ruleset). Best-effort: front is
+    # secondary to the side analysis, so any failure here logs and still marks
+    # the row 'complete' with analysis null (graceful degrade) rather than
+    # failing the whole /analyse or leaving the front row stuck.
+    front_aggregated = None
+    try:
+        log.info("downloading front clip: %s", req.front_clip_path)
+        front_bytes = db.storage.from_(STORAGE_BUCKET).download(req.front_clip_path)
+        front_suffix = os.path.splitext(req.front_clip_path)[-1] or (".jpg" if is_photo else ".mp4")
+        ftmp = tempfile.NamedTemporaryFile(suffix=front_suffix, delete=False)
+        try:
+            ftmp.write(front_bytes)
+            ftmp.flush()
+            ftmp.close()
+            if is_photo:
+                front_frame       = process_image_front(ftmp.name, _landmarker_image)
+                front_aggregated  = aggregate_single_frame_front_measurement(front_frame)
+            else:
+                # Fresh VIDEO landmarker for the front video too — see the
+                # side-processing note above.
+                front_lm = load_model(MODEL_PATH)
+                try:
+                    front_frames = process_video_front(ftmp.name, front_lm)
+                finally:
+                    front_lm.close()
+                front_aggregated  = aggregate_front_measurements(front_frames)
+            log.info("front aggregation for session %s: detection_rate=%s reliable=%s",
+                     req.session_id, front_aggregated.get("detection_rate"), front_aggregated.get("reliable"))
+        finally:
+            try:
+                os.unlink(ftmp.name)
+            except FileNotFoundError:
+                pass
+    except Exception as exc:
+        log.error("session %s: front-view processing failed, marking complete without measurements: %s",
+                  req.session_id, exc)
+
     front_result = db.table("session_videos") \
-        .update({"analysis_status": "complete"}) \
+        .update({
+            "analysis":        front_aggregated,   # raw front shape, or None on failure
+            "analysis_status": "complete",
+        }) \
         .eq("session_id", req.session_id) \
         .eq("view_angle", "front") \
         .execute()
@@ -314,7 +375,7 @@ def analyse(req: AnalyseRequest):
         "status":     "complete",
         "session_id": req.session_id,
         "side":       aggregated,
-        "front":      None,
+        "front":      front_aggregated,
     }
 
 
