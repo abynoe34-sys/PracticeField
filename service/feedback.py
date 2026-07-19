@@ -31,7 +31,15 @@ def _get_client() -> OpenAI:
         api_key = os.environ.get("OPENAI_API_KEY", "")
         if not api_key:
             raise RuntimeError("OPENAI_API_KEY must be set")
-        _client = OpenAI(api_key=api_key)
+        # Resilience (item 5): bound the wait and give transient errors
+        # (429 rate-limit, 5xx, connection blips) a couple of automatic
+        # retries with backoff, then fail cleanly. Without an explicit
+        # timeout the SDK default is very long (~10 min), so a slow/rate-
+        # limited call would stall the inline feedback step for minutes;
+        # with these, it fails fast into feedback_status='failed' (item 2),
+        # which the user can retry. max_retries covers the common transient
+        # 429 so a brief rate-limit self-heals instead of surfacing.
+        _client = OpenAI(api_key=api_key, timeout=30.0, max_retries=2)
     return _client
 
 

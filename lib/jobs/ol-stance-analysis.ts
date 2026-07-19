@@ -35,6 +35,38 @@ export const olStanceAnalysis = inngest.createFunction(
   {
     id:       'ol-stance-analysis',
     triggers: [{ event: 'analysis/session.ready' }],
+    // Resilience (item 5): when the job exhausts its retries (Railway down,
+    // MediaPipe crash, storage-download failure, timeout), mark the session's
+    // rows analysis_status='failed' + analysis_error so the UI shows a failed
+    // state instead of spinning on 'processing' forever. Without this, a
+    // terminal failure left the rows stuck in 'processing' (the mark-processing
+    // step ran, but nothing ever wrote a terminal status) — the exact cause of
+    // the stale 'ready'/'processing' rows seen in the DB. The guard
+    // (.in processing/ready) avoids clobbering a row that actually completed
+    // before a later step failed.
+    onFailure: async ({ event, error }) => {
+      const originalData =
+        (event as unknown as { data?: { event?: { data?: SessionReadyData } } })
+          ?.data?.event?.data
+      const sessionId = originalData?.session_id
+      if (!sessionId) {
+        console.error('[ol-stance-analysis] onFailure fired with no session_id', error)
+        return
+      }
+      const db = getAdminClient()
+      await db
+        .from('session_videos')
+        .update({
+          analysis_status: 'failed',
+          analysis_error:  String(error?.message ?? error).slice(0, 500),
+        })
+        .eq('session_id', sessionId)
+        .not('view_angle', 'is', null)
+        .in('analysis_status', ['processing', 'ready'])
+      console.error(
+        `[ol-stance-analysis] session ${sessionId} marked failed after retries: ${error?.message}`
+      )
+    },
   },
   async ({ event, step }) => {
     const data = event.data as SessionReadyData
@@ -173,9 +205,14 @@ export const olStanceAnalysis = inngest.createFunction(
             'X-Service-Secret': serviceSecret,
           },
           body: JSON.stringify(body),
+          // Bound the wait (item 5) so a genuinely-hung Railway fails the step
+          // (retriable → eventually onFailure) instead of hanging until
+          // Inngest's own step timeout. 5 min is generous headroom for
+          // MediaPipe on a long clip; a healthy /analyse returns in seconds.
+          signal: AbortSignal.timeout(300_000),
         })
       } catch (err) {
-        // Network-level error — service unreachable. Retriable.
+        // Network-level error or timeout — service unreachable/too slow. Retriable.
         throw new Error(`Analysis service unreachable: ${String(err)}`)
       }
 

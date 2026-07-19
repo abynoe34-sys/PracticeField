@@ -169,20 +169,39 @@ export async function POST(req: NextRequest) {
           .eq('session_id', sessionId)
           .not('view_angle', 'is', null)
 
-        await inngest.send({
-          name: 'analysis/session.ready',
-          data: {
-            session_id:   sessionId,
-            ...(playerAccountId
-              ? { player_account_id: playerAccountId }
-              : { player_id: playerId }),
-            drill_type:   drillType    || 'general',
-            triggered_at: new Date().toISOString(),
-          },
-        })
+        // Resilience (item 5): the row inserts + the 'ready' transition have
+        // already committed by this point. If inngest.send() throws (Inngest
+        // outage), do NOT 500 the whole confirm — the clips are uploaded and
+        // the caller shouldn't see the upload as failed. Log it loudly and
+        // return a flag so the client knows analysis wasn't triggered. This is
+        // the likely cause of the stale 'ready' rows in the DB: a send failure
+        // used to bubble up as a 500 after the rows were already 'ready',
+        // leaving them stuck with no job. (A stuck-'ready' recovery/resubmit
+        // path is a known gap — see CLAUDE.md item 5 findings.)
+        let analysisTriggered = true
+        try {
+          await inngest.send({
+            name: 'analysis/session.ready',
+            data: {
+              session_id:   sessionId,
+              ...(playerAccountId
+                ? { player_account_id: playerAccountId }
+                : { player_id: playerId }),
+              drill_type:   drillType    || 'general',
+              triggered_at: new Date().toISOString(),
+            },
+          })
+        } catch (sendErr) {
+          analysisTriggered = false
+          console.error(
+            `[videos/confirm] session ${sessionId}: clips uploaded but inngest.send failed — ` +
+            `session is 'ready' with no analysis job. Needs re-trigger.`,
+            sendErr
+          )
+        }
 
         return NextResponse.json(
-          { video: { ...videoRow, analysis_status: 'ready' }, session_ready: true },
+          { video: { ...videoRow, analysis_status: 'ready' }, session_ready: true, analysis_triggered: analysisTriggered },
           { status: 201 }
         )
       }
