@@ -6,7 +6,9 @@ import Image from 'next/image'
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 import { getSupabaseClient } from '@/lib/supabase'
 import ReferencePhotosSection from '@/components/ReferencePhotosSection'
-import type { ReferencePhoto } from '@/types'
+import TwoClipUpload from '@/components/TwoClipUpload'
+import { mapToStancePosition, STANCE_POSITIONS, FOOTBALL_POSITIONS, type StancePosition } from '@/lib/position'
+import type { ReferencePhoto, SessionVideo } from '@/types'
 
 type AccountStatus = 'pending_minor_consent' | 'active' | 'restricted'
 
@@ -17,17 +19,17 @@ type PlayerAccount = {
   account_status: AccountStatus
   is_minor: boolean
   training_opt_in: boolean
+  position: string | null
 }
 
-type VideoRow = {
+type SessionRow = {
   id: string
-  file_name: string
-  label: string
-  drill_type: string
-  recorded_at: string
+  session_date: string
+  position: string | null
+  created_at: string
   analysis_status: string
-  storage_path: string
-  public_url: string | null
+  feedback_status: string
+  has_feedback: boolean
 }
 
 export default function PlayerDashboard() {
@@ -36,12 +38,24 @@ export default function PlayerDashboard() {
 
   const [session,     setSession]     = useState<Session | null>(null)
   const [account,     setAccount]     = useState<PlayerAccount | null>(null)
-  const [videos,      setVideos]      = useState<VideoRow[]>([])
+  const [sessions,    setSessions]    = useState<SessionRow[]>([])
   const [refPhotos,   setRefPhotos]   = useState<ReferencePhoto[]>([])
   const [pageLoading, setPageLoading] = useState(true)
   const [loadError,   setLoadError]   = useState<string | null>(null)
-  const [uploading,   setUploading]   = useState(false)
-  const [uploadError, setUploadError] = useState<string | null>(null)
+
+  // Stance-analysis session flow (mirrors the coach videos page's upload tab)
+  const [sessionCreating, setSessionCreating] = useState(false)
+  const [sessionError,    setSessionError]    = useState<string | null>(null)
+  const [analysisSessionId, setAnalysisSessionId] = useState<string | null>(null)
+
+  // Per-session stance position (defaults from profile, overridable)
+  const [stancePosition, setStancePosition] = useState<StancePosition | ''>('')
+  const stanceTouched = useRef(false)
+
+  // Profile position editor
+  const [editingPosition, setEditingPosition] = useState(false)
+  const [positionDraft,   setPositionDraft]   = useState('')
+  const [savingPosition,  setSavingPosition]  = useState(false)
 
   useEffect(() => {
     const supabase = getSupabaseClient()
@@ -77,12 +91,12 @@ export default function PlayerDashboard() {
           setAccount(acc)
 
           if (acc.account_status === 'active') {
-            const vRes = await fetch('/api/player-accounts/me/videos', {
+            const sRes = await fetch('/api/player-accounts/me/sessions', {
               headers: { Authorization: `Bearer ${sess.access_token}` },
             })
-            if (vRes.ok) {
-              const { videos: vids } = await vRes.json()
-              setVideos(vids ?? [])
+            if (sRes.ok) {
+              const { sessions: sess2 } = await sRes.json()
+              setSessions(sess2 ?? [])
             }
 
             const pRes = await fetch(`/api/reference-photos?playerAccountId=${acc.id}`, {
@@ -108,44 +122,87 @@ export default function PlayerDashboard() {
     }
   }, [router])
 
+  // Default the per-session stance position from the profile once the account
+  // loads — only until the player manually changes the selector.
+  useEffect(() => {
+    if (account && !stanceTouched.current) {
+      setStancePosition(mapToStancePosition(account.position) ?? '')
+    }
+  }, [account])
+
   const logout = async () => {
     await getSupabaseClient().auth.signOut()
     router.push('/player/login')
   }
 
-  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file || !account) return
+  const savePosition = async () => {
+    if (!session) return
+    setSavingPosition(true)
+    try {
+      const res = await fetch('/api/player-accounts/me', {
+        method:  'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization:  `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ position: positionDraft || null }),
+      })
+      if (res.ok) {
+        const { account: acc } = await res.json()
+        setAccount(acc)
+        // Re-default the per-session selector to the new profile value unless
+        // the player already overrode it this session.
+        if (!stanceTouched.current) setStancePosition(mapToStancePosition(acc.position) ?? '')
+        setEditingPosition(false)
+      }
+    } finally {
+      setSavingPosition(false)
+    }
+  }
 
-    // Re-fetch the current session to guarantee a non-stale access token.
+  // Creates a solo analysis session (player_account_id path, JWT-authed) so
+  // TwoClipUpload has a valid sessions.id FK — the solo mirror of the coach
+  // videos page's createOlSession. This replaces the old dead-end single-clip
+  // /api/videos/upload path (which never set a view_angle, so it never paired
+  // or triggered analysis).
+  const startAnalysisSession = async () => {
+    if (!account) return
     const { data: { session: currentSession } } =
       await getSupabaseClient().auth.getSession()
     if (!currentSession) { router.push('/player/login'); return }
 
-    setUploading(true)
-    setUploadError(null)
-
-    const form = new FormData()
-    form.append('file', file)
-    form.append('player_account_id', account.id)
-    form.append('recorded_at', new Date().toISOString().split('T')[0])
-
-    const res = await fetch('/api/videos/upload', {
-      method:  'POST',
-      headers: { Authorization: `Bearer ${currentSession.access_token}` },
-      body:    form,
-    })
-
-    if (!res.ok) {
+    setSessionCreating(true)
+    setSessionError(null)
+    try {
+      const res = await fetch('/api/sessions', {
+        method:  'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization:  `Bearer ${currentSession.access_token}`,
+        },
+        body: JSON.stringify({
+          player_account_id: account.id,
+          session_date:      new Date().toISOString().slice(0, 10),
+          position:          stancePosition || null,
+        }),
+      })
       const json = await res.json()
-      setUploadError(json.error ?? 'Upload failed.')
-    } else {
-      const { video } = await res.json()
-      setVideos(v => [{ ...video, public_url: null }, ...v])
+      if (!res.ok) {
+        setSessionError(json.error ?? 'Could not start a session.')
+        return
+      }
+      setAnalysisSessionId(json.session.id)
+    } catch {
+      setSessionError('Network error. Please try again.')
+    } finally {
+      setSessionCreating(false)
     }
+  }
 
-    setUploading(false)
-    e.target.value = ''
+  // Both clips uploaded — hand off to the results view, which polls the
+  // pipeline (Inngest → analyse → auto-feedback) to completion.
+  const handleSessionReady = (_sides: SessionVideo[], _fronts: SessionVideo[]) => {
+    if (analysisSessionId) router.push(`/player/sessions/${analysisSessionId}`)
   }
 
   // ── Loading ─────────────────────────────────────────────────────────────────
@@ -264,76 +321,153 @@ export default function PlayerDashboard() {
           Welcome, {account?.display_name}
         </p>
 
-        {/* Upload row */}
-        <div className="flex items-center justify-between">
-          <h2 className="text-white font-semibold">My Videos</h2>
-          <label
-            className={`cursor-pointer bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium px-4 py-2 rounded-md transition-colors ${
-              uploading ? 'opacity-60 pointer-events-none' : ''
-            }`}
-          >
-            {uploading ? 'Uploading…' : '+ Upload Video'}
-            <input
-              type="file"
-              accept="video/mp4,video/quicktime,video/webm,video/x-msvideo"
-              className="hidden"
-              onChange={handleUpload}
-              disabled={uploading}
-            />
-          </label>
+        {/* Profile — position (editable) */}
+        <div className="bg-field-card border border-field-border rounded-md px-4 py-3 flex items-center justify-between gap-3">
+          {editingPosition ? (
+            <>
+              <div className="flex-1">
+                <label className="block text-xs text-field-muted mb-1">Position</label>
+                <select
+                  value={positionDraft}
+                  onChange={e => setPositionDraft(e.target.value)}
+                  className="w-full bg-field-dark border border-field-border rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-600"
+                >
+                  <option value="">Not set</option>
+                  {FOOTBALL_POSITIONS.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
+              <div className="flex gap-2 pt-5">
+                <button
+                  onClick={savePosition}
+                  disabled={savingPosition}
+                  className="bg-brand-600 hover:bg-brand-500 disabled:opacity-60 text-white text-xs font-medium px-3 py-2 rounded-md transition-colors"
+                >
+                  {savingPosition ? 'Saving…' : 'Save'}
+                </button>
+                <button
+                  onClick={() => setEditingPosition(false)}
+                  className="text-xs text-gray-500 hover:text-gray-300 px-2 py-2 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-sm text-white">
+                <span className="text-field-muted">Position:</span>{' '}
+                {account?.position ?? <span className="text-gray-600">not set</span>}
+              </p>
+              <button
+                onClick={() => { setPositionDraft(account?.position ?? ''); setEditingPosition(true) }}
+                className="text-xs text-brand-400 hover:text-brand-300 transition-colors"
+              >
+                Edit
+              </button>
+            </>
+          )}
         </div>
 
-        {uploadError && (
-          <p className="text-sm text-red-400 leading-relaxed">{uploadError}</p>
-        )}
-
-        {/* Video list */}
-        {videos.length === 0 ? (
-          <div className="bg-field-card border border-field-border rounded-md p-10 text-center">
-            <p className="text-gray-500 text-sm">
-              No videos yet. Upload your first practice clip above.
+        {/* Stance Analysis — the two-clip pipeline, same as the coach flow */}
+        <section className="space-y-4">
+          <div>
+            <h2 className="text-white font-semibold">Stance Analysis</h2>
+            <p className="text-xs text-field-muted mt-0.5">
+              Upload a side-view and front-view clip (or photo). AI analyzes your
+              3-point stance, lean angle, and technique.
             </p>
           </div>
-        ) : (
-          <div className="space-y-3">
-            {videos.map(v => (
-              <div
-                key={v.id}
-                className="bg-field-card border border-field-border rounded-md p-4 flex items-center gap-4"
-              >
-                <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm font-medium truncate">
-                    {v.label || v.file_name}
-                  </p>
-                  <p className="text-xs text-gray-500 mt-0.5 capitalize">
-                    {v.drill_type.replace(/_/g, ' ')} · {v.recorded_at} ·{' '}
-                    <span
-                      className={
-                        v.analysis_status === 'complete'
-                          ? 'text-green-500'
-                          : v.analysis_status === 'error'
-                          ? 'text-red-400'
-                          : 'text-gray-500'
-                      }
-                    >
-                      {v.analysis_status}
-                    </span>
-                  </p>
-                </div>
-                {v.public_url && (
-                  <a
-                    href={v.public_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="shrink-0 text-xs text-brand-400 hover:text-brand-300 transition-colors whitespace-nowrap"
-                  >
-                    ▶ Play
-                  </a>
-                )}
+
+          {sessionError && (
+            <p className="text-sm text-brand-300 leading-relaxed">{sessionError}</p>
+          )}
+
+          {!analysisSessionId ? (
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-medium text-field-muted mb-1.5">
+                  Position for this session
+                </label>
+                <select
+                  value={stancePosition}
+                  onChange={e => { stanceTouched.current = true; setStancePosition(e.target.value as StancePosition | '') }}
+                  className="w-full bg-field-dark border border-field-border rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-600"
+                >
+                  <option value="">Not specified</option>
+                  {STANCE_POSITIONS.map(p => (
+                    <option key={p.value} value={p.value}>{p.label}</option>
+                  ))}
+                </select>
+                <p className="text-[11px] text-gray-600 mt-1">
+                  Defaults from your profile{account?.position ? ` (${account.position})` : ''}. Change it for a one-off different stance.
+                </p>
               </div>
-            ))}
-          </div>
-        )}
+              <button
+                onClick={startAnalysisSession}
+                disabled={sessionCreating}
+                className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-60 text-white font-semibold py-3 rounded-md text-sm transition-colors"
+              >
+                {sessionCreating ? 'Starting…' : '+ New Stance Analysis'}
+              </button>
+            </div>
+          ) : (
+            <TwoClipUpload
+              sessionId={analysisSessionId}
+              drillType="ol_stance_3point"
+              playerAccountId={account?.id}
+              authToken={session?.access_token}
+              onSessionReady={handleSessionReady}
+            />
+          )}
+        </section>
+
+        {/* Past sessions */}
+        <section className="space-y-3">
+          <h3 className="text-sm font-semibold text-field-muted uppercase tracking-wide">
+            My Sessions
+          </h3>
+          {sessions.length === 0 ? (
+            <div className="bg-field-card border border-field-border rounded-md p-8 text-center">
+              <p className="text-gray-500 text-sm">
+                No analysis sessions yet. Start one above.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {sessions.map(s => {
+                const label =
+                  s.analysis_status === 'failed' ? 'analysis failed'
+                  : s.analysis_status !== 'complete' ? 'analyzing…'
+                  : s.has_feedback ? 'feedback ready'
+                  : s.feedback_status === 'failed' ? 'feedback failed'
+                  : s.feedback_status === 'skipped' ? 'complete'
+                  : 'generating feedback…'
+                const labelCls =
+                  s.analysis_status === 'failed' || s.feedback_status === 'failed' ? 'text-red-400'
+                  : label === 'feedback ready' || label === 'complete' ? 'text-green-500'
+                  : 'text-brand-400'
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => router.push(`/player/sessions/${s.id}`)}
+                    className="w-full text-left bg-field-card border border-field-border hover:border-gray-600 rounded-md p-4 flex items-center justify-between gap-4 transition-colors"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-white text-sm font-medium">{s.session_date}</p>
+                      <p className="text-xs mt-0.5">
+                        <span className={labelCls}>{label}</span>
+                        {s.position && (
+                          <span className="text-field-muted"> · {s.position.replace(/_/g, '/')}</span>
+                        )}
+                      </p>
+                    </div>
+                    <span className="text-brand-400 text-sm shrink-0">View →</span>
+                  </button>
+                )
+              })}
+            </div>
+          )}
+        </section>
 
         {/* Reference Photos */}
         <ReferencePhotosSection

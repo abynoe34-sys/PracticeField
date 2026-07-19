@@ -28,9 +28,14 @@ interface FeedbackPanelProps {
   // Present for the self-signup player path (their JWT); coaches rely on the
   // session cookie and pass nothing.
   authToken?: string
+  // Client pages (the solo results view) pass this to re-fetch their own
+  // state after a retry — router.refresh() only re-runs server components, so
+  // it's a no-op there. The coach session page is a server component and
+  // relies on router.refresh() instead, passing nothing.
+  onRetried?: () => void
 }
 
-export default function FeedbackPanel({ video, sessionId, authToken }: FeedbackPanelProps) {
+export default function FeedbackPanel({ video, sessionId, authToken, onRetried }: FeedbackPanelProps) {
   const router = useRouter()
   const [retrying, setRetrying] = useState(false)
   const [retryError, setRetryError] = useState<string | null>(null)
@@ -53,6 +58,7 @@ export default function FeedbackPanel({ video, sessionId, authToken }: FeedbackP
         setRetryError(j.error ?? 'Retry failed. Please try again.')
       } else {
         router.refresh()
+        onRetried?.()
       }
     } catch {
       setRetryError('Network error. Please try again.')

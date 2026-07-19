@@ -329,10 +329,17 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
       })
       if (!storageRes.ok) throw new Error(`Storage upload failed (${storageRes.status})`)
 
-      // 3. Confirm — write the DB row now that the file is in storage
+      // 3. Confirm — write the DB row now that the file is in storage.
+      // The self-signup path is JWT-authed (the confirm route re-verifies
+      // player_account ownership from the token), so the auth header must be
+      // forwarded here too — same as presign above. Coaches rely on the
+      // session cookie and send no token.
+      const confirmHeaders: HeadersInit = { 'Content-Type': 'application/json' }
+      if (props.authToken) confirmHeaders['Authorization'] = `Bearer ${props.authToken}`
+
       const confirmRes = await fetch('/api/videos/confirm', {
         method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: confirmHeaders,
         body: JSON.stringify({ storage_path: presignJson.storagePath, ...presignJson.meta }),
       })
       const confirmJson = await confirmRes.json()
