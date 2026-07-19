@@ -1,6 +1,6 @@
 # Practice Field — Claude Code Context
 
-> Last updated: 2026-07-19 (pipeline-hardening pass per the owner's "Build Spec — Pipeline Hardening" — end-to-end production verification with real timings, feedback silent-failure state + retry, position-NULL root-cause finding, stuck-on-loading sweep, external-dependency resilience/timeouts, and the mechanical half of front-view analysis. Earlier the same day: photo upload Features A & B, then the exhaustive route-ownership security audit — both documented below.)
+> Last updated: 2026-07-20 (Solo-player analysis access + Position capture build — solo players can now run the two-clip analysis pipeline from their own dashboard, and the OL-stance position (guard_tackle/center) is captured as a profile default + per-session override and flows through to the feedback prompt. Documented below under "Solo analysis access + position capture". Prior work — pipeline hardening, photo Features A & B, the route-ownership audit — is below that.)
 
 ## Next Session Priorities
 
@@ -14,7 +14,7 @@
 
 5. **`POST /api/sessions`, `/api/training-plans`, `/api/progress` return 404 (not 403) for a cross-owner `player_id`.** Minor consistency gap left by the 2026-07-19 audit — these three use a single combined `.eq('id', playerId).eq('coach_id', coachId)` query rather than the fetch-then-compare 404-vs-403 split used everywhere else (delete routes, `/presign`, `/confirm`, the other GET-by-id routes). Not a security hole — cross-owner writes are still fully blocked, confirmed live — just an inconsistent error code. Low priority polish.
 
-6. **`position` is never captured anywhere — it is a genuine data-collection gap, not a plumbing bug (root-caused 2026-07-19).** See "Pipeline hardening" §Item 3 below and the "What's Still Outstanding" note. The pipeline no longer *fabricates* a position (the old `?? 'guard_tackle'` default is gone), so feedback is now honestly hedged when it's unknown — but nothing in the UI or upload flow ever asks for a player's position, so it will stay NULL until a capture point is added. Deciding *where* to capture it (player profile field vs. per-session vs. per-upload) is the open product question, deferred to the calibration work that needs it.
+6. **~~`position` is never captured~~ — DONE 2026-07-20.** The OL-stance analysis position (`guard_tackle`/`center`) is now captured as a profile default + per-session override and flows to the feedback prompt. See "Solo analysis access + position capture" below. Note for the owner (flagged, not a bug): with a real position now present, feedback **resumes position-aware language** (e.g. "critical for a guard or tackle's performance") — grounded in the captured value, not fabricated, and still hedged when reliability is low. This is expected/acceptable until the calibration ruleset exists. `line_side`/`fault_type` remain uncaptured **by design** (Step 0 finding: `line_side` has no computational consumer; `fault_type` is an analysis output/calibration label, not an input).
 
 7. **No pipeline monitoring/alerting exists.** A failed analysis or feedback generation now writes a terminal `failed` state that the UI surfaces (Items 2 & 5), but nothing *notifies* anyone — no error aggregation, no alert on a stuck/failed run. Recommended minimal cheap approach in "Pipeline hardening" §Item 5 below. Not built (out of scope for this pass); flagged for a decision.
 
@@ -194,6 +194,46 @@ Applied from `BRAND_SPEC_practice_field.md` (owner-provided handoff doc, not com
 
 ---
 
+## Solo analysis access + position capture (2026-07-20)
+
+Two linked pieces from one build spec, committed separately.
+
+### Step 0 finding — what the three metadata fields actually are
+
+Read the code before building capture. There are **two distinct "position" concepts**, which the spec (written without awareness of this) conflated:
+
+- **Profile position** — `players.position` / `player_accounts.position` — the broad `FootballPosition` roster taxonomy (`QB`/`OL`/`C`/`OG`/`OT`/…), free-text (no CHECK), used for training-plan drill selection. Coach-created players **already** captured this on the add-player form; solo accounts had no such column until migration-v16.
+- **Analysis stance-position** — `sessions.position` (new, v16) / `session_videos.position` — CHECK-constrained to exactly **`guard_tackle` | `center`**, the *only* position vocabulary the OL-stance feedback prompt (`service/feedback.py` `POSITION_CUES`) consumes. This was **genuinely never captured** — the real gap.
+- **`line_side`** (`left`/`right`): **no computational consumer** — `pose_utils.py` never reads it, there's no mirror-imaging anywhere; it's only a text cue in the prompt, and stance handedness is already *derived* from the video (`down_hand_majority`). → **no capture UI**, stays null.
+- **`fault_type`**: a calibration label / future analysis **output** (the fault a clip demonstrates or that the deferred ruleset will detect), not an analysis-time input. → **no capture UI**, stays null.
+
+**Design decision (proceeded on the recommended default; owner didn't pick):** the per-session analysis position (`guard_tackle`/`center`) **defaults from the broad profile position via a deterministic mapping** (`lib/position.ts` `mapToStancePosition`: `C`→`center`, `OG`/`OT`→`guard_tackle`, else unset) and is overridable per session. Kept the broad `FootballPosition` as the single profile field rather than adding a redundant stance-position profile field.
+
+### Part 1 — solo player analysis access
+
+Solo (`player_accounts`) players had no UI path to the two-clip pipeline — the dashboard only offered the deprecated single-clip `/api/videos/upload` (no `view_angle` → never paired, never analyzed). Backend already supported solo end-to-end; this was pure UI wiring.
+
+- **`app/player/dashboard/page.tsx`** rewired: the single-clip upload is **gone** (dead-end no longer reachable), replaced by a "Stance Analysis" flow — create a solo session (`player_account_id`, JWT-authed `POST /api/sessions`), then the real `TwoClipUpload` (photos + video), then a "My Sessions" list linking to results.
+- **`app/player/sessions/[sessionId]/page.tsx`** (new) — the solo results view mirroring the coach session page (`VideoAnalysisCard` + `FeedbackPanel` + `FrontMeasurements`), a **client** page that polls itself to completion.
+- **`GET /api/player-accounts/me/sessions`** and **`.../sessions/[sessionId]`** (new) — JWT-owned; the single-session route returns 404 for a session that isn't yours (the `/me` convention).
+- **Bug fixed during the build:** `TwoClipUpload`'s **confirm** call didn't forward the auth token (only presign did) — fine for coaches (cookie), but the solo `player_account_id` path in `/confirm` is JWT-authed, so confirm 401'd. Now forwards it. Also `FeedbackPanel` gained an `onRetried` callback so a client page re-fetches after a retry (`router.refresh()` only re-runs server components).
+
+### Part 2 — position capture (both flows, identical)
+
+- **Profile capture:** solo signup gained a position `<select>` (`POST /api/player-accounts` stores it); solo profile editable on the dashboard via new **`PATCH /api/player-accounts/me`**; coach players editable on the detail page via new **`PlayerPositionEditor`** island (→ existing `PATCH /api/players/[id]`). `FOOTBALL_POSITIONS` centralized in `lib/position.ts`.
+- **Per-session capture:** a `guard_tackle`/`center` selector at session start in **both** flows, defaulted from the profile via `mapToStancePosition`, overridable, stored on `sessions.position` (validated in `POST /api/sessions`).
+- **Plumbing:** `lib/jobs/ol-stance-analysis.ts`'s `validate-session` step now reads `sessions.position` on its fresh DB read and passes it to `/analyse` (replacing the old event-payload passthrough that always sent null); `/analyse` writes it to `session_videos.position` where feedback reads it. **Bug fixed during the build:** the job read `sessions.position` into its `clips` object but the `/analyse` body still used `data.position` (event payload) — position never flowed until that line used `clips.position`.
+- **History integrity** (the load-bearing correctness point): the per-session position is a **snapshot on the session row**, independent of the profile column. Verified live — editing a player's profile position leaves an existing session's `position` (and its `session_videos.position`) unchanged.
+- **Coach-flow bug fixed:** `createOlSession` was a `useCallback` whose deps omitted `stancePosition`, so it captured the initial `''` → sessions got `position: null` regardless of the selector (stale closure). Added `stancePosition` to the deps. (The solo handler is a plain function, so it was unaffected.)
+
+### Verified live (real accounts, real DB/Storage, through the actual UI)
+
+Solo photo pair uploaded through the real dashboard → `TwoClipUpload` → pipeline → **auto-feedback rendered on the results page with zero manual intervention**; `sessions.position` and `session_videos.position` both carried the captured value; feedback became position-aware and accurately grounded. Coach path: selector defaulted from the player's profile (`C`→Center) and an override (→Guard/Tackle) landed on the session row. Profile edit via UI worked (solo PATCH `/me`; coach `PlayerPositionEditor`). History integrity, cross-owner 404, unauthenticated 401, and solo-JWT-can't-reach-coach-routes (401) all confirmed. All disposable fixtures cleaned up storage-first (zero-count sweep + zero storage orphans + auth users deleted). Video was not separately re-run: the position path is media-type-independent (it lives entirely in `POST /api/sessions` + the Inngest job, never touching `media_type`), and the photo run exercised the full chain.
+
+### migration-v16
+
+`player_accounts.position TEXT` (nullable, free-text — mirrors `players.position`) + `sessions.position TEXT CHECK (position IN ('guard_tackle','center'))` (nullable). Both additive, safe on existing rows (all NULL). Applied + CHECK verified live.
+
 ## Pipeline Hardening (2026-07-19) — the "Build Spec — Pipeline Hardening" pass
 
 Goal (owner's words): make the upload → analyze → feedback → display pipeline *mechanically solid* before calibration content and real users. Six items, each committed separately, each verified live before commit.
@@ -342,7 +382,7 @@ Before Pipeline Hardening §Item 2, a NULL `feedback` column meant *either* "aut
 
 **Google sign-in** — still just scoped/designed conceptually (from earlier in this broader session), not built. Should stay compatible with the new unified accounts model when it is eventually built — same derived-role approach should extend cleanly since it keys off `auth_user_id`, not a stored role string.
 
-**Why is `position` NULL** — **root-caused 2026-07-19** (see Pipeline Hardening §Item 3 + Priority #6): it's a genuine data-collection gap — nothing ever captures a real position — not a plumbing bug. Fabrication removed; feedback now honestly hedges when unknown. Open question is *where* to capture it (product decision, deferred to calibration).
+**Position capture — DONE 2026-07-20** (see "Solo analysis access + position capture" above). The analysis stance-position (`guard_tackle`/`center`) is captured as profile default + per-session override and reaches the feedback prompt. Still deferred (calibration work): position-specific good/bad rules/thresholds/cues. `line_side`/`fault_type` intentionally uncaptured (Step 0 finding). One owner-flag: feedback now makes position-aware claims again from the captured value — expected, grounded, still hedged on low reliability.
 
 **`/feedback` output shape divergence from original plan** — see Next Session Priority 3.
 
@@ -422,7 +462,15 @@ Before Pipeline Hardening §Item 2, a NULL `feedback` column meant *either* "aut
 | `components/TwoClipUpload.tsx` | Two-clip OL stance upload UI: presign → Storage PUT → confirm (×2). **Changed 2026-07-19** — accepts `image/jpeg`/`image/png` alongside video (20MB cap), enforces both slots being the same media type client-side (`establishedMediaType()`), 📷/🎬 icons. |
 | `app/[coachId]/players/[playerId]/sessions/[sessionId]/page.tsx` | Session results page — `force-dynamic`, fetches videos, renders `VideoAnalysisCard` + `FeedbackCard` per drill, plus `SessionAutoRefresh` for live updates. **Changed 2026-07-19** — also fetches and renders `ReferencePhotosSection` scoped to this session. |
 | `app/[coachId]/players/[playerId]/page.tsx` | Player detail page — stats, progress charts, latest training plan, session history. **Changed 2026-07-19** — fetches and renders `ReferencePhotosSection` scoped to this player. |
-| `app/player/dashboard/page.tsx` | Self-signup player's own dashboard (video upload, account-status gating). **Changed 2026-07-19** — fetches and renders `ReferencePhotosSection` via the player-account JWT path. |
+| `app/player/dashboard/page.tsx` | Self-signup player's own dashboard. **Rewired 2026-07-20 (solo analysis access)** — deprecated single-clip upload removed (dead-end gone); now a "Stance Analysis" flow (create solo session → `TwoClipUpload`) + a "My Sessions" list → results page, an editable profile-position row (`PATCH /me`), and a per-session stance-position selector defaulted from the profile. **2026-07-19** — also renders `ReferencePhotosSection` (JWT path). |
+| `lib/position.ts` | **New, 2026-07-20.** Shared position logic: `FOOTBALL_POSITIONS` (broad profile taxonomy), `STANCE_POSITIONS` (`guard_tackle`/`center` + labels), `mapToStancePosition()` (profile → stance-group default: `C`→center, `OG`/`OT`→guard_tackle, else null). Bridges the two distinct position concepts (see the build's Step 0 finding). |
+| `app/player/sessions/[sessionId]/page.tsx` | **New, 2026-07-20.** Solo player's own analysis results view — client mirror of the coach session page (`VideoAnalysisCard` + `FeedbackPanel` + `FrontMeasurements`), JWT-fetched, self-polling to completion. |
+| `app/api/player-accounts/me/sessions/route.ts`, `.../sessions/[sessionId]/route.ts` | **New, 2026-07-20.** JWT-owned solo session list + single-session (videos with analysis/feedback + signed URLs). Cross-owner/nonexistent → 404 (the `/me` convention). |
+| `app/api/player-accounts/me/route.ts` | `GET` returns account (now incl. `position`). **`PATCH` added 2026-07-20** — updates the player's own profile `position`, scoped by `auth_user_id`. |
+| `components/PlayerPositionEditor.tsx` | **New, 2026-07-20.** Coach-side inline profile-position editor island on the player detail page (→ `PATCH /api/players/[id]`). |
+| `app/api/sessions/route.ts` (position) | **Also changed 2026-07-20** — `POST` accepts + validates `position` (`guard_tackle`/`center`) and stores it on `sessions.position`. |
+| `lib/jobs/ol-stance-analysis.ts` (position) | **Also changed 2026-07-20** — `validate-session` reads `sessions.position` (fresh DB read) and the `/analyse` body sends `clips.position` (was the always-null event payload). |
+| `supabase/migration-v16-position-capture.sql` | **New, applied, 2026-07-20.** `player_accounts.position` (free-text) + `sessions.position` (CHECK `guard_tackle`/`center`). |
 | `app/[coachId]/players/[playerId]/plan/page.tsx` | Virtual Training Coach plan builder. **Fixed 2026-07-17** — crashed for essentially every player reading `analysis.issues` without `isStructuredAnalysis()`; see Gotcha #8. |
 | `app/[coachId]/players/[playerId]/videos/page.tsx` | Coach video library + upload tab (two-clip only as of 2026-07-14) |
 | `app/api/inngest/route.ts` | Inngest serve endpoint — must be synced manually in Inngest dashboard after deploy |
