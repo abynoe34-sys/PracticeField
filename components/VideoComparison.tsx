@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 import type { SessionVideo, VideoAnalysis } from '@/types'
 import { formatDate } from '@/lib/utils'
+import { isStructuredAnalysis } from './VideoAnalysisCard'
 
 interface VideoComparisonProps {
   videos: SessionVideo[]
@@ -31,8 +32,17 @@ function videoDate(v: SessionVideo): string {
 }
 
 export default function VideoComparison({ videos }: VideoComparisonProps) {
-  // Only use fully analysed videos; sort oldest → newest by filmed date
-  const complete = [...videos.filter(v => v.analysis_status === 'complete' && v.analysis)]
+  // Only use fully analysed videos with the STRUCTURED GPT-4o shape — sort
+  // oldest → newest by filmed date. isStructuredAnalysis() guard added
+  // 2026-07-19 (security/correctness audit, Gotcha #8's third occurrence):
+  // this used to accept any truthy `analysis`, including the two-clip
+  // pipeline's raw MediaPipe measurement shape ({slope_deg_mean, ...}, no
+  // overall_grade/issues/technique_scores). Every completed two-clip
+  // session produces that raw shape, so this crashed (la.issues.map on
+  // undefined) for essentially any coach who reached the Progress Compare
+  // tab with 2+ analyzed videos — same failure mode already hit twice
+  // elsewhere (VideoAnalysisCard, the plan page).
+  const complete = [...videos.filter(v => v.analysis_status === 'complete' && isStructuredAnalysis(v.analysis))]
     .sort((a, b) => videoDate(a).localeCompare(videoDate(b)))
 
   const [leftIdx,  setLeftIdx]  = useState(0)

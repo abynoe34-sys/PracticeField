@@ -5,7 +5,8 @@
 // reference material for the text feedback writer. Do not delete without review.
 // Nothing in the active codebase calls this route as of 2026-07-14.
 import { NextRequest, NextResponse } from 'next/server'
-import { getAdminClient } from '@/lib/supabase'
+import { getAdminClient, getSupabaseClient } from '@/lib/supabase'
+import { requireCoachSession } from '@/lib/require-coach'
 import { analyzeVideoFrames } from '@/lib/openai'
 import { extractFramesFromBuffer } from '@/lib/server-frames'
 import type { ExperienceLevel, VideoAnalysis } from '@/types'
@@ -48,6 +49,41 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Video not found' }, { status: 404 })
     }
 
+    // ── Ownership (added 2026-07-19, security audit) ──────────────────────────
+    // This route had no ownership check at all: any caller who knew a
+    // video_id could trigger paid analysis on any coach's video and mutate
+    // the linked session's improvements/root_causes/strengths. Derived from
+    // the video row itself (coach_id XOR player_account_id), same pattern as
+    // /api/videos/[videoId]'s checkOwnership().
+    if (video.coach_id) {
+      const auth = await requireCoachSession()
+      if ('error' in auth) return auth.error
+      if (video.coach_id !== auth.coachId) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      }
+    } else if (video.player_account_id) {
+      const jwt = req.headers.get('authorization')?.replace('Bearer ', '')
+      if (!jwt) {
+        return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 })
+      }
+      const { data: { user }, error: authError } =
+        await getSupabaseClient().auth.getUser(jwt)
+      if (authError || !user) {
+        return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 })
+      }
+      const { data: account, error: accountError } = await db
+        .from('player_accounts')
+        .select('id')
+        .eq('id', video.player_account_id)
+        .eq('auth_user_id', user.id)
+        .single()
+      if (accountError || !account) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      }
+    } else {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
     // Fetch player info
     const { data: player } = await db
       .from('players')
@@ -65,7 +101,19 @@ export async function POST(req: NextRequest) {
       .order('created_at', { ascending: true })
       .limit(1)
 
-    const baselineAnalysis = (priorVideos?.[0]?.analysis as VideoAnalysis) ?? null
+    // Guard added 2026-07-19 (security/correctness audit, Gotcha #8's fourth
+    // occurrence) — this used to cast `.analysis` to VideoAnalysis
+    // unconditionally. session_videos.analysis also holds the two-clip
+    // pipeline's raw MediaPipe measurement shape ({slope_deg_mean, ...}, no
+    // overall_grade/issues), which would crash lib/openai.ts's
+    // analyzeVideoFrames() at `baselineAnalysis.issues.map(...)`. A prior
+    // video with the raw shape is treated as "no baseline" rather than
+    // passed through as a lying cast.
+    const rawPrior = priorVideos?.[0]?.analysis as VideoAnalysis | null | undefined
+    const baselineAnalysis =
+      rawPrior && typeof (rawPrior as unknown as Record<string, unknown>).summary === 'string'
+        ? rawPrior
+        : null
 
     // Mark as processing
     await db
