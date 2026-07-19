@@ -21,6 +21,7 @@ export default function PlayerVideosPage() {
     parent_email: string | null
   } | null>(null)
   const [loading, setLoading]   = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [tab, setTab]           = useState<'library' | 'compare' | 'upload'>('library')
   const [pollingIds, setPollingIds] = useState<Set<string>>(new Set())
 
@@ -35,15 +36,24 @@ export default function PlayerVideosPage() {
   const [resendSent,   setResendSent]   = useState(false)
   const [resendError,  setResendError]  = useState<string | null>(null)
 
+  // try/catch/finally so a failed load surfaces an error instead of hanging
+  // on "Loading…" forever (item 4 sweep).
   const load = useCallback(async () => {
-    const [vr, pr] = await Promise.all([
-      fetch(`/api/videos?playerId=${playerId}`),
-      fetch(`/api/players/${playerId}`),
-    ])
-    const [vd, pd] = await Promise.all([vr.json(), pr.json()])
-    setVideos(vd.videos ?? [])
-    setPlayer(pd.player ?? null)
-    setLoading(false)
+    setLoadError(null)
+    try {
+      const [vr, pr] = await Promise.all([
+        fetch(`/api/videos?playerId=${playerId}`),
+        fetch(`/api/players/${playerId}`),
+      ])
+      const [vd, pd] = await Promise.all([vr.json(), pr.json()])
+      setVideos(vd.videos ?? [])
+      setPlayer(pd.player ?? null)
+    } catch (err) {
+      console.error('Failed to load videos page', err)
+      setLoadError('Could not load this player’s videos. Please refresh to try again.')
+    } finally {
+      setLoading(false)
+    }
   }, [coachId, playerId])
 
   useEffect(() => { load() }, [load])
@@ -212,6 +222,16 @@ export default function PlayerVideosPage() {
         <div className="space-y-4">
           {loading ? (
             <p className="text-gray-500 text-sm text-center py-8">Loading…</p>
+          ) : loadError ? (
+            <div className="bg-field-card border border-brand-700 rounded-md p-6 text-center space-y-3">
+              <p className="text-sm text-brand-300">{loadError}</p>
+              <button
+                onClick={() => { setLoading(true); load() }}
+                className="bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium px-4 py-2 rounded-md transition-colors"
+              >
+                Retry
+              </button>
+            </div>
           ) : videos.length === 0 ? (
             <div className="bg-field-card border border-dashed border-field-border rounded-xl p-10 text-center space-y-3">
               <p className="text-4xl">🎥</p>

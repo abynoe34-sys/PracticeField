@@ -39,6 +39,7 @@ export default function PlayerDashboard() {
   const [videos,      setVideos]      = useState<VideoRow[]>([])
   const [refPhotos,   setRefPhotos]   = useState<ReferencePhoto[]>([])
   const [pageLoading, setPageLoading] = useState(true)
+  const [loadError,   setLoadError]   = useState<string | null>(null)
   const [uploading,   setUploading]   = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
 
@@ -61,35 +62,43 @@ export default function PlayerDashboard() {
         if (loadedRef.current) return
         loadedRef.current = true
 
-        const res = await fetch('/api/player-accounts/me', {
-          headers: { Authorization: `Bearer ${sess.access_token}` },
-        })
-        if (!res.ok) {
-          router.push('/player/login')
-          return
-        }
-        const { account: acc } = (await res.json()) as { account: PlayerAccount }
-        setAccount(acc)
-
-        if (acc.account_status === 'active') {
-          const vRes = await fetch('/api/player-accounts/me/videos', {
+        // try/catch/finally so a network error during load surfaces an error
+        // state instead of hanging on "Loading…" forever (item 4 sweep — the
+        // fetches below could throw and skip setPageLoading(false)).
+        try {
+          const res = await fetch('/api/player-accounts/me', {
             headers: { Authorization: `Bearer ${sess.access_token}` },
           })
-          if (vRes.ok) {
-            const { videos: vids } = await vRes.json()
-            setVideos(vids ?? [])
+          if (!res.ok) {
+            router.push('/player/login')
+            return
           }
+          const { account: acc } = (await res.json()) as { account: PlayerAccount }
+          setAccount(acc)
 
-          const pRes = await fetch(`/api/reference-photos?playerAccountId=${acc.id}`, {
-            headers: { Authorization: `Bearer ${sess.access_token}` },
-          })
-          if (pRes.ok) {
-            const { photos } = await pRes.json()
-            setRefPhotos(photos ?? [])
+          if (acc.account_status === 'active') {
+            const vRes = await fetch('/api/player-accounts/me/videos', {
+              headers: { Authorization: `Bearer ${sess.access_token}` },
+            })
+            if (vRes.ok) {
+              const { videos: vids } = await vRes.json()
+              setVideos(vids ?? [])
+            }
+
+            const pRes = await fetch(`/api/reference-photos?playerAccountId=${acc.id}`, {
+              headers: { Authorization: `Bearer ${sess.access_token}` },
+            })
+            if (pRes.ok) {
+              const { photos } = await pRes.json()
+              setRefPhotos(photos ?? [])
+            }
           }
+        } catch (err) {
+          console.error('Failed to load player dashboard', err)
+          setLoadError('Could not load your dashboard. Please refresh to try again.')
+        } finally {
+          setPageLoading(false)
         }
-
-        setPageLoading(false)
       }
     )
 
@@ -145,6 +154,23 @@ export default function PlayerDashboard() {
     return (
       <main className="min-h-screen flex items-center justify-center bg-field-dark">
         <p className="text-sm text-gray-500">Loading…</p>
+      </main>
+    )
+  }
+
+  // ── Load error (item 4) — surface instead of a blank/half-rendered page ──────
+  if (loadError) {
+    return (
+      <main className="min-h-screen flex items-center justify-center px-4 bg-field-dark">
+        <div className="bg-field-card border border-brand-700 rounded-md p-6 text-center space-y-3 max-w-sm">
+          <p className="text-sm text-brand-300">{loadError}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium px-4 py-2 rounded-md transition-colors"
+          >
+            Refresh
+          </button>
+        </div>
       </main>
     )
   }

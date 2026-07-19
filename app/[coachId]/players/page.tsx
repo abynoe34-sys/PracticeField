@@ -29,6 +29,7 @@ export default function PlayersPage() {
   const [players, setPlayers] = useState<Player[]>([])
   const [sessions, setSessions] = useState<Session[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
   const [saving, setSaving] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
@@ -48,16 +49,27 @@ export default function PlayersPage() {
     return new Date(dob) > cutoff
   })()
 
+  // try/catch/finally so a thrown/failed fetch surfaces an error instead of
+  // hanging forever on "Loading…" (item 4 sweep — same failure mode as the
+  // Gotcha #8 plan-page hang: without this, any fetch/json() throw skips
+  // setLoading(false)).
   const load = useCallback(async () => {
     setLoading(true)
-    const [pr, sr] = await Promise.all([
-      fetch('/api/players'),
-      fetch('/api/sessions'),
-    ])
-    const [pd, sd] = await Promise.all([pr.json(), sr.json()])
-    setPlayers(pd.players ?? [])
-    setSessions(sd.sessions ?? [])
-    setLoading(false)
+    setLoadError(null)
+    try {
+      const [pr, sr] = await Promise.all([
+        fetch('/api/players'),
+        fetch('/api/sessions'),
+      ])
+      const [pd, sd] = await Promise.all([pr.json(), sr.json()])
+      setPlayers(pd.players ?? [])
+      setSessions(sd.sessions ?? [])
+    } catch (err) {
+      console.error('Failed to load players page', err)
+      setLoadError('Could not load your players. Please refresh to try again.')
+    } finally {
+      setLoading(false)
+    }
   }, [coachId])
 
   useEffect(() => { load() }, [load])
@@ -253,6 +265,16 @@ export default function PlayersPage() {
 
       {loading ? (
         <div className="text-gray-500 text-sm py-8 text-center">Loading players…</div>
+      ) : loadError ? (
+        <div className="bg-field-card border border-brand-700 rounded-md p-6 text-center space-y-3">
+          <p className="text-sm text-brand-300">{loadError}</p>
+          <button
+            onClick={() => load()}
+            className="bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium px-4 py-2 rounded-md transition-colors"
+          >
+            Retry
+          </button>
+        </div>
       ) : players.length === 0 ? (
         <div className="bg-field-card border border-dashed border-field-border rounded-xl p-10 text-center">
           <p className="text-3xl mb-2">🏈</p>
