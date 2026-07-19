@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient, getSupabaseClient } from '@/lib/supabase'
 import { generateId } from '@/lib/utils'
 import { inngest } from '@/lib/inngest'
+import { requireCoachSession } from '@/lib/require-coach'
 
 // Allow up to 60 seconds for large file uploads to Supabase Storage
 export const maxDuration = 60
@@ -28,7 +29,6 @@ export async function POST(req: NextRequest) {
 
     const file            = formData.get('file') as File | null
     const playerId        = formData.get('player_id') as string | null
-    const coachId         = formData.get('coach_id') as string | null
     const playerAccountId = formData.get('player_account_id') as string | null
     const sessionId       = formData.get('session_id') as string | null
     const viewAngle       = formData.get('view_angle') as string | null
@@ -55,25 +55,31 @@ export async function POST(req: NextRequest) {
     // ── Mutual exclusivity check ──────────────────────────────────────────────
     // Mirrors the chk_sv_has_owner constraint in session_videos: a video must
     // belong to exactly one owner type, never both.
-    if (playerAccountId && (playerId || coachId)) {
+    if (playerAccountId && playerId) {
       return NextResponse.json(
-        { error: 'player_account_id cannot be combined with player_id or coach_id.' },
+        { error: 'player_account_id cannot be combined with player_id.' },
         { status: 400 }
       )
     }
-    if (!playerAccountId && (!playerId || !coachId)) {
+    if (!playerAccountId && !playerId) {
       return NextResponse.json(
-        { error: 'Either player_id + coach_id, or player_account_id is required.' },
+        { error: 'Either player_id (coach-managed) or player_account_id (self-signup) is required.' },
         { status: 400 }
       )
     }
 
     const db = getAdminClient()
+    let coachId: string | null = null
 
-    // ── Path A: coach-managed player ──────────────────────────────────────────
-    // Fresh DB query every request — consent_status and parental_consent_status
-    // come from the database row at this moment, never from the client.
-    if (playerId && coachId) {
+    // ── Path A: coach-managed player — coachId is session-derived (added
+    //    2026-07-19, security audit — this route previously trusted
+    //    coach_id from the form body outright, the same "self-consistent
+    //    pair" gap already fixed on /api/videos/presign and /confirm) ───────
+    if (playerId) {
+      const auth = await requireCoachSession()
+      if ('error' in auth) return auth.error
+      coachId = auth.coachId
+
       const { data: player, error: playerError } = await db
         .from('players')
         .select('consent_status, parental_consent_status, is_minor')

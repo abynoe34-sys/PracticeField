@@ -5,8 +5,19 @@ import { requireCoachSession } from '@/lib/require-coach'
 type RouteContext = { params: Promise<{ playerId: string }> }
 
 // GET /api/players/[playerId] — fetch a single player
+//
+// Ownership added 2026-07-19 (security audit) — this route previously had
+// no ownership check at all, leaking a player's name, DOB, and consent/
+// parent-email fields to anyone who knew or guessed a playerId. Same fix as
+// every other route in this lineage: coachId derived from the session, a
+// real 403 (not a masking 404) for a player that exists but belongs to a
+// different coach.
 export async function GET(_req: NextRequest, { params }: RouteContext) {
   try {
+    const auth = await requireCoachSession()
+    if ('error' in auth) return auth.error
+    const { coachId } = auth
+
     const { playerId } = await params
     const db = getAdminClient()
     const { data, error } = await db
@@ -17,6 +28,9 @@ export async function GET(_req: NextRequest, { params }: RouteContext) {
 
     if (error || !data) {
       return NextResponse.json({ error: 'Player not found' }, { status: 404 })
+    }
+    if (data.coach_id !== coachId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     return NextResponse.json({ player: data })

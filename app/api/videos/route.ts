@@ -1,16 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase'
+import { requireCoachSession } from '@/lib/require-coach'
 
-// GET /api/videos?coachId=X&playerId=Y&sessionId=Z
+// GET /api/videos?playerId=Y&sessionId=Z
+//
+// Ownership added 2026-07-19 (security audit) — this was the explicitly
+// known-open gap from CLAUDE.md Gotcha #16: coachId was trusted from a
+// query param with zero verification, listing every video (including
+// freshly-signed playback URLs) for any coach whose id you knew. coachId
+// is now derived from the session; playerId/sessionId remain pure filters
+// on top of that, never the authorization boundary themselves.
 export async function GET(req: NextRequest) {
   try {
-    const coachId   = req.nextUrl.searchParams.get('coachId')
+    const auth = await requireCoachSession()
+    if ('error' in auth) return auth.error
+    const { coachId } = auth
+
     const playerId  = req.nextUrl.searchParams.get('playerId')
     const sessionId = req.nextUrl.searchParams.get('sessionId')
-
-    if (!coachId) {
-      return NextResponse.json({ error: 'coachId is required' }, { status: 400 })
-    }
 
     const db = getAdminClient()
     let query = db

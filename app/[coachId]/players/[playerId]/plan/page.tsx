@@ -42,8 +42,8 @@ export default function GeneratePlanPage() {
     try {
       const [pr, sr, vr] = await Promise.all([
         fetch(`/api/players/${playerId}`),
-        fetch(`/api/sessions?coachId=${coachId}&playerId=${playerId}`),
-        fetch(`/api/videos?coachId=${coachId}&playerId=${playerId}`),
+        fetch(`/api/sessions?playerId=${playerId}`),
+        fetch(`/api/videos?playerId=${playerId}`),
       ])
       const [pd, sd, vd] = await Promise.all([pr.json(), sr.json(), vr.json()])
 

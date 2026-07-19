@@ -37,7 +37,7 @@ export default function PlayerVideosPage() {
 
   const load = useCallback(async () => {
     const [vr, pr] = await Promise.all([
-      fetch(`/api/videos?coachId=${coachId}&playerId=${playerId}`),
+      fetch(`/api/videos?playerId=${playerId}`),
       fetch(`/api/players/${playerId}`),
     ])
     const [vd, pd] = await Promise.all([vr.json(), pr.json()])
@@ -59,7 +59,7 @@ export default function PlayerVideosPage() {
     setPollingIds(ids)
 
     const timer = setInterval(async () => {
-      const res = await fetch(`/api/videos?coachId=${coachId}&playerId=${playerId}`)
+      const res = await fetch(`/api/videos?playerId=${playerId}`)
       const data = await res.json()
       const updated: SessionVideo[] = data.videos ?? []
       setVideos(updated)

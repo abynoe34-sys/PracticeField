@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase'
+import { requireCoachSession } from '@/lib/require-coach'
 import { Resend } from 'resend'
 import crypto from 'crypto'
 
@@ -12,19 +13,32 @@ const FROM    = 'Practice Field <onboarding@resend.dev>'
 // POST /api/players/[playerId]/resend-consent
 // Regenerates the parental consent token and resends the consent email.
 // Only valid for minor players whose parental_consent_status is 'pending'.
+//
+// Ownership added 2026-07-19 (security audit) — this route had NO auth at
+// all: anyone who knew or guessed a playerId could trigger a resend to
+// that player's parent, an abuse/spam vector with no rate limiting.
+// coachId is now derived from the session, matching every other
+// player-scoped mutation.
 export async function POST(_req: NextRequest, { params }: RouteContext) {
   try {
+    const auth = await requireCoachSession()
+    if ('error' in auth) return auth.error
+    const { coachId } = auth
+
     const { playerId } = await params
     const db = getAdminClient()
 
     const { data: player, error } = await db
       .from('players')
-      .select('id, name, is_minor, parental_consent_status, parent_email')
+      .select('id, coach_id, name, is_minor, parental_consent_status, parent_email')
       .eq('id', playerId)
       .single()
 
     if (error || !player) {
       return NextResponse.json({ error: 'Player not found.' }, { status: 404 })
+    }
+    if (player.coach_id !== coachId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     if (!player.is_minor) {

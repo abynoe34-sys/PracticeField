@@ -45,13 +45,20 @@ export async function PATCH(req: NextRequest) {
   }
 }
 
-// GET /api/coach?coachId=ABC123 — fetch or auto-create coach
-export async function GET(req: NextRequest) {
+// GET /api/coach — fetch the authenticated coach's own row.
+//
+// Ownership added 2026-07-19 (security audit) — previously took coachId
+// from a query param with zero verification, leaking a coach's name/email/
+// team_name to anyone who knew or guessed a coachId. The prior "read-only,
+// indirectly protected by the outer layout gate" reasoning didn't hold up:
+// this route is directly callable regardless of what any page does.
+// coachId is now derived from the session, same as every other route in
+// this lineage — a coach can only ever fetch their own row.
+export async function GET() {
   try {
-    const coachId = req.nextUrl.searchParams.get('coachId')
-    if (!coachId) {
-      return NextResponse.json({ error: 'coachId is required' }, { status: 400 })
-    }
+    const auth = await requireCoachSession()
+    if ('error' in auth) return auth.error
+    const { coachId } = auth
 
     const db = getAdminClient()
     const { data, error } = await db

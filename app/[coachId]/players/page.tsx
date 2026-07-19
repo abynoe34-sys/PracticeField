@@ -51,8 +51,8 @@ export default function PlayersPage() {
   const load = useCallback(async () => {
     setLoading(true)
     const [pr, sr] = await Promise.all([
-      fetch(`/api/players?coachId=${coachId}`),
-      fetch(`/api/sessions?coachId=${coachId}`),
+      fetch('/api/players'),
+      fetch('/api/sessions'),
     ])
     const [pd, sd] = await Promise.all([pr.json(), sr.json()])
     setPlayers(pd.players ?? [])

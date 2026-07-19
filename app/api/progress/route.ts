@@ -1,17 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase'
+import { requireCoachSession } from '@/lib/require-coach'
 import type { LogProgressRequest } from '@/types'
 
-// GET /api/progress?coachId=X&playerId=Y&metric=40-yard+dash
+// GET /api/progress?playerId=Y&metric=40-yard+dash
+//
+// Ownership added 2026-07-19 (security audit) — coachId was trusted from a
+// query param with zero verification, leaking progress metrics for any
+// coach whose id you knew. coachId is now derived from the session;
+// playerId/metric remain pure filters.
 export async function GET(req: NextRequest) {
   try {
-    const coachId = req.nextUrl.searchParams.get('coachId')
+    const auth = await requireCoachSession()
+    if ('error' in auth) return auth.error
+    const { coachId } = auth
+
     const playerId = req.nextUrl.searchParams.get('playerId')
     const metric = req.nextUrl.searchParams.get('metric')
-
-    if (!coachId) {
-      return NextResponse.json({ error: 'coachId is required' }, { status: 400 })
-    }
 
     const db = getAdminClient()
     let query = db
@@ -43,23 +48,44 @@ export async function GET(req: NextRequest) {
 }
 
 // POST /api/progress — log a new performance metric
+//
+// Ownership added 2026-07-19 (security audit) — previously trusted both
+// coach_id AND player_id from the body with no relationship check at all.
+// coachId is now derived from the session; player_id is verified to
+// belong to it below.
 export async function POST(req: NextRequest) {
   try {
+    const auth = await requireCoachSession()
+    if ('error' in auth) return auth.error
+    const { coachId } = auth
+
     const body: LogProgressRequest = await req.json()
 
-    if (!body.player_id || !body.coach_id || !body.metric_name || body.value === undefined) {
+    if (!body.player_id || !body.metric_name || body.value === undefined) {
       return NextResponse.json(
-        { error: 'player_id, coach_id, metric_name, and value are required' },
+        { error: 'player_id, metric_name, and value are required' },
         { status: 400 }
       )
     }
 
     const db = getAdminClient()
+
+    const { data: player, error: playerError } = await db
+      .from('players')
+      .select('id')
+      .eq('id', body.player_id)
+      .eq('coach_id', coachId)
+      .single()
+
+    if (playerError || !player) {
+      return NextResponse.json({ error: 'Player not found.' }, { status: 404 })
+    }
+
     const { data, error } = await db
       .from('progress_metrics')
       .insert({
         player_id: body.player_id,
-        coach_id: body.coach_id,
+        coach_id: coachId,
         metric_name: body.metric_name,
         value: body.value,
         measured_at: body.measured_at,

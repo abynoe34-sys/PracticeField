@@ -47,7 +47,7 @@ export default function SettingsPage() {
 
   // Load existing profile on mount
   useEffect(() => {
-    fetch(`/api/coach?coachId=${coachId}`)
+    fetch('/api/coach')
       .then(r => r.json())
       .then(({ coach }) => {
         if (coach) {

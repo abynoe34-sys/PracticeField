@@ -1,18 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase'
+import { requireCoachSession } from '@/lib/require-coach'
 import { generateTrainingPlanAI, generateTrainingPlanTemplate } from '@/lib/openai'
 import { getImprovementTimeline } from '@/lib/training-templates'
 import type { GenerateTrainingPlanRequest } from '@/types'
 
-// GET /api/training-plans?coachId=X&playerId=Y
+// GET /api/training-plans?playerId=Y
+//
+// Ownership added 2026-07-19 (security audit) — coachId was trusted from a
+// query param with zero verification, leaking training plan contents
+// (pain points, exercises) for any coach whose id you knew. coachId is now
+// derived from the session; playerId remains a pure filter.
 export async function GET(req: NextRequest) {
   try {
-    const coachId = req.nextUrl.searchParams.get('coachId')
-    const playerId = req.nextUrl.searchParams.get('playerId')
+    const auth = await requireCoachSession()
+    if ('error' in auth) return auth.error
+    const { coachId } = auth
 
-    if (!coachId) {
-      return NextResponse.json({ error: 'coachId is required' }, { status: 400 })
-    }
+    const playerId = req.nextUrl.searchParams.get('playerId')
 
     const db = getAdminClient()
     let query = db
@@ -38,24 +43,43 @@ export async function GET(req: NextRequest) {
 }
 
 // POST /api/training-plans — generate a training plan
+//
+// Ownership added 2026-07-19 (security audit) — this route previously
+// trusted both coach_id AND player_id from the body with NO relationship
+// check at all (worse than the "self-consistent pair" gap found elsewhere —
+// this didn't even verify player_id belonged to coach_id). Any caller could
+// generate a plan attached to any coach/player pair. coachId is now derived
+// from the session; player_id is verified to belong to it below.
 export async function POST(req: NextRequest) {
   try {
+    const auth = await requireCoachSession()
+    if ('error' in auth) return auth.error
+    const { coachId } = auth
+
     const body: GenerateTrainingPlanRequest = await req.json()
 
-    if (!body.player_id || !body.coach_id || !body.pain_points?.length) {
+    if (!body.player_id || !body.pain_points?.length) {
       return NextResponse.json(
-        { error: 'player_id, coach_id, and pain_points are required' },
+        { error: 'player_id and pain_points are required' },
         { status: 400 }
       )
     }
 
-    // Fetch player info for context
+    // Fetch player info for context — also the ownership check: a fetch
+    // scoped by coach_id that returns nothing means either the player
+    // doesn't exist or belongs to a different coach; both are refused
+    // identically here since there's no data to leak either way.
     const db = getAdminClient()
-    const { data: player } = await db
+    const { data: player, error: playerError } = await db
       .from('players')
       .select('name, position, experience_level')
       .eq('id', body.player_id)
+      .eq('coach_id', coachId)
       .single()
+
+    if (playerError || !player) {
+      return NextResponse.json({ error: 'Player not found.' }, { status: 404 })
+    }
 
     // Fetch recent strengths for context
     const { data: recentSessions } = await db
@@ -93,7 +117,7 @@ export async function POST(req: NextRequest) {
       .from('training_plans')
       .insert({
         player_id: body.player_id,
-        coach_id: body.coach_id,
+        coach_id: coachId,
         pain_points: body.pain_points,
         experience_level: body.experience_level,
         commitment_weeks: body.commitment_weeks,

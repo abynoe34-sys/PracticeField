@@ -5,8 +5,19 @@ import { requireCoachSession } from '@/lib/require-coach'
 type RouteContext = { params: Promise<{ sessionId: string }> }
 
 // GET /api/sessions/[sessionId]
+//
+// Ownership added 2026-07-19 (security audit) — this route previously had
+// no ownership check at all, leaking session notes/strengths/improvements
+// to anyone who knew or guessed a sessionId. Coach-managed sessions only,
+// matching this route's PATCH/DELETE below and chk_sessions_has_owner —
+// a session with no coach_id (self-signup, owned via player_account_id) is
+// refused here rather than silently returned.
 export async function GET(_req: NextRequest, { params }: RouteContext) {
   try {
+    const auth = await requireCoachSession()
+    if ('error' in auth) return auth.error
+    const { coachId } = auth
+
     const { sessionId } = await params
     const db = getAdminClient()
     const { data, error } = await db
@@ -17,6 +28,9 @@ export async function GET(_req: NextRequest, { params }: RouteContext) {
 
     if (error || !data) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 })
+    }
+    if (!data.coach_id || data.coach_id !== coachId) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     return NextResponse.json({ session: data })
