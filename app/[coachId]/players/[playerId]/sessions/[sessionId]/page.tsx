@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { getAdminClient } from '@/lib/supabase'
 import { formatDate } from '@/lib/utils'
 import VideoAnalysisCard from '@/components/VideoAnalysisCard'
-import FeedbackCard from '@/components/FeedbackCard'
+import FeedbackPanel from '@/components/FeedbackPanel'
 import SessionAutoRefresh from '@/components/SessionAutoRefresh'
 import DeleteSessionButton from '@/components/DeleteSessionButton'
 import ReferencePhotosSection from '@/components/ReferencePhotosSection'
@@ -55,21 +55,28 @@ export default async function SessionDetailPage({ params }: SessionDetailProps) 
 
   const rootCauses: Record<string, string> = session.root_causes ?? {}
 
-  // Drives SessionAutoRefresh: keep polling while any side video hasn't
-  // reached a terminal status yet (or none exist — a clip may still be
-  // uploading). 'complete' is terminal regardless of feedback, since
-  // feedback generation is best-effort and may never arrive.
+  // Drives SessionAutoRefresh. Analysis-status half: keep polling while any
+  // side video hasn't reached a terminal analysis status.
   const anyFailed = sideVideos.some(v => v.analysis_status === 'failed')
   const anyInProgress =
     sideVideos.length === 0 ||
     sideVideos.some(v => v.analysis_status !== 'complete' && v.analysis_status !== 'failed')
   const pollStatus: 'processing' | 'complete' | 'failed' =
     anyInProgress ? 'processing' : anyFailed ? 'failed' : 'complete'
-  const feedbackPending = sideVideos.some(v => v.analysis_status === 'complete' && !v.feedback)
+  // Feedback half (item 2): keep polling while feedback is genuinely still in
+  // flight — feedback_status pending/processing on a completed side row. Now
+  // a real terminal signal, not the old "one grace poll then give up" hack:
+  // 'failed'/'skipped'/'complete' all stop the poll (the failed state is
+  // shown by FeedbackPanel, with a retry, rather than polled forever).
+  const feedbackInFlight = sideVideos.some(
+    v => v.analysis_status === 'complete' &&
+         (v.feedback_status === 'pending' || v.feedback_status === 'processing') &&
+         !v.feedback
+  )
 
   return (
     <div className="max-w-xl mx-auto space-y-6">
-      <SessionAutoRefresh status={pollStatus} feedbackPending={feedbackPending} />
+      <SessionAutoRefresh status={pollStatus} feedbackInFlight={feedbackInFlight} />
       {/* Breadcrumb */}
       <div>
         <div className="flex items-center gap-1.5 text-sm text-gray-500">
@@ -156,8 +163,9 @@ export default async function SessionDetailPage({ params }: SessionDetailProps) 
                 <VideoAnalysisCard
                   video={video}
                   position={player.position ?? null}
+                  showFeedbackState={false}
                 />
-                <FeedbackCard feedback={video.feedback} />
+                <FeedbackPanel video={video} sessionId={sessionId} />
                 {frontClip?.public_url && (
                   <details className="group">
                     <summary className="text-xs text-gray-600 cursor-pointer hover:text-gray-400 transition-colors px-1">

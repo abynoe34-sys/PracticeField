@@ -242,6 +242,10 @@ def analyse(req: AnalyseRequest):
     # existing "feedback pending" UI placeholder already covers this case.
     # The manual POST /feedback route is untouched and still works for
     # re-generating feedback on any session, auto-generated or not.
+    # feedback_status (migration-v15) makes the outcome visible instead of
+    # conflating "failed" with "not generated" — both used to leave feedback
+    # null. A failure sets feedback_status='failed' + feedback_error so the UI
+    # can surface it and offer a retry; a no-pose skip sets 'skipped'.
     if aggregated.get("slope_deg_mean") is not None or aggregated.get("lean_from_vertical_mean") is not None:
         try:
             from feedback import generate_feedback
@@ -252,7 +256,11 @@ def analyse(req: AnalyseRequest):
                 position=req.position,
             )
             fb_write = db.table("session_videos") \
-                .update({"feedback": feedback_result}) \
+                .update({
+                    "feedback":        feedback_result,
+                    "feedback_status": "complete",
+                    "feedback_error":  None,
+                }) \
                 .eq("session_id", req.session_id) \
                 .eq("view_angle", "side") \
                 .execute()
@@ -261,9 +269,25 @@ def analyse(req: AnalyseRequest):
             else:
                 log.info("session %s: feedback auto-generated and written", req.session_id)
         except Exception as exc:
-            log.error("session %s: auto-feedback generation failed, continuing without it: %s", req.session_id, exc)
+            # Best-effort: the analysis write already succeeded above. Record
+            # the failure on the row (never re-raise) so the user sees a clear
+            # "couldn't generate — retry" state instead of a silent pending.
+            log.error("session %s: auto-feedback generation failed, marking failed: %s", req.session_id, exc)
+            try:
+                db.table("session_videos") \
+                    .update({"feedback_status": "failed", "feedback_error": str(exc)[:500]}) \
+                    .eq("session_id", req.session_id) \
+                    .eq("view_angle", "side") \
+                    .execute()
+            except Exception as write_exc:
+                log.error("session %s: could not even write feedback_status=failed: %s", req.session_id, write_exc)
     else:
         log.info("session %s: skipping auto-feedback — no usable pose detections", req.session_id)
+        db.table("session_videos") \
+            .update({"feedback_status": "skipped"}) \
+            .eq("session_id", req.session_id) \
+            .eq("view_angle", "side") \
+            .execute()
 
     # ── Front-view: mark complete (analysis stays null — result lives on side row) ──
     # Front-view biomechanical processing is not yet implemented, but the row
@@ -289,29 +313,44 @@ def analyse(req: AnalyseRequest):
     }
 
 
-# ── Feedback (GPT-4o text writer, admin-gated) ─────────────────────────────────
+# ── Feedback (GPT-4o text writer) ──────────────────────────────────────────────
 #
-# Converts the raw MediaPipe measurements already written to session_videos.analysis
-# into coaching feedback via gpt-4o-mini. Separate from /analyse and gated by its
-# own X-Admin-Secret header (not X-Service-Secret) because this is a dev/admin-only
-# step until output quality has been reviewed — it is not called automatically as
-# part of the Inngest pipeline.
+# Converts the raw MediaPipe measurements already written to
+# session_videos.analysis into coaching feedback via gpt-4o-mini. Two entry
+# points share one core (_regenerate_feedback_from_db):
+#   POST /feedback            — admin-gated (X-Admin-Secret), for dev/manual
+#                               re-runs (e.g. after a prompt change).
+#   POST /regenerate-feedback — service-gated (X-Service-Secret), the endpoint
+#                               the app's user-facing retry calls. Vercel
+#                               already holds SERVICE_SECRET (as
+#                               ANALYSIS_SERVICE_SECRET); it does NOT hold
+#                               ADMIN_SECRET, so the retry path can't reuse
+#                               /feedback — hence this second, service-gated
+#                               door onto the identical logic.
 
 class FeedbackRequest(BaseModel):
     session_id: str
 
 
-@app.post("/feedback", dependencies=[Depends(require_admin)])
-def feedback(req: FeedbackRequest):
-    log.info("received feedback request for session %s", req.session_id)
+def _regenerate_feedback_from_db(session_id: str) -> dict:
+    """
+    Read the side-view row's measurements + context back from the DB and
+    (re)generate feedback, writing feedback + feedback_status. Shared by both
+    the admin /feedback route and the service-gated /regenerate-feedback route
+    so a user retry runs the exact same generation logic as the manual re-run.
 
+    Raises HTTPException for the caller to surface (404 no row, 409 analysis
+    not complete, 502 generation failed) — and on 502 also records
+    feedback_status='failed' + feedback_error so the failure stays visible
+    even if the caller drops the response.
+    """
     from feedback import generate_feedback
 
     db = get_supabase()
 
     row_result = db.table("session_videos") \
         .select("analysis, analysis_status, fault_type, line_side, position") \
-        .eq("session_id", req.session_id) \
+        .eq("session_id", session_id) \
         .eq("view_angle", "side") \
         .limit(1) \
         .execute()
@@ -338,22 +377,44 @@ def feedback(req: FeedbackRequest):
             line_side=row.get("line_side"),
             position=row.get("position"),
         )
-    except RuntimeError as exc:
+    except Exception as exc:
+        # Record the failure on the row so a dropped response doesn't leave the
+        # user staring at a silent pending — then surface it to the caller.
+        db.table("session_videos") \
+            .update({"feedback_status": "failed", "feedback_error": str(exc)[:500]}) \
+            .eq("session_id", session_id) \
+            .eq("view_angle", "side") \
+            .execute()
         raise HTTPException(status_code=502, detail=str(exc))
 
     write_result = db.table("session_videos") \
-        .update({"feedback": result}) \
-        .eq("session_id", req.session_id) \
+        .update({
+            "feedback":        result,
+            "feedback_status": "complete",
+            "feedback_error":  None,
+        }) \
+        .eq("session_id", session_id) \
         .eq("view_angle", "side") \
         .execute()
 
     if hasattr(write_result, "error") and write_result.error:
         raise HTTPException(status_code=500, detail=f"DB write failed: {write_result.error}")
 
-    log.info("session %s feedback written to DB", req.session_id)
+    log.info("session %s feedback written to DB", session_id)
+    return result
 
-    return {
-        "status":     "complete",
-        "session_id": req.session_id,
-        "feedback":   result,
-    }
+
+@app.post("/feedback", dependencies=[Depends(require_admin)])
+def feedback(req: FeedbackRequest):
+    log.info("received admin feedback request for session %s", req.session_id)
+    result = _regenerate_feedback_from_db(req.session_id)
+    return {"status": "complete", "session_id": req.session_id, "feedback": result}
+
+
+@app.post("/regenerate-feedback", dependencies=[Depends(require_secret)])
+def regenerate_feedback(req: FeedbackRequest):
+    # Service-gated twin of /feedback for the app's user-facing retry. Same
+    # logic, different trust boundary (see the module comment above).
+    log.info("received retry feedback request for session %s", req.session_id)
+    result = _regenerate_feedback_from_db(req.session_id)
+    return {"status": "complete", "session_id": req.session_id, "feedback": result}

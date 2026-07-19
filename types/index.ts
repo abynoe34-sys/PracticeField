@@ -287,6 +287,8 @@ export interface SessionVideo {
   analysis_status:  AnalysisStatus
   analysis:         VideoAnalysis | null
   feedback:         StanceFeedback | null
+  feedback_status:  'pending' | 'processing' | 'complete' | 'failed' | 'skipped'
+  feedback_error:   string | null
   frame_paths:      string[]
   label:            string | null
   drill_type:       DrillType | null

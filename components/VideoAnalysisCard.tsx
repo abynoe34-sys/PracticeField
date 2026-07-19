@@ -10,6 +10,11 @@ interface VideoAnalysisCardProps {
   position?: string | null   // player position for drill library matching
   onReanalyze?: () => void
   onDelete?: () => void
+  // When false, the card omits its own "feedback pending/failed" line —
+  // used on the session page where FeedbackPanel owns the feedback UI (state
+  // + retry) and would otherwise double up. Defaults true so the coach video
+  // library still shows a feedback indicator.
+  showFeedbackState?: boolean
 }
 
 const GRADE_STYLES: Record<string, { bg: string; text: string; label: string }> = {
@@ -104,7 +109,7 @@ export function isStructuredAnalysis(a: VideoAnalysis | null): a is VideoAnalysi
   return !!a && typeof (a as unknown as Record<string, unknown>).summary === 'string'
 }
 
-export default function VideoAnalysisCard({ video, position, onReanalyze, onDelete }: VideoAnalysisCardProps) {
+export default function VideoAnalysisCard({ video, position, onReanalyze, onDelete, showFeedbackState = true }: VideoAnalysisCardProps) {
   const [videoOpen, setVideoOpen] = useState(false)
   const [tab, setTab] = useState<'issues' | 'scores' | 'plan'>('issues')
 
@@ -185,9 +190,19 @@ export default function VideoAnalysisCard({ video, position, onReanalyze, onDele
         </div>
       )}
 
-      {/* Complete, but nothing to show yet — no structured analysis and /feedback hasn't run */}
-      {video.analysis_status === 'complete' && !analysis && !video.feedback && (
-        <div className="px-4 py-3 text-sm text-gray-500">✓ Analysis complete — feedback pending</div>
+      {/* Complete, but no structured analysis to render here (two-clip raw
+          shape). Show a feedback-state line — now feedback_status-aware so a
+          FAILED generation reads as failed, not a permanent silent "pending".
+          Suppressed (showFeedbackState=false) on the session page, where
+          FeedbackPanel owns this area including the retry affordance. */}
+      {showFeedbackState && video.analysis_status === 'complete' && !analysis && !video.feedback && (
+        <div className="px-4 py-3 text-sm">
+          {video.feedback_status === 'failed'
+            ? <span className="text-brand-300">⚠ Analysis complete — feedback couldn&apos;t be generated</span>
+            : video.feedback_status === 'skipped'
+            ? <span className="text-gray-500">✓ Analysis complete — feedback not generated (no clear pose)</span>
+            : <span className="text-gray-500">✓ Analysis complete — feedback pending…</span>}
+        </div>
       )}
 
       {/* Full Analysis */}
