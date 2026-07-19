@@ -146,9 +146,14 @@ class AnalyseRequest(BaseModel):
     side_clip_path:  str
     front_clip_path: str
     drill_type:      str
-    fault_type:      str
-    line_side:       str
-    position:        str
+    # Optional/nullable (item 3, 2026-07-19): these are not captured anywhere
+    # yet, so the Inngest job sends null rather than fabricated defaults. They
+    # are written through as-is (None stays None in the DB — the CHECK
+    # constraints permit NULL) so feedback.py's UNKNOWN hedging applies instead
+    # of the model inventing a position/side/fault for every session.
+    fault_type:      str | None = None
+    line_side:       str | None = None
+    position:        str | None = None
     # Feature A (analyzed stance photos, BUILD_SPEC_photo_upload.md). Default
     # "video" preserves behavior for any event already in flight when this
     # field was added — every caller (lib/jobs/ol-stance-analysis.ts) sends

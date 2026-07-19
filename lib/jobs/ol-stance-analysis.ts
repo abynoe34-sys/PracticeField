@@ -7,9 +7,18 @@ type SessionReadyData = {
   player_id?:         string | null
   player_account_id?: string | null
   drill_type:         string
-  // fault_type / line_side / position are not yet persisted on session_videos.
-  // They are passed through the event payload from the upload route so the
-  // analysis service receives them without a schema change in the interim.
+  // fault_type / line_side / position — the stance-analysis context that the
+  // deferred calibration/ruleset work will judge against. IMPORTANT (item 3,
+  // 2026-07-19): nothing in the app captures these yet — no film-time form, no
+  // field on upload. The confirm route that fires this event does NOT include
+  // them, so in practice they arrive undefined. They are passed through as-is
+  // (undefined → null) and must NOT be back-filled with fabricated defaults:
+  // doing so ('guard_tackle'/'right'/'none') made feedback confidently label
+  // every session — e.g. "as a guard or tackle…" for a center — which is
+  // exactly the fabrication the 2026-07-17 honest-feedback fix removed
+  // upstream. Passing null lets service/feedback.py's UNKNOWN hedging apply.
+  // See CLAUDE.md "position/line_side/fault_type not captured" for the
+  // capture-point finding.
   fault_type?:        string
   line_side?:         string
   position?:          string
@@ -142,9 +151,11 @@ export const olStanceAnalysis = inngest.createFunction(
         side_clip_path:  clips.sideClipPath,
         front_clip_path: clips.frontClipPath,
         drill_type:      clips.drillType,
-        fault_type:      data.fault_type  ?? 'none',
-        line_side:       data.line_side   ?? 'right',
-        position:        data.position    ?? 'guard_tackle',
+        // Honest passthrough (item 3) — NOT fabricated defaults. null when
+        // uncaptured, so /feedback hedges instead of inventing a position.
+        fault_type:      data.fault_type  ?? null,
+        line_side:       data.line_side   ?? null,
+        position:        data.position    ?? null,
         media_type:      clips.mediaType,
       }
 
