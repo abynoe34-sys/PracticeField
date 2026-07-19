@@ -88,6 +88,17 @@ export const olStanceAnalysis = inngest.createFunction(
         throw new Error(`DB query failed: ${error.message}`)
       }
 
+      // Per-session analysis stance-position, captured at session start
+      // (Position capture build). Read fresh from the sessions row here — NOT
+      // trusted from the event payload — same "always re-verify against the DB"
+      // discipline this step already applies to clip pairing/readiness. null
+      // when uncaptured, which flows through to /feedback as honest-unknown.
+      const { data: sessionRow } = await db
+        .from('sessions')
+        .select('position')
+        .eq('id', session_id)
+        .single()
+
       console.log(
         `[ol-stance-analysis] session ${session_id}: ` +
         `found ${rows?.length ?? 0} view-tagged clips`
@@ -138,6 +149,7 @@ export const olStanceAnalysis = inngest.createFunction(
         frontClipPath:  frontClips[0].storage_path as string,
         drillType:      (sideClips[0].drill_type ?? data.drill_type) as string,
         mediaType:      sideMediaType,
+        position:       (sessionRow?.position ?? null) as string | null,
       }
     })
 
@@ -185,9 +197,13 @@ export const olStanceAnalysis = inngest.createFunction(
         drill_type:      clips.drillType,
         // Honest passthrough (item 3) — NOT fabricated defaults. null when
         // uncaptured, so /feedback hedges instead of inventing a position.
+        // position is read fresh from sessions.position in validate-session
+        // (Position capture build) — the captured per-session snapshot, not the
+        // event payload. fault_type/line_side are still uncaptured (analysis
+        // output / unused — see the build's Step 0 finding), so stay null.
         fault_type:      data.fault_type  ?? null,
         line_side:       data.line_side   ?? null,
-        position:        data.position    ?? null,
+        position:        clips.position    ?? null,
         media_type:      clips.mediaType,
       }
 

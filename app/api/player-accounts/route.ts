@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
       email,
       password,
       display_name,
+      position,
       date_of_birth,
       terms_agreed,
       training_opt_in = false,
@@ -136,6 +137,9 @@ export async function POST(req: NextRequest) {
       auth_user_id:                    authUserId,
       email,
       display_name,
+      // Profile position (broad FootballPosition, free-text) — optional at
+      // signup, editable later on the dashboard (Position capture build).
+      position:                        typeof position === 'string' && position.trim() !== '' ? position.trim() : null,
       date_of_birth,
       // Trigger-computed placeholders — overwritten by trg_initialize_player_account
       is_minor:                        false,

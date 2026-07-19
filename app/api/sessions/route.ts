@@ -60,6 +60,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'session_date is required' }, { status: 400 })
     }
 
+    // Per-session analysis stance-position (Position capture build). Optional —
+    // null means "not captured", which the pipeline treats as honest-unknown
+    // (feedback hedges). If present it must be the exact OL-stance vocabulary
+    // the sessions.position CHECK and feedback.py POSITION_CUES understand.
+    const position: 'guard_tackle' | 'center' | null = body.position ?? null
+    if (position !== null && position !== 'guard_tackle' && position !== 'center') {
+      return NextResponse.json(
+        { error: "position must be 'guard_tackle', 'center', or omitted." },
+        { status: 400 }
+      )
+    }
+
     // ── Mutual exclusivity check ──────────────────────────────────────────────
     if (player_account_id && player_id) {
       return NextResponse.json(
@@ -156,6 +168,7 @@ export async function POST(req: NextRequest) {
           ? { player_account_id }
           : { player_id, coach_id }),
         session_date,
+        position,
         strengths:    body.strengths    ?? [],
         improvements: body.improvements ?? [],
         root_causes:  body.root_causes  ?? {},

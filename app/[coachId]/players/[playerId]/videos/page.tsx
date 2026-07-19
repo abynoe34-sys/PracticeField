@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import TwoClipUpload from '@/components/TwoClipUpload'
 import VideoAnalysisCard from '@/components/VideoAnalysisCard'
 import VideoComparison from '@/components/VideoComparison'
+import { mapToStancePosition, STANCE_POSITIONS, type StancePosition } from '@/lib/position'
 import type { SessionVideo } from '@/types'
 
 export default function PlayerVideosPage() {
@@ -30,6 +31,12 @@ export default function PlayerVideosPage() {
   const [olSessionError,    setOlSessionError]    = useState<string | null>(null)
   const [olSessionId,       setOlSessionId]       = useState<string | null>(null)
   const [olSuccess,         setOlSuccess]         = useState(false)
+
+  // Per-session analysis stance-position (Position capture build). Defaults
+  // from the player's profile position (mapped to the guard_tackle/center
+  // vocabulary), overridable for this one session. '' = leave unset (null).
+  const [stancePosition, setStancePosition] = useState<StancePosition | ''>('')
+  const stanceTouched = useRef(false)
 
   // Resend consent state
   const [resendSaving, setResendSaving] = useState(false)
@@ -57,6 +64,14 @@ export default function PlayerVideosPage() {
   }, [coachId, playerId])
 
   useEffect(() => { load() }, [load])
+
+  // Default the per-session stance position from the player's profile position
+  // once it loads — only until the coach manually changes the selector.
+  useEffect(() => {
+    if (player && !stanceTouched.current) {
+      setStancePosition(mapToStancePosition(player.position) ?? '')
+    }
+  }, [player])
 
   // Poll for videos that are still processing
   useEffect(() => {
@@ -115,10 +130,8 @@ export default function PlayerVideosPage() {
     setResendSaving(false)
   }
 
-  // Creates a sessions row so TwoClipUpload has a valid session_id FK.
-  // Known gap: POST /api/sessions requires coach_id + player_id.
-  // Self-signup players (player_account_id only) cannot use this flow
-  // until the sessions table gains a player_account_id path.
+  // Creates a sessions row so TwoClipUpload has a valid session_id FK, storing
+  // the per-session stance position captured above (Position capture build).
   const createOlSession = useCallback(async () => {
     setOlSessionCreating(true)
     setOlSessionError(null)
@@ -129,6 +142,7 @@ export default function PlayerVideosPage() {
         coach_id:     coachId,
         player_id:    playerId,
         session_date: new Date().toISOString().slice(0, 10),
+        position:     stancePosition || null,
       }),
     })
     const json = await res.json()
@@ -139,7 +153,7 @@ export default function PlayerVideosPage() {
     }
     setOlSessionId(json.session.id)
     setOlSessionCreating(false)
-  }, [coachId, playerId])
+  }, [coachId, playerId, stancePosition])
 
   const switchToTwoClip = useCallback(async () => {
     if (!olSessionId) {
@@ -302,15 +316,40 @@ export default function PlayerVideosPage() {
             )}
 
             {!olSuccess && !olSessionId && (
-              <div className="bg-field-card border border-field-border rounded-xl p-6 text-center space-y-4">
-                <p className="text-white font-semibold text-sm">OL Stance Analysis</p>
-                <p className="text-gray-500 text-xs">
-                  Upload a side-view and front-view clip. AI will analyze stance, lean angle, and technique.
-                </p>
+              <div className="bg-field-card border border-field-border rounded-xl p-6 space-y-4">
+                <div className="text-center">
+                  <p className="text-white font-semibold text-sm">OL Stance Analysis</p>
+                  <p className="text-gray-500 text-xs mt-1">
+                    Upload a side-view and front-view clip. AI will analyze stance, lean angle, and technique.
+                  </p>
+                </div>
+
+                {/* Per-session stance position — defaults from the player's
+                    profile, overridable for this session. */}
+                <div className="text-left">
+                  <label className="block text-xs font-medium text-gray-400 mb-1.5">
+                    Position for this session
+                  </label>
+                  <select
+                    value={stancePosition}
+                    onChange={e => { stanceTouched.current = true; setStancePosition(e.target.value as StancePosition | '') }}
+                    className="w-full bg-field-dark border border-field-border rounded-md px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-600"
+                  >
+                    <option value="">Not specified</option>
+                    {STANCE_POSITIONS.map(p => (
+                      <option key={p.value} value={p.value}>{p.label}</option>
+                    ))}
+                  </select>
+                  <p className="text-[11px] text-gray-600 mt-1">
+                    Defaults from {player?.name ?? 'the player'}&apos;s profile
+                    {player?.position ? ` (${player.position})` : ''}. Change it for a one-off different stance.
+                  </p>
+                </div>
+
                 <button
                   onClick={switchToTwoClip}
                   disabled={olSessionCreating}
-                  className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white font-semibold py-3 rounded-xl text-sm transition-colors"
+                  className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-50 text-white font-semibold py-3 rounded-md text-sm transition-colors"
                 >
                   {olSessionCreating ? 'Starting…' : 'Start Analysis Session'}
                 </button>

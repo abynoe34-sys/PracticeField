@@ -11,6 +11,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { FOOTBALL_POSITIONS } from '@/lib/position'
 
 // Mirror of the API's isMinorToday — evaluated against new Date() at render time.
 function isMinorFromDob(dob: string): boolean {
@@ -22,6 +23,7 @@ function isMinorFromDob(dob: string): boolean {
 
 export default function PlayerSignupForm() {
   const [displayName,  setDisplayName]  = useState('')
+  const [position,     setPosition]     = useState('')
   const [email,        setEmail]        = useState('')
   const [password,     setPassword]     = useState('')
   const [dateOfBirth,  setDateOfBirth]  = useState('')
@@ -61,6 +63,7 @@ export default function PlayerSignupForm() {
           email,
           password,
           display_name:   displayName,
+          position:       position || undefined,
           date_of_birth:  dateOfBirth,
           terms_agreed:   termsAgreed,
           training_opt_in: trainingOptIn,
@@ -135,6 +138,18 @@ export default function PlayerSignupForm() {
             placeholder="Your name"
             className="w-full bg-field-card border border-field-border rounded-md px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
           />
+        </div>
+
+        <div>
+          <label className="block text-xs text-white/70 mb-1">Position <span className="text-white/40">(optional)</span></label>
+          <select
+            value={position}
+            onChange={e => setPosition(e.target.value)}
+            className="w-full bg-field-card border border-field-border rounded-md px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-600"
+          >
+            <option value="">Select position</option>
+            {FOOTBALL_POSITIONS.map(p => <option key={p} value={p}>{p}</option>)}
+          </select>
         </div>
 
         <div>

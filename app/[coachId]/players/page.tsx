@@ -3,24 +3,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import PlayerCard from '@/components/PlayerCard'
+import { FOOTBALL_POSITIONS as POSITIONS } from '@/lib/position'
 import type { Player, Session, FootballPosition, ExperienceLevel } from '@/types'
-
-const POSITIONS: FootballPosition[] = [
-  // Offense
-  'QB','RB','FB','WR','TE',
-  // Offensive Line
-  'OL','C','OG','OT',
-  // Defensive Line
-  'DE','DT','NT',
-  // Linebackers
-  'MLB','ILB','OLB',
-  // Secondary
-  'CB','NB','SS','FS',
-  // Specialists
-  'K','P','LS','H','PR','KR',
-  // Other
-  'Athlete',
-]
 
 export default function PlayersPage() {
   const { coachId } = useParams<{ coachId: string }>()

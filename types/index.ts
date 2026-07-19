@@ -145,6 +145,9 @@ export interface CreateSessionRequest {
   coach_id?: string
   player_account_id?: string
   session_date: string
+  // Per-session analysis stance-position snapshot (guard_tackle|center) or
+  // null/omitted when not captured. See lib/position.ts.
+  position?: 'guard_tackle' | 'center' | null
   strengths: string[]
   improvements: string[]
   root_causes: Record<string, string>

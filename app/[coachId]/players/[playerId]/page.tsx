@@ -4,6 +4,7 @@ import { getAdminClient } from '@/lib/supabase'
 import { formatDate, detectPlateau } from '@/lib/utils'
 import PerformanceChart from '@/components/PerformanceChart'
 import DeletePlayerButton from '@/components/DeletePlayerButton'
+import PlayerPositionEditor from '@/components/PlayerPositionEditor'
 import ReferencePhotosSection from '@/components/ReferencePhotosSection'
 import type { Session, ProgressMetric, ReferencePhoto } from '@/types'
 
@@ -68,9 +69,7 @@ export default async function PlayerDetailPage({ params }: PlayerDetailProps) {
           </div>
           <h1 className="text-2xl font-bold text-white">{player.name}</h1>
           <div className="flex items-center gap-2 mt-1">
-            {player.position && (
-              <span className="text-sm text-gray-400">{player.position}</span>
-            )}
+            <PlayerPositionEditor playerId={playerId} initialPosition={player.position ?? null} />
             <span className={`text-xs font-medium px-2 py-0.5 rounded border ${LEVEL_COLORS[level as keyof typeof LEVEL_COLORS] ?? LEVEL_COLORS.beginner}`}>
               {LEVEL_LABELS[level as keyof typeof LEVEL_LABELS] ?? level}
             </span>
