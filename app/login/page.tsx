@@ -93,7 +93,17 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <label className="block text-xs text-white/70 mb-1">Password</label>
+            <div className="flex items-baseline justify-between mb-1">
+              <label className="block text-xs text-white/70">Password</label>
+              {/* One reset entry point for both roles — coaches and players are
+                  both Supabase auth.users, so recovery is identical. */}
+              <Link
+                href="/forgot-password"
+                className="text-xs text-white/60 hover:text-white transition-colors"
+              >
+                Forgot password?
+              </Link>
+            </div>
             <input
               type="password"
               value={password}

@@ -9,6 +9,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { isPasswordValid, PASSWORD_REQUIREMENT } from '@/lib/password'
 
 export default function CoachSignupForm() {
   const [name,         setName]         = useState('')
@@ -20,7 +21,7 @@ export default function CoachSignupForm() {
   const [error,        setError]        = useState<string | null>(null)
   const [done,         setDone]         = useState(false)
 
-  const canSubmit = email.trim() && password.length >= 8 && termsAgreed
+  const canSubmit = email.trim() && isPasswordValid(password) && termsAgreed
 
   const handleSubmit = async () => {
     setError(null)
@@ -109,7 +110,7 @@ export default function CoachSignupForm() {
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            placeholder="At least 8 characters"
+            placeholder={PASSWORD_REQUIREMENT}
             className="w-full bg-field-card border border-field-border rounded-md px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
           />
         </div>

@@ -12,6 +12,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { FOOTBALL_POSITIONS } from '@/lib/position'
+import { isPasswordValid, PASSWORD_REQUIREMENT } from '@/lib/password'
 
 // Mirror of the API's isMinorToday — evaluated against new Date() at render time.
 function isMinorFromDob(dob: string): boolean {
@@ -46,7 +47,7 @@ export default function PlayerSignupForm() {
   const canSubmit =
     displayName.trim() &&
     email.trim() &&
-    password.length >= 8 &&
+    isPasswordValid(password) &&
     dateOfBirth &&
     termsAgreed &&
     (!isMinor || parentEmail.trim()) &&
@@ -169,7 +170,7 @@ export default function PlayerSignupForm() {
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            placeholder="At least 8 characters"
+            placeholder={PASSWORD_REQUIREMENT}
             className="w-full bg-field-card border border-field-border rounded-md px-4 py-3 text-sm text-white placeholder-gray-600 focus:outline-none focus:border-brand-600"
           />
         </div>
