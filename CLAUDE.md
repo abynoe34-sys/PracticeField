@@ -1,10 +1,10 @@
 # Practice Field — Claude Code Context
 
-> Last updated: 2026-07-20 (Solo-player analysis access + Position capture build — solo players can now run the two-clip analysis pipeline from their own dashboard, and the OL-stance position (guard_tackle/center) is captured as a profile default + per-session override and flows through to the feedback prompt. Documented below under "Solo analysis access + position capture". Prior work — pipeline hardening, photo Features A & B, the route-ownership audit — is below that.)
+> Last updated: 2026-07-20 (Password reset flow — "forgot password" now exists for every account type, built on Supabase Auth's native recovery; documented below under "Password reset". Gated on the deferred email-delivery workstream for real-user use. Earlier the same day: Solo-player analysis access + Position capture build — solo players can now run the two-clip analysis pipeline from their own dashboard, and the OL-stance position (guard_tackle/center) is captured as a profile default + per-session override and flows through to the feedback prompt. Documented below under "Solo analysis access + position capture". Prior work — pipeline hardening, photo Features A & B, the route-ownership audit — is below that.)
 
 ## Next Session Priorities
 
-1. **No coach "forgot password" flow exists yet.** Coaches have real passwords (as of 2026-07-18) but there's no reset-password page — `getSupabaseClient().auth.resetPasswordForEmail()` needs a page to land on. Players have the same gap (pre-existing, not new). Low effort, real user-facing risk.
+1. **~~No "forgot password" flow~~ — BUILT 2026-07-20** (see "Password reset" below). Works for coaches AND players from one entry point. **Two things still needed before it helps a real user:** (a) email delivery must go live (deferred workstream — see "Email delivery" below), and (b) **`https://practice-field.vercel.app/reset-password` must be added to the Supabase Redirect URLs allow-list** — see the config note in "Password reset", this is a dashboard setting, not code, and the flow silently misroutes without it.
 
 2. **Legacy `coaches` rows (~30) are permanently inert under the new auth model** — by explicit owner decision (2026-07-18), not migrated, not backfilled. Most are bot-crawler noise (`favicon.ico`, `contact-us`, etc. — see Gotcha #13). Not a bug — a decision.
 
@@ -193,6 +193,60 @@ Applied from `BRAND_SPEC_practice_field.md` (owner-provided handoff doc, not com
 **Verified live**, not just typechecked: real disposable coach + player accounts signed up and logged in through `/signup`/`/login`/dashboards; computed styles read back via `getComputedStyle()` confirmed every touched surface resolves to the exact configured hex values (gradient stops, `#EC3D50` buttons, `#1C1830` cards, `#3A3050` borders, `6px` radii, the `#C9384D` severity-critical split, the skewed red active-nav underline). All disposable test fixtures cleaned up afterward via the established append-only-trigger-safe pattern (Gotcha #15), confirmed gone via zero-count sweeps.
 
 ---
+
+## Password reset (2026-07-20)
+
+Before this, there was **no reset path at all** — a forgotten password meant permanent lockout for coaches and players alike. This wires up Supabase Auth's native recovery; it is UI + wiring, not a custom token system.
+
+### One flow serves every account type — confirmed, not assumed
+
+Coaches and players authenticate identically: both are plain rows in `auth.users` (coaches gained `auth_user_id` in migration-v12; `player_accounts` always had one). They differ only in *which profile table references the auth user*, which password recovery never touches. So a single `resetPasswordForEmail` entry point on the unified `/login` covers both — **verified live against a real coach account and a real solo player account**, not inferred.
+
+### The pages
+
+- **`app/forgot-password/page.tsx`** — email → `resetPasswordForEmail(email, { redirectTo: <origin>/reset-password })`.
+  **Anti-enumeration:** the "If an account exists for that email, a reset link has been sent" confirmation renders **unconditionally** — same text, same code path, even when Supabase returns an error (the `catch` deliberately swallows). Rendering anything different for a non-existent address would turn this form into an account-existence oracle. Verified live: registered vs unregistered email produce byte-identical output.
+- **`app/reset-password/page.tsx`** — the `redirectTo` target. Establishes the recovery session, then `updateUser({ password })`, then **`signOut()`** so no half-authenticated recovery session is left behind (the user signs in fresh).
+
+### Why the reset page handles three token shapes (don't "simplify" this)
+
+Supabase delivers the recovery credential differently depending on how the link was created, so the page handles all three explicitly:
+
+| Shape | When it appears | Handled by |
+|---|---|---|
+| `?code=…` | PKCE — what `resetPasswordForEmail()` produces from the browser client (`@supabase/ssr`'s `createBrowserClient` uses PKCE), because a code verifier was stashed locally. **This is the production path once email is live.** | `exchangeCodeForSession()` |
+| `?token_hash=…&type=recovery` | The verify-endpoint shape | `verifyOtp()` |
+| `#access_token=…` | Implicit — what an **admin-generated** link (`auth.admin.generateLink`, no local verifier) redirects with | `detectSessionInUrl` consumes it; the page polls for the session |
+
+Handling only one would work in dev and break in production (or vice-versa). **Note the asymmetry this creates for testing:** admin-generated links (the only ones obtainable while email is deferred) exercise the `token_hash`/implicit paths, *not* the PKCE `?code` path that will actually run in production — see the verification caveat below.
+
+**Guarding:** no credential in the URL → the friendly "invalid or expired" state, **including when the visitor is already logged in**, so the page can't be used as a no-token password-change backdoor. The credential is scrubbed from the URL via `history.replaceState` once consumed, so it isn't left in the address bar, history, or a later `Referer`.
+
+### Password rules — `lib/password.ts`
+
+The min-8 rule was previously duplicated inline in `CoachSignupForm`, `PlayerSignupForm`, and both signup API routes. It now lives in `lib/password.ts` (`MIN_PASSWORD_LENGTH`, `validatePassword`, `isPasswordValid`, `PASSWORD_REQUIREMENT`) and both signup forms plus the reset page import it, so signup and reset can't drift. **The server routes remain authoritative** (`password.length < 8` → 400 in `/api/coaches/signup` and `/api/player-accounts`) — the shared lib is the client half of the same contract, not a security control. Change the rule in both places.
+
+### ⚠ Required config step — Redirect URLs allow-list (found during verification)
+
+`redirectTo` is **only honored if the exact URL is on the project's Redirect URLs allow-list** ([Supabase docs](https://supabase.com/docs/guides/auth/redirect-urls)); otherwise Supabase silently falls back to the Site URL. Observed live: a generated recovery link came back with `redirect_to=https://practice-field.vercel.app` — the site root, **not** `/reset-password` — because the path isn't allow-listed. Left as-is, a real reset email would drop users on the landing page and the reset would appear broken.
+
+**Before this goes live, add to Authentication → URL Configuration → Redirect URLs:**
+- `https://practice-field.vercel.app/reset-password` (production)
+- `http://localhost:3000/**` (local dev)
+
+This is a dashboard setting, not code — it is not fixed by anything in this commit.
+
+### Verified live (2026-07-20)
+
+Disposable coach + solo player accounts; recovery links obtained via `auth.admin.generateLink({ type: 'recovery' })` since email doesn't deliver yet. For **both** account types: link produced → reset page accepted it → new password set → **old password rejected, new password accepted** (confirmed via real `signInWithPassword`). Also confirmed: replaying a used link → friendly "invalid or expired" (single-use intact); a direct visit with no token → same friendly state; a bogus `?code=` → same friendly state, no crash or hang; min-8 and passwords-match validation both enforced; registered vs unregistered email indistinguishable; computed styles match the brand system exactly (`#EC3D50` action, brand gradient, `#1C1830`/`#3A3050` inputs, 6px radii); zero console errors. Disposable accounts cleaned up (zero-count sweep).
+
+**Verification caveat (honest gap):** the PKCE `?code` path — the one that will actually run in production once email is on — could not be exercised live, because obtaining a real PKCE link requires a delivered email (an admin-generated link has no code verifier and yields the implicit shape instead). Its *failure* path was verified (bogus code → friendly error, no hang); its success path is implemented per Supabase's documented API but is unverified. **Re-verify it when email delivery lands.**
+
+### Email delivery — the deferred dependency
+
+Password reset only reaches real users once email delivery is enabled. Today Resend sends from `onboarding@resend.dev`, which delivers **only to pre-approved addresses** — so a real user will not receive a reset email. This is expected and was explicitly out of scope for this build.
+
+**This joins the deferred EMAIL workstream.** When email delivery is switched on (custom Resend domain — see "Resend custom domain" in What's Still Outstanding — likely bundled with the minor-consent email work pending legal input), **both password reset and minor-consent emails become live at once and both should be re-verified with real delivery at that point**, together with the PKCE caveat and the Redirect-URL config step above.
 
 ## Solo analysis access + position capture (2026-07-20)
 
@@ -390,7 +444,7 @@ Before Pipeline Hardening §Item 2, a NULL `feedback` column meant *either* "aut
 
 **`ADMIN_SECRET` should be rotated** — exposed in a debugging screenshot during the 2026-07-17 session. Still not done.
 
-**Resend custom domain** — unchanged, still outstanding. All transactional emails send from `onboarding@resend.dev`.
+**Resend custom domain / email delivery** — still outstanding. All transactional emails send from `onboarding@resend.dev`, which delivers only to pre-approved addresses. **This is now the blocking dependency for password reset** (built 2026-07-20) as well as minor-consent emails. When it lands, both go live simultaneously and both need re-verification with real delivery — plus the two follow-ups in "Password reset": the Redirect-URL allow-list config step, and the unverified PKCE `?code` path.
 
 **Front-view analysis — mechanical half now built (2026-07-19), fault-judgment half still deferred.** The Python service now extracts front landmarks and writes raw mechanical measurements (stance width, shoulder/hip tilt, knee alignment, lateral offset, down hand) to the front row; `FrontMeasurements.tsx` surfaces them. What's still deferred (to calibration, for both angles together): any good-vs-bad ruleset, thresholds, or coaching cues on those measurements. See Pipeline Hardening §Item 6.
 
@@ -411,7 +465,10 @@ Before Pipeline Hardening §Item 2, a NULL `feedback` column meant *either* "aut
 | `lib/require-coach.ts` | **New, 2026-07-18.** `requireCoachSession()` — reusable API-route helper, derives `coachId` from the verified session (401 if unauthenticated, 403 if authenticated but not a coach). Used by every strengthened ownership check this session. |
 | `app/[coachId]/layout.tsx` | **Rewritten 2026-07-18.** The real security boundary for every page under `/[coachId]/...` — unauthenticated → `/login`, authenticated player → `/player/dashboard`, authenticated coach at the wrong `coachId` → redirected to their own. Previously had no auth check at all. |
 | `app/signup/page.tsx` | **New, 2026-07-18.** Unified sign-up entry point — role picker renders `CoachSignupForm` or `PlayerSignupForm`. |
-| `app/login/page.tsx` | **New, 2026-07-18.** Unified login — `signInWithPassword` then `GET /api/whoami` to route to `/${coachId}` or `/player/dashboard`. |
+| `app/login/page.tsx` | **New, 2026-07-18.** Unified login — `signInWithPassword` then `GET /api/whoami` to route to `/${coachId}` or `/player/dashboard`. **Changed 2026-07-20** — added the "Forgot password?" link (one reset entry point for both roles). |
+| `app/forgot-password/page.tsx` | **New, 2026-07-20.** Reset request — `resetPasswordForEmail(redirectTo: /reset-password)`. Confirmation renders unconditionally (anti-enumeration). |
+| `app/reset-password/page.tsx` | **New, 2026-07-20.** Reset target — handles all three recovery-credential shapes (PKCE `?code` / `?token_hash` / implicit `#access_token`), guards no/expired token with a friendly state, `updateUser({password})` then `signOut()`, scrubs the token from the URL. |
+| `lib/password.ts` | **New, 2026-07-20.** Single source of truth for the min-8 password rule (`validatePassword`/`isPasswordValid`/`PASSWORD_REQUIREMENT`), shared by both signup forms and the reset page. Server routes stay authoritative. |
 | `components/CoachSignupForm.tsx` | **New, 2026-07-18.** Coach signup form (name, team_name, email, password, terms), calls `POST /api/coaches/signup`. |
 | `components/PlayerSignupForm.tsx` | **New, 2026-07-18.** Extracted from the old `app/player/signup/page.tsx`; unchanged logic (minor detection, parent-email validation), calls the pre-existing `POST /api/player-accounts`. |
 | `app/api/coaches/signup/route.ts` | **New, 2026-07-18.** First real coach account creation endpoint — `auth.admin.createUser` + `coaches` row (with `auth_user_id`) + consent records + verification email, rolls back the auth user on DB insert failure. |
