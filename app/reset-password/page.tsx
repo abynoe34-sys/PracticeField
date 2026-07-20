@@ -51,11 +51,12 @@ export default function ResetPasswordPage() {
     const url = new URL(href)
     const hashParams = new URLSearchParams(url.hash.replace(/^#/, ''))
 
-    const code        = url.searchParams.get('code')
-    const tokenHash   = url.searchParams.get('token_hash')
-    const type        = url.searchParams.get('type') ?? hashParams.get('type')
-    const hashToken   = hashParams.get('access_token')
-    const errorParam  = url.searchParams.get('error') ?? hashParams.get('error')
+    const code         = url.searchParams.get('code')
+    const tokenHash    = url.searchParams.get('token_hash')
+    const type         = url.searchParams.get('type') ?? hashParams.get('type')
+    const hashToken    = hashParams.get('access_token')
+    const hashRefresh  = hashParams.get('refresh_token')
+    const errorParam   = url.searchParams.get('error') ?? hashParams.get('error')
 
     const supabase = getSupabaseClient()
     let settled = false
@@ -102,13 +103,31 @@ export default function ResetPasswordPage() {
       }
 
       if (hashToken) {
-        // detectSessionInUrl is consuming it; poll briefly for the session.
-        for (const delay of [0, 300, 800, 1500]) {
+        // Establish the session EXPLICITLY rather than waiting for the client's
+        // own URL detection. This is the shape Supabase actually redirects with
+        // for a recovery link (verified against the live verify endpoint:
+        // `#access_token=…&refresh_token=…&type=recovery`), but
+        // createBrowserClient runs in PKCE mode, where detectSessionInUrl is
+        // looking for `?code=` and never consumes an implicit hash. Passively
+        // polling getSession() here therefore waited for a session that would
+        // never appear and timed out into the "invalid or expired" state —
+        // which is exactly how this failed in production.
+        if (hashRefresh) {
+          const { error: setErr } = await supabase.auth.setSession({
+            access_token:  hashToken,
+            refresh_token: hashRefresh,
+          })
+          settle(!setErr)
+          return
+        }
+        // No refresh_token to pair with it — fall back to whatever the client
+        // may have picked up on its own before giving up.
+        for (const delay of [0, 400, 1200]) {
           timers.push(setTimeout(async () => {
             if (settled) return
             const { data } = await supabase.auth.getSession()
             if (data.session) settle(true)
-            else if (delay === 1500) settle(false)
+            else if (delay === 1200) settle(false)
           }, delay))
         }
         return

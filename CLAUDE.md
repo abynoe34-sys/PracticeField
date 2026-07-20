@@ -4,7 +4,7 @@
 
 ## Next Session Priorities
 
-1. **~~No "forgot password" flow~~ — BUILT 2026-07-20** (see "Password reset" below). Works for coaches AND players from one entry point. **Two things still needed before it helps a real user:** (a) email delivery must go live (deferred workstream — see "Email delivery" below), and (b) **`https://practice-field.vercel.app/reset-password` must be added to the Supabase Redirect URLs allow-list** — see the config note in "Password reset", this is a dashboard setting, not code, and the flow silently misroutes without it.
+1. **~~No "forgot password" flow~~ — BUILT + FIXED 2026-07-20** (see "Password reset" below). Works for coaches AND players from one entry point; the production redirect is correctly allow-listed. A real bug found after first ship (the implicit-hash credential was never consumed, so every reset showed "invalid or expired") is fixed and re-verified against a production build. Remaining gap for real users: **email delivery** (deferred workstream — see "Email delivery" below).
 
 2. **Legacy `coaches` rows (~30) are permanently inert under the new auth model** — by explicit owner decision (2026-07-18), not migrated, not backfilled. Most are bot-crawler noise (`favicon.ico`, `contact-us`, etc. — see Gotcha #13). Not a bug — a decision.
 
@@ -226,21 +226,31 @@ Handling only one would work in dev and break in production (or vice-versa). **N
 
 The min-8 rule was previously duplicated inline in `CoachSignupForm`, `PlayerSignupForm`, and both signup API routes. It now lives in `lib/password.ts` (`MIN_PASSWORD_LENGTH`, `validatePassword`, `isPasswordValid`, `PASSWORD_REQUIREMENT`) and both signup forms plus the reset page import it, so signup and reset can't drift. **The server routes remain authoritative** (`password.length < 8` → 400 in `/api/coaches/signup` and `/api/player-accounts`) — the shared lib is the client half of the same contract, not a security control. Change the rule in both places.
 
-### ⚠ Required config step — Redirect URLs allow-list (found during verification)
+### Redirect URLs allow-list — production is fine, localhost is not
 
-`redirectTo` is **only honored if the exact URL is on the project's Redirect URLs allow-list** ([Supabase docs](https://supabase.com/docs/guides/auth/redirect-urls)); otherwise Supabase silently falls back to the Site URL. Observed live: a generated recovery link came back with `redirect_to=https://practice-field.vercel.app` — the site root, **not** `/reset-password` — because the path isn't allow-listed. Left as-is, a real reset email would drop users on the landing page and the reset would appear broken.
+`redirectTo` is only honored if the exact URL is on the project's Redirect URLs allow-list ([Supabase docs](https://supabase.com/docs/guides/auth/redirect-urls)); otherwise Supabase silently falls back to the Site URL.
 
-**Before this goes live, add to Authentication → URL Configuration → Redirect URLs:**
-- `https://practice-field.vercel.app/reset-password` (production)
-- `http://localhost:3000/**` (local dev)
+**Verified 2026-07-20:** `https://practice-field.vercel.app/reset-password` **IS** allow-listed and honored — production is correctly configured, no action needed. (An earlier note in this file claimed otherwise; that was wrong — the fallback observed was for `http://localhost:3000/reset-password`, which is *not* allow-listed.)
 
-This is a dashboard setting, not code — it is not fixed by anything in this commit.
+**Only if you want the flow to work against local dev**, add `http://localhost:3000/**` to Authentication → URL Configuration → Redirect URLs. Not required for production.
+
+### 🐞 The bug that broke this in production (fixed 2026-07-20)
+
+**Symptom:** reset email arrived, the link was clicked, and `/reset-password` showed "This link is invalid or has expired" — every time, for everyone.
+
+**Root cause:** Supabase's recovery redirect delivers the credential in the **URL hash** (verified against the live verify endpoint — the `Location` header is `…/reset-password#access_token=…&refresh_token=…&type=recovery`). The original page *passively waited* for `detectSessionInUrl` to consume that hash. But `createBrowserClient` (`@supabase/ssr`) runs in **PKCE mode**, where the client is looking for `?code=` and never consumes an implicit hash — so the polled-for session never appeared and the page fell through to the "invalid or expired" state.
+
+**Fix:** the hash branch now calls `supabase.auth.setSession({ access_token, refresh_token })` **explicitly** instead of waiting for the client's own URL detection.
+
+**Why the original verification missed it:** the pre-fix testing exercised the `?token_hash=` branch (via `verifyOtp`), which bypasses URL detection entirely and therefore passed — while the shape production actually delivers (implicit hash) was never exercised. **Lesson: verify the shape the real redirect produces, not a shape that's merely easy to construct.** The live `Location` header is the ground truth; check it with `curl -D -` against a generated link rather than assuming.
+
+**Re-verified after the fix** (dev server *and* a real `next build` production build): a genuine Supabase recovery redirect now renders the form, and completing it changed the password for real — old password rejected, new accepted.
 
 ### Verified live (2026-07-20)
 
 Disposable coach + solo player accounts; recovery links obtained via `auth.admin.generateLink({ type: 'recovery' })` since email doesn't deliver yet. For **both** account types: link produced → reset page accepted it → new password set → **old password rejected, new password accepted** (confirmed via real `signInWithPassword`). Also confirmed: replaying a used link → friendly "invalid or expired" (single-use intact); a direct visit with no token → same friendly state; a bogus `?code=` → same friendly state, no crash or hang; min-8 and passwords-match validation both enforced; registered vs unregistered email indistinguishable; computed styles match the brand system exactly (`#EC3D50` action, brand gradient, `#1C1830`/`#3A3050` inputs, 6px radii); zero console errors. Disposable accounts cleaned up (zero-count sweep).
 
-**Verification caveat (honest gap):** the PKCE `?code` path — the one that will actually run in production once email is on — could not be exercised live, because obtaining a real PKCE link requires a delivered email (an admin-generated link has no code verifier and yields the implicit shape instead). Its *failure* path was verified (bogus code → friendly error, no hang); its success path is implemented per Supabase's documented API but is unverified. **Re-verify it when email delivery lands.**
+**Verification caveat (honest gap):** the PKCE `?code` success path is still unverified — a real PKCE link requires a delivered email (an admin-generated link carries no code verifier and yields the implicit-hash shape, which is what production was actually observed to deliver). Its *failure* path is verified (bogus code → friendly error, no hang). **Re-verify when email delivery lands** — and note the 2026-07-20 bug below is exactly the class of thing this gap hides, so treat it as a real risk, not a formality.
 
 ### Email delivery — the deferred dependency
 
