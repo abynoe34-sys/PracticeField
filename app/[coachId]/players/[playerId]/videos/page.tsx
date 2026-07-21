@@ -6,7 +6,9 @@ import Link from 'next/link'
 import TwoClipUpload from '@/components/TwoClipUpload'
 import VideoAnalysisCard from '@/components/VideoAnalysisCard'
 import VideoComparison from '@/components/VideoComparison'
+import SessionFeedback from '@/components/SessionFeedback'
 import { mapToStancePosition, STANCE_POSITIONS, type StancePosition } from '@/lib/position'
+import { formatDate } from '@/lib/utils'
 import type { SessionVideo } from '@/types'
 
 export default function PlayerVideosPage() {
@@ -23,7 +25,7 @@ export default function PlayerVideosPage() {
   } | null>(null)
   const [loading, setLoading]   = useState(true)
   const [loadError, setLoadError] = useState<string | null>(null)
-  const [tab, setTab]           = useState<'library' | 'compare' | 'upload'>('library')
+  const [tab, setTab]           = useState<'library' | 'feedback' | 'compare' | 'upload'>('library')
   const [pollingIds, setPollingIds] = useState<Set<string>>(new Set())
 
   // Two-clip (OL stance) session state
@@ -180,6 +182,29 @@ export default function PlayerVideosPage() {
 
   const completedVideos = videos.filter(v => v.analysis_status === 'complete')
 
+  // Group the flat video list into sessions for the Feedback tab. `videos` is
+  // ordered created_at DESC by the API, so Map insertion order already yields
+  // most-recent-session-first; only sessions that have a side clip (the
+  // analysis subject) are shown. Feedback is session-level (the side+front
+  // pair), so this fixes the per-clip presentation of the coaching assessment.
+  const feedbackSessions = (() => {
+    const bySession = new Map<string, SessionVideo[]>()
+    for (const v of videos) {
+      if (!v.session_id) continue
+      const arr = bySession.get(v.session_id) ?? []
+      arr.push(v)
+      bySession.set(v.session_id, arr)
+    }
+    return [...bySession.entries()]
+      .map(([sessionId, vids]) => ({
+        sessionId,
+        sideVideos: vids.filter(v => v.view_angle === 'side'),
+        frontVideo: vids.find(v => v.view_angle === 'front'),
+        recordedAt: vids.find(v => v.view_angle === 'side')?.recorded_at ?? vids[0]?.recorded_at ?? null,
+      }))
+      .filter(s => s.sideVideos.length > 0)
+  })()
+
   return (
     <div className="space-y-6 max-w-2xl mx-auto">
       {/* Header */}
@@ -212,9 +237,10 @@ export default function PlayerVideosPage() {
       {/* Tab bar */}
       <div className="flex border-b border-field-border">
         {[
-          { key: 'library', label: `Library (${videos.length})`, disabled: false },
-          { key: 'compare', label: `Progress Compare${completedVideos.length >= 2 ? '' : ' (2+ needed)'}`, disabled: completedVideos.length < 2 },
-          { key: 'upload',  label: needsParentalConsent ? '⚠ Consent Required' : '+ Upload New', disabled: false },
+          { key: 'library',  label: `Library (${videos.length})`, disabled: false },
+          { key: 'feedback', label: `Feedback${feedbackSessions.length > 0 ? ` (${feedbackSessions.length})` : ''}`, disabled: false },
+          { key: 'compare',  label: `Progress Compare${completedVideos.length >= 2 ? '' : ' (2+ needed)'}`, disabled: completedVideos.length < 2 },
+          { key: 'upload',   label: needsParentalConsent ? '⚠ Consent Required' : '+ Upload New', disabled: false },
         ].map(t => (
           <button
             key={t.key}
@@ -261,14 +287,73 @@ export default function PlayerVideosPage() {
               </button>
             </div>
           ) : (
-            videos.map(video => (
-              <VideoAnalysisCard
-                key={video.id}
-                video={video}
-                position={player?.position ?? null}
-                onDelete={() => handleDelete(video.id)}
-                onReanalyze={() => handleReanalyze(video)}
-              />
+            <>
+              {/* Feedback is session-level, not per-clip — the Library is now
+                  just the clips + their status. Coaching assessment lives in
+                  the Feedback tab (showFeedbackState=false suppresses the old
+                  per-clip "feedback pending" placeholder here). */}
+              {feedbackSessions.length > 0 && (
+                <p className="text-xs text-field-muted">
+                  Coaching feedback and front-view measurements are in the{' '}
+                  <button
+                    onClick={() => setTab('feedback')}
+                    className="text-brand-400 hover:text-brand-300 underline transition-colors"
+                  >
+                    Feedback tab
+                  </button>.
+                </p>
+              )}
+              {videos.map(video => (
+                <VideoAnalysisCard
+                  key={video.id}
+                  video={video}
+                  position={player?.position ?? null}
+                  showFeedbackState={false}
+                  onDelete={() => handleDelete(video.id)}
+                  onReanalyze={() => handleReanalyze(video)}
+                />
+              ))}
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Feedback — consolidated session-level assessment (side coaching
+          feedback + front measurements), one block per session. */}
+      {tab === 'feedback' && (
+        <div className="space-y-6">
+          {loading ? (
+            <p className="text-gray-500 text-sm text-center py-8">Loading…</p>
+          ) : feedbackSessions.length === 0 ? (
+            <div className="bg-field-card border border-dashed border-field-border rounded-xl p-10 text-center space-y-2">
+              <p className="text-3xl">📋</p>
+              <p className="text-gray-400 font-medium">No feedback yet</p>
+              <p className="text-gray-600 text-sm">
+                Upload a side + front stance pair — once it&apos;s analyzed, the coaching
+                assessment appears here.
+              </p>
+            </div>
+          ) : (
+            feedbackSessions.map(s => (
+              <section key={s.sessionId} className="space-y-3">
+                <div className="flex items-center justify-between gap-3 border-b border-field-border pb-2">
+                  <h2 className="text-base font-semibold text-white">
+                    {s.recordedAt ? formatDate(s.recordedAt) : 'Session'}
+                  </h2>
+                  <Link
+                    href={`/${coachId}/players/${playerId}/sessions/${s.sessionId}`}
+                    className="text-xs text-brand-400 hover:text-brand-300 transition-colors shrink-0"
+                  >
+                    Full session →
+                  </Link>
+                </div>
+                <SessionFeedback
+                  sideVideos={s.sideVideos}
+                  frontVideo={s.frontVideo}
+                  sessionId={s.sessionId}
+                  onRetried={load}
+                />
+              </section>
             ))
           )}
         </div>
