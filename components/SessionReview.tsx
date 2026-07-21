@@ -123,7 +123,7 @@ export default function SessionReview({ player, coachId, onSuccess }: SessionRev
       const json = await res.json()
 
       if (!res.ok) {
-        setError(json.error ?? 'Failed to save session')
+        setError(json.error ?? 'Failed to save notes')
         return
       }
 
@@ -144,7 +144,7 @@ export default function SessionReview({ player, coachId, onSuccess }: SessionRev
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Session Date */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1.5">Session Date</label>
+        <label className="block text-sm font-medium text-gray-300 mb-1.5">Date</label>
         <input
           type="date"
           value={sessionDate}
@@ -214,7 +214,7 @@ export default function SessionReview({ player, coachId, onSuccess }: SessionRev
         disabled={saving}
         className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors"
       >
-        {saving ? 'Saving…' : 'Save Session'}
+        {saving ? 'Saving…' : 'Save Notes'}
       </button>
     </form>
   )

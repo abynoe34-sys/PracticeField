@@ -238,7 +238,7 @@ export default function GeneratePlanPage() {
 
                 {/* Video analysis group */}
                 {availableOptions.some(s => s.source === 'video') && (
-                  <optgroup label={`🎥 Video Analysis${latestVideo?.analysis?.overall_grade ? ` · Grade ${latestVideo.analysis.overall_grade}` : ''}`}>
+                  <optgroup label={`🎥 Stance Analysis${latestVideo?.analysis?.overall_grade ? ` · Grade ${latestVideo.analysis.overall_grade}` : ''}`}>
                     {availableOptions
                       .filter(s => s.source === 'video')
                       .map(s => (
@@ -247,9 +247,9 @@ export default function GeneratePlanPage() {
                   </optgroup>
                 )}
 
-                {/* Session review group */}
+                {/* Coaches notes group */}
                 {availableOptions.some(s => s.source === 'session') && (
-                  <optgroup label="📋 Session Review">
+                  <optgroup label="📋 Coaches Notes">
                     {availableOptions
                       .filter(s => s.source === 'session')
                       .map(s => (

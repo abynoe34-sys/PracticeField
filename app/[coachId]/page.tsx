@@ -76,7 +76,7 @@ export default async function DashboardPage({ params }: DashboardProps) {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: 'Players', value: playerList.length, icon: '🏈' },
-          { label: 'Sessions', value: sessionList.length, icon: '📋' },
+          { label: 'Notes', value: sessionList.length, icon: '📋' },
           { label: 'This Week', value: sessionList.filter(s => {
             const d = new Date(s.session_date)
             const now = new Date()
@@ -129,10 +129,10 @@ export default async function DashboardPage({ params }: DashboardProps) {
         )}
       </section>
 
-      {/* Recent Sessions */}
+      {/* Recent Coaches Notes */}
       {recentSessions.length > 0 && (
         <section>
-          <h2 className="text-base font-semibold text-white mb-3">Recent Sessions</h2>
+          <h2 className="text-base font-semibold text-white mb-3">Recent Coaches Notes</h2>
           <div className="space-y-2">
             {recentSessions.map(session => {
               const player = playerList.find(p => p.id === session.player_id)

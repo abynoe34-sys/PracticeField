@@ -30,7 +30,7 @@ export default function DeleteSessionButton({ coachId, playerId, sessionId, sess
 
   const handleDelete = async () => {
     const confirmed = window.confirm(
-      `Permanently delete this session (${sessionLabel}) and its videos? This cannot be undone.`
+      `Permanently delete this entry (${sessionLabel}) and its videos? This cannot be undone.`
     )
     if (!confirmed) return
 
@@ -42,7 +42,7 @@ export default function DeleteSessionButton({ coachId, playerId, sessionId, sess
       const json = await res.json()
 
       if (!res.ok) {
-        window.alert(json.error ?? 'Failed to delete session.')
+        window.alert(json.error ?? 'Failed to delete.')
         setDeleting(false)
         return
       }
@@ -62,7 +62,7 @@ export default function DeleteSessionButton({ coachId, playerId, sessionId, sess
       disabled={deleting}
       className="text-xs text-red-500 hover:text-red-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
     >
-      {deleting ? 'Deleting…' : '🗑 Delete session'}
+      {deleting ? 'Deleting…' : '🗑 Delete'}
     </button>
   )
 }

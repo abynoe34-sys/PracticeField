@@ -57,7 +57,7 @@ export default function LandingPage() {
       {/* Feature List */}
       <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl w-full">
         {[
-          { icon: '📋', title: 'Session Reviews', desc: 'Log strengths, weaknesses, and root causes after every practice.' },
+          { icon: '📋', title: 'Coaches Notes', desc: 'Log strengths, weaknesses, and root causes after every practice.' },
           { icon: '🤖', title: 'Virtual Training Coach', desc: 'Get expert exercise recommendations with sets, reps, and WHY it helps.' },
           { icon: '📈', title: 'Progress Tracking', desc: 'Visual charts show trends, plateau detection, and when to pivot.' },
         ].map(f => (

@@ -216,11 +216,11 @@ export default function PlayerVideosPage() {
             {player?.name ?? '…'}
           </Link>
           <span>›</span>
-          <span className="text-gray-400">Video Analysis</span>
+          <span className="text-gray-400">New Session</span>
         </div>
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white">🎥 Video Analysis</h1>
+            <h1 className="text-2xl font-bold text-white">🎥 New Session</h1>
             {player && (
               <p className="text-gray-500 text-sm">
                 {player.name}{player.position ? ` · ${player.position}` : ''}
@@ -344,7 +344,7 @@ export default function PlayerVideosPage() {
                     href={`/${coachId}/players/${playerId}/sessions/${s.sessionId}`}
                     className="text-xs text-brand-400 hover:text-brand-300 transition-colors shrink-0"
                   >
-                    Full session →
+                    Full details →
                   </Link>
                 </div>
                 <SessionFeedback

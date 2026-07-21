@@ -85,7 +85,7 @@ export default async function SessionDetailPage({ params }: SessionDetailProps) 
           <span>›</span>
           <Link href={`/${coachId}/players/${playerId}`} className="hover:text-gray-300">{player.name}</Link>
           <span>›</span>
-          <span className="text-gray-400">Session</span>
+          <span className="text-gray-400">Coaches Notes</span>
         </div>
         <div className="flex items-center justify-between mt-1">
           <h1 className="text-2xl font-bold text-white">
@@ -150,7 +150,7 @@ export default async function SessionDetailPage({ params }: SessionDetailProps) 
       {sideVideos.length > 0 && (
         <section className="space-y-4">
           <h2 className="text-base font-semibold text-white">
-            Video Analysis
+            Stance Analysis
             {sideVideos.length > 1 && (
               <span className="ml-2 text-xs font-normal text-gray-500">
                 {sideVideos.length} drill{sideVideos.length !== 1 ? 's' : ''}

@@ -28,7 +28,7 @@ export default async function NewSessionPage({ params }: NewSessionProps) {
         >
           ← {player.name}
         </Link>
-        <h1 className="text-2xl font-bold text-white mt-1">New Session</h1>
+        <h1 className="text-2xl font-bold text-white mt-1">Coaches Notes</h1>
         <p className="text-gray-500 text-sm">Log what happened and what needs work.</p>
       </div>
 

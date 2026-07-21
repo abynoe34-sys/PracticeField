@@ -77,16 +77,16 @@ export default async function PlayerDetailPage({ params }: PlayerDetailProps) {
         </div>
         <div className="flex gap-2 flex-col sm:flex-row">
           <Link
-            href={`/${coachId}/players/${playerId}/sessions/new`}
+            href={`/${coachId}/players/${playerId}/videos`}
             className="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-4 py-2 rounded-xl text-sm transition-colors text-center"
           >
-            + New Session
+            🎥 New Session
           </Link>
           <Link
-            href={`/${coachId}/players/${playerId}/videos`}
+            href={`/${coachId}/players/${playerId}/sessions/new`}
             className="bg-field-card border border-field-border hover:border-brand-600 text-white font-medium px-4 py-2 rounded-xl text-sm transition-colors text-center"
           >
-            🎥 Videos
+            + Coaches Notes
           </Link>
           <Link
             href={`/${coachId}/players/${playerId}/plan`}
@@ -123,7 +123,7 @@ export default async function PlayerDetailPage({ params }: PlayerDetailProps) {
       <div className="grid grid-cols-3 gap-3">
         <div className="bg-field-card border border-field-border rounded-xl p-4">
           <p className="text-xl font-bold text-white">{sessionList.length}</p>
-          <p className="text-xs text-gray-500">Sessions</p>
+          <p className="text-xs text-gray-500">Notes</p>
         </div>
         <div className="bg-field-card border border-field-border rounded-xl p-4">
           <p className="text-xl font-bold text-white">{plans?.length ?? 0}</p>
@@ -131,7 +131,7 @@ export default async function PlayerDetailPage({ params }: PlayerDetailProps) {
         </div>
         <div className="bg-field-card border border-field-border rounded-xl p-4">
           <p className="text-xl font-bold text-white">{sessionList[0] ? formatDate(sessionList[0].session_date) : '—'}</p>
-          <p className="text-xs text-gray-500">Last Session</p>
+          <p className="text-xs text-gray-500">Last Note</p>
         </div>
       </div>
 
@@ -188,21 +188,21 @@ export default async function PlayerDetailPage({ params }: PlayerDetailProps) {
         />
       </section>
 
-      {/* Session History */}
+      {/* Coaches Notes history */}
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-semibold text-white">Session History</h2>
+          <h2 className="text-base font-semibold text-white">Coaches Notes</h2>
           <span className="text-xs text-gray-500">{sessionList.length} total</span>
         </div>
 
         {sessionList.length === 0 ? (
           <div className="bg-field-card border border-dashed border-field-border rounded-xl p-8 text-center">
-            <p className="text-gray-500 text-sm">No sessions logged yet.</p>
+            <p className="text-gray-500 text-sm">No coaches notes yet.</p>
             <Link
               href={`/${coachId}/players/${playerId}/sessions/new`}
               className="inline-block mt-3 text-xs text-brand-400 underline hover:no-underline"
             >
-              Log first session →
+              Add first note →
             </Link>
           </div>
         ) : (

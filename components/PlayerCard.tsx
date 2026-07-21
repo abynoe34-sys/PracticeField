@@ -47,12 +47,12 @@ export default function PlayerCard({ player, latestSession, sessionCount = 0, co
       </div>
 
       <div className="mt-3 flex items-center gap-4 text-xs text-gray-500">
-        <span>{sessionCount} session{sessionCount !== 1 ? 's' : ''}</span>
+        <span>{sessionCount} note{sessionCount !== 1 ? 's' : ''}</span>
         {latestSession && (
           <span>Last: {formatDate(latestSession.session_date)}</span>
         )}
         {!latestSession && sessionCount === 0 && (
-          <span className="text-yellow-600">No sessions yet</span>
+          <span className="text-yellow-600">No notes yet</span>
         )}
       </div>
 
