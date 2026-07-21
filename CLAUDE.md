@@ -1,6 +1,6 @@
 # Practice Field — Claude Code Context
 
-> Last updated: 2026-07-20 (Password reset flow — "forgot password" now exists for every account type, built on Supabase Auth's native recovery; documented below under "Password reset". Gated on the deferred email-delivery workstream for real-user use. Earlier the same day: Solo-player analysis access + Position capture build — solo players can now run the two-clip analysis pipeline from their own dashboard, and the OL-stance position (guard_tackle/center) is captured as a profile default + per-session override and flows through to the feedback prompt. Documented below under "Solo analysis access + position capture". Prior work — pipeline hardening, photo Features A & B, the route-ownership audit — is below that.)
+> Last updated: 2026-07-21 (Consolidated "Feedback" tab — side coaching feedback + front measurements gathered into one session-level place, in both the coach and solo views, via a shared `SessionFeedback` container that reuses `FeedbackPanel`/`FrontMeasurements`. Presentation-only; front-view stays measurements-only (calibration deferred). Documented below under "Consolidated Feedback tab". Earlier: Password reset flow — "forgot password" now exists for every account type, built on Supabase Auth's native recovery; documented below under "Password reset". Gated on the deferred email-delivery workstream for real-user use. Earlier the same day: Solo-player analysis access + Position capture build — solo players can now run the two-clip analysis pipeline from their own dashboard, and the OL-stance position (guard_tackle/center) is captured as a profile default + per-session override and flows through to the feedback prompt. Documented below under "Solo analysis access + position capture". Prior work — pipeline hardening, photo Features A & B, the route-ownership audit — is below that.)
 
 ## Next Session Priorities
 
@@ -193,6 +193,32 @@ Applied from `BRAND_SPEC_practice_field.md` (owner-provided handoff doc, not com
 **Verified live**, not just typechecked: real disposable coach + player accounts signed up and logged in through `/signup`/`/login`/dashboards; computed styles read back via `getComputedStyle()` confirmed every touched surface resolves to the exact configured hex values (gradient stops, `#EC3D50` buttons, `#1C1830` cards, `#3A3050` borders, `6px` radii, the `#C9384D` severity-critical split, the skewed red active-nav underline). All disposable test fixtures cleaned up afterward via the established append-only-trigger-safe pattern (Gotcha #15), confirmed gone via zero-count sweeps.
 
 ---
+
+## Consolidated Feedback tab (2026-07-21)
+
+Feedback is about the *stance* — the side+front pair — but it was rendered inline per-clip (each `VideoAnalysisCard` drew its own feedback-state placeholder; the session pages stacked `FeedbackPanel`/`FrontMeasurements` per drill). This gathers the session-level assessment into one place, in **both** the coach and solo views. **Presentation-only** — nothing about how feedback is *generated* changed, and front-view stays measurements-only (the good/bad ruleset is still deferred calibration work).
+
+### `components/SessionFeedback.tsx` — the shared container
+
+New client component, the single source both views render. Given a session's side row(s) + front row + `sessionId` (+ optional `authToken`/`onRetried` for the solo JWT path), it renders:
+- **Per side clip:** `FeedbackPanel` when `analysis_status === 'complete'` (so the caveat banner inside `FeedbackCard` and the hardening pass's `feedback_status` handling — real feedback / pending spinner / failed+**Retry** / skipped — all come along **unchanged, reused not rebuilt**); an "analysis failed" note when the analysis itself failed; an "analyzing…" spinner otherwise (FeedbackPanel returns null pre-completion, so this fills that gap).
+- **Front-view section:** heading "Front-view measurements — mechanical, not yet coaching judgment" + `FrontMeasurements`, or a neutral note when the front row's `analysis` is null/failed (guarded on the `view: 'front'` marker). **Deliberately no front-view judgment** — this is the *container* the future cross-angle version slots into.
+
+### Coach view — `app/[coachId]/players/[playerId]/videos/page.tsx`
+
+New **"Feedback"** tab alongside Library / Progress Compare / Upload New (the videos page is multi-session, so the tab groups the flat `/api/videos` list by `session_id`, most-recent-first via the API's `created_at DESC` + Map insertion order, one `SessionFeedback` block per session with a date header + "Full session →" link). **Light Library simplification** (spec item 3): Library clips now pass `showFeedbackState={false}` (just clip + status, the redundant per-clip "feedback pending" placeholder is gone) with a one-line pointer to the Feedback tab.
+
+### Solo view — `app/player/sessions/[sessionId]/page.tsx`
+
+A matching **Feedback | Clips** tab bar (it's already single-session, so no grouping). Feedback = the same `SessionFeedback` (passing the JWT + a re-fetch `onRetried`); Clips = the raw `VideoAnalysisCard` players. Same component, no divergent UX.
+
+### Ownership / data paths — unchanged
+
+No new endpoints or ownership surfaces. Coach reuses `/api/videos` (session-derived coachId); solo reuses `/api/player-accounts/me/sessions/[sessionId]` (JWT-owned, 404 for not-yours). Verified live: solo 404s on a coach session and 401s on the coach `/api/videos`.
+
+### Verified live (2026-07-21)
+
+Pre-baked fixtures covering every state. Coach Feedback tab rendered all four: real feedback + front measurements; feedback pending spinner; feedback failed + a **working Retry** (fired `POST /api/sessions/[id]/retry-feedback`, failed gracefully with Python down — hardening behavior intact, no crash); and front-null → the neutral note with side feedback still rendering. Library placeholder gone, pointer present. Solo view showed the same consolidated Feedback + a Clips tab. Brand styling confirmed by computed styles (active tab `text-brand-400`/`border-brand-500`, Retry `#EC3D50`/6px). Ownership intact; zero console errors. Fixtures cleaned up (zero-count sweep).
 
 ## Password reset (2026-07-20)
 
@@ -520,7 +546,8 @@ Before Pipeline Hardening §Item 2, a NULL `feedback` column meant *either* "aut
 | `components/VideoComparison.tsx` | Renders the Progress Compare tab (side-by-side grade/score/issue diff between two analyzed videos). **Fixed 2026-07-19** — see Gotcha #8's "bitten four times" note: used to filter "analyzed" videos with a bare `analysis` truthiness check, then force-cast with `!`, crashing on the two-clip pipeline's raw measurement shape. Now filters with `isStructuredAnalysis()`. |
 | `components/FeedbackCard.tsx` | Renders the `feedback` column (GPT-4o output) on the session results page. Returns `null` if `feedback` is null. No grade badge as of 2026-07-17. |
 | `components/SessionAutoRefresh.tsx` | **Rewritten 2026-07-19 (hardening).** Client island, polls via `router.refresh()`. Props are now `status` + `feedbackInFlight`; polls while `status === 'processing'` OR feedback is genuinely in flight, and stops on any terminal `feedback_status` (`complete`/`failed`/`skipped`) — replacing the old "one grace poll then give up" hack. Renders nothing. |
-| `components/FeedbackPanel.tsx` | **New, 2026-07-19 (Item 2).** Wraps `FeedbackCard`: renders it when `feedback` is present, else a `feedback_status`-driven state — a failed state with a **Retry** button (→ `POST /api/sessions/[sessionId]/retry-feedback`), a skipped note, or a pending spinner. |
+| `components/FeedbackPanel.tsx` | **New, 2026-07-19 (Item 2).** Wraps `FeedbackCard`: renders it when `feedback` is present, else a `feedback_status`-driven state — a failed state with a **Retry** button (→ `POST /api/sessions/[sessionId]/retry-feedback`), a skipped note, or a pending spinner. Returns null until `analysis_status === 'complete'`. Reused (not rebuilt) by `SessionFeedback`. |
+| `components/SessionFeedback.tsx` | **New, 2026-07-21.** The consolidated session-level assessment container — side coaching feedback (reuses `FeedbackPanel` per drill, incl. analysis-in-progress/failed notes) + a "Front-view measurements — mechanical, not yet coaching judgment" section (reuses `FrontMeasurements`, neutral note when the front row is null/failed). Rendered by both the coach videos-page Feedback tab and the solo results-page Feedback tab. No front-view judgment (calibration deferred). |
 | `components/FrontMeasurements.tsx` | **New, 2026-07-19 (Item 6).** Renders the front row's raw mechanical measurements as a labeled table (guarded `view === 'front'`, Gotcha #8 safe), with a low-confidence note when `reliable === false`. Explicitly NOT coaching judgment. |
 | `app/api/sessions/[sessionId]/retry-feedback/route.ts` | **New, 2026-07-19 (Item 2).** Ownership-checked (coach session XOR player JWT, same discipline as Gotcha #17), sets `feedback_status='processing'`, calls the Python `/regenerate-feedback` endpoint with `X-Service-Secret` + `AbortSignal.timeout(60_000)`; records `failed`+502 on network error. |
 | `supabase/migration-v15-feedback-status.sql` | **New, applied, 2026-07-19 (Item 2).** Adds `feedback_status` (`pending`/`processing`/`complete`/`failed`/`skipped`, default `pending`) + `feedback_error` to `session_videos`; backfills feedback-present rows to `complete`. See Gotcha #19 (the CHECK needed `'processing'` added post-first-apply — file has all five). |
@@ -539,7 +566,8 @@ Before Pipeline Hardening §Item 2, a NULL `feedback` column meant *either* "aut
 | `lib/jobs/ol-stance-analysis.ts` (position) | **Also changed 2026-07-20** — `validate-session` reads `sessions.position` (fresh DB read) and the `/analyse` body sends `clips.position` (was the always-null event payload). |
 | `supabase/migration-v16-position-capture.sql` | **New, applied, 2026-07-20.** `player_accounts.position` (free-text) + `sessions.position` (CHECK `guard_tackle`/`center`). |
 | `app/[coachId]/players/[playerId]/plan/page.tsx` | Virtual Training Coach plan builder. **Fixed 2026-07-17** — crashed for essentially every player reading `analysis.issues` without `isStructuredAnalysis()`; see Gotcha #8. |
-| `app/[coachId]/players/[playerId]/videos/page.tsx` | Coach video library + upload tab (two-clip only as of 2026-07-14) |
+| `app/[coachId]/players/[playerId]/videos/page.tsx` | Coach video library + upload tab (two-clip only as of 2026-07-14). **Changed 2026-07-21** — added a **Feedback** tab (session-grouped `SessionFeedback`, most-recent-first) alongside Library / Progress Compare / Upload New; Library clips simplified to clip+status (`showFeedbackState={false}`) with a pointer to the Feedback tab. |
+| `app/player/sessions/[sessionId]/page.tsx` | Solo player's own analysis results view. **Changed 2026-07-21** — split into a **Feedback | Clips** tab bar: Feedback = the shared `SessionFeedback`, Clips = the `VideoAnalysisCard` players. Same component/UX as the coach Feedback tab. |
 | `app/api/inngest/route.ts` | Inngest serve endpoint — must be synced manually in Inngest dashboard after deploy |
 | `app/api/reference-photos/presign/route.ts`, `confirm/route.ts` | **New, 2026-07-19 (Feature B).** Same direct-to-storage pattern as `/api/videos/*`, session-derived ownership from day one, reuses the coach-managed consent gate. No `view_angle`, no pairing, no `drill_type` — deliberately simpler than the analysis upload path. |
 | `app/api/reference-photos/route.ts` | **New, 2026-07-19.** `GET` list — coach query-param convention (matches `GET /api/videos`) or player-account JWT self-view. |
