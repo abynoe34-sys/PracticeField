@@ -1,6 +1,6 @@
 # Practice Field — Claude Code Context
 
-> Last updated: 2026-07-21 (Consolidated "Feedback" tab — side coaching feedback + front measurements gathered into one session-level place, in both the coach and solo views, via a shared `SessionFeedback` container that reuses `FeedbackPanel`/`FrontMeasurements`. Presentation-only; front-view stays measurements-only (calibration deferred). Documented below under "Consolidated Feedback tab". Earlier: Password reset flow — "forgot password" now exists for every account type, built on Supabase Auth's native recovery; documented below under "Password reset". Gated on the deferred email-delivery workstream for real-user use. Earlier the same day: Solo-player analysis access + Position capture build — solo players can now run the two-clip analysis pipeline from their own dashboard, and the OL-stance position (guard_tackle/center) is captured as a profile default + per-session override and flows through to the feedback prompt. Documented below under "Solo analysis access + position capture". Prior work — pipeline hardening, photo Features A & B, the route-ownership audit — is below that.)
+> Last updated: 2026-07-21 (UI label rename — "session" was overloaded for two features; the manual coach-notes feature is now labeled "Coaches Notes" and the video/stance analysis is now "New Session," everywhere users see it. **Labels only — internal code/DB/routes/types/events still say "session".** Documented below under "UI label rename". Two findings surfaced and flagged (not fixed): the sessions-table conflation, and an IDOR on the coach server-component pages. Earlier the same day: Consolidated "Feedback" tab — side coaching feedback + front measurements gathered into one session-level place, in both the coach and solo views, via a shared `SessionFeedback` container that reuses `FeedbackPanel`/`FrontMeasurements`. Presentation-only; front-view stays measurements-only (calibration deferred). Documented below under "Consolidated Feedback tab". Earlier: Password reset flow — "forgot password" now exists for every account type, built on Supabase Auth's native recovery; documented below under "Password reset". Gated on the deferred email-delivery workstream for real-user use. Earlier the same day: Solo-player analysis access + Position capture build — solo players can now run the two-clip analysis pipeline from their own dashboard, and the OL-stance position (guard_tackle/center) is captured as a profile default + per-session override and flows through to the feedback prompt. Documented below under "Solo analysis access + position capture". Prior work — pipeline hardening, photo Features A & B, the route-ownership audit — is below that.)
 
 ## Next Session Priorities
 
@@ -193,6 +193,41 @@ Applied from `BRAND_SPEC_practice_field.md` (owner-provided handoff doc, not com
 **Verified live**, not just typechecked: real disposable coach + player accounts signed up and logged in through `/signup`/`/login`/dashboards; computed styles read back via `getComputedStyle()` confirmed every touched surface resolves to the exact configured hex values (gradient stops, `#EC3D50` buttons, `#1C1830` cards, `#3A3050` borders, `6px` radii, the `#C9384D` severity-critical split, the skewed red active-nav underline). All disposable test fixtures cleaned up afterward via the established append-only-trigger-safe pattern (Gotcha #15), confirmed gone via zero-count sweeps.
 
 ---
+
+## UI label rename — "Coaches Notes" vs "New Session" (2026-07-21)
+
+The word "session" was used in the UI for **two different features**, which confused users (an owner opened the manual-notes form not realizing what it was):
+
+1. A manual coach-notes log (Session Date / Strengths / Areas to Improve / Notes — no video).
+2. The video/stance-analysis pipeline (side+front clips → feedback).
+
+Renamed the **user-facing labels only**:
+- The manual notes feature → **"Coaches Notes"**.
+- The video-analysis feature → **"New Session"** (so "session" now means the video analysis, matching the pipeline/owner's mental model).
+
+### ⚠️ Deliberate internal↔UI naming mismatch (don't "fix" it)
+
+**This is display text only. The data model, routes, types, code identifiers, and Inngest events are unchanged — internally the notes feature is still "session"-named** (`sessions` table, `POST /api/sessions`, `SessionReview.tsx`, `DeleteSessionButton.tsx`, `/sessions/new`, `/sessions/[id]`, etc.). So `SessionReview` renders a form titled **"Coaches Notes"**, and `/sessions/new` is the **"Coaches Notes"** page. A future dev should NOT rename the DB/routes to match the UI — renaming the data model was explicitly out of scope (high risk across the Python service, Inngest jobs, ownership checks, migrations; zero user benefit).
+
+### What was renamed (labels only)
+
+- **→ Coaches Notes:** landing card ("Session Reviews"); player-detail entry button ("+ New Session" → "+ Coaches Notes"), stats ("Sessions"/"Last Session" → "Notes"/"Last Note"), history section ("Session History" → "Coaches Notes") + empty state; the notes form title + `SessionReview`'s "Session Date"→"Date" / "Save Session"→"Save Notes" / error copy; coach-dashboard stat + "Recent Sessions" → "Recent Coaches Notes"; `PlayerCard` "N sessions"→"N notes"; the plan generator's "📋 Session Review" source group → "📋 Coaches Notes"; the session-detail breadcrumb "Session" → "Coaches Notes".
+- **→ New Session:** player-detail "🎥 Videos" button → "🎥 New Session" (also promoted to the primary/brand CTA); videos page breadcrumb + h1 "Video Analysis" → "New Session"; the Feedback tab's "Full session →" → "Full details →"; session-detail "Video Analysis" section heading → "Stance Analysis"; plan generator "🎥 Video Analysis" group → "🎥 Stance Analysis".
+- **Kept as-is (correct under the new meaning):** wording *inside* the video area ("Start Analysis Session", "Submit another session", "+ Upload New") — "session" there now legitimately means the video analysis. Solo view unchanged ("Stance Analysis"/"My Sessions" already mean the analysis; solo has no Coaches Notes — it's coach-only, confirmed).
+
+### Notes feature — is it wired / does it respect ownership? (reported)
+
+- **Fully wired and working**: `/sessions/new` → `SessionReview` → `POST /api/sessions` (creates a `sessions` row with strengths/improvements/root_causes/notes) → appears in the player's Coaches Notes history → the `/sessions/[id]` detail page renders it. Verified live (a note saved end-to-end during this pass).
+- **Ownership on create/edit/delete is enforced**: `POST /api/sessions` derives coachId from the session and re-checks the player belongs to it; `DELETE /api/sessions/[id]` is ownership-checked (Gotcha #17 lineage).
+
+### 🐞 Two findings flagged (NOT fixed here — labels-only scope)
+
+1. **`sessions` table conflates both features.** Both a Coaches-Note entry and a video-analysis create a `sessions` row, so the "Coaches Notes" history/counts (player detail + coach dashboard) also include video-analysis sessions (which show up as empty-looking dated entries). Verified live. A clean split needs a data-model change (e.g. a `kind` column or a filter) — out of scope for a labels task. **Recommend** a follow-up filter/flag so "Coaches Notes" lists only actual notes entries.
+2. **IDOR on the coach server-component pages.** `app/[coachId]/layout.tsx` verifies the logged-in coach's `coach_id` matches the URL `coachId`, but the nested **server components fetch `player`/`sessions`/`session_videos` by id with the admin client and NO coach-ownership scope** (`app/[coachId]/players/[playerId]/page.tsx`, `.../sessions/[sessionId]/page.tsx`, `.../sessions/new/page.tsx`, `.../plan/page.tsx`). **Confirmed live:** logged in as coach A, visiting `/RENCOACHA/players/<coach-B-player-id>` rendered coach B's player. Requires knowing the target UUID (not guessable), and create/edit/delete are still blocked by the API-layer checks — so it's a **view-only cross-coach leak**, same class as the 2026-07-19 route audit (which hardened API routes but not these page-level fetches). The `/videos` page is NOT affected (it reads through the ownership-checked `/api/videos` + `/api/players/[id]`). **Recommend** a small follow-up: scope each of these page fetches by the layout-verified coachId (or 404 on mismatch).
+
+### Follow-up (owner-flagged, separate): photo option under "New Session"
+
+Now that "session" = video analysis, the owner wants the **photo upload option** revisited so it reads cleanly under the "New Session" flow. NOT part of this rename — a separate follow-up (likely just confirming the photo path presents sensibly under "New Session").
 
 ## Consolidated Feedback tab (2026-07-21)
 
