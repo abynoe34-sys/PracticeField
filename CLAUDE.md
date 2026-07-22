@@ -319,6 +319,27 @@ Password reset only reaches real users once email delivery is enabled. Today Res
 
 **This joins the deferred EMAIL workstream.** When email delivery is switched on (custom Resend domain — see "Resend custom domain" in What's Still Outstanding — likely bundled with the minor-consent email work pending legal input), **both password reset and minor-consent emails become live at once and both should be re-verified with real delivery at that point**, together with the PKCE caveat and the Redirect-URL config step above.
 
+## Youth-player consent notification emails (2026-07-22)
+
+Before this, a minor self-signup sent an email to the **parent** (consent request) and a **verification** email to the player, but **no consent-notification email to the player** — not at signup, not after approval. Step-0 code read confirmed this was a **missing feature, not a broken send** (no `resend.emails.send` to the player's consent state existed anywhere). Two player-facing notifications were added around the **existing** consent flow — no change to consent mechanics/age-verification (deferred, pending legal input).
+
+**Scope: self-signup path only.** Only `player_accounts` rows have a player `email`. Coach-managed minors (`players` table) have **only `parent_email`, no player email** — so player notifications are structurally impossible there and are not attempted.
+
+### The two emails — both in `lib/player-emails.ts`
+
+Deliberately centralized in **one module** (templates + on/off flag) so the legally-sensitive copy and trigger are trivially editable/disable-able per legal guidance, not a deep rebuild. Same Resend provider/path/`FROM` as every other transactional email (benefits from the same future domain swap). Both are **best-effort** (`try/catch`, log-and-swallow, never throw) so a failed notification can't break signup or approval.
+
+- **A. Post-approval "consent established"** (`sendConsentEstablishedPlayerNotification`) — trigger: `POST /api/consent/[token]` Path A **confirm** branch, right after the approval is recorded (`account_status → 'active'`). To the player's email: "your parent/guardian approved your account, you can log in now" + a `/login` link. Low legal risk (reports an already-established fact). **Always on.**
+- **B. Signup-time notification** (`sendMinorSignupPlayerNotification`) — trigger: `POST /api/player-accounts`, minor branch, after the parent consent email (step "5c"). Minimal/neutral: acknowledges signup and that parent/guardian approval is pending; collects nothing, doesn't imply the account is active. This is the **legally sensitive** one (contacts an unconsented minor). **Gated by a switch** — `MINOR_SIGNUP_PLAYER_EMAIL_ENABLED` (defaults on; set env `MINOR_SIGNUP_PLAYER_EMAIL=off` to disable without a code change, or flip the literal default). Disabling it does **not** affect email A or the parent email.
+
+**To edit/disable per legal advice:** copy lives in the two template functions in `lib/player-emails.ts`; the signup email's on/off is the `MINOR_SIGNUP_PLAYER_EMAIL` env var / the exported flag in that same file. Single obvious place — no call-site changes needed.
+
+### Verified (as far as the sandbox allows) — 2026-07-22
+
+Typecheck clean. Exercised the real Resend path (throwaway script, no DB fixtures): (1) the Resend SDK returns `{ error }` rather than **throwing** on a rejected recipient — confirming the wrappers are genuinely non-blocking; (2) flag default → both sends attempted, non-throwing; (3) `MINOR_SIGNUP_PLAYER_EMAIL=off` → signup email **not** attempted while the post-approval email **still** sends (switch is correctly scoped); (4) both sends to Resend's `delivered@resend.dev` test address were **accepted**, so the provider path is genuinely reached. Wiring into both routes verified by reading. Script cleaned up.
+
+**⚠️ NOT verified — real-inbox delivery.** Same limitation as the password-reset PKCE caveat: `onboarding@resend.dev` delivers only to pre-approved addresses, so an actual minor's inbox receiving these was **not** proven. "Verified via test path" ≠ "delivered to a real inbox." Added to the email-workstream checklist below — **re-verify real delivery of BOTH player emails when the email provider lands.** Also re-confirm at that point that email B's content/trigger still reflects the latest legal guidance before it reaches real minors.
+
 ## Solo analysis access + position capture (2026-07-20)
 
 Two linked pieces from one build spec, committed separately.
@@ -515,7 +536,10 @@ Before Pipeline Hardening §Item 2, a NULL `feedback` column meant *either* "aut
 
 **`ADMIN_SECRET` should be rotated** — exposed in a debugging screenshot during the 2026-07-17 session. Still not done.
 
-**Resend custom domain / email delivery** — still outstanding. All transactional emails send from `onboarding@resend.dev`, which delivers only to pre-approved addresses. **This is now the blocking dependency for password reset** (built 2026-07-20) as well as minor-consent emails. When it lands, both go live simultaneously and both need re-verification with real delivery — plus the two follow-ups in "Password reset": the Redirect-URL allow-list config step, and the unverified PKCE `?code` path.
+**Resend custom domain / email delivery** — still outstanding. All transactional emails send from `onboarding@resend.dev`, which delivers only to pre-approved addresses. **This is now the blocking dependency for password reset** (built 2026-07-20) as well as minor-consent emails. When it lands, everything below goes live simultaneously and all need re-verification with real delivery:
+- Password reset — plus the two follow-ups in "Password reset": the Redirect-URL allow-list config step, and the unverified PKCE `?code` path.
+- Parental consent email (existing).
+- **The two youth-player notifications (built 2026-07-22, `lib/player-emails.ts`)** — signup-pending (email B) and post-approval (email A); real-inbox delivery unverified. Also re-check email B's copy/trigger against the latest legal guidance, and confirm the `MINOR_SIGNUP_PLAYER_EMAIL` on/off setting reflects the owner's decision, before it reaches real minors.
 
 **Front-view analysis — mechanical half now built (2026-07-19), fault-judgment half still deferred.** The Python service now extracts front landmarks and writes raw mechanical measurements (stance width, shoulder/hip tilt, knee alignment, lateral offset, down hand) to the front row; `FrontMeasurements.tsx` surfaces them. What's still deferred (to calibration, for both angles together): any good-vs-bad ruleset, thresholds, or coaching cues on those measurements. See Pipeline Hardening §Item 6.
 
@@ -540,6 +564,7 @@ Before Pipeline Hardening §Item 2, a NULL `feedback` column meant *either* "aut
 | `app/forgot-password/page.tsx` | **New, 2026-07-20.** Reset request — `resetPasswordForEmail(redirectTo: /reset-password)`. Confirmation renders unconditionally (anti-enumeration). |
 | `app/reset-password/page.tsx` | **New, 2026-07-20.** Reset target — handles all three recovery-credential shapes (PKCE `?code` / `?token_hash` / implicit `#access_token`), guards no/expired token with a friendly state, `updateUser({password})` then `signOut()`, scrubs the token from the URL. |
 | `lib/password.ts` | **New, 2026-07-20.** Single source of truth for the min-8 password rule (`validatePassword`/`isPasswordValid`/`PASSWORD_REQUIREMENT`), shared by both signup forms and the reset page. Server routes stay authoritative. |
+| `lib/player-emails.ts` | **New, 2026-07-22.** The two youth-player consent notifications (self-signup path only) — templates + the `MINOR_SIGNUP_PLAYER_EMAIL_ENABLED` on/off flag, all in one place so the legally-sensitive copy/trigger is trivially editable. `sendMinorSignupPlayerNotification()` (gated, best-effort) called by `POST /api/player-accounts` step 5c; `sendConsentEstablishedPlayerNotification()` (always-on, best-effort) called by `POST /api/consent/[token]` Path A confirm. Both never throw. See "Youth-player consent notification emails". |
 | `components/CoachSignupForm.tsx` | **New, 2026-07-18.** Coach signup form (name, team_name, email, password, terms), calls `POST /api/coaches/signup`. |
 | `components/PlayerSignupForm.tsx` | **New, 2026-07-18.** Extracted from the old `app/player/signup/page.tsx`; unchanged logic (minor detection, parent-email validation), calls the pre-existing `POST /api/player-accounts`. |
 | `app/api/coaches/signup/route.ts` | **New, 2026-07-18.** First real coach account creation endpoint — `auth.admin.createUser` + `coaches` row (with `auth_user_id`) + consent records + verification email, rolls back the auth user on DB insert failure. |

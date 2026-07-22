@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase'
 import { Resend } from 'resend'
 import { TERMS_VERSION } from '@/lib/constants'
+import { sendMinorSignupPlayerNotification } from '@/lib/player-emails'
 import crypto from 'crypto'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
@@ -254,6 +255,11 @@ export async function POST(req: NextRequest) {
           <p>This link expires in 30 days. If you did not expect this email, you can safely ignore it — the account will not be activated without your approval.</p>
         `,
       })
+
+      // 5c. Signup-time notification to the minor player (consent still pending).
+      // Best-effort + legally-adjustable — content and on/off live in
+      // lib/player-emails.ts. Never blocks signup on this send.
+      await sendMinorSignupPlayerNotification({ playerEmail: email, displayName: display_name })
     }
 
     return NextResponse.json(

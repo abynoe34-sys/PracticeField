@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminClient } from '@/lib/supabase'
 import { TERMS_VERSION } from '@/lib/constants'
+import { sendConsentEstablishedPlayerNotification } from '@/lib/player-emails'
 
 type RouteContext = { params: Promise<{ token: string }> }
 
@@ -79,7 +80,7 @@ export async function POST(req: NextRequest, { params }: RouteContext) {
 
   const { data: paAccount } = await db
     .from('player_accounts')
-    .select('id, parent_email')
+    .select('id, parent_email, email, display_name')
     .eq('parent_consent_token', token)
     .gt('parent_consent_token_expires_at', now)
     .single()
@@ -130,6 +131,18 @@ export async function POST(req: NextRequest, { params }: RouteContext) {
       })
     }
     await db.from('consent_records').insert(paRows)
+
+    // Post-approval "consent established" notification to the player.
+    // Only on confirm — reports the now-established, legitimate fact that the
+    // account is active. Best-effort (never throws); a failed send must not
+    // break the approval. Coach-managed minors (Path B) have no player email,
+    // so this only applies here. Copy lives in lib/player-emails.ts.
+    if (isConfirm && paAccount.email) {
+      await sendConsentEstablishedPlayerNotification({
+        playerEmail: paAccount.email,
+        displayName: paAccount.display_name,
+      })
+    }
 
     return NextResponse.json({ decision })
   }
