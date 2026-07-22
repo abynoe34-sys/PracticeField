@@ -21,8 +21,11 @@ export default async function SessionDetailPage({ params }: SessionDetailProps) 
   const db = getAdminClient()
 
   const [{ data: session }, { data: player }, { data: rawVideos }, { data: rawPhotos }] = await Promise.all([
-    db.from('sessions').select('*').eq('id', sessionId).single(),
-    db.from('players').select('*').eq('id', playerId).single(),
+    // Scope both by coachId (the layout-verified owner) so a coach can't view
+    // another coach's session or player by id (IDOR). player_id on the session
+    // also pins it to the URL's player. A non-owned id → null → notFound() below.
+    db.from('sessions').select('*').eq('id', sessionId).eq('coach_id', coachId).eq('player_id', playerId).single(),
+    db.from('players').select('*').eq('id', playerId).eq('coach_id', coachId).single(),
     db.from('session_videos').select('*').eq('session_id', sessionId).order('created_at', { ascending: true }),
     db.from('reference_photos').select('*').eq('session_id', sessionId).order('created_at', { ascending: false }),
   ])

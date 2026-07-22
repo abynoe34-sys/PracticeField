@@ -223,7 +223,7 @@ Renamed the **user-facing labels only**:
 ### 🐞 Two findings flagged (NOT fixed here — labels-only scope)
 
 1. **`sessions` table conflates both features.** Both a Coaches-Note entry and a video-analysis create a `sessions` row, so the "Coaches Notes" history/counts (player detail + coach dashboard) also include video-analysis sessions (which show up as empty-looking dated entries). Verified live. A clean split needs a data-model change (e.g. a `kind` column or a filter) — out of scope for a labels task. **Recommend** a follow-up filter/flag so "Coaches Notes" lists only actual notes entries.
-2. **IDOR on the coach server-component pages.** `app/[coachId]/layout.tsx` verifies the logged-in coach's `coach_id` matches the URL `coachId`, but the nested **server components fetch `player`/`sessions`/`session_videos` by id with the admin client and NO coach-ownership scope** (`app/[coachId]/players/[playerId]/page.tsx`, `.../sessions/[sessionId]/page.tsx`, `.../sessions/new/page.tsx`, `.../plan/page.tsx`). **Confirmed live:** logged in as coach A, visiting `/RENCOACHA/players/<coach-B-player-id>` rendered coach B's player. Requires knowing the target UUID (not guessable), and create/edit/delete are still blocked by the API-layer checks — so it's a **view-only cross-coach leak**, same class as the 2026-07-19 route audit (which hardened API routes but not these page-level fetches). The `/videos` page is NOT affected (it reads through the ownership-checked `/api/videos` + `/api/players/[id]`). **Recommend** a small follow-up: scope each of these page fetches by the layout-verified coachId (or 404 on mismatch).
+2. **IDOR on the coach server-component pages. — ✅ FIXED 2026-07-22** (see "IDOR on coach server-component pages — FIXED" below). `app/[coachId]/layout.tsx` verified the URL `coachId` but the nested server components fetched `player`/`session`/`training_plan` by id with the admin client and no coach scope — a view-only cross-coach leak (confirmed live originally). Now every such by-id fetch is scoped `.eq('coach_id', coachId)` → `notFound()` on mismatch; the full 9-page sweep found exactly the 4 server-component pages, verified live with two coaches (cross-tenant → 404, own → renders).
 
 ### Follow-up (owner-flagged, separate): photo option under "New Session"
 
@@ -318,6 +318,22 @@ Disposable coach + solo player accounts; recovery links obtained via `auth.admin
 Password reset only reaches real users once email delivery is enabled. Today Resend sends from `onboarding@resend.dev`, which delivers **only to pre-approved addresses** — so a real user will not receive a reset email. This is expected and was explicitly out of scope for this build.
 
 **This joins the deferred EMAIL workstream.** When email delivery is switched on (custom Resend domain — see "Resend custom domain" in What's Still Outstanding — likely bundled with the minor-consent email work pending legal input), **both password reset and minor-consent emails become live at once and both should be re-verified with real delivery at that point**, together with the PKCE caveat and the Redirect-URL config step above.
+
+## IDOR on coach server-component pages — FIXED (2026-07-22)
+
+The confirmed cross-coach **view** leak flagged in the 2026-07-21 rename session (finding #2) and the handover doc is now closed. `app/[coachId]/layout.tsx` verified the URL `coachId` belonged to the session, but nested **server-component pages fetched `player`/`session`/`training_plan` by id with the admin client and NO coach-ownership scope** — so a coach who knew another coach's resource UUID could render it (create/edit/delete stayed blocked by the API layer; this was view-only). Same "trusts an id, no ownership check" class as the Gotcha #17 API audit — but that audit hardened **API routes**, never these **page-level** admin-client fetches.
+
+**Full sweep (all 9 pages under `app/[coachId]`), not just the flagged ones:**
+- **Fixed (4 server components, admin-client fetch-by-id):** added `.eq('coach_id', coachId)` (the layout-verified owner) to the by-id query on each, so a non-owned id yields null → `notFound()`:
+  - `players/[playerId]/page.tsx` — player scoped.
+  - `players/[playerId]/sessions/[sessionId]/page.tsx` — session scoped by `coach_id` **and** `player_id`; player scoped by `coach_id`.
+  - `players/[playerId]/sessions/new/page.tsx` — player scoped.
+  - `training-plans/[planId]/page.tsx` — plan scoped.
+- **Confirmed safe (not assumed — re-read):** `app/[coachId]/page.tsx` already scopes every query by `coach_id`. The 4 client pages (`plan`, `videos`, `players`, `settings`) hold no admin client and read only through session-derived, ownership-checked APIs (`/api/players/[id]`, `/api/sessions`, `/api/videos`, `/api/coach`, `/api/training-plans` — all Gotcha #17-hardened).
+
+**Verified live with two coaches** (disposable A + a data-only B owning a player/session/plan, fully self-contained — real production data untouched). As logged-in coach A: loading B's player, session, new-note form, and training plan by id all returned **404** (previously rendered B's data); loading A's own player, session, new-note form, and plan all still **rendered** (no regression). All 8 checks passed. Fixtures cleaned up storage-free (direct inserts, no consent records) — zero-count sweep + auth user deleted confirmed.
+
+**Note (unchanged, still open):** the `sessions`-table conflation (finding #1 from the rename session) and the `POST /api/sessions|training-plans|progress` 404-vs-403 cosmetic gap (Priority 5) are separate items, not touched here.
 
 ## Youth-player consent notification emails (2026-07-22)
 

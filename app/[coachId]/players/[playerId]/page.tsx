@@ -25,7 +25,10 @@ export default async function PlayerDetailPage({ params }: PlayerDetailProps) {
 
   const [{ data: player }, { data: sessions }, { data: metrics }, { data: plans }, { data: rawPhotos }] =
     await Promise.all([
-      db.from('players').select('*').eq('id', playerId).single(),
+      // Scope the player fetch by coachId (the layout-verified owner) — without
+      // this, any coach could view another coach's player by id (IDOR). A
+      // non-owned id yields null → notFound() below.
+      db.from('players').select('*').eq('id', playerId).eq('coach_id', coachId).single(),
       db.from('sessions').select('*').eq('player_id', playerId).order('session_date', { ascending: false }),
       db.from('progress_metrics').select('*').eq('player_id', playerId).order('measured_at'),
       db.from('training_plans').select('*').eq('player_id', playerId).order('created_at', { ascending: false }),

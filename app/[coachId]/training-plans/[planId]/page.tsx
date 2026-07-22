@@ -14,10 +14,13 @@ export default async function TrainingPlanPage({ params }: TrainingPlanPageProps
   const { coachId, planId } = await params
   const db = getAdminClient()
 
+  // Scope by coachId (the layout-verified owner) so a coach can't view another
+  // coach's training plan by id (IDOR). A non-owned id yields null → notFound().
   const { data: plan } = await db
     .from('training_plans')
     .select('*')
     .eq('id', planId)
+    .eq('coach_id', coachId)
     .single()
 
   if (!plan) notFound()

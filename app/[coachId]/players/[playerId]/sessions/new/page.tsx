@@ -11,10 +11,14 @@ export default async function NewSessionPage({ params }: NewSessionProps) {
   const { coachId, playerId } = await params
   const db = getAdminClient()
 
+  // Scope by coachId (the layout-verified owner) so a coach can't open the
+  // note-creation form against another coach's player by id (IDOR). A non-owned
+  // id yields null → notFound().
   const { data: player } = await db
     .from('players')
     .select('*')
     .eq('id', playerId)
+    .eq('coach_id', coachId)
     .single()
 
   if (!player) notFound()
