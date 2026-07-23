@@ -319,6 +319,27 @@ Password reset only reaches real users once email delivery is enabled. Today Res
 
 **This joins the deferred EMAIL workstream.** When email delivery is switched on (custom Resend domain — see "Resend custom domain" in What's Still Outstanding — likely bundled with the minor-consent email work pending legal input), **both password reset and minor-consent emails become live at once and both should be re-verified with real delivery at that point**, together with the PKCE caveat and the Redirect-URL config step above.
 
+## Photo capture improvements (2026-07-23, in progress)
+
+A photo is a single sample — no other frame to fall back on — so a bad photo means a bad/failed analysis (`reliable: false`, thin feedback), discovered only *after* upload + the full pipeline run. This is a multi-item build (separate commit per item) attacking that fragility at capture time. Items land incrementally; this section grows as they do.
+
+### Item 1 — pre-upload pose validation (DONE)
+
+Fast, advisory pre-flight when a **photo** is selected (videos skip it — many frames): is a person detected, and is the full body head→feet visible? Reports "Looks good" or friendly retake guidance **before** the user commits to an upload.
+
+**Decision — server-side detection, not client-side MediaPipe.** Reuses the Python service's already-loaded IMAGE-mode landmarker via a detection-only endpoint. Rationale: zero drift from what `/analyse` actually sees (the spec's stated concern), no heavy client bundle / second model to host, and detection-only is far faster than the full pipeline. The tradeoff (a network round-trip) is fine for a photo pre-flight.
+
+- **`service/pose_utils.py` `detect_pose_quality()`** — is a pose present, and are all key regions (head/shoulders/hips/knees/feet) visible? A region counts as in-frame only when its landmarks are BOTH confidently detected (visibility ≥ MIN_VIS) AND have normalised coords within [0,1]. **The in-frame coord check is load-bearing:** MediaPipe *extrapolates* off-frame landmarks and keeps their visibility high, so a "feet cut off" photo still reads as visible on visibility alone — but the cropped ankle comes back at y > 1.0. Returns `{detected, full_body, reason, missing[]}`.
+- **`service/main.py` `POST /detect`** — service-secret gated, raw image bytes in the body (no `python-multipart` dep), writes/stores nothing.
+- **`app/api/videos/precheck/route.ts`** — authenticated proxy (coach session OR player JWT — no per-resource ownership since nothing is read/written; auth just prevents anonymous compute abuse). Validates mime/size, forwards bytes to `/detect`. **Best-effort:** any service error/timeout returns an inconclusive verdict (`check_unavailable`), never a hard block.
+- **`components/TwoClipUpload.tsx`** — photos get checked on selection (`runPrecheck`); `verdictToPrecheck()` maps the verdict to "Looks good" / a specific warning ("feet cut off", "no person", etc.) + an **"Upload anyway"** button. Warn, don't forbid — advisory only. Purely additive to the presign→PUT→confirm flow.
+
+**Verified live (production Vercel + Railway; `/detect` stores nothing, so no fixtures land in prod):** real full-body still (extracted from `scripts/full_pose_preview_overlay.jpg`) → `full_body:true`; progressively cropped → `missing:['feet']` then `['knees','feet']`; solid no-person image → `no_pose`; no-auth → 401. Mapping unit-tested (all 8 branches). Real production UI (disposable player, images injected into the file input): full-body → "✓ Looks good"; no-person → the warning + "Upload anyway". Note: MediaPipe extrapolation means a *mild* feet-crop and a head-only crop (shoulders still in frame) can pass — acceptable false-negatives for an advisory "warn, don't forbid" check. Disposable fixtures (incl. a solo session the browser test created) cleaned up — zero-count sweep.
+
+### Items 2–6 — pending
+
+Guided capture (2), frame-from-video (3), multi-photo aggregation (4), honest expectation-setting (5), EXIF/orientation check (6). Item 6 note from the item-1 read: the Python service uses `cv2.imread()`, which applies EXIF orientation by default — item 6 will *verify* this (a rotated photo yields the same measurements) rather than assume.
+
 ## IDOR on coach server-component pages — FIXED (2026-07-22)
 
 The confirmed cross-coach **view** leak flagged in the 2026-07-21 rename session (finding #2) and the handover doc is now closed. `app/[coachId]/layout.tsx` verified the URL `coachId` belonged to the session, but nested **server-component pages fetched `player`/`session`/`training_plan` by id with the admin client and NO coach-ownership scope** — so a coach who knew another coach's resource UUID could render it (create/edit/delete stayed blocked by the API layer; this was view-only). Same "trusts an id, no ownership check" class as the Gotcha #17 API audit — but that audit hardened **API routes**, never these **page-level** admin-client fetches.
@@ -612,6 +633,7 @@ Before Pipeline Hardening §Item 2, a NULL `feedback` column meant *either* "aut
 | `supabase/migration-v13-media-type.sql` | **New, applied, 2026-07-19.** Additive, `NOT NULL DEFAULT 'video'`, `media_type TEXT CHECK IN ('video','photo')` on `session_videos`. Enables Feature A. |
 | `components/DeletePlayerButton.tsx` | **New.** `window.confirm()` naming the player + session count, calls `DELETE /api/players/[playerId]`. Wired into the player detail page header. |
 | `components/DeleteSessionButton.tsx` | **New.** `window.confirm()` naming the session date, calls `DELETE /api/sessions/[sessionId]`. Wired into the session detail page header. |
+| `app/api/videos/precheck/route.ts` | **New, 2026-07-23 (photo item 1).** Authenticated proxy (coach session OR player JWT) for the pre-upload pose check — validates mime/size, forwards raw photo bytes to the Python `/detect`, returns `{detected, full_body, reason, missing}`. Best-effort: any service error → `check_unavailable` (never a hard block). Stores nothing. |
 | `app/api/videos/presign/route.ts` | Step 1 of upload: consent gate + signed URL issuance. **Changed 2026-07-19** — accepts `image/jpeg`/`image/png` (20MB cap, vs video's 500MB), and ownership hardened: `coachId` now derived from `requireCoachSession()` instead of trusted from the body, with a real 403 (not a masking 404) for a cross-owner `playerId` — see Gotcha #16. |
 | `app/api/videos/confirm/route.ts` | Step 2 of upload: DB row insert + paired-clip check + Inngest fire. **Changed 2026-07-19** — same ownership hardening as `/presign`; `deriveMediaType()` sets `media_type` from the stored file's real extension, never client-supplied. **Changed 2026-07-19 (hardening)** — `inngest.send` wrapped in try/catch; no longer 500s if the fire fails after the row commits — returns an `analysis_triggered` flag instead of orphaning a committed row (Item 5). |
 | `lib/openai.ts` | OpenAI client (Next.js side); `generateTrainingPlanAI()` (active); `analyzeVideoFrames()` (deprecated) |
