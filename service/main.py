@@ -3,7 +3,7 @@ import tempfile
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException, Header, Depends
+from fastapi import FastAPI, HTTPException, Header, Depends, Request
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from supabase import create_client, Client, ClientOptions
@@ -137,6 +137,47 @@ def test_supabase():
 
     overall = all(v.get("ok") for v in results.values())
     return {"status": "ok" if overall else "error", "checks": results}
+
+
+# ── Pre-upload pose check (Photo feature item 1) ───────────────────────────────
+# Detection-only pre-flight: given a raw photo (request body = the image bytes),
+# report whether a full-body pose is visible BEFORE the user commits to an
+# upload + full pipeline run. Reuses the IMAGE-mode landmarker, so the verdict
+# can't drift from what /analyse will see. Writes nothing, stores nothing. The
+# body is raw bytes (Content-Type: image/*) rather than multipart so the service
+# needs no python-multipart dependency; the Next.js /api/videos/precheck proxy
+# (which enforces auth + size/mime) forwards the bytes here with X-Service-Secret.
+MAX_DETECT_BYTES = 20 * 1024 * 1024  # 20MB — matches the photo upload cap
+
+
+@app.post("/detect", dependencies=[Depends(require_secret)])
+async def detect(request: Request):
+    if _landmarker_image is None:
+        raise HTTPException(status_code=503, detail="model not loaded — service not ready")
+
+    raw = await request.body()
+    if not raw:
+        raise HTTPException(status_code=400, detail="empty request body — expected image bytes")
+    if len(raw) > MAX_DETECT_BYTES:
+        raise HTTPException(status_code=413, detail="image too large for pre-check")
+
+    from pose_utils import detect_pose_quality
+
+    # cv2.imread reads from a file (and applies EXIF orientation), matching the
+    # real analysis path exactly — so write to a temp file rather than imdecode.
+    tmp = tempfile.NamedTemporaryFile(suffix=".img", delete=False)
+    try:
+        tmp.write(raw)
+        tmp.flush()
+        tmp.close()
+        verdict = detect_pose_quality(tmp.name, _landmarker_image)
+    finally:
+        try:
+            os.unlink(tmp.name)
+        except FileNotFoundError:
+            pass
+
+    return verdict
 
 
 # ── Analyse ───────────────────────────────────────────────────────────────────

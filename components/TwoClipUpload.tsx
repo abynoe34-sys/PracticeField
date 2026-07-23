@@ -5,11 +5,21 @@ import type { SessionVideo } from '@/types'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+// Pre-upload pose check (Photo feature item 1). Runs only for photos — a video
+// has many frames to fall back on, a photo is a single sample, so a bad photo
+// is worth catching BEFORE the upload + full pipeline run. Advisory only: the
+// user can always "upload anyway" (detection is imperfect — warn, don't forbid).
+type Precheck =
+  | { phase: 'checking' }                    // request in flight
+  | { phase: 'good' }                        // full body visible → proceed
+  | { phase: 'warn'; message: string }       // problem found → guidance + upload-anyway
+  | { phase: 'skipped' }                      // video, or the check couldn't run
+
 // The active slot tracks one in-progress upload at a time per view.
 // Completed uploads accumulate in ViewState.uploaded.
 type ActiveSlot =
   | { status: 'idle' }
-  | { status: 'selected'; file: File }
+  | { status: 'selected'; file: File; precheck: Precheck }
   | { status: 'uploading'; file: File }
   | { status: 'failed'; error: string }
 
@@ -84,6 +94,39 @@ function validateFile(f: File, requiredType: MediaType | null): string | null {
     return `File too large — maximum size is ${type === 'photo' ? '20 MB' : '500 MB'}.`
   }
   return null
+}
+
+// Map the /api/videos/precheck verdict to a Precheck UI state. Anything
+// inconclusive (service unavailable, null result) falls through to 'skipped'
+// so the user is never hard-blocked by a check that couldn't run.
+interface PrecheckVerdict {
+  detected:  boolean | null
+  full_body: boolean | null
+  reason:    string
+  missing:   string[]
+}
+
+function verdictToPrecheck(v: PrecheckVerdict): Precheck {
+  if (v.reason === 'check_unavailable' || v.detected === null) return { phase: 'skipped' }
+  if (v.reason === 'unreadable') {
+    return { phase: 'warn', message: "We couldn't read that image — try taking or choosing a different photo." }
+  }
+  if (!v.detected) {
+    return { phase: 'warn', message: "We can't see a person in this photo — make sure your whole body is in the shot and well-lit." }
+  }
+  if (v.full_body) return { phase: 'good' }
+
+  const m = new Set(v.missing ?? [])
+  if (m.has('head') && m.has('feet')) {
+    return { phase: 'warn', message: "We can't see your full body — step back so your head and feet are both in frame." }
+  }
+  if (m.has('feet')) {
+    return { phase: 'warn', message: "Your feet look cut off — step back or tilt the camera down so your feet are in frame." }
+  }
+  if (m.has('head')) {
+    return { phase: 'warn', message: "The top of your body looks cut off — tilt the camera up so your head is in frame." }
+  }
+  return { phase: 'warn', message: "Part of your body isn't clearly visible — step back and make sure your whole body is in frame, well-lit." }
 }
 
 // ── Sub-component: one view section ──────────────────────────────────────────
@@ -193,7 +236,7 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset }: ViewS
         </div>
       )}
 
-      {/* Selected — file preview + upload button */}
+      {/* Selected — file preview + pose pre-check + upload button */}
       {active.status === 'selected' && (
         <div className="pl-8 space-y-3">
           <div className="flex items-center gap-3 bg-field-dark border border-field-border rounded-lg px-3 py-2.5">
@@ -210,11 +253,33 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset }: ViewS
               Remove
             </button>
           </div>
+
+          {/* Pose pre-check verdict (photos only) */}
+          {active.precheck.phase === 'checking' && (
+            <div className="flex items-center gap-2 text-xs text-gray-400">
+              <div className="w-3.5 h-3.5 border-2 border-brand-500 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+              Checking your photo…
+            </div>
+          )}
+          {active.precheck.phase === 'good' && (
+            <p className="text-xs text-green-400">✓ Looks good — full body visible.</p>
+          )}
+          {active.precheck.phase === 'warn' && (
+            <p className="text-xs text-yellow-300 bg-yellow-950 border border-yellow-800 rounded-lg px-3 py-2 leading-snug">
+              ⚠️ {active.precheck.message}
+            </p>
+          )}
+
           <button
             onClick={onUpload}
-            className="w-full bg-brand-600 hover:bg-brand-500 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors"
+            disabled={active.precheck.phase === 'checking'}
+            className="w-full bg-brand-600 hover:bg-brand-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-2.5 rounded-lg text-sm transition-colors"
           >
-            Upload {heading.toLowerCase()} clip
+            {active.precheck.phase === 'checking'
+              ? 'Checking…'
+              : active.precheck.phase === 'warn'
+                ? 'Upload anyway'
+                : `Upload ${heading.toLowerCase()} clip`}
           </button>
         </div>
       )}
@@ -278,7 +343,37 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
       setter(prev => ({ ...prev, active: { status: 'failed', error: err } }))
       return
     }
-    setter(prev => ({ ...prev, active: { status: 'selected', file: f } }))
+    // Photos get a pre-upload pose check (item 1); videos skip it (many frames).
+    const isPhoto = mediaTypeOf(f) === 'photo'
+    setter(prev => ({
+      ...prev,
+      active: { status: 'selected', file: f, precheck: isPhoto ? { phase: 'checking' } : { phase: 'skipped' } },
+    }))
+    if (isPhoto) runPrecheck(angle, f)
+  }
+
+  // Pre-upload pose check for a selected photo. Best-effort + advisory — any
+  // failure/inconclusive result becomes 'skipped' (upload still allowed). The
+  // functional setter guards against a stale response (user removed/replaced
+  // the file before the check returned): only apply if that exact file is
+  // still the selected one.
+  const runPrecheck = async (angle: 'side' | 'front', file: File) => {
+    const setter = angle === 'side' ? setSide : setFront
+    const apply = (precheck: Precheck) =>
+      setter(prev =>
+        prev.active.status === 'selected' && prev.active.file === file
+          ? { ...prev, active: { ...prev.active, precheck } }
+          : prev
+      )
+    try {
+      const headers: HeadersInit = { 'Content-Type': file.type }
+      if (props.authToken) headers['Authorization'] = `Bearer ${props.authToken}`
+      const res = await fetch('/api/videos/precheck', { method: 'POST', headers, body: file })
+      if (!res.ok) { apply({ phase: 'skipped' }); return }
+      apply(verdictToPrecheck(await res.json()))
+    } catch {
+      apply({ phase: 'skipped' })
+    }
   }
 
   const resetActive = (angle: 'side' | 'front') => {

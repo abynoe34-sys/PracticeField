@@ -269,6 +269,63 @@ def process_image_front(image_path: str, landmarker: PoseLandmarker) -> dict:
     return _front_row(1, 0.0, None, None)
 
 
+def detect_pose_quality(image_path: str, landmarker: PoseLandmarker) -> dict:
+    """
+    Lightweight PRE-UPLOAD check (Photo feature item 1): is a person detected,
+    and is the full body (head through feet) visible enough to analyse? This is
+    a pre-flight only — detection, no measurements, no DB write. It reuses the
+    exact same IMAGE-mode landmarker the real photo analysis uses, so the "is
+    this usable?" verdict can't drift from what /analyse will actually see.
+
+    `landmarker` must be the IMAGE-mode instance (load_model_image()).
+
+    Returns:
+      {
+        "detected":   bool,          # any pose found at all
+        "full_body":  bool,          # every key region visible >= MIN_VIS
+        "reason":     str,           # "ok" | "partial" | "no_pose" | "unreadable"
+        "missing":    list[str],     # region names below MIN_VIS (for guidance)
+      }
+    """
+    img = cv2.imread(image_path)
+    if img is None:
+        return {"detected": False, "full_body": False, "reason": "unreadable", "missing": []}
+
+    rgb    = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
+    result = landmarker.detect(mp_img)
+
+    if not result.pose_landmarks:
+        return {"detected": False, "full_body": False, "reason": "no_pose", "missing": []}
+
+    lms = result.pose_landmarks[0]
+
+    # Region → the landmarks that must be visible for that region to count as
+    # "in frame". Off-frame / cropped landmarks come back with low visibility,
+    # so this doubles as a "head or feet cut off" detector, which is the most
+    # common bad-photo failure mode for a full-body stance shot.
+    groups = {
+        "head":      [NOSE],
+        "shoulders": [L_SHOULDER, R_SHOULDER],
+        "hips":      [L_HIP, R_HIP],
+        "knees":     [L_KNEE, R_KNEE],
+        "feet":      [L_ANKLE, R_ANKLE],
+    }
+    missing = [
+        name for name, idxs in groups.items()
+        if any((lms[i].visibility or 0.0) < MIN_VIS for i in idxs)
+    ]
+    full_body = len(missing) == 0
+
+    log.info("pose pre-check: detected=True full_body=%s missing=%s", full_body, missing)
+    return {
+        "detected":  True,
+        "full_body": full_body,
+        "reason":    "ok" if full_body else "partial",
+        "missing":   missing,
+    }
+
+
 def process_video_side(video_path: str, landmarker: PoseLandmarker) -> list[dict]:
     """
     Run side-view pose analysis on a video file.
