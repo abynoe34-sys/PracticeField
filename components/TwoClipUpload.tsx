@@ -65,15 +65,66 @@ function mediaTypeOf(f: File): MediaType | null {
   return null
 }
 
-const ANGLE_META: Record<'side' | 'front', { heading: string; body: string }> = {
+const ANGLE_META: Record<'side' | 'front', { heading: string; body: string; tips: string[] }> = {
   side: {
     heading: 'Side view',
     body:    'Camera at hip height, square to your side. Full body visible — head through feet, nothing cut off.',
+    tips:    ['Full body in frame', 'Camera ~hip height', 'Stand side-on'],
   },
   front: {
     heading: 'Front view',
     body:    'Camera at hip height, facing straight at you. Full body in frame — feet flat on ground, top of helmet visible.',
+    tips:    ['Full body in frame', 'Camera ~hip height', 'Face the camera'],
   },
+}
+
+// ── Guided-capture framing aid (item 2) ───────────────────────────────────────
+// A simple silhouette showing roughly how the body should sit in the frame,
+// differing per angle (side profile vs front-on). A positioning aid, not an AR
+// feature — the app uploads a file (no in-app live camera), so this shows the
+// user how to frame the shot in their camera before they take it. Kept compact
+// so it never crowds the capture controls on mobile.
+function StanceSilhouette({ angle }: { angle: 'side' | 'front' }) {
+  return (
+    <svg
+      viewBox="0 0 72 96"
+      className="w-14 h-[74px] flex-shrink-0 text-brand-400"
+      aria-label={`${angle} view framing guide`}
+      role="img"
+    >
+      {/* Phone frame — dashed, subtle. Head must sit below the top edge and
+          feet above the bottom edge (the "full body in frame" cue). */}
+      <rect x="3" y="2" width="66" height="92" rx="7" fill="none"
+            stroke="currentColor" strokeOpacity="0.35" strokeWidth="1.5" strokeDasharray="4 3" />
+      <line x1="12" y1="84" x2="60" y2="84" stroke="currentColor" strokeOpacity="0.25" strokeWidth="1.5" />
+      {angle === 'side' ? (
+        // Side profile in a bent-over 3-point stance, facing right: hips high at
+        // back, back sloping down to a low head, one hand reaching to the ground.
+        <g fill="currentColor">
+          <circle cx="49" cy="42" r="6" />
+          {/* torso: rear hip (high) sloping forward-down to shoulders */}
+          <path d="M22 40 Q34 34 45 46 L43 52 Q33 44 24 48 Z" />
+          {/* down arm to ground */}
+          <path d="M44 48 L52 82 L48 82 L40 50 Z" />
+          {/* rear leg, bent */}
+          <path d="M24 46 L20 66 L26 84 L30 82 L25 66 L29 48 Z" />
+        </g>
+      ) : (
+        // Front-on athletic stance: head centred, wide shoulders, feet apart.
+        <g fill="currentColor">
+          <circle cx="36" cy="30" r="6.5" />
+          {/* torso trapezoid (wide shoulders → hips) */}
+          <path d="M24 40 L48 40 L44 62 L28 62 Z" />
+          {/* arms down the sides */}
+          <path d="M24 41 L19 62 L23 62 L28 44 Z" />
+          <path d="M48 41 L53 62 L49 62 L44 44 Z" />
+          {/* legs apart */}
+          <path d="M29 61 L24 84 L29 84 L33 62 Z" />
+          <path d="M43 61 L48 84 L43 84 L39 62 Z" />
+        </g>
+      )}
+    </svg>
+  )
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -142,7 +193,7 @@ interface ViewSectionProps {
 
 function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset }: ViewSectionProps) {
   const [dragOver, setDragOver] = useState(false)
-  const { heading, body } = ANGLE_META[angle]
+  const { heading, body, tips } = ANGLE_META[angle]
   const { uploaded, active } = state
   const count       = uploaded.length
   const hasUploaded = count > 0
@@ -195,8 +246,20 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset }: ViewS
         )}
       </div>
 
-      {/* Angle description */}
-      <p className="text-xs text-gray-500 leading-relaxed pl-8">{body}</p>
+      {/* Angle guidance — framing silhouette (item 2) + text + quick tips */}
+      <div className="flex items-start gap-3 pl-8">
+        <StanceSilhouette angle={angle} />
+        <div className="space-y-1.5 min-w-0">
+          <p className="text-xs text-gray-500 leading-relaxed">{body}</p>
+          <ul className="flex flex-wrap gap-x-2 gap-y-1">
+            {tips.map(t => (
+              <li key={t} className="text-[11px] text-gray-400 bg-field-dark border border-field-border rounded px-1.5 py-0.5 whitespace-nowrap">
+                {t}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
 
       {/* Uploaded clip list */}
       {hasUploaded && (
