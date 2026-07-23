@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import type { SessionVideo } from '@/types'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -20,6 +20,7 @@ type Precheck =
 type ActiveSlot =
   | { status: 'idle' }
   | { status: 'selected'; file: File; precheck: Precheck }
+  | { status: 'framepicker'; file: File }   // video file; user is picking a frame (item 3)
   | { status: 'uploading'; file: File }
   | { status: 'failed'; error: string }
 
@@ -189,12 +190,47 @@ interface ViewSectionProps {
   onPick:   (f: File) => void
   onUpload: () => void
   onReset:  () => void
+  onEnterFramePicker:  () => void
+  onCancelFramePicker: () => void
 }
 
-function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset }: ViewSectionProps) {
+function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset, onEnterFramePicker, onCancelFramePicker }: ViewSectionProps) {
   const [dragOver, setDragOver] = useState(false)
   const { heading, body, tips } = ANGLE_META[angle]
-  const { uploaded, active } = state
+  const { active } = state
+
+  // Frame-picker (item 3): object URL for the video being scrubbed, created
+  // once per framepicker file and revoked on exit (no per-render leak).
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [frameUrl, setFrameUrl] = useState<string | null>(null)
+  const framepickerFile = active.status === 'framepicker' ? active.file : null
+  useEffect(() => {
+    if (!framepickerFile) { setFrameUrl(null); return }
+    const url = URL.createObjectURL(framepickerFile)
+    setFrameUrl(url)
+    return () => URL.revokeObjectURL(url)
+  }, [framepickerFile])
+
+  // Capture the frame currently shown in the <video> as a JPEG and hand it back
+  // as the selected file — it then flows through the exact same photo path as a
+  // real photo (single-frame → reliable:false, and the item-1 precheck runs on
+  // it). A single chosen instant is honestly a single sample.
+  const useCurrentFrame = () => {
+    const v = videoRef.current
+    if (!v || !v.videoWidth) return
+    const canvas = document.createElement('canvas')
+    canvas.width  = v.videoWidth
+    canvas.height = v.videoHeight
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    ctx.drawImage(v, 0, 0, canvas.width, canvas.height)
+    canvas.toBlob(blob => {
+      if (!blob) return
+      const t = v.currentTime.toFixed(2)
+      onPick(new File([blob], `frame-${t}s.jpg`, { type: 'image/jpeg' }))
+    }, 'image/jpeg', 0.92)
+  }
+  const { uploaded } = state
   const count       = uploaded.length
   const hasUploaded = count > 0
 
@@ -317,6 +353,17 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset }: ViewS
             </button>
           </div>
 
+          {/* Frame-from-video (item 3): offer picking one key frame from a video */}
+          {mediaTypeOf(active.file) === 'video' && (
+            <button
+              type="button"
+              onClick={onEnterFramePicker}
+              className="text-xs text-brand-400 hover:text-brand-300 transition-colors"
+            >
+              🎞️ Or pick one key frame (e.g. the bottom of your stance) →
+            </button>
+          )}
+
           {/* Pose pre-check verdict (photos only) */}
           {active.precheck.phase === 'checking' && (
             <div className="flex items-center gap-2 text-xs text-gray-400">
@@ -344,6 +391,42 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset }: ViewS
                 ? 'Upload anyway'
                 : `Upload ${heading.toLowerCase()} clip`}
           </button>
+        </div>
+      )}
+
+      {/* Frame picker (item 3) — scrub the video, capture one frame as the input */}
+      {active.status === 'framepicker' && (
+        <div className="pl-8 space-y-3">
+          <p className="text-xs text-gray-400">
+            Scrub to the exact moment (e.g. the bottom of your stance), then capture it.
+            A single frame is analyzed like a photo — less precise than the full video.
+          </p>
+          {frameUrl && (
+            <video
+              ref={videoRef}
+              src={frameUrl}
+              controls
+              playsInline
+              preload="auto"
+              className="w-full max-h-64 bg-black rounded-lg"
+            />
+          )}
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={useCurrentFrame}
+              className="flex-1 bg-brand-600 hover:bg-brand-500 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors"
+            >
+              📸 Use current frame
+            </button>
+            <button
+              type="button"
+              onClick={onCancelFramePicker}
+              className="bg-field-dark border border-field-border hover:border-gray-500 text-gray-300 font-medium py-2.5 px-4 rounded-lg text-sm transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
 
@@ -444,6 +527,24 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
     const ref    = angle === 'side' ? sideRef  : frontRef
     setter(prev => ({ ...prev, active: { status: 'idle' } }))
     if (ref.current) ref.current.value = ''
+  }
+
+  // Frame-from-video (item 3): enter/leave the frame picker for a selected video.
+  const enterFramePicker = (angle: 'side' | 'front') => {
+    const setter = angle === 'side' ? setSide : setFront
+    setter(prev =>
+      prev.active.status === 'selected' && mediaTypeOf(prev.active.file) === 'video'
+        ? { ...prev, active: { status: 'framepicker', file: prev.active.file } }
+        : prev
+    )
+  }
+  const cancelFramePicker = (angle: 'side' | 'front') => {
+    const setter = angle === 'side' ? setSide : setFront
+    setter(prev =>
+      prev.active.status === 'framepicker'
+        ? { ...prev, active: { status: 'selected', file: prev.active.file, precheck: { phase: 'skipped' } } }
+        : prev
+    )
   }
 
   // ── Upload ─────────────────────────────────────────────────────────────────
@@ -553,6 +654,8 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
         onPick={f  => pickFile('side', f)}
         onUpload={() => uploadClip('side')}
         onReset={() => resetActive('side')}
+        onEnterFramePicker={() => enterFramePicker('side')}
+        onCancelFramePicker={() => cancelFramePicker('side')}
       />
 
       <ViewSection
@@ -562,6 +665,8 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
         onPick={f  => pickFile('front', f)}
         onUpload={() => uploadClip('front')}
         onReset={() => resetActive('front')}
+        onEnterFramePicker={() => enterFramePicker('front')}
+        onCancelFramePicker={() => cancelFramePicker('front')}
       />
 
       <button
