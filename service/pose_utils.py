@@ -300,10 +300,21 @@ def detect_pose_quality(image_path: str, landmarker: PoseLandmarker) -> dict:
 
     lms = result.pose_landmarks[0]
 
-    # Region → the landmarks that must be visible for that region to count as
-    # "in frame". Off-frame / cropped landmarks come back with low visibility,
-    # so this doubles as a "head or feet cut off" detector, which is the most
-    # common bad-photo failure mode for a full-body stance shot.
+    # A region counts as "in the photo" only if every one of its landmarks is
+    # both confidently detected (visibility) AND actually inside the frame.
+    # The in-frame test is the load-bearing one for cropped shots: MediaPipe
+    # EXTRAPOLATES landmarks that fall outside the image and keeps their
+    # visibility above threshold, so a "feet cut off" photo still reports the
+    # ankles as visible — but their normalised y comes back > 1.0 (below the
+    # frame). Checking visibility alone misses crops; checking the coordinates
+    # is in-frame catches "head or feet cut off", the most common bad-photo
+    # failure mode for a full-body stance shot.
+    def in_frame(i) -> bool:
+        lm = lms[i]
+        if (lm.visibility or 0.0) < MIN_VIS:
+            return False
+        return 0.0 <= lm.x <= 1.0 and 0.0 <= lm.y <= 1.0
+
     groups = {
         "head":      [NOSE],
         "shoulders": [L_SHOULDER, R_SHOULDER],
@@ -311,10 +322,7 @@ def detect_pose_quality(image_path: str, landmarker: PoseLandmarker) -> dict:
         "knees":     [L_KNEE, R_KNEE],
         "feet":      [L_ANKLE, R_ANKLE],
     }
-    missing = [
-        name for name, idxs in groups.items()
-        if any((lms[i].visibility or 0.0) < MIN_VIS for i in idxs)
-    ]
+    missing = [name for name, idxs in groups.items() if not all(in_frame(i) for i in idxs)]
     full_body = len(missing) == 0
 
     log.info("pose pre-check: detected=True full_body=%s missing=%s", full_body, missing)
