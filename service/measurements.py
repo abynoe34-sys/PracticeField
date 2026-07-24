@@ -25,6 +25,11 @@ MULTI_PHOTO_MAX_SLOPE_STD_DEG = 6.0
 #     judgment), so its reliable flag only tempers the measurement display.
 MULTI_PHOTO_MAX_STANCE_WIDTH_STD = 0.20
 
+# Frame-from-video Option B (item 3): half-width (seconds) of the neighbourhood
+# analyzed around a picked moment. ~0.8s total captures a held 3-point stance
+# while still spreading out (→ unreliable) if the pick landed mid-movement.
+FRAME_WINDOW_HALF_S = 0.4
+
 
 def aggregate_side_measurements(frames: list[dict]) -> dict:
     """
@@ -243,6 +248,46 @@ def aggregate_multi_photo_front_measurement(frames: list[dict]) -> dict:
                 "stance_width_ratio_std": width_std, "multi_photo": True})
     log.info("multi-photo front: %d photos, %d valid, width_std=%s -> reliable=%s",
              total, n_valid, width_std, reliable)
+    return out
+
+
+def _window(frames: list[dict], center_time_s: float) -> list[dict]:
+    """Per-frame rows within +/- FRAME_WINDOW_HALF_S of center_time_s, primary
+    subject only (person 0 or a no-detection row)."""
+    return [
+        f for f in frames
+        if (f.get("person") == 0 or f.get("person") is None)
+        and f.get("time_s") is not None
+        and abs(f["time_s"] - center_time_s) <= FRAME_WINDOW_HALF_S
+    ]
+
+
+def aggregate_windowed_measurement(frames: list[dict], center_time_s: float) -> dict:
+    """
+    Frame-from-video Option B (item 3) — side view. Analyze the NEIGHBOURHOOD of
+    a picked moment: filter the video's per-frame side measurements to a window
+    around center_time_s and run them through aggregate_multi_photo_measurement
+    — the SAME conservative consistency logic multi-photo uses, so the two paths
+    judge reliability identically (no drift). A held/steady stance across the
+    window agrees → reliable:true; a moment mid-movement spreads out → stays
+    reliable:false. Falls back to false (< 2 valid frames) at clip edges.
+    """
+    out = aggregate_multi_photo_measurement(_window(frames, center_time_s))
+    out["windowed"] = True
+    out["selected_frame_time"] = round(center_time_s, 2)
+    out["window_half_s"] = FRAME_WINDOW_HALF_S
+    log.info("windowed side @ %.2fs: valid=%s std=%s -> reliable=%s",
+             center_time_s, out.get("valid_count"), out.get("slope_deg_std"), out.get("reliable"))
+    return out
+
+
+def aggregate_windowed_front_measurement(frames: list[dict], center_time_s: float) -> dict:
+    """Frame-from-video Option B — front view. Same windowing, reusing the
+    multi-photo front aggregator's consistency logic."""
+    out = aggregate_multi_photo_front_measurement(_window(frames, center_time_s))
+    out["windowed"] = True
+    out["selected_frame_time"] = round(center_time_s, 2)
+    out["window_half_s"] = FRAME_WINDOW_HALF_S
     return out
 
 

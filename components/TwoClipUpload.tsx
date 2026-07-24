@@ -19,8 +19,12 @@ type Precheck =
 // Completed uploads accumulate in ViewState.uploaded.
 type ActiveSlot =
   | { status: 'idle' }
-  | { status: 'selected'; file: File; precheck: Precheck }
-  | { status: 'framepicker'; file: File }   // video file; user is picking a frame (item 3)
+  // selectedFrameTime (item 3 Option B): when a moment was picked from a VIDEO,
+  // the whole video is uploaded with this timestamp (seconds). /analyse then
+  // windows around it and derives reliability from the neighbourhood's
+  // consistency (item 4's aggregator) — not a client-extracted single still.
+  | { status: 'selected'; file: File; precheck: Precheck; selectedFrameTime?: number }
+  | { status: 'framepicker'; file: File }   // video file; user is picking a moment (item 3)
   | { status: 'uploading'; file: File }
   | { status: 'failed'; error: string }
 
@@ -192,9 +196,10 @@ interface ViewSectionProps {
   onReset:  () => void
   onEnterFramePicker:  () => void
   onCancelFramePicker: () => void
+  onUseMoment:         (time: number) => void
 }
 
-function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset, onEnterFramePicker, onCancelFramePicker }: ViewSectionProps) {
+function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset, onEnterFramePicker, onCancelFramePicker, onUseMoment }: ViewSectionProps) {
   const [dragOver, setDragOver] = useState(false)
   const { heading, body, tips } = ANGLE_META[angle]
   const { active } = state
@@ -211,24 +216,15 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset, onEnter
     return () => URL.revokeObjectURL(url)
   }, [framepickerFile])
 
-  // Capture the frame currently shown in the <video> as a JPEG and hand it back
-  // as the selected file — it then flows through the exact same photo path as a
-  // real photo (single-frame → reliable:false, and the item-1 precheck runs on
-  // it). A single chosen instant is honestly a single sample.
-  const useCurrentFrame = () => {
+  // Option B (item 3): capture the picked MOMENT (timestamp), not a client-side
+  // still. The whole video is uploaded with this timestamp; /analyse windows
+  // around it and derives reliability from the neighbourhood's consistency
+  // (item 4's aggregator) — a held stance earns confidence, a transitional
+  // moment does not. Reuses the video already selected, so no re-encode.
+  const useCurrentMoment = () => {
     const v = videoRef.current
-    if (!v || !v.videoWidth) return
-    const canvas = document.createElement('canvas')
-    canvas.width  = v.videoWidth
-    canvas.height = v.videoHeight
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    ctx.drawImage(v, 0, 0, canvas.width, canvas.height)
-    canvas.toBlob(blob => {
-      if (!blob) return
-      const t = v.currentTime.toFixed(2)
-      onPick(new File([blob], `frame-${t}s.jpg`, { type: 'image/jpeg' }))
-    }, 'image/jpeg', 0.92)
+    if (!v) return
+    onUseMoment(v.currentTime)
   }
   const { uploaded } = state
   const count       = uploaded.length
@@ -353,15 +349,26 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset, onEnter
             </button>
           </div>
 
-          {/* Frame-from-video (item 3): offer picking one key frame from a video */}
+          {/* Frame-from-video (item 3): pick a key moment from a video. When a
+              moment is chosen the whole clip still uploads (server windows
+              around it); otherwise the full clip is analyzed. */}
           {mediaTypeOf(active.file) === 'video' && (
-            <button
-              type="button"
-              onClick={onEnterFramePicker}
-              className="text-xs text-brand-400 hover:text-brand-300 transition-colors"
-            >
-              🎞️ Or pick one key frame (e.g. the bottom of your stance) →
-            </button>
+            active.selectedFrameTime !== undefined ? (
+              <p className="text-xs text-brand-300 flex items-center gap-2">
+                🎯 Analyzing the moment at {active.selectedFrameTime.toFixed(1)}s
+                <button type="button" onClick={onEnterFramePicker} className="text-brand-400 hover:text-brand-300 underline">
+                  change
+                </button>
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={onEnterFramePicker}
+                className="text-xs text-brand-400 hover:text-brand-300 transition-colors"
+              >
+                🎯 Or focus on one key moment (e.g. the bottom of your stance) →
+              </button>
+            )
           )}
 
           {/* Pose pre-check verdict (photos only) */}
@@ -394,12 +401,14 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset, onEnter
         </div>
       )}
 
-      {/* Frame picker (item 3) — scrub the video, capture one frame as the input */}
+      {/* Frame picker (item 3, Option B) — scrub to the key moment; the whole
+          clip uploads and the server analyzes the frames around this moment. */}
       {active.status === 'framepicker' && (
         <div className="pl-8 space-y-3">
           <p className="text-xs text-gray-400">
-            Scrub to the exact moment (e.g. the bottom of your stance), then capture it.
-            A single frame is analyzed like a photo — less precise than the full video.
+            Scrub to the key moment (e.g. the bottom of your stance), then lock it in.
+            We analyze the frames right around it — a steady, held stance reads as
+            more reliable than a moment mid-movement.
           </p>
           {frameUrl && (
             <video
@@ -414,10 +423,10 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset, onEnter
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={useCurrentFrame}
+              onClick={useCurrentMoment}
               className="flex-1 bg-brand-600 hover:bg-brand-500 text-white font-semibold py-2.5 rounded-lg text-sm transition-colors"
             >
-              📸 Use current frame
+              🎯 Use this moment
             </button>
             <button
               type="button"
@@ -546,6 +555,16 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
         : prev
     )
   }
+  // Option B (item 3): a moment was locked in — keep the VIDEO selected and tag
+  // it with the timestamp. On upload the whole clip goes up with selectedFrameTime.
+  const useMoment = (angle: 'side' | 'front', time: number) => {
+    const setter = angle === 'side' ? setSide : setFront
+    setter(prev =>
+      prev.active.status === 'framepicker'
+        ? { ...prev, active: { status: 'selected', file: prev.active.file, precheck: { phase: 'skipped' }, selectedFrameTime: time } }
+        : prev
+    )
+  }
 
   // ── Upload ─────────────────────────────────────────────────────────────────
 
@@ -554,6 +573,7 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
     const setter = angle === 'side' ? setSide : setFront
     if (view.active.status !== 'selected') return
     const file = view.active.file
+    const selectedFrameTime = view.active.selectedFrameTime  // Option B (item 3)
 
     setter(prev => ({ ...prev, active: { status: 'uploading', file } }))
 
@@ -572,6 +592,7 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
           file_name:   file.name,
           file_type:   file.type,
           file_size:   file.size,
+          ...(selectedFrameTime !== undefined ? { selected_frame_time: selectedFrameTime } : {}),
           ...(props.playerAccountId
             ? { player_account_id: props.playerAccountId }
             : { player_id: props.playerId, coach_id: props.coachId }),
@@ -662,6 +683,7 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
         onReset={() => resetActive('side')}
         onEnterFramePicker={() => enterFramePicker('side')}
         onCancelFramePicker={() => cancelFramePicker('side')}
+        onUseMoment={(t) => useMoment('side', t)}
       />
 
       <ViewSection
@@ -673,6 +695,7 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
         onReset={() => resetActive('front')}
         onEnterFramePicker={() => enterFramePicker('front')}
         onCancelFramePicker={() => cancelFramePicker('front')}
+        onUseMoment={(t) => useMoment('front', t)}
       />
 
       <button

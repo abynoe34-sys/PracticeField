@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
       recorded_at:       recordedAt,
       file_name:         fileName,
       file_size:         fileSize,
+      selected_frame_time: selectedFrameTime,
     } = body
 
     if (!storagePath) {
@@ -144,6 +145,10 @@ export async function POST(req: NextRequest) {
         analysis_status: initialStatus,
         media_type:      mediaType,
         frame_paths:     [],
+        // Frame-from-video Option B (item 3): only meaningful for a video;
+        // /analyse windows around it. Ignored for photos (single sample).
+        selected_frame_time: mediaType === 'video' && typeof selectedFrameTime === 'number'
+          ? selectedFrameTime : null,
       })
       .select()
       .single()

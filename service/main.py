@@ -193,6 +193,12 @@ class AnalyseRequest(BaseModel):
     # the photo path with >= 2 entries takes the aggregating branch.
     side_clip_paths:  list[str] | None = None
     front_clip_paths: list[str] | None = None
+    # Frame-from-video Option B (item 3): the picked timestamp (seconds) for a
+    # video clip. When set, that clip is windowed around this moment and
+    # reliability comes from the neighbourhood's consistency (reusing item 4's
+    # aggregator). None for plain video (whole-clip) and photos (unchanged).
+    side_selected_frame_time:  float | None = None
+    front_selected_frame_time: float | None = None
     drill_type:      str
     # Optional/nullable (item 3, 2026-07-19): these are not captured anywhere
     # yet, so the Inngest job sends null rather than fabricated defaults. They
@@ -226,9 +232,9 @@ def analyse(req: AnalyseRequest):
     )
     from measurements import (
         aggregate_side_measurements, aggregate_single_frame_measurement,
-        aggregate_multi_photo_measurement,
+        aggregate_multi_photo_measurement, aggregate_windowed_measurement,
         aggregate_front_measurements, aggregate_single_frame_front_measurement,
-        aggregate_multi_photo_front_measurement,
+        aggregate_multi_photo_front_measurement, aggregate_windowed_front_measurement,
     )
 
     is_photo = req.media_type == "photo"
@@ -289,7 +295,13 @@ def analyse(req: AnalyseRequest):
             finally:
                 side_lm.close()
         frames = _process_object(req.side_clip_path, _proc_video_side, ".mp4")
-        aggregated = aggregate_side_measurements(frames)
+        # Frame-from-video Option B (item 3): a picked moment → window around it
+        # and derive reliability from neighbourhood consistency. Otherwise the
+        # whole clip is aggregated as before.
+        if req.side_selected_frame_time is not None:
+            aggregated = aggregate_windowed_measurement(frames, req.side_selected_frame_time)
+        else:
+            aggregated = aggregate_side_measurements(frames)
 
     log.info(
         "side aggregation for session %s: slope_mean=%s reliable=%s",
@@ -413,7 +425,10 @@ def analyse(req: AnalyseRequest):
                 finally:
                     front_lm.close()
             front_frames = _process_object(req.front_clip_path, _proc_video_front, ".mp4")
-            front_aggregated = aggregate_front_measurements(front_frames)
+            if req.front_selected_frame_time is not None:
+                front_aggregated = aggregate_windowed_front_measurement(front_frames, req.front_selected_frame_time)
+            else:
+                front_aggregated = aggregate_front_measurements(front_frames)
         log.info("front aggregation for session %s: detection_rate=%s reliable=%s",
                  req.session_id, front_aggregated.get("detection_rate"), front_aggregated.get("reliable"))
     except Exception as exc:

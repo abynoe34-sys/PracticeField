@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
       file_name:         fileName,
       file_type:         fileType,
       file_size:         fileSize,
+      selected_frame_time: selectedFrameTime,
     } = body
 
     // ── view_angle validation ─────────────────────────────────────────────────
@@ -204,6 +205,8 @@ export async function POST(req: NextRequest) {
         recorded_at:       recordedAt       ?? new Date().toISOString().split('T')[0],
         file_name:         fileName         ?? null,
         file_size:         fileSize         ?? null,
+        // Frame-from-video Option B (item 3): the picked timestamp for a video.
+        selected_frame_time: typeof selectedFrameTime === 'number' ? selectedFrameTime : null,
       },
     })
   } catch (err) {

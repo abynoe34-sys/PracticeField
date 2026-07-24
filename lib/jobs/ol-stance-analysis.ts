@@ -80,7 +80,7 @@ export const olStanceAnalysis = inngest.createFunction(
 
       const { data: rows, error } = await db
         .from('session_videos')
-        .select('id, view_angle, analysis_status, storage_path, drill_type, media_type')
+        .select('id, view_angle, analysis_status, storage_path, drill_type, media_type, selected_frame_time')
         .eq('session_id', session_id)
         .not('view_angle', 'is', null)
 
@@ -152,6 +152,10 @@ export const olStanceAnalysis = inngest.createFunction(
         // photo use the singular *ClipPath above, unchanged.
         sideClipPaths:  sideClips.map(c => c.storage_path)  as string[],
         frontClipPaths: frontClips.map(c => c.storage_path) as string[],
+        // Frame-from-video Option B (item 3): the picked timestamp per angle
+        // (video only). When set, /analyse windows around it. null otherwise.
+        sideSelectedFrameTime:  (sideClips[0].selected_frame_time  ?? null) as number | null,
+        frontSelectedFrameTime: (frontClips[0].selected_frame_time ?? null) as number | null,
         drillType:      (sideClips[0].drill_type ?? data.drill_type) as string,
         mediaType:      sideMediaType,
         position:       (sessionRow?.position ?? null) as string | null,
@@ -201,6 +205,8 @@ export const olStanceAnalysis = inngest.createFunction(
         front_clip_path: clips.frontClipPath,
         side_clip_paths:  clips.sideClipPaths,
         front_clip_paths: clips.frontClipPaths,
+        side_selected_frame_time:  clips.sideSelectedFrameTime,
+        front_selected_frame_time: clips.frontSelectedFrameTime,
         drill_type:      clips.drillType,
         // Honest passthrough (item 3) — NOT fabricated defaults. null when
         // uncaptured, so /feedback hedges instead of inventing a position.
