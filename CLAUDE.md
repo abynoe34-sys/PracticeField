@@ -319,9 +319,9 @@ Password reset only reaches real users once email delivery is enabled. Today Res
 
 **This joins the deferred EMAIL workstream.** When email delivery is switched on (custom Resend domain — see "Resend custom domain" in What's Still Outstanding — likely bundled with the minor-consent email work pending legal input), **both password reset and minor-consent emails become live at once and both should be re-verified with real delivery at that point**, together with the PKCE caveat and the Redirect-URL config step above.
 
-## Photo capture improvements (2026-07-23, in progress)
+## Photo capture improvements (2026-07-23) — all 6 items DONE
 
-A photo is a single sample — no other frame to fall back on — so a bad photo means a bad/failed analysis (`reliable: false`, thin feedback), discovered only *after* upload + the full pipeline run. This is a multi-item build (separate commit per item) attacking that fragility at capture time. Items land incrementally; this section grows as they do.
+A photo is a single sample — no other frame to fall back on — so a bad photo means a bad/failed analysis (`reliable: false`, thin feedback), discovered only *after* upload + the full pipeline run. This 6-item build (separate commit per item) attacks that fragility at capture time. All items shipped + verified live.
 
 ### Item 1 — pre-upload pose validation (DONE)
 
@@ -336,9 +336,31 @@ Fast, advisory pre-flight when a **photo** is selected (videos skip it — many 
 
 **Verified live (production Vercel + Railway; `/detect` stores nothing, so no fixtures land in prod):** real full-body still (extracted from `scripts/full_pose_preview_overlay.jpg`) → `full_body:true`; progressively cropped → `missing:['feet']` then `['knees','feet']`; solid no-person image → `no_pose`; no-auth → 401. Mapping unit-tested (all 8 branches). Real production UI (disposable player, images injected into the file input): full-body → "✓ Looks good"; no-person → the warning + "Upload anyway". Note: MediaPipe extrapolation means a *mild* feet-crop and a head-only crop (shoulders still in frame) can pass — acceptable false-negatives for an advisory "warn, don't forbid" check. Disposable fixtures (incl. a solo session the browser test created) cleaned up — zero-count sweep.
 
-### Items 2–6 — pending
+### Item 2 — guided capture (DONE)
 
-Guided capture (2), frame-from-video (3), multi-photo aggregation (4), honest expectation-setting (5), EXIF/orientation check (6). Item 6 note from the item-1 read: the Python service uses `cv2.imread()`, which applies EXIF orientation by default — item 6 will *verify* this (a rotated photo yields the same measurements) rather than assume.
+A per-angle framing **silhouette** + quick-tip chips in each `TwoClipUpload` view slot (side profile vs front-on), differing per angle. The app uploads a file (no in-app live camera), so this is a positioning aid — shows how the body should sit in frame + concise tips ("Full body in frame · camera ~hip height · stand side-on / face the camera"). Shared component → both coach and solo flows. Verified live (mobile 375px): both silhouettes render and differ by angle, tips differ, zero horizontal overflow, aid sits above the controls (no obstruction).
+
+### Item 3 — frame-from-video (DONE) + design decision
+
+Selecting a **video** offers "pick one key frame" → an inline scrubber (native `<video controls>`) → "use current frame" captures that frame to a JPEG (canvas), which flows through the exact same single-frame **photo** path (`reliable:false`, and the item-1 precheck runs on it). Plain-video upload is untouched (picker is purely additive — no regression).
+
+**Decision: shipped (a) single-frame, NOT (b) chosen-frame + neighbour confidence.** Adjacent video frames are ~33ms apart and highly correlated, so "consistency across neighbours" would almost always agree regardless of pose quality — false confidence. Real multi-sample confidence needs INDEPENDENT samples (full-motion video, which the pipeline already aggregates, or separate photos — item 4). A single chosen instant is honestly a single sample → `reliable:false`. (b) is a follow-up, but only valid with independent samples, never adjacent frames. Verified live: real 1920×1080 video → scrub → captured `frame-1.00s.jpg` (photo) ready to upload.
+
+### Item 4 — multi-photo aggregation (DONE) — consistency-based reliability
+
+2+ photos per angle are aggregated instead of a single sample, so `reliable` can reflect **agreement across samples** rather than being hardcoded false. `measurements.py` `aggregate_multi_photo_measurement` (side) / `aggregate_multi_photo_front_measurement` (front): **conservative** — `reliable` requires ≥ 2 photos with a valid pose AND a tight spread (side: back-slope stdev ≤ 6°; front: stance-width-ratio stdev ≤ 0.20). A single valid detection among several, or a disagreeing set, stays `reliable:false` — an inconsistent set must never read as high-confidence; falls back to false when in doubt. `/analyse` accepts `side_clip_paths`/`front_clip_paths` (the ≥2-photo branch aggregates; single photo + video unchanged, backward-compatible via the singular `*_clip_path`); `ol-stance-analysis.ts` passes all side/front paths.
+
+**Verified live through the real pipeline:** consistent 2-photo set (slope_std 0.38°) → `reliable:true`; inconsistent set (stance + sideways, slope_std 53.5°) → `reliable:false`; single photo → `reliable:false`, unchanged (no `multi_photo` field). Thresholds are conservative heuristics pending calibration.
+
+**Known follow-ups (documented, not regressions):** (1) analysis auto-fires on the first side+front pair, so multi-photo aggregates cleanly when all photos for an angle are uploaded *before* the pairing completes; adding a photo after re-fires (idempotent but redundant — converges via last-writer-wins). A move to explicit-submit triggering would make this clean. (2) N side rows each render an identical feedback card (the per-drill UI model vs multi-photo-as-one-set). Both are separate follow-ups; the aggregation itself is correct and additive.
+
+### Item 5 — honest expectation-setting (DONE)
+
+Two honest nudges: (1) at the choice point (`TwoClipUpload`, both flows) a one-line note that video is most accurate and a single photo frame is less precise; (2) in the feedback UI (`FeedbackPanel` happy path) a yellow note when the analysis is photo-derived (`media_type==='photo'`) — deliberately distinct in colour/message from `FeedbackCard`'s blue "AI-generated, not verified" caveat (that's about ground-truth; this is about single-sample precision) so they don't clash. Choice-point note verified live; the photo note is an isolated conditional.
+
+### Item 6 — EXIF/orientation (VERIFIED, no code change needed)
+
+**Empirically confirmed** (not inferred) that `cv2.imread()` applies EXIF orientation, so a rotated phone photo yields the same measurements as upright. Ran three real photos through the real pipeline: upright → slope **-88.67°**; same pixels physically rotated 90° **+ EXIF orientation tag** → **-89.76°** (matches upright — `cv2` corrected it); **negative control** = same rotated pixels with **no** EXIF tag → **+15.45°** (reads sideways, 104° off — exactly the silent bug that would occur if orientation weren't handled, and it does NOT with the tagged file). A real phone photo carries the tag, so the core side-view slope is safe. No fix required.
 
 ## IDOR on coach server-component pages — FIXED (2026-07-22)
 
