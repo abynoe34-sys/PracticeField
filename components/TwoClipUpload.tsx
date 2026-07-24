@@ -647,6 +647,12 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
         </span>
       </div>
 
+      {/* Honest expectation-setting (item 5): video vs photo tradeoff, at the
+          point where the user chooses which to provide. A nudge, not a block. */}
+      <p className="text-xs text-gray-500 bg-field-dark border border-field-border rounded-md px-3 py-2">
+        🎥 Video gives the most accurate feedback. 📷 Photos work too, but a single frame is less precise.
+      </p>
+
       <ViewSection
         angle="side"
         state={side}

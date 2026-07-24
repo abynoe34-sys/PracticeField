@@ -43,8 +43,23 @@ export default function FeedbackPanel({ video, sessionId, authToken, onRetried }
   // Analysis itself not done yet — VideoAnalysisCard already shows that state.
   if (video.analysis_status !== 'complete') return null
 
-  // The happy path: real feedback exists.
-  if (video.feedback) return <FeedbackCard feedback={video.feedback} />
+  // The happy path: real feedback exists. When it's photo-derived, surface the
+  // lower-confidence tradeoff to the user (item 5) — distinct in colour and
+  // message from FeedbackCard's blue "AI-generated, not verified" caveat (that
+  // one is about ground-truth validation; this one is about single-sample
+  // precision). A single photo is one sample, hence less precise than a video.
+  if (video.feedback) {
+    return (
+      <div className="space-y-2">
+        {video.media_type === 'photo' && (
+          <p className="text-xs text-yellow-300 bg-yellow-950 border border-yellow-800 rounded-md px-3 py-2 leading-snug">
+            📷 From a single photo — one sample, so this is less precise than a full video. For the most reliable feedback, record a video.
+          </p>
+        )}
+        <FeedbackCard feedback={video.feedback} />
+      </div>
+    )
+  }
 
   const doRetry = async () => {
     setRetrying(true)
