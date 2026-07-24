@@ -186,6 +186,13 @@ class AnalyseRequest(BaseModel):
     session_id:      str
     side_clip_path:  str
     front_clip_path: str
+    # Multi-photo aggregation (item 4): all side / front photo paths for the
+    # session, when more than one was uploaded for an angle. Optional and
+    # backward-compatible — when absent (or a single-element list, or video),
+    # behaviour is exactly as before via side_clip_path/front_clip_path. Only
+    # the photo path with >= 2 entries takes the aggregating branch.
+    side_clip_paths:  list[str] | None = None
+    front_clip_paths: list[str] | None = None
     drill_type:      str
     # Optional/nullable (item 3, 2026-07-19): these are not captured anywhere
     # yet, so the Inngest job sends null rather than fabricated defaults. They
@@ -219,62 +226,77 @@ def analyse(req: AnalyseRequest):
     )
     from measurements import (
         aggregate_side_measurements, aggregate_single_frame_measurement,
+        aggregate_multi_photo_measurement,
         aggregate_front_measurements, aggregate_single_frame_front_measurement,
+        aggregate_multi_photo_front_measurement,
     )
 
     is_photo = req.media_type == "photo"
 
     db = get_supabase()
 
+    # Download one object into a temp file, run `process` on it, always clean up.
+    # Used for the per-photo passes (single and multi-photo) so the download +
+    # tempfile + unlink discipline lives in one place.
+    def _process_object(path: str, process, default_suffix: str):
+        raw = db.storage.from_(STORAGE_BUCKET).download(path)
+        suffix = os.path.splitext(path)[-1] or default_suffix
+        tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
+        try:
+            tmp.write(raw)
+            tmp.flush()
+            tmp.close()
+            return process(tmp.name)
+        finally:
+            try:
+                os.unlink(tmp.name)
+            except FileNotFoundError:
+                pass
+
     # ── Side-view processing ──────────────────────────────────────────────────
     # storage_path is the full object path within the bucket (coach_id/session_id/clip.mp4
     # for video, or .jpg/.png for a photo). The bucket name comes from the env
     # var — never from the path itself.
-    log.info("downloading side clip from bucket '%s': %s", STORAGE_BUCKET, req.side_clip_path)
+    #
+    # Photo path can now be multiple (item 4): all side photos for the session
+    # are aggregated with a consistency-based reliability. A single photo or a
+    # video is unchanged. side_clip_path stays the primary/first for back-compat.
+    side_paths = req.side_clip_paths or [req.side_clip_path]
 
-    raw_bytes = db.storage.from_(STORAGE_BUCKET).download(req.side_clip_path)
-
-    suffix = os.path.splitext(req.side_clip_path)[-1] or (".jpg" if is_photo else ".mp4")
-    tmp = tempfile.NamedTemporaryFile(suffix=suffix, delete=False)
-    try:
-        tmp.write(raw_bytes)
-        tmp.flush()
-        tmp.close()
-        log.info("side clip written to temp file: %s", tmp.name)
-
-        if is_photo:
-            frame      = process_image_side(tmp.name, _landmarker_image)
-            aggregated = aggregate_single_frame_measurement(frame)
+    if is_photo:
+        if len(side_paths) >= 2:
+            log.info("multi-photo side: %d photos for session %s", len(side_paths), req.session_id)
+            frames = [_process_object(p, lambda t: process_image_side(t, _landmarker_image), ".jpg")
+                      for p in side_paths]
+            aggregated = aggregate_multi_photo_measurement(frames)
         else:
-            # Fresh VIDEO-mode landmarker per video (item 6 bug fix). A VIDEO
-            # landmarker is stateful — it requires monotonically increasing
-            # timestamps across calls and carries pose-tracking state between
-            # frames. Reusing one global instance across two videos in a
-            # request (side then front) threw "Input timestamp must be
-            # monotonically increasing" (front restarts timestamps below the
-            # side clip's end); reusing it across requests would do the same
-            # for the 2nd+ session's side clip, and either way tracking state
-            # would bleed between videos. A per-video instance is the correct
-            # MediaPipe usage. IMAGE mode (photos) is stateless, so the shared
-            # _landmarker_image is fine.
+            frame = _process_object(side_paths[0], lambda t: process_image_side(t, _landmarker_image), ".jpg")
+            aggregated = aggregate_single_frame_measurement(frame)
+    else:
+        # Fresh VIDEO-mode landmarker per video (Gotcha #18). A VIDEO landmarker
+        # is stateful — it requires monotonically increasing timestamps across
+        # calls and carries pose-tracking state between frames. Reusing one
+        # global instance across two videos in a request (side then front) threw
+        # "Input timestamp must be monotonically increasing"; reusing it across
+        # requests would do the same for the 2nd+ session's side clip, and
+        # either way tracking state would bleed between videos. A per-video
+        # instance is the correct MediaPipe usage. IMAGE mode (photos) is
+        # stateless, so the shared _landmarker_image is fine.
+        def _proc_video_side(t):
             side_lm = load_model(MODEL_PATH)
             try:
-                frames = process_video_side(tmp.name, side_lm)
+                return process_video_side(t, side_lm)
             finally:
                 side_lm.close()
-            aggregated = aggregate_side_measurements(frames)
-        log.info(
-            "side aggregation for session %s: slope_mean=%.2f reliable=%s",
-            req.session_id,
-            aggregated.get("slope_deg_mean") or 0.0,
-            aggregated["reliable"],
-        )
-    finally:
-        try:
-            os.unlink(tmp.name)
-            log.info("temp file deleted: %s", tmp.name)
-        except FileNotFoundError:
-            pass
+        frames = _process_object(req.side_clip_path, _proc_video_side, ".mp4")
+        aggregated = aggregate_side_measurements(frames)
+
+    log.info(
+        "side aggregation for session %s: slope_mean=%s reliable=%s",
+        req.session_id,
+        aggregated.get("slope_deg_mean"),
+        aggregated["reliable"],
+    )
 
     # ── Write results back to session_videos ──────────────────────────────────
     # fault_type/line_side/position are persisted here (not just passed through
@@ -367,35 +389,33 @@ def analyse(req: AnalyseRequest):
     # secondary to the side analysis, so any failure here logs and still marks
     # the row 'complete' with analysis null (graceful degrade) rather than
     # failing the whole /analyse or leaving the front row stuck.
+    # Multi-photo front too (item 4) — same conservative aggregation. Single
+    # photo / video unchanged. front_clip_path stays the primary for back-compat.
+    front_paths = req.front_clip_paths or [req.front_clip_path]
     front_aggregated = None
     try:
-        log.info("downloading front clip: %s", req.front_clip_path)
-        front_bytes = db.storage.from_(STORAGE_BUCKET).download(req.front_clip_path)
-        front_suffix = os.path.splitext(req.front_clip_path)[-1] or (".jpg" if is_photo else ".mp4")
-        ftmp = tempfile.NamedTemporaryFile(suffix=front_suffix, delete=False)
-        try:
-            ftmp.write(front_bytes)
-            ftmp.flush()
-            ftmp.close()
-            if is_photo:
-                front_frame       = process_image_front(ftmp.name, _landmarker_image)
-                front_aggregated  = aggregate_single_frame_front_measurement(front_frame)
+        if is_photo:
+            if len(front_paths) >= 2:
+                log.info("multi-photo front: %d photos for session %s", len(front_paths), req.session_id)
+                front_frames = [_process_object(p, lambda t: process_image_front(t, _landmarker_image), ".jpg")
+                                for p in front_paths]
+                front_aggregated = aggregate_multi_photo_front_measurement(front_frames)
             else:
-                # Fresh VIDEO landmarker for the front video too — see the
-                # side-processing note above.
+                front_frame = _process_object(front_paths[0], lambda t: process_image_front(t, _landmarker_image), ".jpg")
+                front_aggregated = aggregate_single_frame_front_measurement(front_frame)
+        else:
+            # Fresh VIDEO landmarker for the front video too — see the
+            # side-processing note above (Gotcha #18).
+            def _proc_video_front(t):
                 front_lm = load_model(MODEL_PATH)
                 try:
-                    front_frames = process_video_front(ftmp.name, front_lm)
+                    return process_video_front(t, front_lm)
                 finally:
                     front_lm.close()
-                front_aggregated  = aggregate_front_measurements(front_frames)
-            log.info("front aggregation for session %s: detection_rate=%s reliable=%s",
-                     req.session_id, front_aggregated.get("detection_rate"), front_aggregated.get("reliable"))
-        finally:
-            try:
-                os.unlink(ftmp.name)
-            except FileNotFoundError:
-                pass
+            front_frames = _process_object(req.front_clip_path, _proc_video_front, ".mp4")
+            front_aggregated = aggregate_front_measurements(front_frames)
+        log.info("front aggregation for session %s: detection_rate=%s reliable=%s",
+                 req.session_id, front_aggregated.get("detection_rate"), front_aggregated.get("reliable"))
     except Exception as exc:
         log.error("session %s: front-view processing failed, marking complete without measurements: %s",
                   req.session_id, exc)

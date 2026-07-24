@@ -147,6 +147,11 @@ export const olStanceAnalysis = inngest.createFunction(
         frontCount:     frontClips.length,
         sideClipPath:   sideClips[0].storage_path  as string,
         frontClipPath:  frontClips[0].storage_path as string,
+        // All side / front paths (item 4 — multi-photo). /analyse aggregates
+        // these only on the photo path with >= 2 entries; video and single
+        // photo use the singular *ClipPath above, unchanged.
+        sideClipPaths:  sideClips.map(c => c.storage_path)  as string[],
+        frontClipPaths: frontClips.map(c => c.storage_path) as string[],
         drillType:      (sideClips[0].drill_type ?? data.drill_type) as string,
         mediaType:      sideMediaType,
         position:       (sessionRow?.position ?? null) as string | null,
@@ -194,6 +199,8 @@ export const olStanceAnalysis = inngest.createFunction(
         session_id:      session_id,
         side_clip_path:  clips.sideClipPath,
         front_clip_path: clips.frontClipPath,
+        side_clip_paths:  clips.sideClipPaths,
+        front_clip_paths: clips.frontClipPaths,
         drill_type:      clips.drillType,
         // Honest passthrough (item 3) — NOT fabricated defaults. null when
         // uncaptured, so /feedback hedges instead of inventing a position.

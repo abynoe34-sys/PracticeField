@@ -3,10 +3,27 @@ measurements.py — geometry aggregation for the analysis service.
 """
 
 import logging
+import statistics
 
 log = logging.getLogger(__name__)
 
 LOW_DETECTION_THRESHOLD = 0.5
+
+# Multi-photo consistency gate (item 4). A single photo is hardcoded
+# reliable:false (one sample can't earn confidence). Multiple photos of the
+# same stance CAN earn a modest reliable:true — but only when they actually
+# AGREE. These thresholds are deliberately conservative: a set that disagrees
+# must never read as high-confidence, and when in doubt we return false. They
+# are heuristics pending calibration, biased toward honest hedging over
+# squeezing out confidence.
+#   - Side: the back-slope spread (population stdev, degrees). Steep near-
+#     vertical slopes are noise-sensitive, so this isn't ultra-tight, but a
+#     genuinely different pose (e.g. a good stance + a standing frame) blows
+#     well past it.
+MULTI_PHOTO_MAX_SLOPE_STD_DEG = 6.0
+#   - Front: stance-width-ratio spread. Front is mechanical-only (no coaching
+#     judgment), so its reliable flag only tempers the measurement display.
+MULTI_PHOTO_MAX_STANCE_WIDTH_STD = 0.20
 
 
 def aggregate_side_measurements(frames: list[dict]) -> dict:
@@ -140,6 +157,93 @@ def aggregate_single_frame_front_measurement(frame: dict) -> dict:
     detected = frame["note"] != "no_detection"
     valid = [frame] if frame.get("visibility_ok") else []
     return _front_summary(valid, 1, 1 if detected else 0, False)
+
+
+def aggregate_multi_photo_measurement(frames: list[dict]) -> dict:
+    """
+    Aggregate 2+ single-photo side-view frames (item 4 — multi-photo). Same
+    output shape as aggregate_side_measurements(), plus diagnostics
+    (sample_count / valid_count / slope_deg_std), so every downstream consumer
+    treats it identically to a video- or single-photo-derived result.
+
+    reliable is CONSISTENCY-derived (not hardcoded false like a single photo),
+    but conservatively:
+        reliable = (>= 2 photos detected a valid pose)
+                   AND (their back-slope spread is tight: stdev <= threshold)
+    A single valid detection among several photos, or a spread-out
+    (inconsistent) set, is NOT reliable — an inconsistent set must never read
+    as high-confidence. Falls back to false when in doubt.
+    """
+    total = len(frames)
+    valid    = [f for f in frames if f.get("visibility_ok") and f.get("slope_deg") is not None]
+    detected = [f for f in frames if f["note"] != "no_detection"]
+    n_valid  = len(valid)
+
+    slopes      = [f["slope_deg"] for f in valid]
+    leans       = [f["lean_from_vertical"] for f in valid if f["lean_from_vertical"] is not None]
+    higher_vals = [f["higher"] for f in valid if f["higher"] is not None]
+
+    slope_mean = round(sum(slopes) / len(slopes), 2) if slopes else None
+    slope_min  = round(min(slopes), 2) if slopes else None
+    slope_max  = round(max(slopes), 2) if slopes else None
+    lean_mean  = round(sum(leans) / len(leans), 2) if leans else None
+    # Population stdev of the per-photo slopes — only meaningful with >= 2.
+    slope_std  = round(statistics.pstdev(slopes), 2) if len(slopes) >= 2 else None
+
+    higher_majority: str | None = None
+    if higher_vals:
+        higher_majority = "hips" if higher_vals.count("hips") >= higher_vals.count("shoulders") else "shoulders"
+
+    consistent = slope_std is not None and slope_std <= MULTI_PHOTO_MAX_SLOPE_STD_DEG
+    reliable   = n_valid >= 2 and consistent
+
+    log.info(
+        "multi-photo side: %d photos, %d valid, slope_mean=%s std=%s -> reliable=%s",
+        total, n_valid, slope_mean, slope_std, reliable,
+    )
+
+    return {
+        "slope_deg_mean":          slope_mean,
+        "slope_deg_min":           slope_min,
+        "slope_deg_max":           slope_max,
+        "lean_from_vertical_mean": lean_mean,
+        "higher_majority":         higher_majority,
+        "frame_count":             total,
+        "detected_frame_count":    len(detected),
+        "detection_rate":          round(len(detected) / total, 3) if total else 0.0,
+        "reliable":                reliable,
+        # Diagnostics — make the consistency reasoning transparent/inspectable.
+        "sample_count":            total,
+        "valid_count":             n_valid,
+        "slope_deg_std":           slope_std,
+        "multi_photo":             True,
+    }
+
+
+def aggregate_multi_photo_front_measurement(frames: list[dict]) -> dict:
+    """
+    Aggregate 2+ single-photo FRONT frames (item 4). Front is mechanical-only
+    (no coaching judgment), so its reliable flag only tempers the measurement
+    display. Conservative all the same: reliable requires >= 2 valid detections
+    AND a tight stance-width-ratio spread; a set that disagrees on something as
+    basic as stance width is not treated as reliable.
+    """
+    total = len(frames)
+    valid    = [f for f in frames if f.get("visibility_ok")]
+    detected = [f for f in frames if f["note"] != "no_detection"]
+    n_valid  = len(valid)
+
+    widths = [f["stance_width_ratio"] for f in valid if f.get("stance_width_ratio") is not None]
+    width_std = round(statistics.pstdev(widths), 3) if len(widths) >= 2 else None
+    consistent = width_std is not None and width_std <= MULTI_PHOTO_MAX_STANCE_WIDTH_STD
+    reliable = n_valid >= 2 and consistent
+
+    out = _front_summary(valid, total, len(detected), reliable)
+    out.update({"sample_count": total, "valid_count": n_valid,
+                "stance_width_ratio_std": width_std, "multi_photo": True})
+    log.info("multi-photo front: %d photos, %d valid, width_std=%s -> reliable=%s",
+             total, n_valid, width_std, reliable)
+    return out
 
 
 def aggregate_single_frame_measurement(frame: dict) -> dict:
