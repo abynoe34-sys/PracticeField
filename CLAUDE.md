@@ -368,6 +368,37 @@ Two honest nudges: (1) at the choice point (`TwoClipUpload`, both flows) a one-l
 
 **Empirically confirmed** (not inferred) that `cv2.imread()` applies EXIF orientation, so a rotated phone photo yields the same measurements as upright. Ran three real photos through the real pipeline: upright → slope **-88.67°**; same pixels physically rotated 90° **+ EXIF orientation tag** → **-89.76°** (matches upright — `cv2` corrected it); **negative control** = same rotated pixels with **no** EXIF tag → **+15.45°** (reads sideways, 104° off — exactly the silent bug that would occur if orientation weren't handled, and it does NOT with the tagged file). A real phone photo carries the tag, so the core side-view slope is safe. No fix required.
 
+## In-app camera capture (2026-07-26)
+
+Record the stance clip **inside the app** (open camera → record side + front) instead of leaving to the phone's camera app and uploading a file. **Record-then-process only** — the analysis pipeline is completely unchanged; the captured clip flows through the **existing** presign→storage→confirm path. Live/real-time on-device analysis is explicitly a separate future phase, NOT built here.
+
+### Step 0 feasibility (verdict: FAVOURABLE — good, not native-quality)
+
+- **Architecture:** plain web app (Next.js/Vercel over HTTPS). NOT a PWA (no manifest/service worker), NOT native-wrapped. Mobile = a browser tab. No camera code existed before this.
+- **APIs:** browser `getUserMedia` + `MediaRecorder` over HTTPS (secure context satisfied on the deployed domain). Android Chrome → **WebM/VP8-9**; iOS Safari (≥14.3) → **MP4/H.264**; iOS <14.3 has no MediaRecorder → must fall back to upload.
+- **Format compatibility (the key risk — resolved empirically):** the upload MIME allow-list already includes `video/webm` and `video/mp4`. iOS MP4 == today's uploads. **WebM was verified to decode end-to-end**: a real browser-produced VP8 WebM (canvas.captureStream + MediaRecorder) pushed through the whole production pipeline **completed** (opencv opened it, `frame_count`>0, no error). **No transcoding needed.**
+- **Caveats (why "good," not "native"):** phone-webcam-level quality (no native stabilization/exposure/zoom); iOS Safari MediaRecorder is the flakier of the two; video has no EXIF so orientation is baked into frames (guide orientation during capture); not installable (no PWA). Native would materially improve capture quality — owner's later call, out of scope.
+
+### What was built
+
+- **`components/CameraCapture.tsx`** — live camera (`getUserMedia`, rear camera default + flip), the guided **silhouette overlaid on the live preview** (side vs front — where item 2 pays off), record (`MediaRecorder`) → review → retake/use, plus optional **photo** capture (single frame grab). Feature-detects the APIs and **degrades gracefully to upload** (permission denied / no camera / unsupported → clean message + "Back to upload"). Picks `video/mp4` if supported else WebM. Runs the **same** pose pre-check (`/api/videos/precheck`) on a grabbed frame during review — reused, not duplicated.
+- **`components/StanceSilhouette.tsx`** — extracted from TwoClipUpload (now takes a `className`) so the compact per-slot chip and the large translucent live-view overlay share one source.
+- **`TwoClipUpload.tsx`** — a "📹 Record with camera" entry per slot (side + front), **additional to** the upload dropzone (upload NOT removed). The captured File goes through `onPick → pickFile → uploadClip` — the **exact existing** presign→storage→confirm path, same session-derived ownership. Shared component → both coach and solo flows.
+
+### Verified (as far as this environment allows) + the real-device gap
+
+Verified here (desktop Chromium, no real camera): component renders without crashing; `getUserMedia` is invoked; **graceful permission-denied fallback** works (message + fallback button + `onCancel` wiring); the "Record with camera" button is integrated in **both** slots and opens the camera view scoped to that slot; the upload path is preserved; and **WebM decodes end-to-end** through the real pipeline.
+
+**⚠️ NOT verifiable from here — real on-device camera UX.** No physical phone, and the in-app browser can't reproduce iOS Safari's WebKit MediaRecorder or provide a device camera. So the live preview, overlay-on-video, recording, review, and precheck-on-recording must be tested on **real devices**. The owner accepted this split ("build it; you device-test"). **Device-test checklist (run on a real iPhone/Safari + a real Android/Chrome before trusting in production):**
+1. Open a session → "📹 Record with camera" (side) → camera permission prompt → live preview shows with the **side** silhouette overlay.
+2. Record a few seconds → Stop → review plays back → "Use this clip".
+3. Repeat for **front** (confirm the overlay/guidance **differ** side vs front).
+4. Confirm both upload via the existing path → pipeline runs → **feedback appears**, no manual file handling.
+5. Confirm the recorded file **decodes** (analysis completes, not `failed`) — iOS MP4 and Android WebM.
+6. Confirm **upload still works** (didn't regress) and the pose pre-check warns on a clearly-cut-off recording.
+7. Ownership: a solo player records to their own account; a coach can't capture to a non-owned player (session-derived, so structurally guaranteed).
+8. iOS < 14.3 / permission denied → graceful fallback to upload (no crash).
+
 ## IDOR on coach server-component pages — FIXED (2026-07-22)
 
 The confirmed cross-coach **view** leak flagged in the 2026-07-21 rename session (finding #2) and the handover doc is now closed. `app/[coachId]/layout.tsx` verified the URL `coachId` belonged to the session, but nested **server-component pages fetched `player`/`session`/`training_plan` by id with the admin client and NO coach-ownership scope** — so a coach who knew another coach's resource UUID could render it (create/edit/delete stayed blocked by the API layer; this was view-only). Same "trusts an id, no ownership check" class as the Gotcha #17 API audit — but that audit hardened **API routes**, never these **page-level** admin-client fetches.
