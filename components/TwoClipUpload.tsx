@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react'
 import type { SessionVideo } from '@/types'
+import StanceSilhouette from './StanceSilhouette'
+import CameraCapture from './CameraCapture'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -25,6 +27,7 @@ type ActiveSlot =
   // consistency (item 4's aggregator) — not a client-extracted single still.
   | { status: 'selected'; file: File; precheck: Precheck; selectedFrameTime?: number }
   | { status: 'framepicker'; file: File }   // video file; user is picking a moment (item 3)
+  | { status: 'recording' }                 // in-app camera capture open (2026-07-26)
   | { status: 'uploading'; file: File }
   | { status: 'failed'; error: string }
 
@@ -81,55 +84,6 @@ const ANGLE_META: Record<'side' | 'front', { heading: string; body: string; tips
     body:    'Camera at hip height, facing straight at you. Full body in frame — feet flat on ground, top of helmet visible.',
     tips:    ['Full body in frame', 'Camera ~hip height', 'Face the camera'],
   },
-}
-
-// ── Guided-capture framing aid (item 2) ───────────────────────────────────────
-// A simple silhouette showing roughly how the body should sit in the frame,
-// differing per angle (side profile vs front-on). A positioning aid, not an AR
-// feature — the app uploads a file (no in-app live camera), so this shows the
-// user how to frame the shot in their camera before they take it. Kept compact
-// so it never crowds the capture controls on mobile.
-function StanceSilhouette({ angle }: { angle: 'side' | 'front' }) {
-  return (
-    <svg
-      viewBox="0 0 72 96"
-      className="w-14 h-[74px] flex-shrink-0 text-brand-400"
-      aria-label={`${angle} view framing guide`}
-      role="img"
-    >
-      {/* Phone frame — dashed, subtle. Head must sit below the top edge and
-          feet above the bottom edge (the "full body in frame" cue). */}
-      <rect x="3" y="2" width="66" height="92" rx="7" fill="none"
-            stroke="currentColor" strokeOpacity="0.35" strokeWidth="1.5" strokeDasharray="4 3" />
-      <line x1="12" y1="84" x2="60" y2="84" stroke="currentColor" strokeOpacity="0.25" strokeWidth="1.5" />
-      {angle === 'side' ? (
-        // Side profile in a bent-over 3-point stance, facing right: hips high at
-        // back, back sloping down to a low head, one hand reaching to the ground.
-        <g fill="currentColor">
-          <circle cx="49" cy="42" r="6" />
-          {/* torso: rear hip (high) sloping forward-down to shoulders */}
-          <path d="M22 40 Q34 34 45 46 L43 52 Q33 44 24 48 Z" />
-          {/* down arm to ground */}
-          <path d="M44 48 L52 82 L48 82 L40 50 Z" />
-          {/* rear leg, bent */}
-          <path d="M24 46 L20 66 L26 84 L30 82 L25 66 L29 48 Z" />
-        </g>
-      ) : (
-        // Front-on athletic stance: head centred, wide shoulders, feet apart.
-        <g fill="currentColor">
-          <circle cx="36" cy="30" r="6.5" />
-          {/* torso trapezoid (wide shoulders → hips) */}
-          <path d="M24 40 L48 40 L44 62 L28 62 Z" />
-          {/* arms down the sides */}
-          <path d="M24 41 L19 62 L23 62 L28 44 Z" />
-          <path d="M48 41 L53 62 L49 62 L44 44 Z" />
-          {/* legs apart */}
-          <path d="M29 61 L24 84 L29 84 L33 62 Z" />
-          <path d="M43 61 L48 84 L43 84 L39 62 Z" />
-        </g>
-      )}
-    </svg>
-  )
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -197,9 +151,11 @@ interface ViewSectionProps {
   onEnterFramePicker:  () => void
   onCancelFramePicker: () => void
   onUseMoment:         (time: number) => void
+  onStartRecording:    () => void
+  authToken?:          string
 }
 
-function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset, onEnterFramePicker, onCancelFramePicker, onUseMoment }: ViewSectionProps) {
+function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset, onEnterFramePicker, onCancelFramePicker, onUseMoment, onStartRecording, authToken }: ViewSectionProps) {
   const [dragOver, setDragOver] = useState(false)
   const { heading, body, tips } = ANGLE_META[angle]
   const { active } = state
@@ -268,13 +224,22 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset, onEnter
 
         {/* "Add another" only shown when at least one clip is uploaded and slot is idle */}
         {hasUploaded && active.status === 'idle' && (
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            className="text-xs text-brand-400 hover:text-brand-300 transition-colors"
-          >
-            + Add another
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onStartRecording}
+              className="text-xs text-brand-400 hover:text-brand-300 transition-colors"
+            >
+              📹 Record
+            </button>
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="text-xs text-brand-400 hover:text-brand-300 transition-colors"
+            >
+              + Add another
+            </button>
+          </div>
         )}
       </div>
 
@@ -329,6 +294,23 @@ function ViewSection({ angle, state, fileRef, onPick, onUpload, onReset, onEnter
           </p>
           <p className="text-xs text-gray-600 mt-1">Video: MP4, MOV, WebM, AVI · max 500 MB — Photo: JPEG, PNG · max 20 MB</p>
         </div>
+      )}
+
+      {/* In-app record option (2026-07-26) — additional to upload, not a replacement */}
+      {active.status === 'idle' && !hasUploaded && (
+        <button
+          type="button"
+          onClick={onStartRecording}
+          className="w-full flex items-center justify-center gap-2 bg-field-dark border border-field-border hover:border-brand-600 text-sm text-gray-300 py-2.5 rounded-xl transition-colors"
+        >
+          📹 Record with camera
+        </button>
+      )}
+
+      {/* Live camera capture — produces a File, then flows through the same
+          presign→storage→confirm path as an upload (onPick). */}
+      {active.status === 'recording' && (
+        <CameraCapture angle={angle} authToken={authToken} onCapture={onPick} onCancel={onReset} />
       )}
 
       {/* Selected — file preview + pose pre-check + upload button */}
@@ -555,6 +537,12 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
         : prev
     )
   }
+  // In-app camera capture (2026-07-26): open the live camera for this slot.
+  const startRecording = (angle: 'side' | 'front') => {
+    const setter = angle === 'side' ? setSide : setFront
+    setter(prev => ({ ...prev, active: { status: 'recording' } }))
+  }
+
   // Option B (item 3): a moment was locked in — keep the VIDEO selected and tag
   // it with the timestamp. On upload the whole clip goes up with selectedFrameTime.
   const useMoment = (angle: 'side' | 'front', time: number) => {
@@ -684,6 +672,8 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
         onEnterFramePicker={() => enterFramePicker('side')}
         onCancelFramePicker={() => cancelFramePicker('side')}
         onUseMoment={(t) => useMoment('side', t)}
+        onStartRecording={() => startRecording('side')}
+        authToken={props.authToken}
       />
 
       <ViewSection
@@ -696,6 +686,8 @@ export default function TwoClipUpload(props: TwoClipUploadProps) {
         onEnterFramePicker={() => enterFramePicker('front')}
         onCancelFramePicker={() => cancelFramePicker('front')}
         onUseMoment={(t) => useMoment('front', t)}
+        onStartRecording={() => startRecording('front')}
+        authToken={props.authToken}
       />
 
       <button
