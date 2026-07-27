@@ -1,8 +1,9 @@
 import { serve } from 'inngest/next'
 import { inngest } from '@/lib/inngest'
 import { olStanceAnalysis } from '@/lib/jobs/ol-stance-analysis'
+import { monitorImmediate, monitorDigest } from '@/lib/jobs/monitoring'
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
-  functions: [olStanceAnalysis],
+  functions: [olStanceAnalysis, monitorImmediate, monitorDigest],
 })
