@@ -368,6 +368,27 @@ Two honest nudges: (1) at the choice point (`TwoClipUpload`, both flows) a one-l
 
 **Empirically confirmed** (not inferred) that `cv2.imread()` applies EXIF orientation, so a rotated phone photo yields the same measurements as upright. Ran three real photos through the real pipeline: upright → slope **-88.67°**; same pixels physically rotated 90° **+ EXIF orientation tag** → **-89.76°** (matches upright — `cv2` corrected it); **negative control** = same rotated pixels with **no** EXIF tag → **+15.45°** (reads sideways, 104° off — exactly the silent bug that would occur if orientation weren't handled, and it does NOT with the tagged file). A real phone photo carries the tag, so the core side-view slope is safe. No fix required.
 
+## Pipeline monitoring & alerting (2026-07-27)
+
+Know when the pipeline breaks **before users report it**. Deliberately light — email alerts, not a dashboard/observability platform. Queries **existing** `session_videos` state only (no new instrumentation) and emails the owner (`abynoe34@gmail.com`).
+
+**Detects (field names verified against the real schema first):**
+1. **Analysis failures** — `analysis_status = 'failed'` (the Inngest `onFailure` handler writes these).
+2. **Feedback failures** — `feedback_status = 'failed'`.
+3. **Stalls** — `analysis_status` still `'ready'`/`'processing'` past `STALL_MINUTES` (15) — real runs finish in seconds/~80s, so >15 min = stuck (catches the silent-hang class, incl. stuck-in-`ready` from an Inngest send failure). Age from `COALESCE(job_started_at, created_at)`.
+
+All over a **cheap recent 48h window** (partial index `idx_sv_monitor` on `created_at WHERE monitor_alerted_at IS NULL`). The 48h window also means ancient known-stuck rows (there are 3 `ready` rows ~14 days old) are NOT re-flagged as new incidents.
+
+**`lib/monitoring.ts`** — `runImmediateCheck()` (email listing new failures/stalls with session ids + error + age; **dedup** via `session_videos.monitor_alerted_at`, migration-v18 — each incident emailed once, marked only after a successful send) and `runDigest()` (24h counts: processed / complete / analysis_failed / feedback_failed / stalled, or a clean "all healthy" — which also proves the monitor is alive). The Resend SDK returns `{ error }` rather than throwing, so both check the send result and throw on failure (so a failed send retries rather than silently marking rows alerted).
+
+**Scheduler — Inngest crons** (`lib/jobs/monitoring.ts`): `monitor-immediate` (`*/20 * * * *`) and `monitor-digest` (`0 13 * * *`), registered in `app/api/inngest/route.ts`. Chosen over Vercel Cron because Inngest is already wired, has no interval limits, and is triggered **only** via the signing-gated `/api/inngest` endpoint — so there is **no new publicly-triggerable surface**. **⚠️ ACTIVATION:** like every Inngest function here, these must be **synced in the Inngest dashboard after deploy** before the crons fire (Gotcha #2 — apps don't auto-register). Until synced, use the manual route.
+
+**`POST /api/monitor/run`** (`{ "mode": "immediate" | "digest" }`) — protected manual/verification/fallback trigger, gated by `X-Service-Secret == ANALYSIS_SERVICE_SECRET` (reuses the internal Vercel↔Railway secret, already on Vercel; **not** client-trusted). Rejects unauthenticated callers (401).
+
+**Delivery works TODAY (no custom domain):** sends via Resend from `onboarding@resend.dev`, which delivers to the Resend account's **own verified address** (`abynoe34@gmail.com`) — exactly this case (alerts only ever go to the owner). First alerts may land in **spam** until the domain is set up — owner should whitelist. **Migration step (later):** switch `ALERT_FROM` in `lib/monitoring.ts` to the verified-domain sender when the email workstream lands — see the email checklist.
+
+**Verified live (production route → real DB → real Resend):** forced a `failed` fixture → immediate alert `sent:true` (Resend **accepted** the send to the owner's address — only happens for a verified address, so genuinely deliverable); a second run → `alerted:0` (dedup, no re-email); digest with the fixture → correct counts (`analysis_failed:1, feedback_failed:1`); digest after cleanup → clean all-clear; unauthenticated → 401. Fixtures cleaned up. **Not confirmable from here:** actual inbox arrival (no inbox access) — owner checks spam; and the Inngest crons actually firing (needs the dashboard re-sync). The detection+email+dedup logic itself is fully verified.
+
 ## In-app camera capture (2026-07-26)
 
 Record the stance clip **inside the app** (open camera → record side + front) instead of leaving to the phone's camera app and uploading a file. **Record-then-process only** — the analysis pipeline is completely unchanged; the captured clip flows through the **existing** presign→storage→confirm path. Live/real-time on-device analysis is explicitly a separate future phase, NOT built here.
@@ -636,6 +657,7 @@ Before Pipeline Hardening §Item 2, a NULL `feedback` column meant *either* "aut
 - Password reset — plus the two follow-ups in "Password reset": the Redirect-URL allow-list config step, and the unverified PKCE `?code` path.
 - Parental consent email (existing).
 - **The two youth-player notifications (built 2026-07-22, `lib/player-emails.ts`)** — signup-pending (email B) and post-approval (email A); real-inbox delivery unverified. Also re-check email B's copy/trigger against the latest legal guidance, and confirm the `MINOR_SIGNUP_PLAYER_EMAIL` on/off setting reflects the owner's decision, before it reaches real minors.
+- **Pipeline monitor alerts (built 2026-07-27, `lib/monitoring.ts`)** — this one **already works** to the owner's own verified address via `onboarding@resend.dev` (alerts only go to the owner), so it's NOT blocked on the domain. The migration step: switch `ALERT_FROM` to the verified-domain sender when the domain lands (improves deliverability / stops landing in spam). No recipient change.
 
 **Front-view analysis — mechanical half now built (2026-07-19), fault-judgment half still deferred.** The Python service now extracts front landmarks and writes raw mechanical measurements (stance width, shoulder/hip tilt, knee alignment, lateral offset, down hand) to the front row; `FrontMeasurements.tsx` surfaces them. What's still deferred (to calibration, for both angles together): any good-vs-bad ruleset, thresholds, or coaching cues on those measurements. See Pipeline Hardening §Item 6.
 
