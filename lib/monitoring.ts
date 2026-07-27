@@ -115,13 +115,17 @@ export async function runImmediateCheck(): Promise<{ alerted: number; sent: bool
     ${section(`Stalled (non-terminal > ${STALL_MINUTES} min)`, stalls)}
     <p style="color:#888;font-size:12px">Detected ${new Date().toISOString()}. Each row is alerted once. Daily digest confirms the monitor is alive.</p>`
 
-  await resend.emails.send({
+  // The Resend SDK returns { error } instead of throwing — check it, so a
+  // rejected send throws here (the caller surfaces it) and we do NOT mark the
+  // rows alerted, so the same incident is retried next interval rather than lost.
+  const { error: sendErr } = await resend.emails.send({
     from: ALERT_FROM, to: ALERT_TO,
     subject: `⚠️ Practice Field: ${incidents.length} pipeline incident${incidents.length === 1 ? '' : 's'}`,
     html,
   })
+  if (sendErr) throw new Error(`alert email send failed: ${JSON.stringify(sendErr)}`)
 
-  // Mark alerted AFTER a successful send so a send failure retries next interval.
+  // Mark alerted only AFTER a successful send.
   await db.from('session_videos').update({ monitor_alerted_at: new Date().toISOString() }).in('id', ids)
   return { alerted: incidents.length, sent: true }
 }
@@ -160,11 +164,12 @@ export async function runDigest(): Promise<{ sent: boolean; counts: Record<strin
     </ul>
     <p style="color:#888;font-size:12px">Daily digest — this email also confirms the monitor is running. ${new Date().toISOString()}</p>`
 
-  await resend.emails.send({
+  const { error: sendErr } = await resend.emails.send({
     from: ALERT_FROM, to: ALERT_TO,
     subject: healthy ? '✅ Practice Field: pipeline healthy (daily)' : '⚠️ Practice Field: pipeline issues (daily digest)',
     html,
   })
+  if (sendErr) throw new Error(`digest email send failed: ${JSON.stringify(sendErr)}`)
   return { sent: true, counts }
 }
 
