@@ -39,7 +39,7 @@ from landmark_derivations import CONTROLLED_VOCAB
 HERE = os.path.dirname(os.path.abspath(__file__))
 RAW = os.path.join(HERE, "qb_ruleset.raw.json")
 OUT = os.path.join(HERE, "qb_ruleset.json")
-EXPECTED_COUNT = 285
+EXPECTED_COUNT = 309
 
 # Airtable field id -> output key
 FIELD = {
