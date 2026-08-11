@@ -1,0 +1,11 @@
+-- migration-v19-reference-photos-enable-rls.sql
+-- Applied to production 2026-08-11 (Supabase migration `enable_rls_reference_photos`).
+--
+-- reference_photos had RLS DISABLED entirely (Supabase linter ERROR). All access to this
+-- table is server-side via the service-role admin client (getAdminClient), which bypasses
+-- RLS — so enabling RLS with NO policy is the correct deny-by-default state for anon /
+-- authenticated. The linter now reports INFO "RLS enabled, no policy", which is intended.
+--
+-- Rollback if photo display breaks (it won't — all reads are service-role):
+--   alter table public.reference_photos disable row level security;
+alter table public.reference_photos enable row level security;
