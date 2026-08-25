@@ -1,18 +1,16 @@
 {
   "meta": {
+    "position": "QB",
     "source_base": "appziCSbI55tKhf4W",
     "source_table": "tblnbu1fm6YoQ56SG",
-    "source_table_name": "QB ruleset",
-    "synced_via": "Airtable connector (live read)",
-    "generated_by": "service/rulesets/build_qb_ruleset.py",
-    "raw_source": "service/rulesets/qb_ruleset.raw.json",
+    "generated_by": "service/rulesets/build_ruleset.py",
+    "raw_source": "qb_ruleset.raw.json",
     "record_count": 309,
     "notes": [
-      "Canonical QB ruleset the pipeline reads. Generated from the raw pull; do not hand-edit — edit in Airtable and re-run build_qb_ruleset.py.",
-      "thresholds_status comes from Airtable ('Draft' / 'Calibrated' / 'Not Applicable'). Numbers in measurable_signal are RECOMMENDATIONS, not rules, until a row is 'Calibrated'. No verdicts are produced here.",
-      "coaching_cue and correction_strategy are authored later in the owner's voice; blank by design.",
-      "judge/proxy_only/skip derived from measurable_by_pose (Yes/Needs Motion=judge, Partial=proxy, No=skip).",
-      "pose_landmarks tokens are validated against CONTROLLED_VOCAB in landmark_derivations.py, which also documents how the derived / non-MediaPipe tokens (Sternum, Pelvis Center, Neck, Spine, Left/Right Foot, Left/Right Hand, unsided Elbow/Wrist) resolve."
+      "Canonical ruleset the pipeline reads. Generated from the raw pull; do not hand-edit — edit in Airtable and re-run build_ruleset.py.",
+      "thresholds_status from Airtable (Draft/Calibrated/Not Applicable). Numbers in measurable_signal are RECOMMENDATIONS, not rules, until a row is Calibrated. No verdicts are produced here.",
+      "judge/proxy_only/skip derived from measurable_by_pose. pose_landmarks tokens validated against CONTROLLED_VOCAB (landmark_derivations.py).",
+      "phase / phase_order (where present) name the phase a measurement belongs to and its position in the required sequence — the order is itself coached."
     ]
   },
   "records": [

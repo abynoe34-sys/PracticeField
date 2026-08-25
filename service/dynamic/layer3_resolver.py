@@ -31,8 +31,13 @@ if _RULESETS not in sys.path:
     sys.path.insert(0, _RULESETS)
 import landmark_derivations as ld  # noqa: E402
 
-DEFAULT_CATALOGUE = os.path.join(_RULESETS, "qb_ruleset.json")
-EXPECTED_COUNT = 309
+# Per-position catalogue files. Each export self-declares its record_count in meta, so we
+# validate against that rather than a hardcoded constant (counts differ per position and
+# change over time as coaching content is authored).
+CATALOGUE_FILES = {
+    "QB": os.path.join(_RULESETS, "qb_ruleset.json"),
+    "WR": os.path.join(_RULESETS, "wr_ruleset.json"),
+}
 
 # Layer 2 phase order — used to order the checklist in rep sequence.
 PHASE_ORDER = ["Pre-snap / stance", "Snap / movement start", "Drop / movement",
@@ -69,7 +74,9 @@ class ResolvedCheckpoint:
     landmarks: list[str]
     landmarks_resolved: list[dict]   # each token → how it resolves
     anchor_phase: str
-    assessable: bool
+    phase: str | None = None         # catalogue-declared phase (WR); None when not phase-structured
+    phase_order: float | None = None # its position in the required sequence — the order is coached
+    assessable: bool = True
     not_assessable_reasons: list[str] = field(default_factory=list)
     phase_confidence: float | None = None
     conditional_notes: list[str] = field(default_factory=list)
@@ -88,12 +95,16 @@ class ResolverResult:
 
 
 # ── catalogue loading + validation ───────────────────────────────────────────────
-def load_catalogue(path: str = DEFAULT_CATALOGUE) -> list[dict]:
+def load_catalogue(position: str = "QB") -> list[dict]:
+    path = CATALOGUE_FILES.get(position)
+    if path is None:
+        raise ValueError(f"no catalogue for position '{position}' (have: {sorted(CATALOGUE_FILES)})")
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
     recs = data["records"]
-    if len(recs) != EXPECTED_COUNT:
-        raise ValueError(f"catalogue count {len(recs)} != expected {EXPECTED_COUNT}")
+    declared = data.get("meta", {}).get("record_count", len(recs))
+    if len(recs) != declared:
+        raise ValueError(f"{position} catalogue count {len(recs)} != declared {declared}")
     for r in recs:
         if not r.get("measurable_by_pose"):
             raise ValueError(f"null Measurable-by-Pose on {r.get('name')}")
@@ -203,7 +214,7 @@ def resolve(position: str,
             phases: dict | None = None,
             handedness: str | None = None,
             catalogue: list[dict] | None = None) -> ResolverResult:
-    recs = catalogue if catalogue is not None else load_catalogue()
+    recs = catalogue if catalogue is not None else load_catalogue(position)
     views = {v.lower() for v in available_views} if available_views is not None else None
     hand, hand_source, hand_disagree = _resolve_handedness(handedness, phases)
 
@@ -226,7 +237,11 @@ def resolve(position: str,
         measurement = (r["name"].split(" - ")[-1]).strip()
         tier = "judge" if r["judge"] else "proxy_only" if r["proxy_only"] else "skip"
         resolved = [_resolve_token(t, hand) for t in r.get("pose_landmarks", [])]
-        ap = anchor_phase(r["variation"], r["technique"], measurement)
+        # A catalogue-declared phase (WR's Phase field) is authoritative — the order is
+        # coached and lives in the catalogue. Fall back to the QB anchor heuristic otherwise.
+        cat_phase = r.get("phase") or None
+        cat_order = r.get("phase_order")
+        ap = cat_phase or anchor_phase(r["variation"], r["technique"], measurement)
 
         reasons: list[str] = []
         # camera view coverage
@@ -265,13 +280,18 @@ def resolve(position: str,
             fault_trigger=r.get("fault_trigger") or "", measurable_signal=r.get("measurable_signal") or "",
             coaching_cue=(r.get("coaching_cue") or None),
             landmarks=list(r.get("pose_landmarks", [])), landmarks_resolved=resolved,
-            anchor_phase=ap, assessable=assessable, not_assessable_reasons=reasons,
-            phase_confidence=phase_conf,
+            anchor_phase=ap, phase=cat_phase, phase_order=cat_order,
+            assessable=assessable, not_assessable_reasons=reasons, phase_confidence=phase_conf,
             conditional_notes=_conditional_notes(r["technique"], measurement, hand_source)))
 
-    # order the checklist in rep sequence, then by name
-    checkpoints.sort(key=lambda c: (PHASE_ORDER.index(c.anchor_phase)
-                                    if c.anchor_phase in PHASE_ORDER else 99, c.name))
+    # order the checklist in rep sequence: a catalogue-declared phase_order (WR) wins;
+    # otherwise fall back to the QB anchor-phase order. Then by name.
+    def _order_key(c):
+        if c.phase_order is not None:
+            return (0, c.phase_order, c.name)
+        idx = PHASE_ORDER.index(c.anchor_phase) if c.anchor_phase in PHASE_ORDER else 99
+        return (0, idx, c.name)
+    checkpoints.sort(key=_order_key)
 
     by_tier = {t: sum(1 for c in checkpoints if c.tier == t) for t in ("judge", "proxy_only", "skip")}
     na = [c for c in checkpoints if not c.assessable]
