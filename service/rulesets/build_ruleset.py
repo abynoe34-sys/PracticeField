@@ -45,6 +45,8 @@ _NOTE_RE = re.compile(r"\.\s*\(")
 POSITIONS = {
     "QB": {
         "table": "tblnbu1fm6YoQ56SG", "raw": "qb_ruleset.raw.json", "out": "qb_ruleset.json",
+        "expected": 309,   # hardcoded, independent of the pull's own metadata — a drift/
+                           # duplicate reappearing changes the count and must fail loudly
         "fields": {
             "fldmpC81yNIlArGwR": "name", "fld8ZcrcnDDzhA0HL": "position",
             "fldSeEyQnehOmYQPY": "position_group", "fld4H2kZQvuPI9Oky": "position_unit",
@@ -59,6 +61,8 @@ POSITIONS = {
     },
     "WR": {
         "table": "tblUjygfinPpQbtXL", "raw": "wr_ruleset.raw.json", "out": "wr_ruleset.json",
+        "expected": 281,   # 25 Aug: 41 duplicate rows (a 2nd copy of Cuts-Speed + a few
+                           # doubled routes/catches) were deleted; asserting 281 confirms it
         "fields": {
             "fldCHVDdJCO7Jl2Td": "name", "fldRtfAvAnzders7Q": "position",
             "fldC7IZwklzjyfvys": "variation", "fldYZ7F96YI8CV30T": "technique",
@@ -107,7 +111,8 @@ def build(position: str) -> dict:
     with open(os.path.join(HERE, cfg["raw"]), encoding="utf-8") as f:
         raw = json.load(f)
     records = raw["records"]
-    expected = raw.get("metadata", {}).get("totalRecordCount", len(records))
+    pull_count = raw.get("metadata", {}).get("totalRecordCount", len(records))
+    expected = cfg["expected"]   # the authority — a hardcoded, reviewed count
 
     out, failures = [], []
     for r in records:
@@ -137,7 +142,14 @@ def build(position: str) -> dict:
         out.append(row)
 
     if len(out) != expected:
-        failures.insert(0, f"record count {len(out)} != pull metadata {expected}")
+        failures.insert(0, f"record count {len(out)} != expected {expected}")
+    if pull_count != expected:
+        failures.insert(0, f"pull metadata totalRecordCount {pull_count} != expected {expected} "
+                           f"(table drift / a deleted duplicate reappeared?)")
+    # every row name must be unique — this catches duplicate rows the count alone can miss
+    dup = [n for n, c in Counter(x.get("name") for x in out).items() if n and c > 1]
+    if dup:
+        failures.append(f"{len(dup)} duplicate Name(s): {dup}")
     if failures:
         raise ValidationError(f"{position}: {len(failures)} failure(s):\n  - " + "\n  - ".join(failures))
 
