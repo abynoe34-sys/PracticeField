@@ -19,9 +19,15 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN wget -q -O pose_landmarker_heavy.task \
     https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_heavy/float16/1/pose_landmarker_heavy.task
 
+# Hand landmarker (2nd detector — service/dynamic/hands_spine.py). Also gitignored; baked
+# in here so the pipeline can invoke Hands on reps Layer 3 flags as needing hand detail.
+RUN wget -q -O hand_landmarker.task \
+    https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task
+
 COPY . .
 
 ENV MEDIAPIPE_MODEL_PATH=/app/pose_landmarker_heavy.task
+ENV HAND_MODEL_PATH=/app/hand_landmarker.task
 
 EXPOSE 8000
 

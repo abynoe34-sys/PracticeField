@@ -80,6 +80,7 @@ class ResolvedCheckpoint:
     not_assessable_reasons: list[str] = field(default_factory=list)
     phase_confidence: float | None = None
     conditional_notes: list[str] = field(default_factory=list)
+    requires_hands: bool = False     # any landmark needs the Hand landmarker (2nd detector)
 
 
 @dataclass
@@ -125,6 +126,17 @@ def _resolve_token(tok: str, hand: str | None) -> dict:
     if kind == "mediapipe":
         return {"token": tok, "kind": "mediapipe", "resolves_to": [tok],
                 "index": ld.MEDIAPIPE_INDEX[tok]}
+    if kind == "hands":
+        side, idx = ld.HANDS_INDEX[tok]
+        out = {"token": tok, "kind": "hands", "source": "hand_landmarker",
+               "hand_index": idx, "requires_hands": True}
+        if tok in ld.REPOINTED_FROM_POSE:
+            out["note"] = "repointed from the low-fidelity pose point to the Hand landmarker"
+        return out
+    if kind == "hands_geometric":
+        d = ld.HANDS_DERIVED[tok]
+        return {"token": tok, "kind": "hands_geometric", "source": "hand_landmarker",
+                "resolves_to": list(d["from"]), "rule": d["rule"], "requires_hands": True}
     d = ld.DERIVATIONS[tok]
     out = {"token": tok, "kind": d["kind"], "resolves_to": list(d["from"]), "rule": d["rule"]}
     if d.get("ambiguous"):
@@ -213,6 +225,7 @@ def resolve(position: str,
             available_views: list[str] | set[str] | None = None,
             phases: dict | None = None,
             handedness: str | None = None,
+            hands_available: bool | None = None,
             catalogue: list[dict] | None = None) -> ResolverResult:
     recs = catalogue if catalogue is not None else load_catalogue(position)
     views = {v.lower() for v in available_views} if available_views is not None else None
@@ -265,6 +278,13 @@ def resolve(position: str,
         if hand is None and any(rr["kind"] == "handedness" for rr in resolved):
             reasons.append("throwing-arm landmark (unsided Elbow/Wrist) unresolved — "
                            "handedness unknown")
+        # Hand-landmarker requirement (2nd detector). A checkpoint using any Hands token
+        # needs Hands to have run. hands_available False → hard-block (not-assessable);
+        # None (unknown) → don't block, but the requirement is still reported so the caller
+        # can decide to run Hands (selective invocation, owner decision 5).
+        needs_hands_cp = any(rr.get("requires_hands") for rr in resolved)
+        if needs_hands_cp and hands_available is False:
+            reasons.append("requires the Hand landmarker, which did not run for this clip")
 
         # 'assessable' = the app could attempt this checkpoint. A LOW-CONFIDENCE phase note
         # does NOT flip it to unassessable — it stays assessable-but-flagged.
@@ -282,7 +302,8 @@ def resolve(position: str,
             landmarks=list(r.get("pose_landmarks", [])), landmarks_resolved=resolved,
             anchor_phase=ap, phase=cat_phase, phase_order=cat_order,
             assessable=assessable, not_assessable_reasons=reasons, phase_confidence=phase_conf,
-            conditional_notes=_conditional_notes(r["technique"], measurement, hand_source)))
+            conditional_notes=_conditional_notes(r["technique"], measurement, hand_source),
+            requires_hands=needs_hands_cp))
 
     # order the checklist in rep sequence: a catalogue-declared phase_order (WR) wins;
     # otherwise fall back to the QB anchor-phase order. Then by name.
@@ -307,6 +328,10 @@ def resolve(position: str,
             "handedness": sum(1 for c in na if any("handedness" in x for x in c.not_assessable_reasons)),
         },
         "handedness": {"value": hand, "source": hand_source, "disagreement": hand_disagree},
+        # Selective-invocation signal (owner decision 5): whether ANY applicable checkpoint
+        # needs the Hand landmarker, so the pipeline runs Hands only on reps that need it.
+        "needs_hands": any(c.requires_hands for c in checkpoints),
+        "hands_available": hands_available,
         "contains_verdicts": False,  # invariant: Layer 3 never emits a verdict/score/grade
     }
     query = {"position": position, "variation": variation, "technique": technique,
@@ -323,10 +348,14 @@ def _main(argv=None):
     ap.add_argument("--views", help="comma-separated: side,front")
     ap.add_argument("--handedness", choices=["left", "right"])
     ap.add_argument("--phases", help="a Layer 2 PhaseResult JSON to scope by")
+    ap.add_argument("--hands", choices=["available", "unavailable"],
+                    help="whether the Hand landmarker ran for this clip (gates hand-dependent checks)")
     args = ap.parse_args(argv)
     phases = json.load(open(args.phases, encoding="utf-8")) if args.phases else None
     views = args.views.split(",") if args.views else None
-    res = resolve(args.position, args.variation, args.technique, views, phases, args.handedness)
+    hands_avail = {"available": True, "unavailable": False}.get(args.hands)
+    res = resolve(args.position, args.variation, args.technique, views, phases, args.handedness,
+                  hands_available=hands_avail)
     print(res.to_json())
 
 
