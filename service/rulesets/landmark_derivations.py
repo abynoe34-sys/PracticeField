@@ -226,16 +226,17 @@ def classify(token: str) -> str:
 
 # ══════════════════════════════════════════════════════════════════════════════
 # Derived-quantity functions (owner decision 2) — VERIFIED against real Hands output
-# on the two clips (2026-08-28). WORLD landmarks only for anything angle-sensitive
-# (the Layer 2 lesson: image-space is camera-angle dependent; world is metric and
-# view-independent). Each hand is a list of 21 {x,y,z} dicts (world_landmarks).
+# on the two clips (2026-08-28).
 #
-# NOTE / OPEN ITEM: the coaching shape NAMES (thumbs-diamond vs pinkies-basket) do not
-# yet map cleanly onto the anatomical "together pair" seen in clip 1 — the overhead and
-# chest holds read as PINKY-together, the low holds as INDEX-together. So the catalogue
-# retiering that assigns these signals to specific rows is HELD pending the owner
-# confirming which filmed hold = which named shape. These primitives are correct and
-# decision-independent; only the row-to-shape assignment is held.
+# COORDINATE FRAME — the load-bearing distinction (a real bug caught in verification):
+#   * WITHIN-hand quantities (palm_normal, palm_orientation, finger_spread) use WORLD
+#     landmarks: metric, camera-aligned axes, view-independent (the Layer 2 lesson).
+#   * INTER-hand quantities (inter_hand_tip_gaps, closest_tip_pair) MUST use IMAGE
+#     landmarks. MediaPipe hand WORLD landmarks are each in that hand's OWN local frame
+#     (origin at that hand's centre), so a left-tip-to-right-tip WORLD distance spans two
+#     different origins and is meaningless (it comes out INVERTED — verified). Image
+#     landmarks share one normalised frame, so the inter-hand gap is real there.
+# Each `hand`/`left`/`right` arg is a list of 21 {x,y,z} dicts in the required frame.
 # ══════════════════════════════════════════════════════════════════════════════
 import math as _math
 
@@ -308,13 +309,37 @@ def finger_spread(hand) -> float:
 def inter_hand_tip_gaps(left, right) -> dict:
     """For a two-hand shape, the distance between each homologous fingertip pair, in
     (mean) hand-scale units. The 'together pair' (thumbs-together vs pinkies-together) is
-    the one with the smallest gap — the verified, orientation-robust discriminator."""
+    the one with the smallest gap — the verified, orientation-robust discriminator.
+    REQUIRES IMAGE landmarks (shared frame); WORLD landmarks give an inverted, meaningless
+    result because each hand's world frame has its own origin (see the frame note above)."""
     sc = (hand_scale(left) + hand_scale(right)) / 2
     return {f: _dist(_v(left, HAND_TIP[f]), _v(right, HAND_TIP[f])) / sc for f in HAND_TIP}
 
 
 def closest_tip_pair(left, right) -> str:
     """Which homologous fingertip pair is closest between the two hands ('Thumb'/'Pinky'/…).
-    This is the shape-family discriminator; the coaching name it maps to is owner-confirmed."""
+    A useful raw primitive, but NOT the clean thumbs-vs-pinkies discriminator: in a
+    thumbs-WINDOW the index tips touch too and can edge out the thumbs. Use shape_family()
+    for the binary family. REQUIRES IMAGE landmarks."""
     gaps = inter_hand_tip_gaps(left, right)
     return min(gaps, key=gaps.get)
+
+
+def thumbs_together(left, right) -> bool:
+    """True when the thumb tips are closer than the pinky tips — the thumbs-diamond/window
+    family (high/chest catch). The verified binary discriminator. REQUIRES IMAGE landmarks.
+    Verified on clip 1: True at the chest & overhead holds, False at low & collarbone."""
+    g = inter_hand_tip_gaps(left, right)
+    return g["Thumb"] < g["Pinky"]
+
+
+def pinkies_together(left, right) -> bool:
+    """True when the pinky tips are closer than the thumb tips — the pinkies-basket family
+    (low catch). Complement of thumbs_together(). REQUIRES IMAGE landmarks."""
+    return not thumbs_together(left, right)
+
+
+def shape_family(left, right) -> str:
+    """'thumbs' (diamond/window) | 'pinkies' (basket) from thumb-gap vs pinky-gap.
+    REQUIRES IMAGE landmarks."""
+    return "thumbs" if thumbs_together(left, right) else "pinkies"
