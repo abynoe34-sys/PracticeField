@@ -25,7 +25,7 @@
       "ideal_execution_standard": "Hold the running trajectory and snap the eyes toward the incoming ball, judging its lateral path while keeping stride length intact. Fire BOTH arms outward away from the torso into the lateral lane, torquing the upper chest slightly toward the ball without breaking the lower body's running line, and form a tight diamond out wide with thumbs and index fingers connected and palms squared to the side-angle trajectory.",
       "fault_trigger": "REACHING WITH ONE HAND - extending only the leading arm, cutting the catching surface in half. Also: the hips rotating with the chest, which breaks the running line and costs stride. (Hand shape needs the Hand landmarker.)",
       "measurable_signal": "[DRAFT] Lateral extension distance of both wrists away from Sternum, resolved in the image plane perpendicular to the running heading, expressed in torso lengths - maximum reach to the catch side. Plus BOTH wrists extending together (a single extended wrist is the one-hand fault). Plus partial shoulder-line rotation toward the catch side WITHOUT the hip line following - the lower body must hold its running line. Plus thumb and index convergence forming the diamond. NOTE: hand shape needs the HAND LANDMARKER; extension, torque and stride continuity are measurable today.",
-      "measurable_by_pose": "Partial",
+      "measurable_by_pose": "Needs Motion",
       "thresholds_status": "Draft",
       "static_or_dynamic": "Dynamic",
       "camera_angle": "Front",
@@ -45,11 +45,13 @@
         "Left Shoulder",
         "Right Shoulder",
         "Left Hip",
-        "Right Hip"
+        "Right Hip",
+        "Left Pinky",
+        "Right Pinky"
       ],
       "pose_landmarks_note": null,
-      "judge": false,
-      "proxy_only": true,
+      "judge": true,
+      "proxy_only": false,
       "skip": false
     },
     {
@@ -136,7 +138,7 @@
       "ideal_execution_standard": "Track the high, fading trajectory and time the jump or upper-body extension to meet the ball out wide at its highest point. Shoot both arms violently upward and outward on a 45-degree diagonal with elbows slightly flexed, hands open wide with thumbs locked together and index fingers pointing diagonally upward to form the overhead triangle.",
       "fault_trigger": "TURNING PINKIES UP - reaching up and out with the pinkies together, which turns the palms completely away from the ball's path. THE OVERHEAD CLAP - slapping the hands together laterally from the sides instead of clamping the ball's incoming line. (Hand orientation needs the Hand landmarker.)",
       "measurable_signal": "[DRAFT] DIAGONAL extension of both wrists - combining vertical elevation above the shoulder line AND lateral displacement away from Sternum, resolved in the image plane, expressed in torso lengths. The measurement is the resultant diagonal reach, target roughly 45 degrees up and out. Plus elbow flexion (slightly flexed, not locked), shoulder-midpoint elevation showing the shrug up and out, and THUMB convergence with index fingers pointing diagonally up. NOTE: thumbs-together vs pinkies-up detection needs the HAND LANDMARKER.",
-      "measurable_by_pose": "Partial",
+      "measurable_by_pose": "Needs Motion",
       "thresholds_status": "Draft",
       "static_or_dynamic": "Dynamic",
       "camera_angle": "Front",
@@ -156,11 +158,13 @@
         "Right Shoulder",
         "Sternum",
         "Left Hip",
-        "Right Hip"
+        "Right Hip",
+        "Left Pinky",
+        "Right Pinky"
       ],
       "pose_landmarks_note": null,
-      "judge": false,
-      "proxy_only": true,
+      "judge": true,
+      "proxy_only": false,
       "skip": false
     },
     {
@@ -249,7 +253,7 @@
       "ideal_execution_standard": "Track the low, diving path and drop the entire body level by bending deeply at the knees and hips. Drop both arms diagonally downward toward the grass on the catch side with elbows tucked near the lower ribcage, inverting the hands out to the side - pinky fingers pressed tightly together, palms facing upward and outward - to form a secure under-scoop.",
       "fault_trigger": "WAIST-BENDING REACHES - keeping the legs straight and bending sideways at the waist, which destroys balance and pulls the eyes away from the ball. THUMBS-TOGETHER LOW CATCH - trying to scoop a low-lateral ball with the thumbs together, forcing the palms to face the ground. (Hand inversion needs the Hand landmarker.)",
       "measurable_signal": "[DRAFT] Vertical drop of Pelvis Center and bilateral knee flexion, expressed in torso lengths. CRITICALLY, cross-check the Spine vector against the hip-to-knee vector AND the shoulder-line tilt to distinguish a knee-and-hip sink from WAIST-BENDING SIDEWAYS: hips staying high while the torso folds laterally is the fault. Plus wrists dropping BOTH downward and laterally (diagonal drop toward the grass on the catch side), elbows tucked near the lower ribcage, and PINKY convergence with palms up and out. NOTE: no pinky landmark exists in the 33-point pose model - inverted-hand detection needs the HAND LANDMARKER.",
-      "measurable_by_pose": "Partial",
+      "measurable_by_pose": "Needs Motion",
       "thresholds_status": "Draft",
       "static_or_dynamic": "Dynamic",
       "camera_angle": "Front",
@@ -271,11 +275,17 @@
         "Sternum",
         "Spine",
         "Left Shoulder",
-        "Right Shoulder"
+        "Right Shoulder",
+        "Left Thumb",
+        "Right Thumb",
+        "Left Pinky",
+        "Right Pinky",
+        "Left Palm Normal",
+        "Right Palm Normal"
       ],
       "pose_landmarks_note": null,
-      "judge": false,
-      "proxy_only": true,
+      "judge": true,
+      "proxy_only": false,
       "skip": false
     },
     {
@@ -365,7 +375,7 @@
       "ideal_execution_standard": "Hold a strong base with the eyes locked on the point of the ball. Shoot the arms forward away from the jersey to meet the ball early and maximise the catching radius, forming a tight symmetric diamond with thumbs and index fingers pressed together and palms turned outward to face the incoming ball.",
       "fault_trigger": "BODY CATCHING - letting the ball travel all the way into the chest pads instead of extending the hands, so it bounces off hard plastic armour and results in drops or deflections. (Hand shape needs the Hand landmarker.)",
       "measurable_signal": "[DRAFT] Horizontal extension distance of both wrists away from Sternum at the catch approach, expressed in torso lengths - maximum reach, with the wrists clearly forward of the chest plane rather than resting against it. Plus elbow flexion angle (relaxed, not locked). Plus convergence of the thumbs and index fingers into a diamond. NOTE: thumb and index points exist in the 33-point pose model but are LOW FIDELITY; reliable diamond-shape detection needs the HAND LANDMARKER. Wrist proximity and orientation give a usable proxy until then.",
-      "measurable_by_pose": "Partial",
+      "measurable_by_pose": "Needs Motion",
       "thresholds_status": "Draft",
       "static_or_dynamic": "Dynamic",
       "camera_angle": "Side",
@@ -383,11 +393,13 @@
         "Right Index Finger",
         "Sternum",
         "Left Shoulder",
-        "Right Shoulder"
+        "Right Shoulder",
+        "Left Pinky",
+        "Right Pinky"
       ],
       "pose_landmarks_note": null,
-      "judge": false,
-      "proxy_only": true,
+      "judge": true,
+      "proxy_only": false,
       "skip": false
     },
     {
@@ -473,7 +485,7 @@
       "ideal_execution_standard": "Track the high trajectory and time the jump or extension so the hands intercept the ball at the absolute apex of reach. Shoot both arms violently upward above the forehead with elbows slightly flexed, hands open wide with thumbs pressed tightly together and index fingers pointing up, creating an inverted triangle to look through.",
       "fault_trigger": "TURNING PINKIES OUT - reaching up for a high ball with the pinkies together instead of the thumbs. This turns the palms away from the ball and makes a clean high catch impossible. (Hand orientation needs the Hand landmarker.)",
       "measurable_signal": "[DRAFT] Vertical elevation of both wrists relative to the shoulder line, expressed in torso lengths - maximum reach, wrists clearly above forehead height. Plus elbow flexion angle (slightly flexed, not locked out), and shoulder-midpoint elevation showing the shrug toward the ears. Plus convergence of the THUMBS with index fingers pointing upward, forming the window. NOTE: reliable thumbs-together vs pinkies-together detection needs the HAND LANDMARKER - this distinction is the defining difference between a high and a low catch and the 33-point pose model cannot resolve it reliably.",
-      "measurable_by_pose": "Partial",
+      "measurable_by_pose": "Needs Motion",
       "thresholds_status": "Draft",
       "static_or_dynamic": "Dynamic",
       "camera_angle": "Front",
@@ -491,11 +503,13 @@
         "Right Index Finger",
         "Left Shoulder",
         "Right Shoulder",
-        "Sternum"
+        "Sternum",
+        "Left Pinky",
+        "Right Pinky"
       ],
       "pose_landmarks_note": null,
-      "judge": false,
-      "proxy_only": true,
+      "judge": true,
+      "proxy_only": false,
       "skip": false
     },
     {
@@ -583,7 +597,7 @@
       "ideal_execution_standard": "Track the downward trajectory and lower the entire body frame by bending at the knees and hips rather than folding at the waist. Drop the arms toward the grass with elbows tucked close to the torso, then invert the hands completely - pinky fingers pressed together, palms facing upward - creating a clean scoop to cradle the dipping ball.",
       "fault_trigger": "BENDING AT THE WAIST - keeping the legs straight and simply leaning over. This ruins balance, alters eye level dramatically, and prevents running after the catch. THUMBS-UP MISTAKE - trying to catch a low ball with the thumbs together like a chest catch, forcing the hands upside down so the ball slips straight through onto the ground. (Hand inversion needs the Hand landmarker.)",
       "measurable_signal": "[DRAFT] Vertical drop of Pelvis Center and bilateral knee flexion, expressed in torso lengths - the whole frame must lower. CRITICALLY, cross-check the Spine vector angle (Pelvis Center to Sternum) against the hip-to-knee vector to distinguish a knee-and-hip sink from BENDING AT THE WAIST: if the hips stay high while the torso folds forward, that is the fault. Plus wrists dropping low with elbows tucked close to the torso, and PINKY convergence with palms up. NOTE: there is NO pinky landmark in the 33-point pose model - inverted-hand detection needs the HAND LANDMARKER. Body lowering is fully measurable today.",
-      "measurable_by_pose": "Partial",
+      "measurable_by_pose": "Needs Motion",
       "thresholds_status": "Draft",
       "static_or_dynamic": "Dynamic",
       "camera_angle": "Side",
@@ -605,11 +619,17 @@
         "Sternum",
         "Spine",
         "Left Shoulder",
-        "Right Shoulder"
+        "Right Shoulder",
+        "Left Thumb",
+        "Right Thumb",
+        "Left Pinky",
+        "Right Pinky",
+        "Left Palm Normal",
+        "Right Palm Normal"
       ],
       "pose_landmarks_note": null,
-      "judge": false,
-      "proxy_only": true,
+      "judge": true,
+      "proxy_only": false,
       "skip": false
     },
     {
@@ -696,7 +716,7 @@
       "ideal_execution_standard": "Sprint at top speed along the route track with a steady, bounce-free head. Keep the hands down and relaxed while running, extending the arms upward only at the absolute last second to keep the trailing defender blind, then raise the hands near collarbone or chin level with pinkies pressed together and palms open to the sky, forming a deep running basket.",
       "fault_trigger": "REACHING EARLY - running downfield with the arms extended to the sky for ten yards. This alerts the defender to play the arms, slows top sprint speed, and makes tracking the ball far harder. (Basket formation needs the Hand landmarker.)",
       "measurable_signal": "[DRAFT] TWO signals. (1) LATE EXTENSION: vertical height of both wrists relative to Sternum held at normal sprint-pump level, with elevation occurring only in the final frames before the catch. The FRAME at which the wrists rise is the measurement - sustained elevation earlier is the REACHING EARLY fault. (2) SPRINT CONTINUITY: forward velocity of Pelvis Center and stride cadence held constant across the extension - no stutter or break in stride. Plus PINKY convergence with palms open to the sky at collarbone level. NOTE: there is NO pinky landmark in the 33-point pose model - basket formation and palm orientation need the HAND LANDMARKER.",
-      "measurable_by_pose": "Partial",
+      "measurable_by_pose": "Needs Motion",
       "thresholds_status": "Draft",
       "static_or_dynamic": "Dynamic",
       "camera_angle": "Side",
@@ -713,11 +733,17 @@
         "Sternum",
         "Pelvis Center",
         "Left Ankle",
-        "Right Ankle"
+        "Right Ankle",
+        "Left Thumb",
+        "Right Thumb",
+        "Left Pinky",
+        "Right Pinky",
+        "Left Palm Normal",
+        "Right Palm Normal"
       ],
       "pose_landmarks_note": null,
-      "judge": false,
-      "proxy_only": true,
+      "judge": true,
+      "proxy_only": false,
       "skip": false
     },
     {
@@ -731,7 +757,7 @@
       "ideal_execution_standard": "The eyes track the nose of the ball dropping from the sky straight down into the open palms. The wrists stay completely loose and cushioned right before impact, letting the ball melt into the fingers without disrupting the running stride.",
       "fault_trigger": "PEEKING - letting the head drift back forward toward the end zone just before the ball drops into the bucket, so it hits the helmet or falls straight through the hands. THE PALMS-FORWARD BARRIER - facing the palms toward the line of scrimmage instead of up to the sky, creating a wall the ball bounces off rather than a basket it falls into.",
       "measurable_signal": "[DRAFT] TWO signals at the impact frame. (1) HEAD ROTATION HELD: head yaw (Nose vector relative to the ear midpoint) maintaining a strict rotational angle back over the shoulder, with the head vector pointing at the wrist midpoint. Any forward yaw back toward the end zone before the wrists close is the PEEKING fault, and it is measured as the frame at which that yaw begins. (2) WRIST CUSHION: wrist angle staying loose, with a small downward give at contact rather than a rigid barrier. NOTE: palm orientation (up to the sky vs forward) is the defining feature here and needs the HAND LANDMARKER; head rotation and sprint continuity are measurable today.",
-      "measurable_by_pose": "Partial",
+      "measurable_by_pose": "Needs Motion",
       "thresholds_status": "Draft",
       "static_or_dynamic": "Dynamic",
       "camera_angle": "Both",
@@ -750,11 +776,13 @@
         "Left Elbow",
         "Right Elbow",
         "Left Shoulder",
-        "Right Shoulder"
+        "Right Shoulder",
+        "Left Palm Normal",
+        "Right Palm Normal"
       ],
       "pose_landmarks_note": null,
-      "judge": false,
-      "proxy_only": true,
+      "judge": true,
+      "proxy_only": false,
       "skip": false
     },
     {
