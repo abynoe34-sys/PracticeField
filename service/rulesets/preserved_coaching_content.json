@@ -1,0 +1,226 @@
+{
+  "_note": "Preserved human-authored coaching content from qb_ruleset.json prior to checkpoints_v2 migration. 22 coaching_cue rows (4 unique cues); 0 correction_strategy. Source of truth for the cue->checkpoints_v2 mapping decision.",
+  "count": 22,
+  "rows": [
+    {
+      "name": "QB - Gun - 3 Step - Ball Carriage",
+      "position": "QB",
+      "variation": "Gun",
+      "technique": "3 Step",
+      "checkpoint": "Ball Carriage",
+      "ideal_execution_standard": "Football remains secure from snap reception through the drop — two-hand control until entering the throwing sequence. Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
+      "coaching_cue": "Two hands on it — relaxed, not loose.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Gun - 3 Step - Foot Placement",
+      "position": "QB",
+      "variation": "Gun",
+      "technique": "3 Step",
+      "checkpoint": "Foot Placement",
+      "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. The designed crossover step is a FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill. Base stays wide enough to hold balance and weight stays centred, not forward on the front foot.",
+      "coaching_cue": "Cut grass with your cleats — feet glide, knees don't cross.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Gun - 3 Step - Step Sequence",
+      "position": "QB",
+      "variation": "Gun",
+      "technique": "3 Step",
+      "checkpoint": "Step Sequence",
+      "ideal_execution_standard": "Complete the three-step shotgun progression with consistent rhythm and spacing — each step maintaining timing with the route concept. The drop contains ONE crossover step on the second step, turning the hips toward the target before the plant.",
+      "coaching_cue": "Cut grass with your cleats — stay low, don't bounce.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Gun - 5 Step - Ball Carriage",
+      "position": "QB",
+      "variation": "Gun",
+      "technique": "5 Step",
+      "checkpoint": "Ball Carriage",
+      "ideal_execution_standard": "Maintain secure two-hand football carriage throughout the longer drop — the ball remains protected until the throwing motion begins. Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
+      "coaching_cue": "Two hands on it — relaxed, not loose.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Gun - 5 Step - Foot Placement",
+      "position": "QB",
+      "variation": "Gun",
+      "technique": "5 Step",
+      "checkpoint": "Foot Placement",
+      "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. The two designed crossover steps are FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill. Base stays wide enough to hold balance and weight stays centred, not forward on the front foot.",
+      "coaching_cue": "Cut grass with your cleats — feet glide, knees don't cross.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Gun - 5 Step - Step Sequence",
+      "position": "QB",
+      "variation": "Gun",
+      "technique": "5 Step",
+      "checkpoint": "Step Sequence",
+      "ideal_execution_standard": "Complete the five-step progression with consistent rhythm, spacing, and body control. The drop contains TWO crossover steps, building the depth intermediate concepts require before finishing on a balanced plant.",
+      "coaching_cue": "Cut grass with your cleats — stay low, don't bounce.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Pistol - 3 Step - Ball Carriage",
+      "position": "QB",
+      "variation": "Pistol",
+      "technique": "3 Step",
+      "checkpoint": "Ball Carriage",
+      "ideal_execution_standard": "Maintain two-hand football security throughout the drop — the ball remains protected and positioned for efficient throwing transition. Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
+      "coaching_cue": "Two hands on it — relaxed, not loose.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Pistol - 3 Step - Foot Placement",
+      "position": "QB",
+      "variation": "Pistol",
+      "technique": "3 Step",
+      "checkpoint": "Foot Placement",
+      "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. The designed crossover step is a FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill. Base stays wide enough to hold balance and weight stays centred, not forward on the front foot.",
+      "coaching_cue": "Cut grass with your cleats — feet glide, knees don't cross.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Pistol - 3 Step - Step Sequence",
+      "position": "QB",
+      "variation": "Pistol",
+      "technique": "3 Step",
+      "checkpoint": "Step Sequence",
+      "ideal_execution_standard": "Complete the three-step progression with consistent rhythm and spacing — maintaining timing while preserving lower-body control. The drop contains ONE crossover step on the second step, turning the hips toward the target before the plant.",
+      "coaching_cue": "Cut grass with your cleats — stay low, don't bounce.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Pistol - 5 Step - Ball Carriage",
+      "position": "QB",
+      "variation": "Pistol",
+      "technique": "5 Step",
+      "checkpoint": "Ball Carriage",
+      "ideal_execution_standard": "Maintain secure two-hand football control throughout the longer drop — the football remains protected until entering the throwing motion. Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
+      "coaching_cue": "Two hands on it — relaxed, not loose.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Pistol - 5 Step - Foot Placement",
+      "position": "QB",
+      "variation": "Pistol",
+      "technique": "5 Step",
+      "checkpoint": "Foot Placement",
+      "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. The two designed crossover steps are FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill. Base stays wide enough to hold balance and weight stays centred, not forward on the front foot.",
+      "coaching_cue": "Cut grass with your cleats — feet glide, knees don't cross.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Pistol - 5 Step - Step Sequence",
+      "position": "QB",
+      "variation": "Pistol",
+      "technique": "5 Step",
+      "checkpoint": "Step Sequence",
+      "ideal_execution_standard": "Complete the five-step progression with consistent rhythm, spacing, and body control — maintaining timing with deeper route concepts. The drop contains TWO crossover steps, building depth before finishing on a balanced plant.",
+      "coaching_cue": "Cut grass with your cleats — stay low, don't bounce.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Under Center - 3 Step - Ball Carriage",
+      "position": "QB",
+      "variation": "Under Center",
+      "technique": "3 Step",
+      "checkpoint": "Ball Carriage",
+      "ideal_execution_standard": "Maintain two-hand football security from the snap through the drop — ball near the chest with elbows controlled and ready to transition into the throwing motion. Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
+      "coaching_cue": "Two hands on it — relaxed, not loose.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Under Center - 3 Step - Foot Placement",
+      "position": "QB",
+      "variation": "Under Center",
+      "technique": "3 Step",
+      "checkpoint": "Foot Placement",
+      "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. The designed crossover step is a FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill. Base stays wide enough to hold balance and weight stays centred, not forward on the front foot.",
+      "coaching_cue": "Cut grass with your cleats — feet glide, knees don't cross.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Under Center - 3 Step - Step Sequence",
+      "position": "QB",
+      "variation": "Under Center",
+      "technique": "3 Step",
+      "checkpoint": "Step Sequence",
+      "ideal_execution_standard": "Complete the correct three-step progression with consistent rhythm — each step building controlled depth while maintaining throwing posture. The drop contains ONE crossover step: the second step crosses to turn the hips toward the target and gain separation, with the third step planting to establish a balanced throwing base.",
+      "coaching_cue": "Cut grass with your cleats — stay low, don't bounce.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Under Center - 5 Step - Ball Carriage",
+      "position": "QB",
+      "variation": "Under Center",
+      "technique": "5 Step",
+      "checkpoint": "Ball Carriage",
+      "ideal_execution_standard": "Maintain two-hand football security from snap reception through the drop — ball tight to the chest with elbows controlled until transitioning into the throwing motion. Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
+      "coaching_cue": "Two hands on it — relaxed, not loose.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Under Center - 5 Step - Foot Placement",
+      "position": "QB",
+      "variation": "Under Center",
+      "technique": "5 Step",
+      "checkpoint": "Foot Placement",
+      "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. The two designed crossover steps are FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill. Base stays wide enough to hold balance and weight stays centred, not forward on the front foot.",
+      "coaching_cue": "Cut grass with your cleats — feet glide, knees don't cross.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Under Center - 5 Step - Step Sequence",
+      "position": "QB",
+      "variation": "Under Center",
+      "technique": "5 Step",
+      "checkpoint": "Step Sequence",
+      "ideal_execution_standard": "Complete the correct five-step progression with consistent rhythm and spacing — each step building controlled depth while maintaining throwing posture. The drop contains TWO crossover steps, which clear the pocket and build the depth the intermediate route concepts need, finishing on a balanced plant.",
+      "coaching_cue": "Cut grass with your cleats — stay low, don't bounce.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Under Center - 7 Step - Ball Carriage",
+      "position": "QB",
+      "variation": "Under Center",
+      "technique": "7 Step",
+      "checkpoint": "Ball Carriage",
+      "ideal_execution_standard": "Maintain secure two-hand football carriage throughout the seven-step drop — ball protected against the body until the throwing phase begins. Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
+      "coaching_cue": "Two hands on it — relaxed, not loose.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Under Center - 7 Step - Foot Placement",
+      "position": "QB",
+      "variation": "Under Center",
+      "technique": "7 Step",
+      "checkpoint": "Foot Placement",
+      "ideal_execution_standard": "Feet glide low to the ground throughout the longer drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. The three designed crossover steps are FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill. Base stays wide enough to hold balance and weight stays centred, not forward on the front foot.",
+      "coaching_cue": "Cut grass with your cleats — feet glide, knees don't cross.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Under Center - 7 Step - Step Sequence",
+      "position": "QB",
+      "variation": "Under Center",
+      "technique": "7 Step",
+      "checkpoint": "Step Sequence",
+      "ideal_execution_standard": "Complete the seven-step progression with consistent rhythm and spacing — creating depth without drifting or losing throwing posture. The drop contains THREE crossover steps, extending the five-step pattern with an additional crossover and plant sequence for deep, long-developing route concepts.",
+      "coaching_cue": "Cut grass with your cleats — stay low, don't bounce.",
+      "correction_strategy": null
+    },
+    {
+      "name": "QB - Under Center - Stance - Foot Alignment",
+      "position": "QB",
+      "variation": "Under Center",
+      "technique": "Stance",
+      "checkpoint": "Foot Alignment",
+      "ideal_execution_standard": "Feet are staggered so the NON-THROWING-side foot sits slightly back — left foot back for a right-handed QB, right foot back for a left-handed QB. The stagger loads the back leg, lets the QB push off efficiently, and starts the drop without a false step forward. Feet stay roughly shoulder-width apart (about armpit width) with knees comfortably flexed and a stable toe-to-heel relationship and toe angle. NOTE: the stagger direction depends on the player's throwing hand — handedness must be supplied by the app before this can be judged; without it, report the observed stagger without scoring it.",
+      "coaching_cue": "Non-throwing foot back — load it, don't false step.",
+      "correction_strategy": null
+    }
+  ]
+}
