@@ -13,9 +13,17 @@ scores, no pass/fail. That is Layer 4, gated on calibration. Every numeric value
 catalogue's `measurable_signal` is a RECOMMENDATION, not a rule, until a row's
 `thresholds_status` is `Calibrated` (no row is, yet).
 
-This is the first component that READS `service/rulesets/qb_ruleset.json`. It resolves the
-derived (non-MediaPipe) landmark tokens via `landmark_derivations.py`, and **fails loudly**
-on any token outside the controlled vocabulary — no silent skipping.
+SOURCE OF TRUTH (2026-09-07): QB is read from the Supabase `checkpoints_v2` table via
+`checkpoints_v2_source` (cleaning + normalisation). WR is still read from the legacy
+`service/rulesets/wr_ruleset.json` because its pose annotation has not been authored into
+checkpoints_v2 yet (Step 4 (d), a DATA prerequisite). Each position has exactly one source.
+It resolves derived (non-MediaPipe) landmark tokens via `landmark_derivations.py`, and
+**fails loudly** on any token outside the controlled vocabulary — no silent skipping.
+
+Per-(position,technique) READINESS GUARD: a checkpoints_v2 technique with any unannotated
+(NULL measurable_by_pose) row is reported as "not yet migrated" in the summary and is NOT
+resolved into a thin checklist. QB resolves Drop-Back / Pocket Movement / Stance / Throwing;
+Exchange and Ball Carry are not-migrated until annotated.
 """
 
 from __future__ import annotations
@@ -30,6 +38,7 @@ _RULESETS = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "rule
 if _RULESETS not in sys.path:
     sys.path.insert(0, _RULESETS)
 import landmark_derivations as ld  # noqa: E402
+import checkpoints_v2_source as cv2  # noqa: E402
 
 # Per-position catalogue files. Each export self-declares its record_count in meta, so we
 # validate against that rather than a hardcoded constant (counts differ per position and
@@ -81,6 +90,8 @@ class ResolvedCheckpoint:
     phase_confidence: float | None = None
     conditional_notes: list[str] = field(default_factory=list)
     requires_hands: bool = False     # any landmark needs the Hand landmarker (2nd detector)
+    formation: str | None = None     # checkpoints_v2 formation (All formations / Gun / Pistol / …)
+    row_id: int | None = None        # checkpoints_v2 row id — stable ordering key when unphased
 
 
 @dataclass
@@ -115,6 +126,38 @@ def load_catalogue(position: str = "QB") -> list[dict]:
             if tok not in ld.CONTROLLED_VOCAB:
                 raise UnknownLandmarkError(f"token '{tok}' on {r.get('name')} not in vocab")
     return recs
+
+
+# ── source selection: checkpoints_v2 (QB) vs legacy JSON (WR, until annotated) ────
+# QB is served from the new source of truth (checkpoints_v2 — substantially annotated,
+# 327/342). WR (and TE/DB/RB) have ZERO pose annotation in checkpoints_v2, so the resolver
+# still reads WR from the legacy JSON until that annotation is authored (Step 4 (d), a DATA
+# prerequisite). Each position has exactly ONE source — no per-technique cross-taxonomy
+# mixing. This is why Step 6 (retire JSON) stays held: WR still depends on it.
+V2_POSITIONS = {"QB"}
+
+
+def _load_records(position: str, prefer_snapshot: bool = False) -> tuple[list[dict], str]:
+    """Return (records, source_tag). checkpoints_v2 records already carry the keys the
+    checkpoint builder reads (normalize_row); legacy JSON records are augmented with the
+    v2-only keys (formation/label/annotated/id) so one builder serves both."""
+    if position in V2_POSITIONS:
+        return cv2.load_normalized(position, prefer_snapshot=prefer_snapshot), "checkpoints_v2"
+    recs = load_catalogue(position)
+    for r in recs:
+        r.setdefault("formation", None)
+        r.setdefault("label", (r.get("name", "").split(" - ")[-1]).strip())
+        r.setdefault("annotated", True)
+        r.setdefault("id", None)
+    return recs, "legacy_json"
+
+
+def _formation_ok(rec_formation: str | None, requested: str | None) -> bool:
+    """Formation matching. 'All formations' rows apply to any requested formation. Records
+    with no formation (legacy JSON) are never filtered out by a formation request."""
+    if requested is None or rec_formation is None:
+        return True
+    return rec_formation == requested or rec_formation == "All formations"
 
 
 # ── landmark resolution ───────────────────────────────────────────────────────────
@@ -190,16 +233,20 @@ def anchor_phase(variation: str, technique: str, measurement: str) -> str:
 
 # ── conditional-note pattern ─────────────────────────────────────────────────────
 def _conditional_notes(technique: str, measurement: str, hand_source: str) -> list[str]:
+    # `measurement` is the synthesized label (phase, or IES leading clause) under the
+    # checkpoints_v2 taxonomy. Keys updated from old vocab (technique "hand off" is now
+    # "Exchange"; there is no "foot alignment" checkpoint label — key on stagger/foot text).
     t, m = technique.lower(), measurement.lower()
     notes: list[str] = []
-    if t == "stance" and "foot alignment" in m and hand_source == "none":
+    if t == "stance" and hand_source == "none" and any(
+            k in m for k in ("foot", "stagger", "non-throwing", "staggered")):
         notes.append(
             "Foot stagger depends on handedness, which isn't known for this rep. The "
             "non-throwing-side foot sits slightly back — if the QB is right-handed the LEFT "
             "foot is back, if left-handed the RIGHT foot is back, so the throwing foot can "
             "load and push off without a false step. Report the observed stagger and let the "
             "player confirm it against their throwing hand; do not assert correct/incorrect.")
-    if t == "hand off" and "footwork" in m:
+    if t == "exchange" and any(k in m for k in ("footwork", "track", "open", "path", "aiming")):
         notes.append(
             "Open angle / track is reported, not judged: the aiming point depends on the "
             "called run concept (dive, trap, power…), which isn't captured. Report the measured "
@@ -226,8 +273,18 @@ def resolve(position: str,
             phases: dict | None = None,
             handedness: str | None = None,
             hands_available: bool | None = None,
-            catalogue: list[dict] | None = None) -> ResolverResult:
-    recs = catalogue if catalogue is not None else load_catalogue(position)
+            formation: str | None = None,
+            catalogue: list[dict] | None = None,
+            source: str | None = None,
+            prefer_snapshot: bool = False) -> ResolverResult:
+    if catalogue is not None:
+        recs, source = catalogue, (source or "checkpoints_v2")
+    else:
+        recs, source = _load_records(position, prefer_snapshot=prefer_snapshot)
+    # Per-(position,technique) readiness guard — only for the checkpoints_v2 source, where a
+    # technique with any NULL-measurable_by_pose row is "not yet migrated" (do not resolve into
+    # a thin checklist). Legacy JSON positions are fully annotated by construction.
+    readiness = cv2.technique_readiness(recs) if source == "checkpoints_v2" else None
     views = {v.lower() for v in available_views} if available_views is not None else None
     hand, hand_source, hand_disagree = _resolve_handedness(handedness, phases)
 
@@ -242,46 +299,68 @@ def resolve(position: str,
             return False
         if technique is not None and r.get("technique") != technique:
             return False
+        if not _formation_ok(r.get("formation"), formation):
+            return False
         return True
 
-    rows = [r for r in recs if match(r)]
+    matched = [r for r in recs if match(r)]
+
+    # Guard: split matched rows into resolvable (ready techniques) and not-migrated.
+    def _ready(tech):
+        if readiness is None:
+            return True
+        return readiness.get((position, tech), {}).get("ready", False)
+
+    not_migrated: dict[str, dict] = {}
+    rows: list[dict] = []
+    for r in matched:
+        tech = r.get("technique")
+        if _ready(tech):
+            rows.append(r)
+        elif tech not in not_migrated:
+            rd = (readiness or {}).get((position, tech), {})
+            not_migrated[tech] = {"technique": tech,
+                                  "annotated": rd.get("annotated"), "total": rd.get("total")}
+
     checkpoints: list[ResolvedCheckpoint] = []
     for r in rows:
-        measurement = (r["name"].split(" - ")[-1]).strip()
+        # checkpoints_v2 has no checkpoint-title field — use the synthesized label (phase, else
+        # IES leading clause). Legacy JSON records were given a `label` in _load_records too.
+        measurement = (r.get("label") or (r.get("name", "").split(" - ")[-1])).strip()
         tier = "judge" if r["judge"] else "proxy_only" if r["proxy_only"] else "skip"
         resolved = [_resolve_token(t, hand) for t in r.get("pose_landmarks", [])]
-        # A catalogue-declared phase (WR's Phase field) is authoritative — the order is
-        # coached and lives in the catalogue. Fall back to the QB anchor heuristic otherwise.
+        # A real catalogue phase is authoritative for ordering + Layer-2 scoping. The QB anchor
+        # heuristic is retained ONLY as an ordering fallback (its buckets are NOT used to gate).
         cat_phase = r.get("phase") or None
         cat_order = r.get("phase_order")
-        ap = cat_phase or anchor_phase(r["variation"], r["technique"], measurement)
+        ap = cat_phase or anchor_phase(r.get("variation") or "", r.get("technique") or "", measurement)
 
         reasons: list[str] = []
         # camera view coverage
-        view_ok, view_note = _view_ok(r["camera_angle"], views)
+        view_ok, view_note = _view_ok(r.get("camera_angle") or "Both", views)
         if not view_ok:
             reasons.append(view_note)
-        # phase coverage (only when Layer 2 context supplied)
+        # Layer-2 phase coverage — gate ONLY on a REAL catalogue phase (cat_phase), never on the
+        # anchor heuristic, so an unphased QB technique (Drop-Back/Stance/Throwing) is never
+        # falsely gated. NOTE: checkpoints_v2's phase vocabulary ("The Five-Point Lock", …) does
+        # not yet map to Layer 2's segmentation names, so in practice this gates nothing for QB
+        # today — a documented follow-up (see summary.phase_scoping).
         phase_conf = None
-        if phases is not None:
-            if ap in present:
-                phase_conf = present[ap].get("confidence")
-                basis = (present[ap].get("basis") or "")
+        if phases is not None and cat_phase is not None:
+            if cat_phase in present:
+                phase_conf = present[cat_phase].get("confidence")
+                basis = (present[cat_phase].get("basis") or "")
                 if "MARGINAL" in basis or (phase_conf is not None and phase_conf < 0.5):
-                    reasons.append(f"phase '{ap}' present but LOW-CONFIDENCE "
+                    reasons.append(f"phase '{cat_phase}' present but LOW-CONFIDENCE "
                                    f"(conf {phase_conf}) — any timing here is uncertain, not firm")
-            elif ap in absent:
-                reasons.append(f"phase '{ap}' not detected in this clip: {absent[ap]}")
+            elif cat_phase in absent:
+                reasons.append(f"phase '{cat_phase}' not detected in this clip: {absent[cat_phase]}")
             else:
-                reasons.append(f"phase '{ap}' not present in the Layer 2 segmentation")
+                reasons.append(f"phase '{cat_phase}' not present in the Layer 2 segmentation")
         # unsided throwing-arm token but no handedness
         if hand is None and any(rr["kind"] == "handedness" for rr in resolved):
             reasons.append("throwing-arm landmark (unsided Elbow/Wrist) unresolved — "
                            "handedness unknown")
-        # Hand-landmarker requirement (2nd detector). A checkpoint using any Hands token
-        # needs Hands to have run. hands_available False → hard-block (not-assessable);
-        # None (unknown) → don't block, but the requirement is still reported so the caller
-        # can decide to run Hands (selective invocation, owner decision 5).
         needs_hands_cp = any(rr.get("requires_hands") for rr in resolved)
         if needs_hands_cp and hands_available is False:
             reasons.append("requires the Hand landmarker, which did not run for this clip")
@@ -293,31 +372,37 @@ def resolve(position: str,
         assessable = len(hard_block) == 0
 
         checkpoints.append(ResolvedCheckpoint(
-            name=r["name"], variation=r["variation"], technique=r["technique"],
+            name=r.get("name") or measurement, variation=r.get("variation") or "",
+            technique=r.get("technique") or "",
             measurement=measurement, tier=tier, tier_guidance=TIER_GUIDANCE[tier],
-            camera_angle=r["camera_angle"], static_or_dynamic=r.get("static_or_dynamic") or "",
-            thresholds_status=r["thresholds_status"], standard=r.get("ideal_execution_standard") or "",
+            camera_angle=r.get("camera_angle") or "Both",
+            static_or_dynamic=r.get("static_or_dynamic") or "",
+            thresholds_status=r.get("thresholds_status") or "", standard=r.get("ideal_execution_standard") or "",
             fault_trigger=r.get("fault_trigger") or "", measurable_signal=r.get("measurable_signal") or "",
             coaching_cue=(r.get("coaching_cue") or None),
             landmarks=list(r.get("pose_landmarks", [])), landmarks_resolved=resolved,
             anchor_phase=ap, phase=cat_phase, phase_order=cat_order,
             assessable=assessable, not_assessable_reasons=reasons, phase_confidence=phase_conf,
-            conditional_notes=_conditional_notes(r["technique"], measurement, hand_source),
-            requires_hands=needs_hands_cp))
+            conditional_notes=_conditional_notes(r.get("technique") or "", measurement, hand_source),
+            requires_hands=needs_hands_cp, formation=r.get("formation"), row_id=r.get("id")))
 
-    # order the checklist in rep sequence: a catalogue-declared phase_order (WR) wins;
-    # otherwise fall back to the QB anchor-phase order. Then by name.
+    # Order in rep sequence: a real phase_order wins; else the row id (stable insertion order —
+    # honest about being arbitrary for unphased techniques, per the Step-4 decision); else the
+    # legacy anchor-phase bucket; then name.
     def _order_key(c):
         if c.phase_order is not None:
-            return (0, c.phase_order, c.name)
+            return (0, c.phase_order, str(c.name))
+        if c.row_id is not None:
+            return (1, c.row_id, str(c.name))
         idx = PHASE_ORDER.index(c.anchor_phase) if c.anchor_phase in PHASE_ORDER else 99
-        return (0, idx, c.name)
+        return (2, idx, str(c.name))
     checkpoints.sort(key=_order_key)
 
     by_tier = {t: sum(1 for c in checkpoints if c.tier == t) for t in ("judge", "proxy_only", "skip")}
     na = [c for c in checkpoints if not c.assessable]
     summary = {
         "total": len(checkpoints),
+        "source": source,
         "by_tier": by_tier,
         "assessable": sum(1 for c in checkpoints if c.assessable),
         "not_assessable": len(na),
@@ -327,16 +412,21 @@ def resolve(position: str,
                                                      for x in c.not_assessable_reasons)),
             "handedness": sum(1 for c in na if any("handedness" in x for x in c.not_assessable_reasons)),
         },
+        # Techniques matching the query that are NOT yet migrated (unannotated in checkpoints_v2)
+        # — surfaced explicitly, never returned as a silently-thin checklist.
+        "not_migrated_techniques": sorted(not_migrated.values(), key=lambda x: x["technique"] or ""),
         "handedness": {"value": hand, "source": hand_source, "disagreement": hand_disagree},
-        # Selective-invocation signal (owner decision 5): whether ANY applicable checkpoint
-        # needs the Hand landmarker, so the pipeline runs Hands only on reps that need it.
         "needs_hands": any(c.requires_hands for c in checkpoints),
         "hands_available": hands_available,
+        # Layer-2 phase scoping is currently applied only on a real catalogue phase; the
+        # checkpoints_v2 phase vocabulary is not yet mapped to Layer 2 (a documented follow-up).
+        "phase_scoping": "catalogue-phase-only (checkpoints_v2 phase↔Layer2 mapping deferred)",
         "contains_verdicts": False,  # invariant: Layer 3 never emits a verdict/score/grade
     }
     query = {"position": position, "variation": variation, "technique": technique,
+             "formation": formation,
              "available_views": sorted(views) if views is not None else None,
-             "phases_provided": phases is not None}
+             "phases_provided": phases is not None, "source": source}
     return ResolverResult(query=query, summary=summary, checkpoints=checkpoints)
 
 
@@ -345,17 +435,20 @@ def _main(argv=None):
     ap = argparse.ArgumentParser(description="Layer 3 — applicable-checks resolver over the catalogue.")
     ap.add_argument("position")
     ap.add_argument("--variation"); ap.add_argument("--technique")
+    ap.add_argument("--formation", help="checkpoints_v2 formation (e.g. Gun / Pistol / Under Center)")
     ap.add_argument("--views", help="comma-separated: side,front")
     ap.add_argument("--handedness", choices=["left", "right"])
     ap.add_argument("--phases", help="a Layer 2 PhaseResult JSON to scope by")
     ap.add_argument("--hands", choices=["available", "unavailable"],
                     help="whether the Hand landmarker ran for this clip (gates hand-dependent checks)")
+    ap.add_argument("--snapshot", action="store_true",
+                    help="prefer the local checkpoints_v2 snapshot over a live DB read")
     args = ap.parse_args(argv)
     phases = json.load(open(args.phases, encoding="utf-8")) if args.phases else None
     views = args.views.split(",") if args.views else None
     hands_avail = {"available": True, "unavailable": False}.get(args.hands)
     res = resolve(args.position, args.variation, args.technique, views, phases, args.handedness,
-                  hands_available=hands_avail)
+                  hands_available=hands_avail, formation=args.formation, prefer_snapshot=args.snapshot)
     print(res.to_json())
 
 

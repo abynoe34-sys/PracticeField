@@ -1,6 +1,8 @@
 # Step 4 — `layer3_resolver` → `checkpoints_v2` rewire: implementation plan
 
-> Status: **plan approved 2026-09-07; part (a) in progress.** Propose-before-code discipline.
+> Status: **parts (a)+(b)+(c) DONE & verified 2026-09-07; (d) out of scope as planned.** QB resolves
+> from checkpoints_v2; the 22 migrated cues verified resolving on their correct checkpoints (24/24 +
+> 28/28 tests). Ready for the single end-of-flow review/merge decision. Step 6 still HELD.
 > Prereq context: the 2026-09-07 source-of-truth migration (see CLAUDE.md changelog + `migration-v22`).
 > Scope guard: Step 6 (retire JSON) stays HELD until (a)+(b) land and are verified.
 
