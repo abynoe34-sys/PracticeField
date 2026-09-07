@@ -1,0 +1,8009 @@
+{
+ "_note": "Real checkpoints_v2 rows (QB + OL_*), ALL rows incl. unannotated (null measurable_by_pose → null pose_landmarks), pulled 2026-09-07. Committed offline fixture for checkpoints_v2_source tests: cleaner (rows with landmarks), no-op (OL clean), readiness guard (needs the null rows to gate faithfully).",
+ "source": "checkpoints_v2 WHERE position=QB OR position LIKE OL_%",
+ "counts": {
+  "QB": 342,
+  "QB_annotated": 327,
+  "OL": 396,
+  "OL_annotated": 59
+ },
+ "rows": [
+  {
+   "id": 1,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 2,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 3,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Left Knee",
+    "Right Knee",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 4,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum"
+   ]
+  },
+  {
+   "id": 5,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Elbow",
+    "Right Elbow"
+   ]
+  },
+  {
+   "id": 6,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Knee",
+    "Right Knee",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 7,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Hip",
+    "Right Hip",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 8,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Knee",
+    "Right Knee",
+    "Left Ankle",
+    "Right Ankle",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 9,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum"
+   ]
+  },
+  {
+   "id": 10,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 11,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 12,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 13,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 14,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 15,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 16,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 17,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 18,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 19,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 20,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 21,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 22,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 23,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 24,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 25,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 26,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 27,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 28,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 29,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 30,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 31,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 32,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 33,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 34,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 35,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 36,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 37,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 38,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 39,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 40,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 41,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 42,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 43,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 44,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 45,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 46,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 47,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 48,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 49,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 50,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 51,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 52,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 53,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 54,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 55,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 56,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 57,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 58,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 59,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 60,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 61,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 62,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 63,
+   "position": "OL_Center",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 1245,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1246,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1247,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1248,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1249,
+   "position": "OL_Center",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 64,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 65,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 66,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 67,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 68,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 69,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 70,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 71,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 72,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 73,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 74,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 75,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 76,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 77,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 78,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 79,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 80,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 81,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 82,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 83,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 84,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 85,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 86,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 87,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 88,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 89,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 90,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 91,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 92,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 93,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 94,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 95,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 96,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 97,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 98,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 99,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 100,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 101,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 102,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 103,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 104,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 105,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 106,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 107,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 108,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 109,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 110,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 111,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 112,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 113,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 114,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 115,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 116,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 117,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 118,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 119,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 120,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 121,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 122,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 123,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 124,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 125,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 126,
+   "position": "OL_Left Guard",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 1250,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1251,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1252,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1253,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1254,
+   "position": "OL_Left Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 127,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 128,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 129,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 130,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 131,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 132,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 133,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 134,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 135,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 136,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 137,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 138,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 139,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 140,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 141,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 142,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 143,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 144,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 145,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 146,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 147,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 148,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 149,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 150,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 151,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 152,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 153,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 154,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 155,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 156,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 157,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 158,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 159,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 160,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 161,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 162,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 163,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 164,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 165,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 166,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 167,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 168,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 169,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 170,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 171,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 172,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 173,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 174,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 175,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 176,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 177,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 178,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 179,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 180,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 181,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 182,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 183,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 184,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 185,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 186,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 187,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 188,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 189,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 190,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 191,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 192,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 193,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 194,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 195,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 196,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 197,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 198,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 199,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 200,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 201,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 202,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 203,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 204,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 205,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 206,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 207,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 208,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 209,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 210,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 211,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 212,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 213,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 214,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 215,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 216,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 217,
+   "position": "OL_Left Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 1260,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1261,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1262,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1263,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1264,
+   "position": "OL_Left Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 550,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 551,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 552,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 553,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 554,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 555,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 556,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 557,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 558,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 559,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 560,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 561,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 562,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 563,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 564,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 565,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 566,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 567,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 568,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 569,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 570,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 571,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 572,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 573,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 574,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 575,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 576,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 577,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 578,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 579,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 580,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 581,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 582,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 583,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 584,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 585,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 586,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 587,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 588,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 589,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 590,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 591,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 592,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 593,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 594,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 595,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 596,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 597,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 598,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 599,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 600,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 601,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 602,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 603,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 604,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 605,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 606,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 607,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 608,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 609,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 610,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 611,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 612,
+   "position": "OL_Right Guard",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 1255,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1256,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1257,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1258,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1259,
+   "position": "OL_Right Guard",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 613,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 614,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 615,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 616,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 617,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 618,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 619,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 620,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 621,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 622,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 623,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 624,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 625,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 626,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 627,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 628,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 629,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 630,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 631,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 632,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 633,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 634,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 635,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 636,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 637,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 638,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 639,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 640,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 641,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 642,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 643,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 644,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 645,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 646,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 647,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 648,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 649,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 650,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 651,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 652,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 653,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 654,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 655,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 656,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 657,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 658,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 659,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 660,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 661,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 662,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 663,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 664,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 665,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 666,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 667,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 668,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 669,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 670,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 671,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 672,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 673,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 674,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 675,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 676,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 677,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 678,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 679,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 680,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 681,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 682,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 683,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 684,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 685,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 686,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 687,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 688,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 689,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 690,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 691,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 692,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 693,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 694,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 695,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 696,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 697,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 698,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 699,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 700,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Ankle",
+    "Right Ankle",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 701,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 702,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 703,
+   "position": "OL_Right Tackle",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 1265,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1266,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1267,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1268,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1269,
+   "position": "OL_Right Tackle",
+   "technique": "Blocking",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 218,
+   "position": "QB",
+   "technique": "Ball Carry",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 219,
+   "position": "QB",
+   "technique": "Ball Carry",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 220,
+   "position": "QB",
+   "technique": "Ball Carry",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 221,
+   "position": "QB",
+   "technique": "Ball Carry",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 222,
+   "position": "QB",
+   "technique": "Ball Carry",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 223,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 224,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 225,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 226,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 227,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 228,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 229,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head stability measurable; gaze deferred.)"
+   ]
+  },
+  {
+   "id": 230,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 231,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel"
+   ]
+  },
+  {
+   "id": 232,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 233,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist"
+   ]
+  },
+  {
+   "id": 234,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 235,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center. (Absolute depth needs a scale reference.)"
+   ]
+  },
+  {
+   "id": 236,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 237,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist"
+   ]
+  },
+  {
+   "id": 238,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 239,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel"
+   ]
+  },
+  {
+   "id": 240,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 241,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 242,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 243,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 244,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 245,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 246,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center. (Absolute depth needs a scale reference.)"
+   ]
+  },
+  {
+   "id": 247,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 248,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 249,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 250,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head stability measurable; gaze/read deferred.)"
+   ]
+  },
+  {
+   "id": 251,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 252,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 253,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 254,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 255,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist"
+   ]
+  },
+  {
+   "id": 256,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel"
+   ]
+  },
+  {
+   "id": 257,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 258,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 259,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 260,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 261,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 262,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head orientation measurable; gaze/reads deferred.)"
+   ]
+  },
+  {
+   "id": 263,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 264,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 265,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 266,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 267,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Pelvis Center",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 268,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 269,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 270,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 271,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 272,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 273,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 274,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 275,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head orientation measurable; gaze deferred.)"
+   ]
+  },
+  {
+   "id": 276,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum"
+   ]
+  },
+  {
+   "id": 277,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 278,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 279,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "No",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 280,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Left Hip",
+    "Right Hip",
+    "Left Foot",
+    "Right Foot"
+   ]
+  },
+  {
+   "id": 281,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 282,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow"
+   ]
+  },
+  {
+   "id": 283,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 284,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Nose",
+    "Left Ear",
+    "Right Ear"
+   ]
+  },
+  {
+   "id": 285,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Elbow",
+    "Right Elbow",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip",
+    "Left Foot",
+    "Right Foot"
+   ]
+  },
+  {
+   "id": 286,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 287,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Nose",
+    "Sternum",
+    "Spine",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 288,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head orientation measurable; gaze deferred.)"
+   ]
+  },
+  {
+   "id": 289,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center. (Absolute depth needs a scale reference.)"
+   ]
+  },
+  {
+   "id": 290,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 291,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index"
+   ]
+  },
+  {
+   "id": 292,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 293,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index"
+   ]
+  },
+  {
+   "id": 294,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 295,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 296,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Thumb",
+    "Right Thumb",
+    "Left Index Finger",
+    "Right Index Finger",
+    "Left Elbow",
+    "Right Elbow. (Thumb/finger points need the Hand landmarker.)"
+   ]
+  },
+  {
+   "id": 297,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 298,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 299,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 300,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 301,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 302,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 303,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head orientation measurable; gaze deferred.)"
+   ]
+  },
+  {
+   "id": 304,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 305,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 306,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 307,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 308,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 309,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel"
+   ]
+  },
+  {
+   "id": 310,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist"
+   ]
+  },
+  {
+   "id": 311,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head orientation measurable; gaze/reads deferred.)"
+   ]
+  },
+  {
+   "id": 312,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 313,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 314,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 315,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 316,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 317,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 318,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 319,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 320,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel"
+   ]
+  },
+  {
+   "id": 321,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 322,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 323,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist"
+   ]
+  },
+  {
+   "id": 324,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 325,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 326,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 327,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 328,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 329,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 330,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 331,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 332,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 333,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel"
+   ]
+  },
+  {
+   "id": 334,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 335,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 336,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist"
+   ]
+  },
+  {
+   "id": 337,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 338,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head orientation measurable; gaze/reads deferred.)"
+   ]
+  },
+  {
+   "id": 339,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 340,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 341,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Pelvis Center",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 342,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 343,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 344,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 345,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 346,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 347,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 348,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 349,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 350,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum"
+   ]
+  },
+  {
+   "id": 351,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Left Hip",
+    "Right Hip",
+    "Left Foot",
+    "Right Foot"
+   ]
+  },
+  {
+   "id": 352,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "No",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 353,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head orientation measurable; gaze deferred.)"
+   ]
+  },
+  {
+   "id": 354,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 355,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 356,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 357,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow"
+   ]
+  },
+  {
+   "id": 358,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Nose",
+    "Left Ear",
+    "Right Ear"
+   ]
+  },
+  {
+   "id": 359,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Elbow",
+    "Right Elbow",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip",
+    "Left Foot",
+    "Right Foot"
+   ]
+  },
+  {
+   "id": 360,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 361,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head orientation measurable; gaze deferred.)"
+   ]
+  },
+  {
+   "id": 362,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center. (Absolute depth needs a scale reference.)"
+   ]
+  },
+  {
+   "id": 363,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 364,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Thumb",
+    "Right Thumb",
+    "Left Index Finger",
+    "Right Index Finger",
+    "Left Elbow",
+    "Right Elbow. (Thumb/finger points need the Hand landmarker.)"
+   ]
+  },
+  {
+   "id": 365,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index"
+   ]
+  },
+  {
+   "id": 366,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 367,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index"
+   ]
+  },
+  {
+   "id": 368,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Nose",
+    "Sternum",
+    "Spine",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 369,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 370,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 371,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 372,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 373,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist",
+    "Ball Position",
+    "Nose",
+    "Left Eye",
+    "Right Eye. (On-schedule-for-route/defense + ball flight deferred.)"
+   ]
+  },
+  {
+   "id": 374,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head orientation measurable; gaze/reads deferred.)"
+   ]
+  },
+  {
+   "id": 375,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck",
+    "Left Hand",
+    "Right Hand",
+    "Ball Position",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip",
+    "Sternum. (Ball Position needs ball tracking; eyes = gaze deferred.)"
+   ]
+  },
+  {
+   "id": 376,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 377,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Thumb",
+    "Right Thumb",
+    "Left Index Finger",
+    "Right Index Finger",
+    "Left Elbow",
+    "Right Elbow",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Left Hip",
+    "Right Hip",
+    "Left Knee",
+    "Right Knee. (Thumb/finger points need the Hand landmarker.)"
+   ]
+  },
+  {
+   "id": 378,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 379,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum"
+   ]
+  },
+  {
+   "id": 380,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center. (Absolute depth needs a scale reference.)"
+   ]
+  },
+  {
+   "id": 381,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 382,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "No",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Ball Position",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip",
+    "Left Knee",
+    "Right Knee",
+    "Left Foot",
+    "Right Foot. (Mesh quality needs the RB + Ball Position.)"
+   ]
+  },
+  {
+   "id": 383,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist"
+   ]
+  },
+  {
+   "id": 384,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 385,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 386,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 387,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip. (Pressure recognition = perception",
+    "deferred; movement response measurable.)"
+   ]
+  },
+  {
+   "id": 388,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head orientation measurable; gaze deferred.)"
+   ]
+  },
+  {
+   "id": 389,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 390,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Nose",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Spine",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 391,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 392,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist"
+   ]
+  },
+  {
+   "id": 393,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 394,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Spine"
+   ]
+  },
+  {
+   "id": 395,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 396,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow"
+   ]
+  },
+  {
+   "id": 397,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Nose",
+    "Spine",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 398,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 399,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 400,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "No",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip. (Decision needs defenders — deferred.)"
+   ]
+  },
+  {
+   "id": 401,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 402,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "No",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye. (Perception/decision — deferred.)"
+   ]
+  },
+  {
+   "id": 403,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Neck. (Head orientation measurable; gaze deferred.)"
+   ]
+  },
+  {
+   "id": 404,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 405,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck",
+    "Left Shoulder",
+    "Right Shoulder. (Pressure = perception/deferred; head orientation measurable",
+    "gaze deferred.)"
+   ]
+  },
+  {
+   "id": 406,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist"
+   ]
+  },
+  {
+   "id": 407,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 408,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 409,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 410,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 411,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Nose",
+    "Sternum",
+    "Spine",
+    "Pelvis Center",
+    "Left Hip",
+    "Right Hip",
+    "Left Foot",
+    "Right Foot"
+   ]
+  },
+  {
+   "id": 412,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Pelvis Center",
+    "Left Hip",
+    "Right Hip",
+    "Left Foot",
+    "Right Foot"
+   ]
+  },
+  {
+   "id": 413,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 414,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head orientation measurable; gaze/scanning deferred.)"
+   ]
+  },
+  {
+   "id": 415,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 416,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 417,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 418,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Nose",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Spine",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 419,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 420,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye. (Head orientation measurable; gaze deferred.)"
+   ]
+  },
+  {
+   "id": 421,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 422,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist"
+   ]
+  },
+  {
+   "id": 423,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 424,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 425,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 426,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 427,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip",
+    "Spine"
+   ]
+  },
+  {
+   "id": 428,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow"
+   ]
+  },
+  {
+   "id": 429,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 430,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 431,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Neck. (Head orientation measurable; gaze deferred.)"
+   ]
+  },
+  {
+   "id": 432,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 433,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Shoulder",
+    "Right Shoulder. (Pressure recognition = perception",
+    "deferred.)"
+   ]
+  },
+  {
+   "id": 434,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 435,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 436,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 437,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Nose",
+    "Left Ear",
+    "Right Ear",
+    "Neck",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 438,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 439,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist",
+    "Left Hand",
+    "Right Hand"
+   ]
+  },
+  {
+   "id": 440,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 441,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum"
+   ]
+  },
+  {
+   "id": 442,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Left Knee",
+    "Right Knee",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Foot",
+    "Right Foot"
+   ]
+  },
+  {
+   "id": 443,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 444,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "No",
+   "pose_landmarks": [
+    "(Not pose-measurable — release point",
+    "hand position on the ball",
+    "and ball trajectory need ball tracking plus target context.)"
+   ]
+  },
+  {
+   "id": 445,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 446,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 447,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Wrist",
+    "Left Hand",
+    "Right Hand",
+    "Left Thumb",
+    "Right Thumb",
+    "Left Index Finger",
+    "Right Index Finger",
+    "Ball Position. (Thumb/finger points need the Hand landmarker; Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 448,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Spine",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 449,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 450,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head orientation measurable; gaze deferred.)"
+   ]
+  },
+  {
+   "id": 451,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist",
+    "Left Hand",
+    "Right Hand",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 452,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Elbow",
+    "Wrist",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip",
+    "Left Foot",
+    "Right Foot"
+   ]
+  },
+  {
+   "id": 453,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 454,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 455,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "No",
+   "pose_landmarks": [
+    "(Not pose-measurable — ball velocity",
+    "trajectory",
+    "and location need ball tracking plus the receiver/defender context.)"
+   ]
+  },
+  {
+   "id": 456,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Spine"
+   ]
+  },
+  {
+   "id": 457,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 458,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "No",
+   "pose_landmarks": [
+    "(Not pose-measurable — release point",
+    "ball trajectory",
+    "and accuracy need ball tracking plus target context.)"
+   ]
+  },
+  {
+   "id": 459,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Spine"
+   ]
+  },
+  {
+   "id": 460,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum"
+   ]
+  },
+  {
+   "id": 461,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist",
+    "Left Hand",
+    "Right Hand"
+   ]
+  },
+  {
+   "id": 462,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Elbow",
+    "Wrist",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 463,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 464,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum"
+   ]
+  },
+  {
+   "id": 465,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Spine",
+    "Sternum",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 466,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 467,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist",
+    "Left Hand",
+    "Right Hand"
+   ]
+  },
+  {
+   "id": 468,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "No",
+   "pose_landmarks": [
+    "(Not pose-measurable — release point and ball path need ball tracking plus throwing-window context.)"
+   ]
+  },
+  {
+   "id": 469,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 470,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Spine",
+    "Sternum",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 471,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist"
+   ]
+  },
+  {
+   "id": 472,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Elbow",
+    "Wrist",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 473,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Hip",
+    "Right Hip",
+    "Spine"
+   ]
+  },
+  {
+   "id": 474,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 475,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum"
+   ]
+  },
+  {
+   "id": 476,
+   "position": "QB",
+   "technique": "Throwing",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Wrist",
+    "Left Hand",
+    "Right Hand",
+    "Left Thumb",
+    "Right Thumb",
+    "Left Index Finger",
+    "Right Index Finger",
+    "Ball Position. (Thumb/finger points need the Hand landmarker; Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 477,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 478,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 479,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 480,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 481,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head stability measurable; gaze/progression deferred.)"
+   ]
+  },
+  {
+   "id": 482,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 483,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel"
+   ]
+  },
+  {
+   "id": 484,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 485,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 486,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 487,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 488,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 489,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist"
+   ]
+  },
+  {
+   "id": 490,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 491,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist"
+   ]
+  },
+  {
+   "id": 492,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel"
+   ]
+  },
+  {
+   "id": 493,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 494,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 495,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 496,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 497,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head stability measurable; gaze/progression deferred.)"
+   ]
+  },
+  {
+   "id": 498,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 499,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 500,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 501,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 502,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 503,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 504,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 505,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head stability measurable; gaze/reads deferred.)"
+   ]
+  },
+  {
+   "id": 506,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 507,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel"
+   ]
+  },
+  {
+   "id": 508,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 509,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee"
+   ]
+  },
+  {
+   "id": 510,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 511,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 512,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 513,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 514,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Elbow",
+    "Wrist"
+   ]
+  },
+  {
+   "id": 515,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 516,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 517,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 518,
+   "position": "QB",
+   "technique": "Drop-Back",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 519,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 520,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 521,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Pelvis Center",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 522,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 523,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 524,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 525,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 526,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Sternum",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 527,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 528,
+   "position": "QB",
+   "technique": "Pocket Movement",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 529,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Ankle",
+    "Right Ankle",
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 530,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Left Hip",
+    "Right Hip",
+    "Left Foot",
+    "Right Foot"
+   ]
+  },
+  {
+   "id": 531,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 532,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow"
+   ]
+  },
+  {
+   "id": 533,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head orientation measurable; gaze deferred.)"
+   ]
+  },
+  {
+   "id": 534,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Sternum"
+   ]
+  },
+  {
+   "id": 535,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Elbow",
+    "Right Elbow",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Left Hip",
+    "Right Hip",
+    "Left Foot",
+    "Right Foot"
+   ]
+  },
+  {
+   "id": 536,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 537,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "No",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Ball Position. (Ball Position needs ball tracking.)"
+   ]
+  },
+  {
+   "id": 538,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Hip",
+    "Right Hip",
+    "Left Shoulder",
+    "Right Shoulder",
+    "Nose",
+    "Left Ear",
+    "Right Ear"
+   ]
+  },
+  {
+   "id": 539,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Needs Motion",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 540,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Elbow",
+    "Right Elbow",
+    "Left Shoulder",
+    "Right Shoulder"
+   ]
+  },
+  {
+   "id": 541,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Nose",
+    "Sternum",
+    "Spine",
+    "Left Hip",
+    "Right Hip"
+   ]
+  },
+  {
+   "id": 542,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index"
+   ]
+  },
+  {
+   "id": 543,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Shoulder",
+    "Right Shoulder",
+    "Sternum",
+    "Spine"
+   ]
+  },
+  {
+   "id": 544,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 545,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Left Hand",
+    "Right Hand",
+    "Left Wrist",
+    "Right Wrist",
+    "Left Thumb",
+    "Right Thumb",
+    "Left Index Finger",
+    "Right Index Finger",
+    "Left Elbow",
+    "Right Elbow. (Thumb/finger points need the Hand landmarker.)"
+   ]
+  },
+  {
+   "id": 546,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot",
+    "Left Heel",
+    "Right Heel",
+    "Left Foot Index",
+    "Right Foot Index"
+   ]
+  },
+  {
+   "id": 547,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Pelvis Center"
+   ]
+  },
+  {
+   "id": 548,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Partial",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye",
+    "Left Ear",
+    "Right Ear",
+    "Neck. (Head orientation measurable; gaze deferred.)"
+   ]
+  },
+  {
+   "id": 549,
+   "position": "QB",
+   "technique": "Stance",
+   "measurable_by_pose": "Yes",
+   "pose_landmarks": [
+    "Left Knee",
+    "Right Knee",
+    "Left Hip",
+    "Right Hip",
+    "Left Ankle",
+    "Right Ankle"
+   ]
+  },
+  {
+   "id": 1233,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1234,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1270,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1271,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1272,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1273,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1274,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1275,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1276,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  },
+  {
+   "id": 1277,
+   "position": "QB",
+   "technique": "Exchange",
+   "measurable_by_pose": null,
+   "pose_landmarks": null
+  }
+ ]
+}
