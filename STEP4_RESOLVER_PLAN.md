@@ -137,3 +137,18 @@ QB matching needs `formation`.
 > content-gap rows excluded AND reported across all 5 positions (total exactly 14). Resolver suite 117/117;
 > cleaning 28/28; QB/WR/TE unchanged. Step 6 still HELD (DB/RB still read JSON). CLAUDE.md updated.
 > Out of scope, untouched: DB/RB, the 14 OL content-gap rows (not authored), the Part-C Catching disposition.
+>
+> **UPDATE 2026-09-09 — RB wired to checkpoints_v2 (all 3 positions); OFFENSE COMPLETE.** Added
+> `RB`/`RB_HB`/`RB_FB` to `V2_POSITIONS`; snapshot → 1488 rows. RB 151/151 annotated (0 null, 0
+> pollution), all fully phased, tiers 84 judge / 67 proxy / 0 skip, vocab 151/151 (0 UnknownLandmarkError).
+> Structure verified: three distinct position values (no umbrella); three-way technique-set independence
+> (RB-only Cuts/Routes; RB_HB-only Exchange + 2-Point Blocking; RB_FB-only 3-Point Blocking, no Exchange);
+> RB_HB First Step is the only RB place formation varies (Gun/Pistol/Under Center). Must-land spot-check:
+> WR-copy fidelity — RB Catching 21/21 + Ball Carry 5/5 + Blocking-Cut 5/5 resolve with landmarks+tier
+> IDENTICAL to WR (no resolver-visible drift); RB_HB Exchange resolves (15) and is absent from RB/RB_FB;
+> RB_FB Blocking/Run - 3 Point + Stance 3-Point resolve, RB_HB has no 3-Point; RB_HB First Step Gun vs
+> Under Center distinct non-overlapping. Resolver suite 150/150; cleaning 28/28; QB/WR/TE/OL unchanged.
+> **All five offensive position groups now resolve from checkpoints_v2 — only DB remains on JSON.**
+> Step 6 (retire JSON) still HELD (DB depends on it). CLAUDE.md updated. Part-C Catching disposition
+> still open — now spans WR + TE + RB Catching/Ball Carry; whenever decided, apply consistently across
+> all three, not piecemeal. Out of scope, untouched: DB annotation/wiring, content authoring, Part-C.

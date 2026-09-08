@@ -458,6 +458,82 @@ def test_ol_exclusion_reported_all_positions():
     check("OL Stance excluded rows total exactly 14 across all positions", total_excluded == 14, f"{total_excluded}")
 
 
+# ── 14. RB resolves from checkpoints_v2 — 3 positions (Step 4 RB wiring, 2026-09-09) ─
+def RB(pos, **kw):
+    kw.setdefault("prefer_snapshot", True)
+    return L3.resolve(pos, **kw)
+
+
+def test_rb_from_checkpoints_v2():
+    for pos, total in (("RB", 86), ("RB_HB", 45), ("RB_FB", 20)):
+        r = RB(pos)
+        check(f"{pos}: source is checkpoints_v2", r.summary["source"] == "checkpoints_v2")
+        check(f"{pos}: resolves all {total} rows", r.summary["total"] == total, f'{r.summary["total"]}')
+        check(f"{pos}: all ready (no not_migrated, no partial exclusions)",
+              not r.summary["not_migrated_techniques"] and not r.summary["partial_exclusions"]
+              and r.summary["excluded_unannotated_total"] == 0)
+        check(f"{pos}: no verdicts, no skip-tier", r.summary["contains_verdicts"] is False and r.summary["by_tier"]["skip"] == 0)
+
+
+def test_rb_wr_copy_fidelity():
+    """Must-land 1: RB's WR-copied rows (Catching, Ball Carry, Blocking-Cut) resolve with landmarks+tier
+    IDENTICAL to WR's originals, aligned positionally within (variation, phase). Grounded 21/21 + 5/5 + 5/5."""
+    for tech in ("Catching", "Ball Carry", "Blocking"):
+        rb = _by_positional_key(RB("RB", technique=tech))
+        wr = _by_positional_key(WR(technique=tech, variation="Execution") if tech == "Blocking" else WR(technique=tech))
+        # Blocking: RB has variation 'Cut'; align RB Cut against WR's Cut rows specifically
+        if tech == "Blocking":
+            rb = _by_positional_key(RB("RB", technique="Blocking", variation="Cut"))
+            wr = _by_positional_key(WR(technique="Blocking", variation="Cut"))
+        shared = set(rb) & set(wr)
+        check(f"RB {tech}: aligns with WR on the copy key (non-empty)", bool(shared),
+              f"rb={len(rb)} wr={len(wr)} shared={len(shared)}")
+        lm = [k for k in shared if rb[k].landmarks != wr[k].landmarks]
+        ti = [k for k in shared if rb[k].tier != wr[k].tier]
+        check(f"RB {tech}: landmarks match WR (no copy drift)", not lm, f"{len(lm)} drifted")
+        check(f"RB {tech}: tier matches WR (no copy drift)", not ti, f"{len(ti)} drifted")
+
+
+def test_rb_hb_only_exchange():
+    """Must-land 2: RB_HB-only technique. Exchange (Handoff/Toss/Option) resolves under RB_HB and is
+    ABSENT under RB and RB_FB (three-way technique-set independence)."""
+    hb = RB("RB_HB", technique="Exchange")
+    check("RB_HB Exchange resolves 15 rows", len(hb.checkpoints) == 15, f"{len(hb.checkpoints)}")
+    check("RB_HB Exchange variations = Handoff/Option/Toss",
+          {c.variation for c in hb.checkpoints} == {"Handoff", "Option", "Toss"}, f'{sorted({c.variation for c in hb.checkpoints})}')
+    check("RB has NO Exchange", len(RB("RB", technique="Exchange").checkpoints) == 0)
+    check("RB_FB has NO Exchange", len(RB("RB_FB", technique="Exchange").checkpoints) == 0)
+
+
+def test_rb_fb_only_technique():
+    """Must-land 3: RB_FB-only structure. Blocking Run - 3 Point + Stance 3-Point resolve under RB_FB;
+    RB_FB has no Exchange, and its 3-Point Blocking split is absent from RB_HB (which is 2-Point)."""
+    b = RB("RB_FB", technique="Blocking", variation="Run - 3 Point")
+    check("RB_FB Blocking/Run - 3 Point resolves", len(b.checkpoints) > 0, f"{len(b.checkpoints)}")
+    check("RB_FB Blocking/Run - 3 Point rows all that variation",
+          all(c.variation == "Run - 3 Point" for c in b.checkpoints))
+    st = RB("RB_FB", technique="Stance", variation="3-Point")
+    check("RB_FB Stance/3-Point resolves", len(st.checkpoints) > 0, f"{len(st.checkpoints)}")
+    check("RB_HB has NO Run - 3 Point (it's 2-Point)",
+          len(RB("RB_HB", technique="Blocking", variation="Run - 3 Point").checkpoints) == 0)
+
+
+def test_rb_hb_formation_specific():
+    """Must-land 4: RB_HB First Step/Starts is the only RB place formation varies (Gun/Pistol/Under
+    Center). Gun vs Under Center return distinct, non-overlapping content."""
+    allfs = RB("RB_HB", technique="First Step")
+    gun = RB("RB_HB", technique="First Step", formation="Gun")
+    uc = RB("RB_HB", technique="First Step", formation="Under Center")
+    check("RB_HB First Step spans Gun/Pistol/Under Center",
+          {c.formation for c in allfs.checkpoints} == {"Gun", "Pistol", "Under Center"},
+          f'{sorted({c.formation for c in allfs.checkpoints})}')
+    check("formation=Gun returns only Gun rows", gun.checkpoints and all(c.formation == "Gun" for c in gun.checkpoints))
+    check("formation=Under Center returns only Under Center rows",
+          uc.checkpoints and all(c.formation == "Under Center" for c in uc.checkpoints))
+    check("Gun and Under Center resolve DISTINCT rows (no overlap)",
+          not ({c.row_id for c in gun.checkpoints} & {c.row_id for c in uc.checkpoints}))
+
+
 def main():
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -474,6 +550,8 @@ def main():
                test_ol_center_stance_partial_exclusion, test_ol_from_checkpoints_v2,
                test_ol_formation_specific_resolution, test_ol_center_guard_blocking_branch,
                test_ol_tackle_2point_branch, test_ol_exclusion_reported_all_positions,
+               test_rb_from_checkpoints_v2, test_rb_wr_copy_fidelity, test_rb_hb_only_exchange,
+               test_rb_fb_only_technique, test_rb_hb_formation_specific,
                test_22_cues_resolve_with_correct_cue):
         fn()
     passed = sum(1 for _, ok, _ in _checks if ok)
