@@ -15,6 +15,20 @@
 > decided here):** whether those 8 rows should get the hand-token treatment CLAUDE.md's Part C
 > describes, or the pose-only Partial annotation stands as the real answer. Step 6 still HELD (the
 > JSON files remain in place, just no longer read by the resolver).
+>
+> **UPDATE 2026-09-08 — TE wired to checkpoints_v2.** TE became fully annotated (308/308, 0 NULL
+> measurable_by_pose, 0 pollution) and was wired by adding `"TE"` to `V2_POSITIONS` (reusing the
+> QB/WR source layer). TE resolves 308 rows (197 judge / 111 proxy / 0 skip), all techniques ready.
+> Wrinkle handled: First Step + Stance are partially phased *at the technique level* but all-or-nothing
+> *per variation* (WR-copied variations unphased→row_id; TE-original 2-Point/3-Point phased→phase_order),
+> so ordering stays clean — covered by a test. ~85% of TE (263/308) is WR-copied ANNOTATION (positional
+> within group; IES reworded receiver→tight end). Must-land spot-check: (1) join-copy fidelity —
+> Catching 21/21 + Split Release 24/24 resolve with landmarks+tier IDENTICAL to WR (no resolver-visible
+> drift); (2) anchor row 1371 (TE's copy of WR's verified 865) resolves at Vertical Escape / po4 /
+> proxy_only, landmarks identical to WR 865, content intact AND correctly TE-worded ('tight end', not
+> 'receiver'); (3) a TE-ORIGINAL technique (First Step / Start - 2 Point, phases 1-5) resolves in order.
+> Resolver suite now 65/65; cleaning suite 28/28; QB + WR unchanged. Step 6 still HELD (DB/RB/OL still
+> read the JSON). CLAUDE.md changelog updated to QB+WR+TE.
 > Prereq context: the 2026-09-07 source-of-truth migration (see CLAUDE.md changelog + `migration-v22`).
 > Scope guard: Step 6 (retire JSON) stays HELD until (a)+(b) land and are verified.
 

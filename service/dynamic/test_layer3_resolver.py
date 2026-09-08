@@ -44,6 +44,11 @@ def WR(**kw):
     return L3.resolve("WR", **kw)
 
 
+def TE(**kw):
+    kw.setdefault("prefer_snapshot", True)
+    return L3.resolve("TE", **kw)
+
+
 # ── 1. no verdicts anywhere (the core invariant) ──────────────────────────────────
 def test_no_verdicts():
     r = QB()
@@ -240,6 +245,97 @@ def test_wr_must_land_catching_tier_is_actual_not_aspirational():
           not hands_used, f"rows unexpectedly needing hands: {hands_used}")
 
 
+# ── 11. TE resolves from checkpoints_v2 (Step 4 TE wiring, 2026-09-08) ─────────────
+def test_te_from_checkpoints_v2():
+    te = TE()
+    check("TE source is checkpoints_v2", te.summary["source"] == "checkpoints_v2", f'{te.summary["source"]}')
+    check("TE resolves all 308 rows", te.summary["total"] == 308, f'{te.summary["total"]}')
+    check("TE: no not-migrated techniques (all annotated)", te.summary["not_migrated_techniques"] == [],
+          f'{te.summary["not_migrated_techniques"]}')
+    check("TE: no verdicts", te.summary["contains_verdicts"] is False)
+    check("TE: no skip-tier rows", te.summary["by_tier"]["skip"] == 0, f'{te.summary["by_tier"]}')
+
+
+def test_te_mixed_phase_per_variation_ordering():
+    """TE's First Step is partially phased at the technique level, but all-or-nothing per
+    variation: Start (WR-copied) is fully unphased -> row_id order; Start - 2 Point (TE-original)
+    is fully phased -> phase_order. Confirm each variation orders correctly, no interleaving."""
+    unph = TE(technique="First Step", variation="Start")
+    check("TE First Step/Start is fully unphased", all(c.phase_order is None for c in unph.checkpoints))
+    ids = [c.row_id for c in unph.checkpoints]
+    check("TE First Step/Start orders by row_id", ids == sorted(ids), f"{ids}")
+    ph = TE(technique="First Step", variation="Start - 2 Point")
+    check("TE First Step/Start - 2 Point is fully phased", all(c.phase_order is not None for c in ph.checkpoints))
+    orders = [c.phase_order for c in ph.checkpoints]
+    check("TE First Step/Start - 2 Point orders by phase_order", orders == sorted(orders), f"{orders}")
+
+
+# ── 12. TE must-land: join-copy fidelity + anchor + a TE-original technique ────────
+def _by_positional_key(res):
+    """Map (variation, phase, rank-within-(variation,phase)-by-row_id) -> checkpoint.
+    Reconstructs the copy's alignment key (annotation was copied positionally within group)."""
+    from collections import defaultdict
+    groups = defaultdict(list)
+    for c in res.checkpoints:
+        groups[(c.variation, c.phase)].append(c)
+    out = {}
+    for (var, ph), cps in groups.items():
+        for rank, c in enumerate(sorted(cps, key=lambda x: (x.row_id if x.row_id is not None else 0))):
+            out[(var, ph, rank)] = c
+    return out
+
+
+def test_te_must_land_join_copy_fidelity():
+    """The join-copy carried WR's ANNOTATION (landmarks + tier), not IES (TE reworded IES to say
+    'tight end'). So fidelity is checked on landmarks+tier, aligned positionally the way the copy
+    worked. Two reused techniques: Catching (1 row per variation/phase) and Split Release (6/phase).
+    Any resolver-visible drift from the copy shows up here."""
+    for tech, var in (("Catching", None), ("Release", "Split Release")):
+        te = _by_positional_key(TE(technique=tech, **({"variation": var} if var else {})))
+        wr = _by_positional_key(WR(technique=tech, **({"variation": var} if var else {})))
+        shared = set(te) & set(wr)
+        check(f"{tech}{'/'+var if var else ''}: TE/WR align on the copy key (non-empty)", bool(shared),
+              f"te={len(te)} wr={len(wr)} shared={len(shared)}")
+        lm_drift = [k for k in shared if te[k].landmarks != wr[k].landmarks]
+        tier_drift = [k for k in shared if te[k].tier != wr[k].tier]
+        check(f"{tech}{'/'+var if var else ''}: landmarks match WR (no copy drift)", not lm_drift,
+              f"{len(lm_drift)} drifted, e.g. {lm_drift[:1]}")
+        check(f"{tech}{'/'+var if var else ''}: tier matches WR (no copy drift)", not tier_drift,
+              f"{len(tier_drift)} drifted, e.g. {tier_drift[:1]}")
+
+
+def test_te_must_land_split_release_anchor():
+    """TE's copy of WR's verified anchor (row 1371 = WR 865's counterpart): Split Release /
+    Vertical Escape / phase_order 4 / proxy_only, landmarks copied faithfully from WR, and the
+    IES is the SAME checkpoint concept but correctly reworded for TE ('tight end', NOT 'receiver')."""
+    sp = TE(technique="Release", variation="Split Release")
+    check("TE Split Release resolves all 24 rows", len(sp.checkpoints) == 24, f"{len(sp.checkpoints)}")
+    a = next((c for c in sp.checkpoints if c.row_id == 1371), None)
+    check("TE anchor row 1371 present", a is not None)
+    if a:
+        check("1371 phase/order = Vertical Escape / 4", a.phase == "The Vertical Escape" and a.phase_order == 4,
+              f"{a.phase}/{a.phase_order}")
+        check("1371 tier is proxy_only (Partial)", a.tier == "proxy_only", a.tier)
+        check("1371 landmarks copied faithfully from WR 865",
+              a.landmarks == ["Nose", "Left Eye", "Right Eye", "Left Ear", "Right Ear", "Neck"], f"{a.landmarks}")
+        s = a.standard.lower()
+        check("1371 content intact (head comes round to track upfield)",
+              "track straight upfield" in s and "re-establishing vision" in s, a.standard[:60])
+        check("1371 is TE-specific ('tight end', NOT 'receiver')",
+              "tight end" in s and "receiver" not in s, a.standard)
+
+
+def test_te_must_land_original_technique():
+    """A TE-ORIGINAL technique (freshly annotated, not copied) resolves in order: First Step /
+    Start - 2 Point, 5 phases in phase_order 1-5."""
+    o = TE(technique="First Step", variation="Start - 2 Point")
+    check("TE-original First Step/Start - 2 Point resolves 5 rows", len(o.checkpoints) == 5, f"{len(o.checkpoints)}")
+    orders = [c.phase_order for c in o.checkpoints]
+    check("TE-original: phase_order is exactly 1..5 in order", orders == [1, 2, 3, 4, 5], f"{orders}")
+    check("TE-original: every row has non-empty standard + a label",
+          all(c.standard and c.measurement for c in o.checkpoints))
+
+
 def main():
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -250,6 +346,9 @@ def main():
                test_skip_rows_resolve_and_ordering,
                test_wr_from_checkpoints_v2, test_wr_phased_ordering, test_wr_unphased_ordering,
                test_wr_must_land_split_release, test_wr_must_land_catching_tier_is_actual_not_aspirational,
+               test_te_from_checkpoints_v2, test_te_mixed_phase_per_variation_ordering,
+               test_te_must_land_join_copy_fidelity, test_te_must_land_split_release_anchor,
+               test_te_must_land_original_technique,
                test_22_cues_resolve_with_correct_cue):
         fn()
     passed = sum(1 for _, ok, _ in _checks if ok)
