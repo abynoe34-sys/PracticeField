@@ -20,10 +20,14 @@ checkpoints_v2 yet (Step 4 (d), a DATA prerequisite). Each position has exactly 
 It resolves derived (non-MediaPipe) landmark tokens via `landmark_derivations.py`, and
 **fails loudly** on any token outside the controlled vocabulary — no silent skipping.
 
-Per-(position,technique) READINESS GUARD: a checkpoints_v2 technique with any unannotated
-(NULL measurable_by_pose) row is reported as "not yet migrated" in the summary and is NOT
-resolved into a thin checklist. QB resolves Drop-Back / Pocket Movement / Stance / Throwing;
-Exchange and Ball Carry are not-migrated until annotated.
+ROW-LEVEL EXCLUSION GUARD (2026-09-08, Option B): individual unannotated rows (NULL
+measurable_by_pose) are excluded from the resolved checklist, rather than gating the whole
+technique. A partially-annotated technique resolves its annotated rows and reports the
+excluded count — never hiding ready content behind a few content-gap rows, but never
+silently returning a partial checklist as if complete. The summary carries
+`not_migrated_techniques` (techniques where EVERY matched row is unannotated → 0 resolve,
+e.g. QB Ball Carry 0/5), `partial_exclusions` (resolved some, excluded some — e.g. QB
+Exchange 36 resolved / 10 excluded), and `excluded_unannotated_total`.
 """
 
 from __future__ import annotations
@@ -283,10 +287,6 @@ def resolve(position: str,
         recs, source = catalogue, (source or "checkpoints_v2")
     else:
         recs, source = _load_records(position, prefer_snapshot=prefer_snapshot)
-    # Per-(position,technique) readiness guard — only for the checkpoints_v2 source, where a
-    # technique with any NULL-measurable_by_pose row is "not yet migrated" (do not resolve into
-    # a thin checklist). Legacy JSON positions are fully annotated by construction.
-    readiness = cv2.technique_readiness(recs) if source == "checkpoints_v2" else None
     views = {v.lower() for v in available_views} if available_views is not None else None
     hand, hand_source, hand_disagree = _resolve_handedness(handedness, phases)
 
@@ -307,22 +307,29 @@ def resolve(position: str,
 
     matched = [r for r in recs if match(r)]
 
-    # Guard: split matched rows into resolvable (ready techniques) and not-migrated.
-    def _ready(tech):
-        if readiness is None:
-            return True
-        return readiness.get((position, tech), {}).get("ready", False)
-
-    not_migrated: dict[str, dict] = {}
+    # ROW-LEVEL exclusion guard (2026-09-08, Option B): exclude individual rows that are not yet
+    # pose-annotated (NULL measurable_by_pose -> normalize_row sets annotated=False), rather than
+    # gating the whole technique. This resolves the annotated rows of a partially-annotated
+    # technique instead of hiding them behind a few content-gap rows — but stays HONEST about
+    # what's missing: every excluded row is counted and reported per technique in the summary, so
+    # an incomplete checklist can never look complete. Legacy JSON rows are annotated=True by
+    # construction, so this is a no-op for them (and for any fully-annotated v2 technique).
     rows: list[dict] = []
+    tech_stats: dict[str, dict] = {}  # technique -> {resolved, excluded}
     for r in matched:
-        tech = r.get("technique")
-        if _ready(tech):
-            rows.append(r)
-        elif tech not in not_migrated:
-            rd = (readiness or {}).get((position, tech), {})
-            not_migrated[tech] = {"technique": tech,
-                                  "annotated": rd.get("annotated"), "total": rd.get("total")}
+        st = tech_stats.setdefault(r.get("technique"), {"resolved": 0, "excluded": 0})
+        if r.get("annotated", True):
+            rows.append(r); st["resolved"] += 1
+        else:
+            st["excluded"] += 1
+    # Techniques with ZERO resolvable rows (every matched row unannotated) -> still "not migrated".
+    not_migrated = [{"technique": t, "resolved": 0, "excluded_unannotated": s["excluded"],
+                     "total": s["resolved"] + s["excluded"]}
+                    for t, s in tech_stats.items() if s["resolved"] == 0 and s["excluded"] > 0]
+    # Techniques that DO resolve but dropped some unannotated rows -> partial, reported explicitly.
+    partial_exclusions = [{"technique": t, "resolved": s["resolved"],
+                           "excluded_unannotated": s["excluded"], "total": s["resolved"] + s["excluded"]}
+                          for t, s in tech_stats.items() if s["resolved"] > 0 and s["excluded"] > 0]
 
     checkpoints: list[ResolvedCheckpoint] = []
     for r in rows:
@@ -414,9 +421,13 @@ def resolve(position: str,
                                                      for x in c.not_assessable_reasons)),
             "handedness": sum(1 for c in na if any("handedness" in x for x in c.not_assessable_reasons)),
         },
-        # Techniques matching the query that are NOT yet migrated (unannotated in checkpoints_v2)
+        # Techniques matching the query with ZERO resolvable rows (every matched row unannotated)
         # — surfaced explicitly, never returned as a silently-thin checklist.
-        "not_migrated_techniques": sorted(not_migrated.values(), key=lambda x: x["technique"] or ""),
+        "not_migrated_techniques": sorted(not_migrated, key=lambda x: x["technique"] or ""),
+        # Techniques that DO resolve but had some unannotated rows excluded — the honesty signal
+        # that a resolved checklist is partial. "N resolved, M not yet annotated", never silent.
+        "partial_exclusions": sorted(partial_exclusions, key=lambda x: x["technique"] or ""),
+        "excluded_unannotated_total": sum(s["excluded"] for s in tech_stats.values()),
         "handedness": {"value": hand, "source": hand_source, "disagreement": hand_disagree},
         "needs_hands": any(c.requires_hands for c in checkpoints),
         "hands_available": hands_available,

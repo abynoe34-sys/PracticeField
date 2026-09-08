@@ -125,19 +125,50 @@ def test_formation_matching():
           all(c.formation not in ("Pistol", "Under Center") for c in gun.checkpoints))
 
 
-# ── 6. not-migrated guard (NULL gates; ready techniques resolve) ──────────────────
-def test_not_migrated_guard():
+# ── 6. ROW-LEVEL exclusion guard (Option B, 2026-09-08) ───────────────────────────
+# DELIBERATELY REWRITTEN from the former test_not_migrated_guard, which asserted the OLD
+# per-technique gating (Exchange fully gated -> 0). Under Option B, unannotated ROWS are
+# excluded individually: a partially-annotated technique resolves its annotated rows and
+# reports the excluded count. This test asserts the NEW contract.
+def test_row_level_exclusion_guard():
+    # QB Exchange (36 annotated / 10 unannotated) now RESOLVES its 36, reported as partial.
     ex = QB(technique="Exchange")
-    check("Exchange (36/46) resolves 0 checkpoints", len(ex.checkpoints) == 0)
-    check("Exchange reported not-migrated with counts",
-          any(t["technique"] == "Exchange" and t["annotated"] == 36 and t["total"] == 46
-              for t in ex.summary["not_migrated_techniques"]))
+    check("QB Exchange resolves its 36 annotated rows (row-level, not gated)", len(ex.checkpoints) == 36,
+          f"{len(ex.checkpoints)}")
+    check("QB Exchange NOT in not_migrated (it partially resolves)",
+          not any(t["technique"] == "Exchange" for t in ex.summary["not_migrated_techniques"]))
+    check("QB Exchange reported as partial: 36 resolved / 10 excluded / 46 total",
+          any(t["technique"] == "Exchange" and t["resolved"] == 36 and t["excluded_unannotated"] == 10
+              and t["total"] == 46 for t in ex.summary["partial_exclusions"]),
+          f'{ex.summary["partial_exclusions"]}')
+    # QB Ball Carry (0 annotated / 5 unannotated) resolves nothing -> still fully not_migrated.
+    bc = QB(technique="Ball Carry")
+    check("QB Ball Carry resolves 0 (all 5 rows unannotated)", len(bc.checkpoints) == 0)
+    check("QB Ball Carry in not_migrated (0 resolved / 5 excluded)",
+          any(t["technique"] == "Ball Carry" and t["resolved"] == 0 and t["excluded_unannotated"] == 5
+              for t in bc.summary["not_migrated_techniques"]), f'{bc.summary["not_migrated_techniques"]}')
+    # position-wide: only Ball Carry fully not-migrated; Exchange is a partial; Exchange rows now appear.
     allq = QB()
     nm = {t["technique"] for t in allq.summary["not_migrated_techniques"]}
-    check("position-only query flags Ball Carry + Exchange not-migrated", nm == {"Ball Carry", "Exchange"}, f"{nm}")
-    ready_techs = {c.technique for c in allq.checkpoints}
-    check("only ready techniques appear in checkpoints",
-          ready_techs == {"Drop-Back", "Pocket Movement", "Stance", "Throwing"}, f"{ready_techs}")
+    check("QB position-only: only Ball Carry fully not-migrated", nm == {"Ball Carry"}, f"{nm}")
+    pe = {t["technique"] for t in allq.summary["partial_exclusions"]}
+    check("QB position-only: Exchange reported as a partial exclusion", pe == {"Exchange"}, f"{pe}")
+    techs = {c.technique for c in allq.checkpoints}
+    check("QB resolved techniques now include Exchange's annotated rows",
+          techs == {"Drop-Back", "Pocket Movement", "Stance", "Throwing", "Exchange"}, f"{techs}")
+    check("QB excluded_unannotated_total = 15 (Exchange 10 + Ball Carry 5)",
+          allq.summary["excluded_unannotated_total"] == 15, f'{allq.summary["excluded_unannotated_total"]}')
+
+
+def test_wr_te_exclusion_is_noop():
+    """Option B must be a TRUE no-op for WR and TE (zero null rows): no exclusions, nothing
+    dropped, totals unchanged from before the guard change (WR 291, TE 308)."""
+    for pos, total in (("WR", 291), ("TE", 308)):
+        r = L3.resolve(pos, prefer_snapshot=True)
+        check(f"{pos}: total unchanged ({total})", r.summary["total"] == total, f'{r.summary["total"]}')
+        check(f"{pos}: zero excluded (no-op)", r.summary["excluded_unannotated_total"] == 0)
+        check(f"{pos}: no not_migrated, no partial_exclusions",
+              r.summary["not_migrated_techniques"] == [] and r.summary["partial_exclusions"] == [])
 
 
 # ── 7. 'No' (skip) rows still resolve; ordering is stable ─────────────────────────
@@ -342,8 +373,8 @@ def main():
     except Exception:
         pass
     for fn in (test_no_verdicts, test_fail_loud_unknown_token, test_camera_view_gating,
-               test_handedness_and_derived_tokens, test_formation_matching, test_not_migrated_guard,
-               test_skip_rows_resolve_and_ordering,
+               test_handedness_and_derived_tokens, test_formation_matching, test_row_level_exclusion_guard,
+               test_wr_te_exclusion_is_noop, test_skip_rows_resolve_and_ordering,
                test_wr_from_checkpoints_v2, test_wr_phased_ordering, test_wr_unphased_ordering,
                test_wr_must_land_split_release, test_wr_must_land_catching_tier_is_actual_not_aspirational,
                test_te_from_checkpoints_v2, test_te_mixed_phase_per_variation_ordering,
