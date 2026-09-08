@@ -152,3 +152,22 @@ QB matching needs `formation`.
 > Step 6 (retire JSON) still HELD (DB depends on it). CLAUDE.md updated. Part-C Catching disposition
 > still open — now spans WR + TE + RB Catching/Ball Carry; whenever decided, apply consistently across
 > all three, not piecemeal. Out of scope, untouched: DB annotation/wiring, content authoring, Part-C.
+>
+> **UPDATE 2026-09-09 — DB wired to checkpoints_v2 (all 4 positions); ENTIRE CATALOGUE COMPLETE.**
+> Added `DB_Corner`/`DB_Nickel`/`DB_Safety_Free`/`DB_Safety_Strong` to `V2_POSITIONS`; snapshot → 1638
+> (the whole table). DB 150/150 annotated, 0 pollution, all fully phased, tiers 112 judge / 38 proxy /
+> 0 skip, vocab 150/150 (0 UnknownLandmarkError), 0 cross-position IES overlap, no Catching (Part-C N/A).
+> **New shared-code change (Option A, owner-decided):** DB's coverage-agnostic marker is `All Coverages`,
+> not `All formations`. `_formation_ok` now uses `WILDCARD_FORMATIONS = {"All formations","All Coverages"}`
+> so DB's coverage-agnostic Stance/Backpedal rows resolve INTO a specific-coverage query (a DB in Zone 2
+> still has a stance / may backpedal) — the same overlay role `All formations` plays for offence.
+> Position-safe (disjoint vocabularies); a regression test confirms QB Gun is unaffected. Must-land
+> spot-check: Zone 2 vs Zone 3 distinct/non-overlapping; `All Coverages` rows ARE included in Zone 2 +
+> Man queries and Stance appears in a position-level Zone 2 query (the assertion that locks Option A);
+> Backpedal present only in Corner + Safety_Free; all 4 positions resolve independently. Resolver suite
+> 178/178; cleaning 28/28; QB/WR/TE/OL/RB unchanged.
+> **This completes the resolver rewire: all 9 position groups resolve from checkpoints_v2. The legacy
+> JSON path (`load_catalogue`) is now unreachable for any real position.** Step 6 (retire the JSON) is
+> now a LIVE decision — mechanically safe; do it as its own commit (make the unknown-position fallback
+> an explicit error; decide on keeping the raw Airtable pulls) after this branch is merged-worthy.
+> Part-C Catching disposition still open (WR + TE + RB); N/A to DB. Out of scope, untouched: Step 6 exec.

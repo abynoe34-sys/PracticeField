@@ -534,6 +534,71 @@ def test_rb_hb_formation_specific():
           not ({c.row_id for c in gun.checkpoints} & {c.row_id for c in uc.checkpoints}))
 
 
+# ── 15. DB resolves from checkpoints_v2 — 4 positions (Step 4 DB wiring, 2026-09-09) ─
+def DB(pos, **kw):
+    kw.setdefault("prefer_snapshot", True)
+    return L3.resolve(pos, **kw)
+
+
+def test_db_from_checkpoints_v2():
+    for pos, total in (("DB_Corner", 70), ("DB_Nickel", 25), ("DB_Safety_Free", 30), ("DB_Safety_Strong", 25)):
+        r = DB(pos)
+        check(f"{pos}: source is checkpoints_v2", r.summary["source"] == "checkpoints_v2")
+        check(f"{pos}: resolves all {total} rows", r.summary["total"] == total, f'{r.summary["total"]}')
+        check(f"{pos}: all ready (no not_migrated/partial)",
+              not r.summary["not_migrated_techniques"] and not r.summary["partial_exclusions"]
+              and r.summary["excluded_unannotated_total"] == 0)
+        check(f"{pos}: no verdicts, no skip-tier", r.summary["contains_verdicts"] is False and r.summary["by_tier"]["skip"] == 0)
+        check(f"{pos}: techniques are First Step + Stance only (no Catching)",
+              {c.technique for c in r.checkpoints} == {"First Step", "Stance"}, f'{sorted({c.technique for c in r.checkpoints})}')
+
+
+def test_db_zone_depth_distinct():
+    """DB's genuinely-new formation vocab: Zone depth is baked into `formation` (Zone 1/2/3).
+    A specific-zone query returns only that zone; Zone 2 and Zone 3 are non-overlapping."""
+    z2 = DB("DB_Corner", technique="First Step", formation="Zone 2")
+    z3 = DB("DB_Corner", technique="First Step", formation="Zone 3")
+    check("Zone 2 returns Zone 2 rows (+ wildcard), no Zone 1/3",
+          all(c.formation in ("Zone 2", "All Coverages") for c in z2.checkpoints)
+          and not any(c.formation in ("Zone 1", "Zone 3") for c in z2.checkpoints))
+    check("Zone 2 and Zone 3 zone-specific rows are non-overlapping",
+          not ({c.row_id for c in z2.checkpoints if c.formation == "Zone 2"} &
+               {c.row_id for c in z3.checkpoints if c.formation == "Zone 3"}))
+
+
+def test_db_all_coverages_is_wildcard():
+    """LOCKS OPTION A (2026-09-09 decision): 'All Coverages' rows are coverage-agnostic and MUST appear
+    in a specific-coverage query — a DB in Zone 2/Man still has a stance and may backpedal. If someone
+    reverts _formation_ok to exclude them (the pre-decision behavior), this fails loud."""
+    bp_ids = {c.row_id for c in DB("DB_Corner", technique="First Step").checkpoints if c.variation == "Backpedal"}
+    check("DB_Corner has Backpedal (All Coverages) rows", len(bp_ids) == 5, f"{sorted(bp_ids)}")
+    z2 = {c.row_id for c in DB("DB_Corner", technique="First Step", formation="Zone 2").checkpoints}
+    man = {c.row_id for c in DB("DB_Corner", technique="First Step", formation="Man").checkpoints}
+    check("Backpedal (All Coverages) rows ARE included in a Zone 2 query", bp_ids <= z2, f"missing: {bp_ids - z2}")
+    check("Backpedal (All Coverages) rows ARE included in a Man query", bp_ids <= man, f"missing: {bp_ids - man}")
+    # coverage-agnostic Stance (all All Coverages) appears in a position+coverage query
+    pos_z2 = DB("DB_Corner", formation="Zone 2")
+    check("coverage-agnostic Stance appears in a position-level Zone 2 query",
+          "Stance" in {c.technique for c in pos_z2.checkpoints}, f'{sorted({c.technique for c in pos_z2.checkpoints})}')
+
+
+def test_db_backpedal_position_independence():
+    """Four-way technique/variation-set independence: Backpedal exists only in Corner + Safety_Free."""
+    have = {p: any(c.variation == "Backpedal" for c in DB(p, technique="First Step").checkpoints)
+            for p in ("DB_Corner", "DB_Nickel", "DB_Safety_Free", "DB_Safety_Strong")}
+    check("Backpedal present in Corner + Safety_Free only",
+          have == {"DB_Corner": True, "DB_Nickel": False, "DB_Safety_Free": True, "DB_Safety_Strong": False}, f"{have}")
+
+
+def test_offense_wildcard_unaffected_by_all_coverages_change():
+    """Regression guard: adding 'All Coverages' to the wildcard set must not change offense — a QB Gun
+    query still includes 'All formations' rows, and no offense row is 'All Coverages'."""
+    gun = QB(variation="5 Step", technique="Drop-Back", formation="Gun")
+    check("QB Gun still returns Gun + All-formations only (wildcard intact)",
+          gun.checkpoints and all(c.formation in ("Gun", "All formations") for c in gun.checkpoints),
+          f'{sorted({c.formation for c in gun.checkpoints})}')
+
+
 def main():
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -552,6 +617,8 @@ def main():
                test_ol_tackle_2point_branch, test_ol_exclusion_reported_all_positions,
                test_rb_from_checkpoints_v2, test_rb_wr_copy_fidelity, test_rb_hb_only_exchange,
                test_rb_fb_only_technique, test_rb_hb_formation_specific,
+               test_db_from_checkpoints_v2, test_db_zone_depth_distinct, test_db_all_coverages_is_wildcard,
+               test_db_backpedal_position_independence, test_offense_wildcard_unaffected_by_all_coverages_change,
                test_22_cues_resolve_with_correct_cue):
         fn()
     passed = sum(1 for _, ok, _ in _checks if ok)

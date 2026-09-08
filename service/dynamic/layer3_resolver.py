@@ -133,17 +133,17 @@ def load_catalogue(position: str = "QB") -> list[dict]:
 
 
 # ── source selection: checkpoints_v2 vs legacy JSON ──────────────────────────────
-# QB (2026-09-07), WR, TE, the five OL positions (all 2026-09-08) and the three RB positions
-# (2026-09-09) are served from the new source of truth (checkpoints_v2) — all pose-annotated
-# (QB 327; WR 291; TE 308; OL 382 of 396 with 14 NULL rows excluded row-level; RB/RB_HB/RB_FB
-# 151/151). Only DB still has ZERO annotation in checkpoints_v2, so it falls through to the
-# legacy JSON until authored (a DATA prerequisite). OL (5) and RB (3) are each distinct position
-# values (not one umbrella) — the resolver matches on the exact position string.
-# NOTE: wiring a position here means the resolver no longer reads its *_ruleset.json, but the
-# JSON files remain in place — retiring them (Step 6) is a separate, still-held decision.
+# EVERY position group now resolves from the new source of truth (checkpoints_v2) as of
+# 2026-09-09: QB (09-07); WR/TE/OL×5 (09-08); RB×3 (09-09); DB×4 (09-09). All pose-annotated
+# (QB 327; WR 291; TE 308; OL 382 of 396 with 14 NULL rows excluded row-level; RB 151; DB 150).
+# OL (5), RB (3) and DB (4) are each distinct position values (not one umbrella) — the resolver
+# matches on the exact position string.
+# NOTE: the legacy JSON path (load_catalogue) is now unreachable for any real position — every
+# one is in V2_POSITIONS. Retiring the JSON entirely (Step 6) is a separate, still-held decision.
 V2_POSITIONS = {"QB", "WR", "TE",
                 "OL_Center", "OL_Left Guard", "OL_Right Guard", "OL_Left Tackle", "OL_Right Tackle",
-                "RB", "RB_HB", "RB_FB"}
+                "RB", "RB_HB", "RB_FB",
+                "DB_Corner", "DB_Nickel", "DB_Safety_Free", "DB_Safety_Strong"}
 
 
 def _load_records(position: str, prefer_snapshot: bool = False) -> tuple[list[dict], str]:
@@ -161,12 +161,20 @@ def _load_records(position: str, prefer_snapshot: bool = False) -> tuple[list[di
     return recs, "legacy_json"
 
 
+# The formation-agnostic ("applies to any formation/coverage") markers. Per-vocabulary but
+# position-safe: no offence row uses "All Coverages", no DB row uses "All formations". A row
+# carrying either is a wildcard that resolves into ANY specific-formation query (2026-09-09:
+# added "All Coverages" for DB so its coverage-agnostic Stance/Backpedal rows are not dropped
+# from a Zone/Man query — the same overlay role "All formations" plays for offence).
+WILDCARD_FORMATIONS = frozenset({"All formations", "All Coverages"})
+
+
 def _formation_ok(rec_formation: str | None, requested: str | None) -> bool:
-    """Formation matching. 'All formations' rows apply to any requested formation. Records
-    with no formation (legacy JSON) are never filtered out by a formation request."""
+    """Formation matching. A wildcard-formation row (WILDCARD_FORMATIONS) applies to any requested
+    formation. Records with no formation (legacy JSON) are never filtered out by a formation request."""
     if requested is None or rec_formation is None:
         return True
-    return rec_formation == requested or rec_formation == "All formations"
+    return rec_formation == requested or rec_formation in WILDCARD_FORMATIONS
 
 
 # ── landmark resolution ───────────────────────────────────────────────────────────
