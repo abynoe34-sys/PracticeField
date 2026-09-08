@@ -128,13 +128,15 @@ def load_catalogue(position: str = "QB") -> list[dict]:
     return recs
 
 
-# ── source selection: checkpoints_v2 (QB) vs legacy JSON (WR, until annotated) ────
-# QB is served from the new source of truth (checkpoints_v2 — substantially annotated,
-# 327/342). WR (and TE/DB/RB) have ZERO pose annotation in checkpoints_v2, so the resolver
-# still reads WR from the legacy JSON until that annotation is authored (Step 4 (d), a DATA
-# prerequisite). Each position has exactly ONE source — no per-technique cross-taxonomy
-# mixing. This is why Step 6 (retire JSON) stays held: WR still depends on it.
-V2_POSITIONS = {"QB"}
+# ── source selection: checkpoints_v2 vs legacy JSON ──────────────────────────────
+# QB (2026-09-07) and WR (2026-09-08) are served from the new source of truth
+# (checkpoints_v2) — both fully pose-annotated (QB 327/342 ready techniques; WR 291/291,
+# zero NULL measurable_by_pose). TE/DB/RB have ZERO pose annotation in checkpoints_v2, so
+# they still fall through to the legacy JSON until authored (a DATA prerequisite). Each
+# position has exactly ONE source — no per-technique cross-taxonomy mixing.
+# NOTE: wiring WR here means the resolver no longer reads wr_ruleset.json, but the JSON
+# files remain in place — retiring them (Step 6) is a separate, still-held decision.
+V2_POSITIONS = {"QB", "WR"}
 
 
 def _load_records(position: str, prefer_snapshot: bool = False) -> tuple[list[dict], str]:

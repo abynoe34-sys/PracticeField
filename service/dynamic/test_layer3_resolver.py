@@ -39,6 +39,11 @@ def QB(**kw):
     return L3.resolve("QB", **kw)
 
 
+def WR(**kw):
+    kw.setdefault("prefer_snapshot", True)
+    return L3.resolve("WR", **kw)
+
+
 # ── 1. no verdicts anywhere (the core invariant) ──────────────────────────────────
 def test_no_verdicts():
     r = QB()
@@ -141,11 +146,40 @@ def test_skip_rows_resolve_and_ordering():
     check("unphased Drop-Back checkpoints are ordered by row_id", ids == sorted(ids), "not sorted")
 
 
-# ── 8. WR still resolves from the legacy JSON (no regression) ─────────────────────
-def test_wr_legacy_json():
-    wr = L3.resolve("WR")
-    check("WR source is legacy_json", wr.summary["source"] == "legacy_json")
-    check("WR resolves its full catalogue (281)", wr.summary["total"] == 281, f'{wr.summary["total"]}')
+# ── 8. WR now resolves from checkpoints_v2 (Step 4 WR wiring, 2026-09-08) ──────────
+def test_wr_from_checkpoints_v2():
+    wr = WR()
+    check("WR source is checkpoints_v2 (no longer legacy_json)", wr.summary["source"] == "checkpoints_v2",
+          f'{wr.summary["source"]}')
+    check("WR resolves all 291 rows", wr.summary["total"] == 291, f'{wr.summary["total"]}')
+    check("WR: no not-migrated techniques (all annotated, 0 NULL mbp)",
+          wr.summary["not_migrated_techniques"] == [], f'{wr.summary["not_migrated_techniques"]}')
+    check("WR: no verdicts", wr.summary["contains_verdicts"] is False)
+    check("WR: no skip-tier rows (WR has no 'No' rows)", wr.summary["by_tier"]["skip"] == 0,
+          f'{wr.summary["by_tier"]}')
+
+
+def test_wr_phased_ordering():
+    """A phased Release variation resolves in phase_order sequence (Split Release, clean 4 phases)."""
+    sp = WR(technique="Release", variation="Split Release")
+    orders = [c.phase_order for c in sp.checkpoints]
+    check("WR Split Release: every checkpoint has a phase_order", all(o is not None for o in orders))
+    check("WR Split Release: checklist is ordered by phase_order", orders == sorted(orders), f"{orders}")
+    # phases appear in their coached sequence
+    seq = []
+    for c in sp.checkpoints:
+        if not seq or seq[-1] != c.phase:
+            seq.append(c.phase)
+    check("WR Split Release: phase sequence Split->Hesitation->Plant&Drive->Vertical Escape",
+          seq == ["The Split", "The Hesitation", "The Plant & Drive", "The Vertical Escape"], f"{seq}")
+
+
+def test_wr_unphased_ordering():
+    """An unphased WR technique (Stance) falls back to row_id ordering (no phase_order)."""
+    st = WR(technique="Stance")
+    check("WR Stance: all unphased (phase_order is None)", all(c.phase_order is None for c in st.checkpoints))
+    ids = [c.row_id for c in st.checkpoints]
+    check("WR Stance: ordered by row_id when unphased", ids == sorted(ids), f"{ids}")
 
 
 # ── 9. THE verification: all 22 migrated cues resolve on the CORRECT checkpoint ────
@@ -165,6 +199,47 @@ def test_22_cues_resolve_with_correct_cue():
     check("resolved cue count is exactly 22", len(resolved) == 22, f"{len(resolved)}")
 
 
+# ── 10. WR must-land spot-check (the WR equivalent of the 22-cue check) ────────────
+def test_wr_must_land_split_release():
+    """Split Release (the cleanest 4-phase Release variation) must resolve intact, in order,
+    with the anchor row we independently verified during the clustering review (id 862)."""
+    sp = WR(technique="Release", variation="Split Release")
+    check("WR Split Release resolves all 24 rows", len(sp.checkpoints) == 24, f"{len(sp.checkpoints)}")
+    from collections import Counter
+    per_phase = Counter(c.phase for c in sp.checkpoints)
+    check("WR Split Release: 4 phases x 6 checkpoints each",
+          set(per_phase.values()) == {6} and len(per_phase) == 4, f"{dict(per_phase)}")
+    # Anchor = id 865, the exact row independently verified during the clustering review
+    # ("The head comes round to track straight upfield…"). (862 is a DIFFERENT checkpoint in
+    # the same Vertical Escape phase — the hips-rotate-downfield one; don't confuse them.)
+    anchor = next((c for c in sp.checkpoints if c.row_id == 865), None)
+    check("WR Split Release: anchor row 865 present", anchor is not None)
+    if anchor:
+        check("row 865 is Vertical Escape phase", anchor.phase == "The Vertical Escape", f"{anchor.phase}")
+        check("row 865 content intact (head comes round to track upfield)",
+              "track straight upfield" in anchor.standard.lower()
+              or "re-establishing vision" in anchor.standard.lower(), anchor.standard[:60])
+
+
+def test_wr_must_land_catching_tier_is_actual_not_aspirational():
+    """The 8 CLAUDE.md-'Part C' retiering rows resolve at their ACTUAL tier (proxy_only /
+    Partial), NOT the aspirational judge/Needs Motion. This is a deliberate tripwire: it
+    fails loud if those rows are ever flipped toward the stale aspiration WITHOUT the
+    hand-token work that flip actually requires (a named, separate follow-up)."""
+    cat = WR(technique="Catching")
+    by_id = {c.row_id: c for c in cat.checkpoints}
+    target_ids = [709, 712, 715, 718, 721, 724, 727, 728]  # 7 Extend&Bait + OtS/The Strike
+    missing = [i for i in target_ids if i not in by_id]
+    check("all 8 retiered Catching rows resolve", not missing, f"missing: {missing}")
+    not_proxy = [(i, by_id[i].tier) for i in target_ids if i in by_id and by_id[i].tier != "proxy_only"]
+    check("8 retiered Catching rows are proxy_only (actual), NOT judge/Needs Motion",
+          not not_proxy, f"unexpected tiers: {not_proxy}")
+    # none of them use a Hand-landmarker token yet (the flip's justification is absent)
+    hands_used = [i for i in target_ids if i in by_id and by_id[i].requires_hands]
+    check("8 retiered Catching rows are hands-free (flip's justification not present)",
+          not hands_used, f"rows unexpectedly needing hands: {hands_used}")
+
+
 def main():
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -172,7 +247,9 @@ def main():
         pass
     for fn in (test_no_verdicts, test_fail_loud_unknown_token, test_camera_view_gating,
                test_handedness_and_derived_tokens, test_formation_matching, test_not_migrated_guard,
-               test_skip_rows_resolve_and_ordering, test_wr_legacy_json,
+               test_skip_rows_resolve_and_ordering,
+               test_wr_from_checkpoints_v2, test_wr_phased_ordering, test_wr_unphased_ordering,
+               test_wr_must_land_split_release, test_wr_must_land_catching_tier_is_actual_not_aspirational,
                test_22_cues_resolve_with_correct_cue):
         fn()
     passed = sum(1 for _, ok, _ in _checks if ok)

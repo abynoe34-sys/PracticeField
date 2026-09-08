@@ -3,6 +3,18 @@
 > Status: **parts (a)+(b)+(c) DONE & verified 2026-09-07; (d) out of scope as planned.** QB resolves
 > from checkpoints_v2; the 22 migrated cues verified resolving on their correct checkpoints (24/24 +
 > 28/28 tests). Ready for the single end-of-flow review/merge decision. Step 6 still HELD.
+>
+> **UPDATE 2026-09-08 — WR wired to checkpoints_v2.** WR became fully annotated (291/291, 0 NULL
+> measurable_by_pose, 0 pollution) and was wired in by adding `"WR"` to `V2_POSITIONS` (reusing the
+> QB source layer, no duplication). WR resolves 291 rows (181 judge / 110 proxy / 0 skip), all
+> techniques ready, phased techniques ordered by phase_order and unphased (First Step / First 5 Yards
+> / Stance) by row_id. Resolver suite now 40/40; cleaning suite 28/28; QB unchanged. Must-land
+> spot-check: Split Release (24 rows, 4 phases in order, anchor row 865) + the 8 CLAUDE.md-"Part C"
+> retiered Catching rows asserted at their ACTUAL tier (proxy_only, NOT judge) and hands-free — a
+> tripwire against a silent flip toward the stale aspiration. **Separate, still-open follow-up (NOT
+> decided here):** whether those 8 rows should get the hand-token treatment CLAUDE.md's Part C
+> describes, or the pose-only Partial annotation stands as the real answer. Step 6 still HELD (the
+> JSON files remain in place, just no longer read by the resolver).
 > Prereq context: the 2026-09-07 source-of-truth migration (see CLAUDE.md changelog + `migration-v22`).
 > Scope guard: Step 6 (retire JSON) stays HELD until (a)+(b) land and are verified.
 
