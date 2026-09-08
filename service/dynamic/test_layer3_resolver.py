@@ -367,6 +367,97 @@ def test_te_must_land_original_technique():
           all(c.standard and c.measurement for c in o.checkpoints))
 
 
+# ── 13. OL resolves from checkpoints_v2 — 5 positions (Step 4 OL wiring, 2026-09-08) ─
+def OL(pos, **kw):
+    kw.setdefault("prefer_snapshot", True)
+    return L3.resolve(pos, **kw)
+
+
+_OL_POSITIONS = ["OL_Center", "OL_Left Guard", "OL_Right Guard", "OL_Left Tackle", "OL_Right Tackle"]
+
+
+def test_ol_center_stance_partial_exclusion():
+    """THE scenario the row-level guard was built for, verified literally first: OL_Center Stance
+    has 16 annotated + 2 unannotated content-gap rows (ids 13, 18). It must resolve the 16 and
+    report the 2 as a PARTIAL exclusion — NOT gate the whole technique, NOT silently drop them."""
+    st = OL("OL_Center", technique="Stance")
+    check("OL_Center Stance resolves its 16 annotated rows", len(st.checkpoints) == 16, f"{len(st.checkpoints)}")
+    check("OL_Center Stance NOT in not_migrated (it partially resolves)",
+          not any(t["technique"] == "Stance" for t in st.summary["not_migrated_techniques"]))
+    check("OL_Center Stance reported partial: 16 resolved / 2 excluded / 18 total",
+          any(t["technique"] == "Stance" and t["resolved"] == 16 and t["excluded_unannotated"] == 2
+              and t["total"] == 18 for t in st.summary["partial_exclusions"]),
+          f'{st.summary["partial_exclusions"]}')
+    resolved_ids = {c.row_id for c in st.checkpoints}
+    check("OL_Center Stance content-gap ids 13 & 18 are NOT resolved", not ({13, 18} & resolved_ids),
+          f"{ {13,18} & resolved_ids }")
+
+
+def test_ol_from_checkpoints_v2():
+    for pos in _OL_POSITIONS:
+        r = OL(pos)
+        check(f"{pos}: source is checkpoints_v2", r.summary["source"] == "checkpoints_v2")
+        check(f"{pos}: no verdicts", r.summary["contains_verdicts"] is False)
+        # Blocking fully annotated; Stance partially -> excluded_total = the Stance content gap
+        exp_excluded = 4 if "Tackle" in pos else 2
+        check(f"{pos}: excluded_unannotated_total = {exp_excluded} (Stance content gap)",
+              r.summary["excluded_unannotated_total"] == exp_excluded, f'{r.summary["excluded_unannotated_total"]}')
+        check(f"{pos}: Blocking fully resolves (no exclusion, no not_migrated)",
+              not any(t["technique"] == "Blocking" for t in r.summary["partial_exclusions"] + r.summary["not_migrated_techniques"]))
+
+
+def test_ol_formation_specific_resolution():
+    """OL is the first position where formation genuinely varies (Gun/Pistol/Under Center in Stance).
+    Gun vs Under Center for the same technique must return distinct, non-overlapping content."""
+    allst = OL("OL_Center", technique="Stance")
+    gun = OL("OL_Center", technique="Stance", formation="Gun")
+    uc = OL("OL_Center", technique="Stance", formation="Under Center")
+    check("OL_Center Stance no-formation spans Gun/Pistol/Under Center",
+          {c.formation for c in allst.checkpoints} == {"Gun", "Pistol", "Under Center"},
+          f'{sorted({c.formation for c in allst.checkpoints})}')
+    check("formation=Gun returns only Gun rows", gun.checkpoints and all(c.formation == "Gun" for c in gun.checkpoints))
+    check("formation=Under Center returns only Under Center rows",
+          uc.checkpoints and all(c.formation == "Under Center" for c in uc.checkpoints))
+    check("Gun and Under Center resolve DISTINCT rows (no overlap)",
+          not ({c.row_id for c in gun.checkpoints} & {c.row_id for c in uc.checkpoints}))
+
+
+def test_ol_center_guard_blocking_branch():
+    """Center/Guard branch: a Center Blocking variation resolves in phase order (Blocking is phased,
+    All-formations)."""
+    r = OL("OL_Center", technique="Blocking", variation="Pass_Pro")
+    check("OL_Center Blocking/Pass_Pro resolves rows", len(r.checkpoints) > 0, f"{len(r.checkpoints)}")
+    orders = [c.phase_order for c in r.checkpoints]
+    check("OL_Center Blocking/Pass_Pro all phased", all(o is not None for o in orders))
+    check("OL_Center Blocking/Pass_Pro ordered by phase_order", orders == sorted(orders), f"{orders}")
+    check("OL_Center Blocking is formation-agnostic (All formations)",
+          all(c.formation == "All formations" for c in r.checkpoints))
+
+
+def test_ol_tackle_2point_branch():
+    """Tackle branch: the Tackle-specific 2-Point split (which Center/Guards don't have) resolves —
+    both a Blocking Pass_Pro - 2 Point variation and Stance 2-Point."""
+    b = OL("OL_Left Tackle", technique="Blocking", variation="Pass_Pro - 2 Point")
+    check("OL_LT Blocking/Pass_Pro - 2 Point resolves rows", len(b.checkpoints) > 0, f"{len(b.checkpoints)}")
+    check("OL_LT Pass_Pro - 2 Point rows all that variation",
+          all(c.variation == "Pass_Pro - 2 Point" for c in b.checkpoints))
+    s2 = OL("OL_Left Tackle", technique="Stance", variation="2-Point")
+    check("OL_LT Stance/2-Point resolves (Tackle-only stance variation)", len(s2.checkpoints) > 0, f"{len(s2.checkpoints)}")
+
+
+def test_ol_exclusion_reported_all_positions():
+    """The 14-row content gap (all Stance) is excluded AND reported across every OL position —
+    never silently dropped. Per-position Stance excluded counts: Center/Guards 2, Tackles 4 (total 14)."""
+    total_excluded = 0
+    for pos in _OL_POSITIONS:
+        st = OL(pos, technique="Stance")
+        pe = [t for t in st.summary["partial_exclusions"] if t["technique"] == "Stance"]
+        check(f"{pos} Stance reported as partial_exclusion", len(pe) == 1, f'{st.summary["partial_exclusions"]}')
+        if pe:
+            total_excluded += pe[0]["excluded_unannotated"]
+    check("OL Stance excluded rows total exactly 14 across all positions", total_excluded == 14, f"{total_excluded}")
+
+
 def main():
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -380,6 +471,9 @@ def main():
                test_te_from_checkpoints_v2, test_te_mixed_phase_per_variation_ordering,
                test_te_must_land_join_copy_fidelity, test_te_must_land_split_release_anchor,
                test_te_must_land_original_technique,
+               test_ol_center_stance_partial_exclusion, test_ol_from_checkpoints_v2,
+               test_ol_formation_specific_resolution, test_ol_center_guard_blocking_branch,
+               test_ol_tackle_2point_branch, test_ol_exclusion_reported_all_positions,
                test_22_cues_resolve_with_correct_cue):
         fn()
     passed = sum(1 for _, ok, _ in _checks if ok)

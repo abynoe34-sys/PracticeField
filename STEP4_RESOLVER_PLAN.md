@@ -120,3 +120,20 @@ their cues** → only then is Step 6 (retire JSON) back on the table.
 ## Out of scope (unchanged)
 Step 6; authoring WR/TE/DB/RB annotation; new coaching content; Defense/Formation values except where
 QB matching needs `formation`.
+>
+> **UPDATE 2026-09-08 — OL wired to checkpoints_v2 (all 5 positions); row-level guard first (Option B).**
+> Prereq (committed separately first, verified in isolation): the readiness guard was changed from
+> per-technique gating to ROW-LEVEL exclusion — unannotated rows are excluded individually and reported
+> (`partial_exclusions` / `not_migrated_techniques` / `excluded_unannotated_total`), so a few content-gap
+> rows no longer hide an otherwise-annotated technique. Empirically: QB Exchange 0→36 resolvable; QB total
+> 291→327; WR/TE true no-op (0 excluded); the old test was rewritten deliberately to the new contract.
+> Then OL wired: `V2_POSITIONS` gained the 5 OL strings; snapshot → 1337 rows (QB 342 + WR 291 + TE 308 +
+> OL 396). OL specifics verified: two techniques (Blocking = All formations, fully phased; Stance = real
+> Gun/Pistol/Under Center, phased); Center/Guards vs Tackles have different Blocking/Stance variation sets
+> (per-string matching, no uniform-set assumption); 0 pollution; vocab 396/396 (0 UnknownLandmarkError);
+> tiers 208 judge / 174 proxy / 0 skip (+14 unannotated). Must-land spot-check: OL_Center Stance reports
+> partial (16 resolved / 2 excluded, ids 13/18) NOT not_migrated; Gun vs Under Center distinct non-overlapping;
+> Center/Guard Blocking branch + Tackle Pass_Pro-2-Point/Stance-2-Point branch both resolve; the 14 Stance
+> content-gap rows excluded AND reported across all 5 positions (total exactly 14). Resolver suite 117/117;
+> cleaning 28/28; QB/WR/TE unchanged. Step 6 still HELD (DB/RB still read JSON). CLAUDE.md updated.
+> Out of scope, untouched: DB/RB, the 14 OL content-gap rows (not authored), the Part-C Catching disposition.

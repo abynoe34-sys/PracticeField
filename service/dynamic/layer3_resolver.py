@@ -133,14 +133,16 @@ def load_catalogue(position: str = "QB") -> list[dict]:
 
 
 # ── source selection: checkpoints_v2 vs legacy JSON ──────────────────────────────
-# QB (2026-09-07), WR (2026-09-08) and TE (2026-09-08) are served from the new source of
-# truth (checkpoints_v2) — all fully pose-annotated (QB 327/342 ready techniques; WR 291/291;
-# TE 308/308, zero NULL measurable_by_pose). DB/RB — and OL once annotated — have ZERO pose
-# annotation in checkpoints_v2, so they still fall through to the legacy JSON until authored
-# (a DATA prerequisite). Each position has exactly ONE source — no per-technique mixing.
-# NOTE: wiring a position here means the resolver no longer reads its wr_/*_ruleset.json, but
-# the JSON files remain in place — retiring them (Step 6) is a separate, still-held decision.
-V2_POSITIONS = {"QB", "WR", "TE"}
+# QB (2026-09-07), WR, TE and the five OL positions (all 2026-09-08) are served from the new
+# source of truth (checkpoints_v2) — all pose-annotated (QB 327 annotated; WR 291; TE 308; OL
+# 382 annotated of 396, the 14 NULL rows excluded row-level, not gating their technique). Only
+# DB/RB still have ZERO annotation in checkpoints_v2, so they fall through to the legacy JSON
+# until authored (a DATA prerequisite). OL is FIVE distinct position values (not one "OL"
+# umbrella) — the resolver matches on the exact position string, so each is just another value.
+# NOTE: wiring a position here means the resolver no longer reads its *_ruleset.json, but the
+# JSON files remain in place — retiring them (Step 6) is a separate, still-held decision.
+V2_POSITIONS = {"QB", "WR", "TE",
+                "OL_Center", "OL_Left Guard", "OL_Right Guard", "OL_Left Tackle", "OL_Right Tackle"}
 
 
 def _load_records(position: str, prefer_snapshot: bool = False) -> tuple[list[dict], str]:
