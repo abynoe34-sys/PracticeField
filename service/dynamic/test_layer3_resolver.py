@@ -541,7 +541,8 @@ def DB(pos, **kw):
 
 
 def test_db_from_checkpoints_v2():
-    for pos, total in (("DB_Corner", 70), ("DB_Nickel", 25), ("DB_Safety_Free", 30), ("DB_Safety_Strong", 25)):
+    # Counts current as of the 2026-09-13 Zone->Cover rename + full re-annotation (126 DB rows).
+    for pos, total in (("DB_Corner", 69), ("DB_Nickel", 18), ("DB_Safety_Free", 22), ("DB_Safety_Strong", 17)):
         r = DB(pos)
         check(f"{pos}: source is checkpoints_v2", r.summary["source"] == "checkpoints_v2")
         check(f"{pos}: resolves all {total} rows", r.summary["total"] == total, f'{r.summary["total"]}')
@@ -553,33 +554,39 @@ def test_db_from_checkpoints_v2():
               {c.technique for c in r.checkpoints} == {"First Step", "Stance"}, f'{sorted({c.technique for c in r.checkpoints})}')
 
 
-def test_db_zone_depth_distinct():
-    """DB's genuinely-new formation vocab: Zone depth is baked into `formation` (Zone 1/2/3).
-    A specific-zone query returns only that zone; Zone 2 and Zone 3 are non-overlapping."""
-    z2 = DB("DB_Corner", technique="First Step", formation="Zone 2")
-    z3 = DB("DB_Corner", technique="First Step", formation="Zone 3")
-    check("Zone 2 returns Zone 2 rows (+ wildcard), no Zone 1/3",
-          all(c.formation in ("Zone 2", "All Coverages") for c in z2.checkpoints)
-          and not any(c.formation in ("Zone 1", "Zone 3") for c in z2.checkpoints))
-    check("Zone 2 and Zone 3 zone-specific rows are non-overlapping",
-          not ({c.row_id for c in z2.checkpoints if c.formation == "Zone 2"} &
-               {c.row_id for c in z3.checkpoints if c.formation == "Zone 3"}))
+def test_db_coverage_depth_distinct():
+    """DB's coverage vocab lives in `formation` (Cover 1/2/3 + Man, coverage-agnostic = All Coverages).
+    ASSERTS POSITIVELY: a Cover 2 query must return real Cover-2-SPECIFIC rows (count > 0), so a dead/
+    renamed formation string fails loud here instead of passing vacuously on wildcard-only rows (the
+    exact failure the old Zone-string test hid — it queried a nonexistent formation, got only the
+    'All Coverages' wildcard rows, and every assertion held while testing nothing real)."""
+    c2 = DB("DB_Corner", technique="First Step", formation="Cover 2")
+    c3 = DB("DB_Corner", technique="First Step", formation="Cover 3")
+    c2_specific = {c.row_id for c in c2.checkpoints if c.formation == "Cover 2"}
+    c3_specific = {c.row_id for c in c3.checkpoints if c.formation == "Cover 3"}
+    check("Cover 2 query returns REAL Cover-2-specific rows (>0, not just wildcard)", len(c2_specific) > 0,
+          f"{len(c2_specific)}")
+    check("Cover 3 query returns REAL Cover-3-specific rows (>0)", len(c3_specific) > 0, f"{len(c3_specific)}")
+    check("Cover 2 returns only Cover 2 (+ All Coverages wildcard), no Cover 1/3",
+          all(c.formation in ("Cover 2", "All Coverages") for c in c2.checkpoints)
+          and not any(c.formation in ("Cover 1", "Cover 3") for c in c2.checkpoints))
+    check("Cover 2 and Cover 3 coverage-specific rows are non-overlapping", not (c2_specific & c3_specific))
 
 
 def test_db_all_coverages_is_wildcard():
     """LOCKS OPTION A (2026-09-09 decision): 'All Coverages' rows are coverage-agnostic and MUST appear
-    in a specific-coverage query — a DB in Zone 2/Man still has a stance and may backpedal. If someone
+    in a specific-coverage query — a DB in Cover 2/Man still has a stance and may backpedal. If someone
     reverts _formation_ok to exclude them (the pre-decision behavior), this fails loud."""
     bp_ids = {c.row_id for c in DB("DB_Corner", technique="First Step").checkpoints if c.variation == "Backpedal"}
     check("DB_Corner has Backpedal (All Coverages) rows", len(bp_ids) == 5, f"{sorted(bp_ids)}")
-    z2 = {c.row_id for c in DB("DB_Corner", technique="First Step", formation="Zone 2").checkpoints}
+    c2 = {c.row_id for c in DB("DB_Corner", technique="First Step", formation="Cover 2").checkpoints}
     man = {c.row_id for c in DB("DB_Corner", technique="First Step", formation="Man").checkpoints}
-    check("Backpedal (All Coverages) rows ARE included in a Zone 2 query", bp_ids <= z2, f"missing: {bp_ids - z2}")
+    check("Backpedal (All Coverages) rows ARE included in a Cover 2 query", bp_ids <= c2, f"missing: {bp_ids - c2}")
     check("Backpedal (All Coverages) rows ARE included in a Man query", bp_ids <= man, f"missing: {bp_ids - man}")
     # coverage-agnostic Stance (all All Coverages) appears in a position+coverage query
-    pos_z2 = DB("DB_Corner", formation="Zone 2")
-    check("coverage-agnostic Stance appears in a position-level Zone 2 query",
-          "Stance" in {c.technique for c in pos_z2.checkpoints}, f'{sorted({c.technique for c in pos_z2.checkpoints})}')
+    pos_c2 = DB("DB_Corner", formation="Cover 2")
+    check("coverage-agnostic Stance appears in a position-level Cover 2 query",
+          "Stance" in {c.technique for c in pos_c2.checkpoints}, f'{sorted({c.technique for c in pos_c2.checkpoints})}')
 
 
 def test_db_backpedal_position_independence():
@@ -617,7 +624,7 @@ def main():
                test_ol_tackle_2point_branch, test_ol_exclusion_reported_all_positions,
                test_rb_from_checkpoints_v2, test_rb_wr_copy_fidelity, test_rb_hb_only_exchange,
                test_rb_fb_only_technique, test_rb_hb_formation_specific,
-               test_db_from_checkpoints_v2, test_db_zone_depth_distinct, test_db_all_coverages_is_wildcard,
+               test_db_from_checkpoints_v2, test_db_coverage_depth_distinct, test_db_all_coverages_is_wildcard,
                test_db_backpedal_position_independence, test_offense_wildcard_unaffected_by_all_coverages_change,
                test_22_cues_resolve_with_correct_cue):
         fn()
