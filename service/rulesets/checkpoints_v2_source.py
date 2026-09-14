@@ -161,6 +161,11 @@ def normalize_row(v2: dict[str, Any]) -> dict[str, Any]:
         "correction_strategy": (v2.get("correction_strategy") or None),
         "check_type": (v2.get("check_type") or None),
         "threshold_parameters": (v2.get("threshold_parameters") or None),
+        # Two-dimensional fault tiering (migration-v23). NULL is fail-OPEN (surfaced) — the
+        # OPPOSITE of measurable_by_pose's fail-CLOSED NULL — because untagged content is still
+        # valid coaching. See FAULT_TIERING_PLAN.md.
+        "player_tier": (v2.get("player_tier") or None),
+        "fault_severity": (v2.get("fault_severity") or None),
         "measurable_by_pose": mbp,
         "pose_landmarks": tokens,
         "pose_landmarks_note": note,

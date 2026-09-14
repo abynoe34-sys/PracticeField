@@ -606,6 +606,108 @@ def test_offense_wildcard_unaffected_by_all_coverages_change():
           f'{sorted({c.formation for c in gun.checkpoints})}')
 
 
+# ── 16. two-dimensional fault tiering (migration-v23; FAULT_TIERING_PLAN.md) ──────────
+def _tier_row(id, tier, sev, order):
+    """A minimal normalized-shape row for tier/severity filter tests (clean vocab landmark)."""
+    return {"position": "QB", "variation": "5 Step", "technique": "Drop-Back", "formation": "Gun",
+            "label": f"cp{id}", "name": f"cp{id}", "judge": True, "proxy_only": False, "skip": False,
+            "annotated": True, "measurable_by_pose": "Yes", "camera_angle": "Both",
+            "static_or_dynamic": "Dynamic", "thresholds_status": "Draft", "phase": None,
+            "phase_order": order, "id": id, "pose_landmarks": ["Left Foot"],
+            "player_tier": tier, "fault_severity": sev}
+
+
+def _tier_catalogue():
+    # rep-order by phase_order 1..6; mix of tiers/severities incl. NULLs (untriaged)
+    return [
+        _tier_row(1, "Fundamental", "Critical", 1),
+        _tier_row(2, "Developing",  "Major",    2),
+        _tier_row(3, "Advanced",    "Minor",    3),
+        _tier_row(4, "Fundamental", "Minor",    4),
+        _tier_row(5, None,          None,       5),   # untriaged on BOTH dimensions
+        _tier_row(6, "Developing",  "Critical", 6),
+    ]
+
+
+def _R(**kw):
+    return L3.resolve("QB", catalogue=_tier_catalogue(), source="checkpoints_v2", **kw)
+
+
+def test_player_tier_is_cumulative_unlock():
+    """player_tier is an 'unlock' threshold: a viewer sees every fault at level <= theirs.
+    Fundamental sees only Fundamental; Advanced sees the full stack. NULL is fail-OPEN (always shown)."""
+    fund = {c.row_id for c in _R(player_tier="Fundamental").checkpoints}
+    dev = {c.row_id for c in _R(player_tier="Developing").checkpoints}
+    adv = {c.row_id for c in _R(player_tier="Advanced").checkpoints}
+    # Fundamental: ids 1,4 (Fundamental) + 5 (NULL, fail-open) — NOT the Developing/Advanced ids
+    check("Fundamental viewer sees only Fundamental + untriaged", fund == {1, 4, 5}, f"{sorted(fund)}")
+    check("Developing viewer adds Developing (cumulative)", dev == {1, 2, 4, 5, 6}, f"{sorted(dev)}")
+    check("Advanced viewer sees the full stack (never hides fundamentals)", adv == {1, 2, 3, 4, 5, 6}, f"{sorted(adv)}")
+    check("player_tier reports the hidden count honestly",
+          _R(player_tier="Fundamental").summary["tier_filter"]["tier_filtered"] == 3)
+
+
+def test_null_tier_severity_fail_open():
+    """The load-bearing asymmetry vs measurable_by_pose: NULL tier/severity is FAIL-OPEN. The
+    untriaged row (id 5) survives EVERY filter — valid coaching is never hidden for lack of a tag."""
+    check("untriaged row survives the strictest tier filter", 5 in {c.row_id for c in _R(player_tier="Fundamental").checkpoints})
+    check("untriaged row survives the strictest severity floor", 5 in {c.row_id for c in _R(min_severity="Critical").checkpoints})
+
+
+def test_min_severity_floor():
+    """min_severity keeps rows at least that severe (Critical most severe). NULL kept (fail-open)."""
+    crit = {c.row_id for c in _R(min_severity="Critical").checkpoints}
+    major = {c.row_id for c in _R(min_severity="Major").checkpoints}
+    # Critical floor: ids 1,6 (Critical) + 5 (NULL) — drops Major(2)/Minor(3,4)
+    check("min_severity=Critical keeps Critical + untriaged only", crit == {1, 5, 6}, f"{sorted(crit)}")
+    check("min_severity=Major keeps Critical+Major + untriaged", major == {1, 2, 5, 6}, f"{sorted(major)}")
+    check("severity floor reports the hidden count", _R(min_severity="Critical").summary["tier_filter"]["severity_filtered"] == 3)
+
+
+def test_max_checkpoints_caps_by_severity_shows_in_rep_order():
+    """The cognitive-load lever: keep the most game-critical N, but DISPLAY them in rep sequence.
+    Top-3 by severity = the two Criticals (1,6) + the highest remaining (Major id 2); id 5 (NULL)
+    ranks just below Major so it is NOT capped away behind a Minor. Displayed order stays phase_order."""
+    r = _R(max_checkpoints=3)
+    kept = [c.row_id for c in r.checkpoints]
+    check("cap keeps exactly 3", len(kept) == 3, f"{kept}")
+    check("cap keeps the most-critical (Criticals 1,6 + Major 2)", set(kept) == {1, 2, 6}, f"{sorted(kept)}")
+    check("capped rows still displayed in rep (phase_order) order", kept == sorted(kept), f"{kept}")
+    check("cap reports the hidden count", r.summary["tier_filter"]["capped"] == 3)
+
+
+def test_tier_filters_compose_and_report_total():
+    """tier + severity + cap compose; hidden_total sums all three omission reasons so a trimmed
+    checklist can never look complete."""
+    r = _R(player_tier="Developing", min_severity="Major", max_checkpoints=2)
+    tf = r.summary["tier_filter"]
+    check("hidden_total = tier + severity + capped", tf["hidden_total"] == tf["tier_filtered"] + tf["severity_filtered"] + tf["capped"])
+    check("composed filter returns <= cap", len(r.checkpoints) <= 2)
+    check("tier_filter echoes the requested params",
+          tf["player_tier"] == "Developing" and tf["min_severity"] == "Major" and tf["max_checkpoints"] == 2)
+
+
+def test_tier_filters_validate_input():
+    for bad in (dict(player_tier="Elite"), dict(min_severity="Catastrophic")):
+        try:
+            _R(**bad)
+            check(f"invalid {list(bad)[0]} raises", False, "no exception")
+        except ValueError:
+            check(f"invalid {list(bad)[0]} raises", True)
+
+
+def test_tier_filter_noop_on_untagged_live_data():
+    """Regression: the catalogue is 100% untriaged today (all NULL). A tier/severity filter must be a
+    NO-OP on real snapshot data (fail-open) — same total as no filter, and nothing hidden. Guarantees
+    steps 1-2 changed no current behavior before any tagging/splitting happens."""
+    base = QB(variation="5 Step", technique="Drop-Back")
+    filt = QB(variation="5 Step", technique="Drop-Back", player_tier="Fundamental", min_severity="Critical")
+    check("untagged live data: tier/severity filter changes nothing", base.summary["total"] == filt.summary["total"],
+          f'{base.summary["total"]} vs {filt.summary["total"]}')
+    check("untagged live data: nothing hidden (fail-open no-op)", filt.summary["tier_filter"]["hidden_total"] == 0,
+          f'{filt.summary["tier_filter"]}')
+
+
 def main():
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -626,6 +728,10 @@ def main():
                test_rb_fb_only_technique, test_rb_hb_formation_specific,
                test_db_from_checkpoints_v2, test_db_coverage_depth_distinct, test_db_all_coverages_is_wildcard,
                test_db_backpedal_position_independence, test_offense_wildcard_unaffected_by_all_coverages_change,
+               test_player_tier_is_cumulative_unlock, test_null_tier_severity_fail_open,
+               test_min_severity_floor, test_max_checkpoints_caps_by_severity_shows_in_rep_order,
+               test_tier_filters_compose_and_report_total, test_tier_filters_validate_input,
+               test_tier_filter_noop_on_untagged_live_data,
                test_22_cues_resolve_with_correct_cue):
         fn()
     passed = sum(1 for _, ok, _ in _checks if ok)

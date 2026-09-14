@@ -96,6 +96,8 @@ class ResolvedCheckpoint:
     requires_hands: bool = False     # any landmark needs the Hand landmarker (2nd detector)
     formation: str | None = None     # checkpoints_v2 formation (All formations / Gun / Pistol / …)
     row_id: int | None = None        # checkpoints_v2 row id — stable ordering key when unphased
+    player_tier: str | None = None   # Fundamental | Developing | Advanced | None (untriaged → fail-open)
+    fault_severity: str | None = None  # Critical | Major | Minor | None (unrated → fail-open)
 
 
 @dataclass
@@ -167,6 +169,20 @@ def _load_records(position: str, prefer_snapshot: bool = False) -> tuple[list[di
 # added "All Coverages" for DB so its coverage-agnostic Stance/Backpedal rows are not dropped
 # from a Zone/Man query — the same overlay role "All formations" plays for offence).
 WILDCARD_FORMATIONS = frozenset({"All formations", "All Coverages"})
+
+# ── two-dimensional fault tiering (migration-v23; see FAULT_TIERING_PLAN.md) ──────
+# player_tier is an "unlock" threshold: a viewer at level N sees every fault introduced at
+# level <= N (CUMULATIVE — an Advanced viewer sees the full stack; tier NEVER hides
+# fundamentals). Declaration order IS the ordinal order, mirroring the DB enum.
+_PLAYER_TIER_RANK = {"Fundamental": 0, "Developing": 1, "Advanced": 2}
+# fault_severity floor for `min_severity`: Critical is most severe. `min_severity="Major"`
+# keeps Critical+Major, drops Minor.
+_SEVERITY_RANK = {"Critical": 0, "Major": 1, "Minor": 2}
+# Priority order used ONLY when `max_checkpoints` must drop something: keep the most
+# game-critical first. Untriaged (NULL) sorts just BELOW Major — conservative ("might
+# matter", never capped away behind a known Minor) but honest that, until severity is
+# tagged, a cap on all-NULL data degrades to rep-order truncation. Reported in summary.
+_SEVERITY_CAP_RANK = {"Critical": 0, "Major": 1, None: 2, "Minor": 3}
 
 
 def _formation_ok(rec_formation: str | None, requested: str | None) -> bool:
@@ -291,6 +307,9 @@ def resolve(position: str,
             handedness: str | None = None,
             hands_available: bool | None = None,
             formation: str | None = None,
+            player_tier: str | None = None,
+            min_severity: str | None = None,
+            max_checkpoints: int | None = None,
             catalogue: list[dict] | None = None,
             source: str | None = None,
             prefer_snapshot: bool = False) -> ResolverResult:
@@ -404,7 +423,8 @@ def resolve(position: str,
             anchor_phase=ap, phase=cat_phase, phase_order=cat_order,
             assessable=assessable, not_assessable_reasons=reasons, phase_confidence=phase_conf,
             conditional_notes=_conditional_notes(r.get("technique") or "", measurement, hand_source),
-            requires_hands=needs_hands_cp, formation=r.get("formation"), row_id=r.get("id")))
+            requires_hands=needs_hands_cp, formation=r.get("formation"), row_id=r.get("id"),
+            player_tier=r.get("player_tier"), fault_severity=r.get("fault_severity")))
 
     # Order in rep sequence: a real phase_order wins; else the row id (stable insertion order —
     # honest about being arbitrary for unphased techniques, per the Step-4 decision); else the
@@ -417,6 +437,38 @@ def resolve(position: str,
         idx = PHASE_ORDER.index(c.anchor_phase) if c.anchor_phase in PHASE_ORDER else 99
         return (2, idx, str(c.name))
     checkpoints.sort(key=_order_key)
+
+    # ── two-dimensional fault-tier filtering (migration-v23) ──────────────────────────
+    # ORTHOGONAL to the row-level exclusion guard above: that guard drops rows that CANNOT be
+    # processed (unannotated, fail-closed); this drops rows that are valid but out of scope for
+    # the requested viewer level / severity floor / display budget. NULL player_tier and NULL
+    # fault_severity are FAIL-OPEN (kept) — untagged content is still valid coaching. Every
+    # omission here is counted and reported in summary.tier_filter so a trimmed checklist can
+    # never masquerade as the complete picture.
+    tier_filtered = severity_filtered = capped = 0
+    if player_tier is not None:
+        if player_tier not in _PLAYER_TIER_RANK:
+            raise ValueError(f"unknown player_tier {player_tier!r} (expected one of {sorted(_PLAYER_TIER_RANK)})")
+        vr = _PLAYER_TIER_RANK[player_tier]
+        kept = [c for c in checkpoints
+                if c.player_tier is None or _PLAYER_TIER_RANK[c.player_tier] <= vr]
+        tier_filtered = len(checkpoints) - len(kept)
+        checkpoints = kept
+    if min_severity is not None:
+        if min_severity not in _SEVERITY_RANK:
+            raise ValueError(f"unknown min_severity {min_severity!r} (expected one of {sorted(_SEVERITY_RANK)})")
+        fr = _SEVERITY_RANK[min_severity]
+        kept = [c for c in checkpoints
+                if c.fault_severity is None or _SEVERITY_RANK[c.fault_severity] <= fr]
+        severity_filtered = len(checkpoints) - len(kept)
+        checkpoints = kept
+    if max_checkpoints is not None and len(checkpoints) > max_checkpoints:
+        # Keep the most game-critical; DISPLAY them still in rep sequence (the checkpoints list is
+        # already _order_key-sorted, so a stable id-membership filter preserves that order).
+        ranked = sorted(checkpoints, key=lambda c: (_SEVERITY_CAP_RANK.get(c.fault_severity, 2),))
+        keep_ids = {id(c) for c in ranked[:max_checkpoints]}
+        capped = len(checkpoints) - max_checkpoints
+        checkpoints = [c for c in checkpoints if id(c) in keep_ids]
 
     by_tier = {t: sum(1 for c in checkpoints if c.tier == t) for t in ("judge", "proxy_only", "skip")}
     na = [c for c in checkpoints if not c.assessable]
@@ -439,6 +491,15 @@ def resolve(position: str,
         # that a resolved checklist is partial. "N resolved, M not yet annotated", never silent.
         "partial_exclusions": sorted(partial_exclusions, key=lambda x: x["technique"] or ""),
         "excluded_unannotated_total": sum(s["excluded"] for s in tech_stats.values()),
+        # Two-dimensional fault-tier filtering (migration-v23). Separate from the exclusion guard:
+        # these rows are valid but out of scope for the requested viewer level / severity floor /
+        # display cap. Reported so a trimmed checklist never looks complete. hidden_total > 0 means
+        # the caller is seeing a deliberately narrowed view.
+        "tier_filter": {
+            "player_tier": player_tier, "min_severity": min_severity, "max_checkpoints": max_checkpoints,
+            "tier_filtered": tier_filtered, "severity_filtered": severity_filtered, "capped": capped,
+            "hidden_total": tier_filtered + severity_filtered + capped,
+        },
         "handedness": {"value": hand, "source": hand_source, "disagreement": hand_disagree},
         "needs_hands": any(c.requires_hands for c in checkpoints),
         "hands_available": hands_available,
@@ -456,6 +517,10 @@ def resolve(position: str,
 
 def _main(argv=None):
     import argparse
+    try:  # Windows consoles default to cp1252; the JSON summary carries non-ASCII (e.g. '↔')
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
     ap = argparse.ArgumentParser(description="Layer 3 — applicable-checks resolver over the catalogue.")
     ap.add_argument("position")
     ap.add_argument("--variation"); ap.add_argument("--technique")
@@ -467,12 +532,20 @@ def _main(argv=None):
                     help="whether the Hand landmarker ran for this clip (gates hand-dependent checks)")
     ap.add_argument("--snapshot", action="store_true",
                     help="prefer the local checkpoints_v2 snapshot over a live DB read")
+    ap.add_argument("--player-tier", choices=["Fundamental", "Developing", "Advanced"],
+                    help="viewer level — show faults introduced at this tier or below (cumulative)")
+    ap.add_argument("--min-severity", choices=["Critical", "Major", "Minor"],
+                    help="severity floor — keep faults at least this game-critical")
+    ap.add_argument("--max-checkpoints", type=int,
+                    help="cap the checklist to the N most-critical faults (shown in rep order)")
     args = ap.parse_args(argv)
     phases = json.load(open(args.phases, encoding="utf-8")) if args.phases else None
     views = args.views.split(",") if args.views else None
     hands_avail = {"available": True, "unavailable": False}.get(args.hands)
     res = resolve(args.position, args.variation, args.technique, views, phases, args.handedness,
-                  hands_available=hands_avail, formation=args.formation, prefer_snapshot=args.snapshot)
+                  hands_available=hands_avail, formation=args.formation,
+                  player_tier=args.player_tier, min_severity=args.min_severity,
+                  max_checkpoints=args.max_checkpoints, prefer_snapshot=args.snapshot)
     print(res.to_json())
 
 
