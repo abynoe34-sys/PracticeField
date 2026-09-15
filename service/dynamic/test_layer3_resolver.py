@@ -541,8 +541,9 @@ def DB(pos, **kw):
 
 
 def test_db_from_checkpoints_v2():
-    # Counts current as of the 2026-09-13 Zone->Cover rename + full re-annotation (126 DB rows).
-    for pos, total in (("DB_Corner", 69), ("DB_Nickel", 18), ("DB_Safety_Free", 22), ("DB_Safety_Strong", 17)):
+    # Counts current as of the 2026-09-15 fault-tiering pilot split (11 DB 'Also:' rows -> 23),
+    # on top of the 2026-09-13 Zone->Cover re-annotation. DB total 126 -> 138.
+    for pos, total in (("DB_Corner", 70), ("DB_Nickel", 23), ("DB_Safety_Free", 24), ("DB_Safety_Strong", 21)):
         r = DB(pos)
         check(f"{pos}: source is checkpoints_v2", r.summary["source"] == "checkpoints_v2")
         check(f"{pos}: resolves all {total} rows", r.summary["total"] == total, f'{r.summary["total"]}')
@@ -595,6 +596,50 @@ def test_db_backpedal_position_independence():
             for p in ("DB_Corner", "DB_Nickel", "DB_Safety_Free", "DB_Safety_Strong")}
     check("Backpedal present in Corner + Safety_Free only",
           have == {"DB_Corner": True, "DB_Nickel": False, "DB_Safety_Free": True, "DB_Safety_Strong": False}, f"{have}")
+
+
+def test_db_pilot_split_landed():
+    """The 2026-09-15 DB fault-tiering pilot: the 11 'Also:'-bundled DB rows are now 23 one-fault
+    rows. Verifies (a) NO DB checkpoint still bundles faults, (b) the sharpest case (row 1772) is
+    correctly split — the primary lunge fault carries feet + judge tier, while the eye-gaze fault
+    it was WRONGLY annotated for is a SEPARATE proxy_only row in the same phase."""
+    also = []
+    for pos in ("DB_Corner", "DB_Nickel", "DB_Safety_Free", "DB_Safety_Strong"):
+        also += [(c.row_id, c.fault_trigger) for c in DB(pos).checkpoints
+                 if "also:" in (c.fault_trigger or "").lower()]
+    check("no DB checkpoint still bundles faults ('Also:' gone everywhere)", not also, f"{also[:2]}")
+
+    cov1 = {c.row_id: c for c in DB("DB_Nickel", technique="First Step", formation="Cover 1").checkpoints}
+    lunge, eye = cov1.get(1772), cov1.get(1791)
+    check("1772 primary (lunge) resolves with feet + judge tier",
+          lunge is not None and "Left Foot" in lunge.landmarks and lunge.tier == "judge",
+          f"{lunge and (lunge.landmarks, lunge.tier)}")
+    check("1791 eye-floating is a SEPARATE proxy_only row, same phase, gaze landmarks",
+          eye is not None and eye.tier == "proxy_only" and eye.phase == lunge.phase
+          and "Left Eye" in eye.landmarks and "Left Foot" not in eye.landmarks,
+          f"{eye and (eye.tier, eye.phase, eye.landmarks)}")
+
+
+def test_db_tier_filtering_bites_on_real_tags():
+    """With the pilot rows now TAGGED, the resolver's tier/severity filters do real work on DB
+    (not just the fail-open no-op on untagged data). DB_Safety_Strong First Step / Cover 1 holds
+    three tagged split children: 1725 (Developing/Critical), 1783 (Advanced/Major), 1784
+    (Developing/Major). Untagged sibling rows stay fail-open throughout."""
+    q = dict(technique="First Step", formation="Cover 1")
+    full = {c.row_id for c in DB("DB_Safety_Strong", **q).checkpoints}
+    check("all three tagged children present unfiltered", {1725, 1783, 1784} <= full, f"{sorted(full)}")
+
+    dev = {c.row_id for c in DB("DB_Safety_Strong", player_tier="Developing", **q).checkpoints}
+    check("player_tier=Developing hides the Advanced fault (1783)", 1783 not in dev)
+    check("player_tier=Developing keeps the Developing faults (1725, 1784)", {1725, 1784} <= dev,
+          f"{sorted(dev)}")
+    check("Developing filter reports a real hidden count (>0)",
+          DB("DB_Safety_Strong", player_tier="Developing", **q).summary["tier_filter"]["tier_filtered"] > 0)
+
+    crit = {c.row_id for c in DB("DB_Safety_Strong", min_severity="Critical", **q).checkpoints}
+    check("min_severity=Critical keeps the Critical fault (1725)", 1725 in crit)
+    check("min_severity=Critical drops the Major faults (1783, 1784)", not ({1783, 1784} & crit),
+          f"{sorted(crit & {1783,1784})}")
 
 
 def test_offense_wildcard_unaffected_by_all_coverages_change():
@@ -727,7 +772,9 @@ def main():
                test_rb_from_checkpoints_v2, test_rb_wr_copy_fidelity, test_rb_hb_only_exchange,
                test_rb_fb_only_technique, test_rb_hb_formation_specific,
                test_db_from_checkpoints_v2, test_db_coverage_depth_distinct, test_db_all_coverages_is_wildcard,
-               test_db_backpedal_position_independence, test_offense_wildcard_unaffected_by_all_coverages_change,
+               test_db_backpedal_position_independence, test_db_pilot_split_landed,
+               test_db_tier_filtering_bites_on_real_tags,
+               test_offense_wildcard_unaffected_by_all_coverages_change,
                test_player_tier_is_cumulative_unlock, test_null_tier_severity_fail_open,
                test_min_severity_floor, test_max_checkpoints_caps_by_severity_shows_in_rep_order,
                test_tier_filters_compose_and_report_total, test_tier_filters_validate_input,

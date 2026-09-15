@@ -4,7 +4,22 @@
 > position (DB, 11 `Also:` rows → 23 fault-rows) BEFORE committing to the QB cluster (119 rows) or
 > the full 93-row set. See `FAULT_TIERING_PLAN.md` §6 step 2.
 >
-> **This is a PROPOSAL for review — nothing here is written to `checkpoints_v2`.** Landmark/camera/tier
+> **EXECUTED 2026-09-15.** All 11 rows split into 23 one-fault rows on live `checkpoints_v2`
+> (parents keep their ids 1608/1695/1724/1725/1729/1730/1744/1747/1752/1755/1772; children are
+> new ids 1780–1791). Verified live: DB 126→138 (Corner 70 / Nickel 23 / Safety_Free 24 /
+> Safety_Strong 21), 0 `Also:` remaining, all 23 rows carry the annotation below. Snapshot
+> regenerated from live; resolver suite 209/209, cleaning 28/28.
+>
+> **The pilot's decisive finding — a DB-level blocker the estimate could not have predicted:**
+> a unique constraint `uniq_checkpoint_v2 (group,position,technique,variation,formation,phase,
+> ideal_execution_standard)` bakes in one-checkpoint-per-phase — `fault_trigger` is NOT in the key.
+> Split children share phase + the shared phase-level IES, so they collided. Resolved by
+> **migration-v24** widening the key to include `fault_trigger` (verified safe: widening a unique key
+> can only allow more distinct rows, never permit a true full duplicate; 0 existing violations;
+> key size 1073 « the 2704-byte btree limit). This is the same one-fault-per-row assumption from
+> Layer 4 and the resolver, found one level deeper — and it will apply to the QB cluster too.
+>
+> The below was the pre-execution proposal. Landmark/camera/tier
 > proposals and every `player_tier`/`fault_severity` are first-pass, SME-confirmable. The point of the
 > pilot is to surface how much of the split is mechanical vs. real re-derivation — and it already shows
 > the answer: **splitting is not a reshuffle.** 5 of the 11 rows need landmark tokens ADDED, several

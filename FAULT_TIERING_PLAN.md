@@ -1,10 +1,11 @@
 # Fault Tiering + Multi-Fault Splitting — Planning Document
 
-> Status: **Decisions 1 & 2 approved (2026-09-14).** Steps 1–2 implemented on branch
-> `fault-tiering-two-dimensional` (stacked on `migration-v22-checkpoints-v2-source-of-truth`,
-> which is itself unmerged). Steps 3–5 are approved in principle but **held**; the DB-scoped
-> split worksheet (`FAULT_TIERING_DB_WORKSHEET.md`) is the next concrete deliverable and the
-> validation vehicle for the split-and-reannotate workflow before the QB cluster.
+> Status: **Decisions 1 & 2 approved (2026-09-14); DB pilot split EXECUTED (2026-09-15).** On branch
+> `fault-tiering-two-dimensional` (stacked on the unmerged `migration-v22-checkpoints-v2-source-of-truth`).
+> Steps 1–2 (schema + resolver) done; the **DB pilot** (11 `Also:` rows → 23 one-fault rows) is done
+> and verified live. **migration-v24** widened `uniq_checkpoint_v2` to include `fault_trigger` — the
+> pilot's decisive finding (see §4a). **Next decision point:** proceed to the QB cluster (~119 rows) or
+> pause for fuller review. Whole-catalogue tagging (step 4) and calibration (step 5) remain held.
 
 This document exists so the reasoning survives outside the conversation. It is the source of
 truth for the fault-tiering effort the way `STEP4_RESOLVER_PLAN.md` was for the resolver rewire.
@@ -107,6 +108,30 @@ ALTER TABLE checkpoints_v2 ADD COLUMN fault_severity fault_severity;   -- NULL =
 Different risk profiles → correctly opposite defaults. This asymmetry is built in deliberately, not
 copied reflexively from the existing guard.
 
+### §4a — migration-v24: the DB-level one-fault-per-phase constraint (pilot finding)
+
+The DB pilot hit a unique constraint the earlier investigation hadn't seen:
+`uniq_checkpoint_v2 UNIQUE (group_name, position, technique, variation, formation, phase,
+ideal_execution_standard)` — **`fault_trigger` is not in the key**. So the catalogue's identity model
+was *one checkpoint per (phase + ideal)*: the one-fault-per-row assumption from Layer 4 and the
+resolver, baked one level deeper as a **database invariant**. Split children share a phase and the
+shared phase-level IES, so they collided on this key. This is the single most valuable thing the DB
+pilot bought — found cheap, before the QB cluster.
+
+Resolved by **migration-v24**, widening the key to `(…, ideal_execution_standard, fault_trigger)`:
+one phase can have one correct ideal and several independent ways to fail it (proven by row 1772).
+Verified safe on live data before applying: widening a unique key is strictly more permissive (can
+only allow rows the old key rejected — same tuple, different fault; a *true* full duplicate still
+collides); 0 existing rows violated the widened key; max key size 1073 bytes « the ~2704-byte btree
+limit. It applies identically to the QB cluster.
+
+**IES handling (favorable for phased rows, a caveat for QB):** because these DB rows are
+phase-structured with a phase-level IES, split children **share the parent's phase + IES** — no
+per-fault IES had to be invented (which would have meant authoring near-duplicate content just to
+satisfy a constraint, the mistake Option 2 in the constraint decision would have forced). QB
+Drop-Back rows are largely *unphased*, so their IES handling on split may not have this luxury —
+expect it to be harder there.
+
 ---
 
 ## 3. Resolver design (implemented)
@@ -201,12 +226,13 @@ Both nullable until triaged.
 1. **Approved & DONE:** steps 1–2 — ratify enums/columns (migration-v23), implement the resolver
    parameters + honest reporting, verify against *current* data (all-NULL → fail-open no-op) before
    any splitting.
-2. **Next deliverable:** the per-row split worksheet, **starting with DB's 11 `Also:` rows only** —
-   smallest set, most recently and thoroughly verified position; validate the split-and-reannotate
-   workflow here before the QB cluster (119 rows) or the full 93 at once.
-   → `FAULT_TIERING_DB_WORKSHEET.md`.
-3. **Held (approved in principle):** the full split (QB cluster + remaining `Also:` rows);
-   regenerate snapshot + DB tests.
+2. **DONE (2026-09-15):** the DB pilot — worksheet (`FAULT_TIERING_DB_WORKSHEET.md`) + the actual
+   split of DB's 11 `Also:` rows → 23 one-fault rows on live `checkpoints_v2`, verified live,
+   snapshot regenerated, tests updated (resolver 209/209, cleaning 28/28). **Surfaced migration-v24**
+   (see below) — the pilot's whole point, caught cheap before the QB cluster.
+   **→ DECISION POINT: proceed to QB cluster, or pause for fuller review.**
+3. **Held (approved in principle):** the rest of the split (QB cluster ~119 rows + the remaining 42
+   `Also:` rows across WR/TE/RB); regenerate snapshot + tests each time.
 4. **Held:** tag `player_tier`/`severity` across the catalogue (severity first).
 5. **Held:** author `check_type`/`threshold_parameters`/calibration on the now-atomic rows.
 
