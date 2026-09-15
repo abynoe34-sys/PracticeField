@@ -2,10 +2,13 @@
 
 > Status: **Decisions 1 & 2 approved (2026-09-14); DB pilot split EXECUTED (2026-09-15).** On branch
 > `fault-tiering-two-dimensional` (stacked on the unmerged `migration-v22-checkpoints-v2-source-of-truth`).
-> Steps 1–2 (schema + resolver) done; the **DB pilot** (11 `Also:` rows → 23 one-fault rows) is done
-> and verified live. **migration-v24** widened `uniq_checkpoint_v2` to include `fault_trigger` — the
-> pilot's decisive finding (see §4a). **Next decision point:** proceed to the QB cluster (~119 rows) or
-> pause for fuller review. Whole-catalogue tagging (step 4) and calibration (step 5) remain held.
+> Steps 1–2 (schema + resolver) done; the **DB pilot** (11 `Also:` rows → 23) and the **QB Drop-Back pilot**
+> (56 multi-symptom rows → 84 via **Option B**, see `FAULT_TIERING_QB_WORKSHEET.md`) are both done and
+> verified live. **migration-v24** widened `uniq_checkpoint_v2` for DB's phased rows (§4a); QB's unphased
+> rows made it inert (no migration needed). QB's net-new was **+28, not the ~+119 estimated** — because
+> most archetypes were row-tagged, not split. **Remaining:** the 40 WR/TE/RB `Also:` rows (each needs its
+> own archetype check — QB proved DB's independence result does NOT generalize), then whole-catalogue
+> tagging (step 4), then calibration (step 5). All held.
 
 This document exists so the reasoning survives outside the conversation. It is the source of
 truth for the fault-tiering effort the way `STEP4_RESOLVER_PLAN.md` was for the resolver rewire.

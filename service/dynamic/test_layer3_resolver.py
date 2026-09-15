@@ -742,15 +742,66 @@ def test_tier_filters_validate_input():
 
 
 def test_tier_filter_noop_on_untagged_live_data():
-    """Regression: the catalogue is 100% untriaged today (all NULL). A tier/severity filter must be a
-    NO-OP on real snapshot data (fail-open) — same total as no filter, and nothing hidden. Guarantees
-    steps 1-2 changed no current behavior before any tagging/splitting happens."""
-    base = QB(variation="5 Step", technique="Drop-Back")
-    filt = QB(variation="5 Step", technique="Drop-Back", player_tier="Fundamental", min_severity="Critical")
+    """Regression: on a still-UNTAGGED slice, a tier/severity filter must be a NO-OP (fail-open) —
+    same total as no filter, nothing hidden. Uses WR, which carries zero tags (only DB and QB
+    Drop-Back are tagged so far). Originally pointed at QB Drop-Back; repointed once QB Drop-Back
+    became genuinely tagged by the 2026-09-15 QB pilot (the filter now correctly BITES there —
+    see test_qb_dropback_tier_filtering)."""
+    base = WR(technique="Routes")
+    filt = WR(technique="Routes", player_tier="Fundamental", min_severity="Critical")
     check("untagged live data: tier/severity filter changes nothing", base.summary["total"] == filt.summary["total"],
           f'{base.summary["total"]} vs {filt.summary["total"]}')
     check("untagged live data: nothing hidden (fail-open no-op)", filt.summary["tier_filter"]["hidden_total"] == 0,
           f'{filt.summary["tier_filter"]}')
+
+
+# ── 17. QB Drop-Back fault-tiering pilot (2026-09-15) — Option B split executed ──────
+def test_qb_dropback_pilot_split_landed():
+    """The QB pilot: 56 multi-symptom Drop-Back rows -> 84 (Option B, earned splits only). Verifies the
+    three split archetypes landed cleanly and — the whole point of the archetype analysis — that a
+    genuinely-different-measurability facet is isolated, and the under-annotated symptoms now carry the
+    landmarks the parent row lacked."""
+    cps = QB(technique="Drop-Back").checkpoints
+    check("QB Drop-Back resolves 167 rows post-split (139 + 28)", len(cps) == 167, f"{len(cps)}")
+    # Feet Glide: every knees-crossing fault now carries knee landmarks (the under-annotation fix)
+    knee_bad = [c.row_id for c in cps if "Knees crossing" in c.fault_trigger and "Left Knee" not in c.landmarks]
+    check("QB: every 'Knees crossing' fault now carries knee landmarks", not knee_bad, f"{knee_bad}")
+    # FG-core rows keep feet landmarks and no longer bundle the knees/weight symptoms
+    core = [c for c in cps if c.row_id in (240, 259, 315, 331, 477, 494, 516)]
+    leak = [c.row_id for c in core if "Knees crossing" in c.fault_trigger or "Weight shifting forward" in c.fault_trigger]
+    check("QB: 7 Feet-Glide core rows no longer bundle knees/weight", len(core) == 7 and not leak, f"core={len(core)} leak={leak}")
+    # Ball Carriage: the deferred ball facet is isolated as skip-tier; hand carriage stays proxy (Partial)
+    ball = [c for c in cps if "Ball drops off the chest" in c.fault_trigger]
+    check("QB: 'ball drops off chest' faults are all skip-tier (deferred, isolated)",
+          len(ball) == 7 and all(c.tier == "skip" for c in ball), f"{[(c.row_id, c.tier) for c in ball][:3]}")
+    hands = [c for c in cps if c.row_id in (248, 254, 317, 332, 480, 495, 508)]
+    check("QB: BC-hands parents stay proxy_only (Partial — upgrade deferred), no ball in fault",
+          all(c.tier == "proxy_only" and "Ball drops off the chest" not in c.fault_trigger for c in hands),
+          f"{[(c.row_id, c.tier) for c in hands if c.tier != 'proxy_only'][:3]}")
+    # Head/Vision: gaze split off as its own proxy row; head-stability row carries no eye landmark
+    gaze = [c for c in cps if c.fault_trigger.startswith("Eyes ") and "Left Eye" in c.landmarks
+            and c.row_id in (1792, 1793, 1794, 1795, 1796, 1797, 1798)]
+    check("QB: 7 HV-gaze children resolve as proxy_only with eye landmarks",
+          len(gaze) == 7 and all(c.tier == "proxy_only" for c in gaze), f"{len(gaze)}")
+    hv_head = [c for c in cps if c.row_id in (250, 262, 311, 338, 481, 497, 505)]
+    check("QB: HV-head parents no longer carry eye landmarks or eye faults",
+          all("Left Eye" not in c.landmarks and "eyes" not in c.fault_trigger.lower() for c in hv_head))
+
+
+def test_qb_dropback_tier_filtering():
+    """With QB Drop-Back now TAGGED, the resolver's tier/severity filters do real work (not the
+    fail-open no-op). Untagged single-fault Drop-Back rows still fail-open through."""
+    q = dict(technique="Drop-Back")
+    full = {c.row_id for c in QB(**q).checkpoints}
+    check("QB Hips row 249 (Advanced) present unfiltered", 249 in full)
+    fund = {c.row_id for c in QB(player_tier="Fundamental", **q).checkpoints}
+    check("player_tier=Fundamental hides the Advanced Hips row 249", 249 not in fund)
+    check("Fundamental filter reports a real hidden count (>0)",
+          QB(player_tier="Fundamental", **q).summary["tier_filter"]["tier_filtered"] > 0)
+    # severity floor: Stride rows are Minor -> dropped at a Major floor; BC-ball (Critical) kept
+    major = {c.row_id for c in QB(min_severity="Major", **q).checkpoints}
+    check("min_severity=Major drops the Minor Stride row 238", 238 not in major)
+    check("min_severity=Major keeps the Critical BC-hands row 248", 248 in major)
 
 
 def main():
@@ -779,6 +830,7 @@ def main():
                test_min_severity_floor, test_max_checkpoints_caps_by_severity_shows_in_rep_order,
                test_tier_filters_compose_and_report_total, test_tier_filters_validate_input,
                test_tier_filter_noop_on_untagged_live_data,
+               test_qb_dropback_pilot_split_landed, test_qb_dropback_tier_filtering,
                test_22_cues_resolve_with_correct_cue):
         fn()
     passed = sum(1 for _, ok, _ in _checks if ok)

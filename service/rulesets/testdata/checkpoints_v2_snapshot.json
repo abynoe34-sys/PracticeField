@@ -1,7 +1,7 @@
 {
- "_note": "Offline snapshot of checkpoints_v2 — the ENTIRE catalogue (QB + WR + TE + 5 OL + 3 RB + 4 DB), all columns incl. player_tier/fault_severity (migration-v23). Re-pulled 2026-09-15 after the DB fault-tiering pilot split (11 'Also:' rows -> 23 one-fault rows; migration-v24 widened uniq_checkpoint_v2 to include fault_trigger). Fallback for checkpoints_v2_source.load_raw() when Supabase is unreachable; makes resolver tests reproducible.",
+ "_note": "Offline snapshot of checkpoints_v2 — the ENTIRE catalogue (QB + WR + TE + 5 OL + 3 RB + 4 DB), all columns incl. player_tier/fault_severity (migration-v23). Re-pulled 2026-09-15 after the DB fault-tiering pilot split (11 'Also:' rows -> 23; migration-v24 widened uniq_checkpoint_v2) AND the QB Drop-Back pilot split (56 multi-symptom rows -> 84, Option B: row-tag 5 archetypes, split Feet-Glide/Ball-Carriage/Head-Vision). Fallback for checkpoints_v2_source.load_raw() when Supabase is unreachable; makes resolver tests reproducible.",
  "source": "checkpoints_v2 (all positions)",
- "count": 1626,
+ "count": 1654,
  "rows": [
   {
    "id": 1,
@@ -7692,8 +7692,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 238,
@@ -7726,8 +7726,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Minor"
   },
   {
    "id": 239,
@@ -7770,8 +7770,8 @@
    "formation": "Gun",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. The designed crossover step is a FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill. Base stays wide enough to hold balance and weight stays centred, not forward on the front foot.",
-   "fault_trigger": "Bouncing, high-stepping, or riding up on the toes instead of gliding. Knees crossing (karaoke-style) rather than the feet gliding past. Base narrowing so the body leans and loses balance. Weight shifting forward onto the front foot, preventing a clean load. Toes pointing backward or knees swinging wide off the linear path. Crossing at a speed that costs control. Heavy heel contact or wasted movement.",
+   "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. Base stays wide enough to hold balance.",
+   "fault_trigger": "Bouncing, high-stepping, or riding up on the toes instead of gliding. Base narrowing so the body leans and loses balance. Toes pointing backward. Crossing at a speed that costs control. Heavy heel contact or wasted movement.",
    "pose_landmarks": [
     "Left Foot",
     "Right Foot",
@@ -7792,8 +7792,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 241,
@@ -7898,8 +7898,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 244,
@@ -8035,8 +8035,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 248,
@@ -8047,8 +8047,8 @@
    "formation": "Gun",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Football remains secure from snap reception through the drop — two-hand control until entering the throwing sequence. Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
-   "fault_trigger": "Ball drops off the chest or elbows flare during the drop. (Ball Position needs ball tracking.) Dropping to one hand on the ball. Arms stiff, or flailing/crossing the body’s midline, forcing the torso to overwork and sapping rotational energy. Ball drifting off a consistent carriage position.",
+   "ideal_execution_standard": "Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
+   "fault_trigger": "Elbows flare during the drop. Dropping to one hand on the ball. Arms stiff, or flailing/crossing the body’s midline, forcing the torso to overwork and sapping rotational energy.",
    "pose_landmarks": [
     "Left Hand",
     "Right Hand",
@@ -8056,8 +8056,7 @@
     "Right Wrist",
     "Left Elbow",
     "Right Elbow",
-    "Sternum",
-    "Ball Position. (Ball Position needs ball tracking.)"
+    "Sternum"
    ],
    "measurable_signal": "[DRAFT — PROXY] Ball secure from snap through the drop — two-hand control until the throwing sequence. POSE PROXY = hands-together/height/elbow-tuck; Ball Position needs BALL TRACKING. Partial.",
    "measurable_by_pose": "Partial",
@@ -8071,8 +8070,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
   },
   {
    "id": 249,
@@ -8102,8 +8101,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
   },
   {
    "id": 250,
@@ -8114,15 +8113,13 @@
    "formation": "Gun",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Maintain downfield vision throughout the drop while progressing through the defensive read. Head stays stable and level over the spine throughout the drop — no bouncing, dipping, or rocking of the upper body, which costs spatial awareness and balance.",
-   "fault_trigger": "Head unstable or eyes drop during the drop. (Eye progression not pose-measurable — deferred.) Head bouncing, dipping, or rocking through the drop; upper body unstable, degrading spatial awareness and balance.",
+   "ideal_execution_standard": "Head stays stable and level over the spine throughout the drop — no bouncing, dipping, or rocking of the upper body, which costs spatial awareness and balance.",
+   "fault_trigger": "Head unstable during the drop. Head bouncing, dipping, or rocking through the drop; upper body unstable, degrading spatial awareness and balance.",
    "pose_landmarks": [
     "Nose",
-    "Left Eye",
-    "Right Eye",
     "Left Ear",
     "Right Ear",
-    "Neck. (Head stability measurable; gaze/read deferred.)"
+    "Neck"
    ],
    "measurable_signal": "[DRAFT — PARTIAL] Downfield vision throughout the drop while progressing through the read. Head STABILITY/orientation measurable; actual EYE progression = deferred. Partial.",
    "measurable_by_pose": "Partial",
@@ -8136,8 +8133,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Minor"
   },
   {
    "id": 251,
@@ -8255,8 +8252,8 @@
    "formation": "Gun",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Maintain secure two-hand football carriage throughout the longer drop — the ball remains protected until the throwing motion begins. Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
-   "fault_trigger": "Ball drops off the chest or elbows flare during the longer drop. (Ball Position needs ball tracking.) Dropping to one hand on the ball. Arms stiff, or flailing/crossing the body’s midline, forcing the torso to overwork and sapping rotational energy. Ball drifting off a consistent carriage position.",
+   "ideal_execution_standard": "Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
+   "fault_trigger": "Elbows flare during the longer drop. Dropping to one hand on the ball. Arms stiff, or flailing/crossing the body’s midline, forcing the torso to overwork and sapping rotational energy.",
    "pose_landmarks": [
     "Left Hand",
     "Right Hand",
@@ -8264,8 +8261,7 @@
     "Right Wrist",
     "Left Elbow",
     "Right Elbow",
-    "Sternum",
-    "Ball Position. (Ball Position needs ball tracking.)"
+    "Sternum"
    ],
    "measurable_signal": "[DRAFT — PROXY] Secure two-hand football carriage throughout the longer drop — ball protected until the throwing motion. POSE PROXY = hands-together/height/elbow-tuck; Ball Position needs BALL TRACKING. Partial.",
    "measurable_by_pose": "Partial",
@@ -8279,8 +8275,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
   },
   {
    "id": 255,
@@ -8317,8 +8313,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 256,
@@ -8383,8 +8379,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 258,
@@ -8415,8 +8411,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 259,
@@ -8427,8 +8423,8 @@
    "formation": "Gun",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. The two designed crossover steps are FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill. Base stays wide enough to hold balance and weight stays centred, not forward on the front foot.",
-   "fault_trigger": "Bouncing, high-stepping, or riding up on the toes instead of gliding. Knees crossing (karaoke-style) rather than the feet gliding past. Base narrowing so the body leans and loses balance. Weight shifting forward onto the front foot, preventing a clean load. Toes pointing backward or knees swinging wide off the linear path. Crossing at a speed that costs control. Heavy heel contact or movement that disrupts timing.",
+   "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. Base stays wide enough to hold balance.",
+   "fault_trigger": "Bouncing, high-stepping, or riding up on the toes instead of gliding. Base narrowing so the body leans and loses balance. Toes pointing backward. Crossing at a speed that costs control. Heavy heel contact or movement that disrupts timing.",
    "pose_landmarks": [
     "Left Foot",
     "Right Foot",
@@ -8449,8 +8445,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 260,
@@ -8517,8 +8513,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Minor"
   },
   {
    "id": 262,
@@ -8529,15 +8525,13 @@
    "formation": "Gun",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Maintain disciplined downfield vision throughout the drop while reading coverage and maintaining body control. Head stays stable and level over the spine throughout the drop — no bouncing, dipping, or rocking of the upper body, which costs spatial awareness and balance.",
-   "fault_trigger": "Head drops/bobs or eyes come down during the drop. (Gaze/reads not pose-measurable — deferred.) Head bouncing, dipping, or rocking through the drop; upper body unstable, degrading spatial awareness and balance.",
+   "ideal_execution_standard": "Head stays stable and level over the spine throughout the drop — no bouncing, dipping, or rocking of the upper body, which costs spatial awareness and balance.",
+   "fault_trigger": "Head drops/bobs during the drop. Head bouncing, dipping, or rocking through the drop; upper body unstable, degrading spatial awareness and balance.",
    "pose_landmarks": [
     "Nose",
-    "Left Eye",
-    "Right Eye",
     "Left Ear",
     "Right Ear",
-    "Neck. (Head orientation measurable; gaze/reads deferred.)"
+    "Neck"
    ],
    "measurable_signal": "[DRAFT — PARTIAL] Disciplined downfield vision throughout the drop while reading coverage + maintaining body control. Head orientation measurable; gaze/reads deferred. Partial.",
    "measurable_by_pose": "Partial",
@@ -8551,8 +8545,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Minor"
   },
   {
    "id": 263,
@@ -8582,8 +8576,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
   },
   {
    "id": 264,
@@ -10182,15 +10176,13 @@
    "formation": "Pistol",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Maintain downfield vision throughout the drop while progressing through defensive reads. Head stays stable and level over the spine throughout the drop — no bouncing, dipping, or rocking of the upper body, which costs spatial awareness and balance.",
-   "fault_trigger": "Head drops/bobs or eyes come down during the drop. (Gaze/reads not pose-measurable — deferred.) Head bouncing, dipping, or rocking through the drop; upper body unstable, degrading spatial awareness and balance.",
+   "ideal_execution_standard": "Head stays stable and level over the spine throughout the drop — no bouncing, dipping, or rocking of the upper body, which costs spatial awareness and balance.",
+   "fault_trigger": "Head drops/bobs during the drop. Head bouncing, dipping, or rocking through the drop; upper body unstable, degrading spatial awareness and balance.",
    "pose_landmarks": [
     "Nose",
-    "Left Eye",
-    "Right Eye",
     "Left Ear",
     "Right Ear",
-    "Neck. (Head orientation measurable; gaze/reads deferred.)"
+    "Neck"
    ],
    "measurable_signal": "[DRAFT — PARTIAL] Downfield vision throughout the drop while progressing through reads. Head orientation measurable; gaze/reads deferred. Partial.",
    "measurable_by_pose": "Partial",
@@ -10204,8 +10196,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Minor"
   },
   {
    "id": 312,
@@ -10274,8 +10266,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Minor"
   },
   {
    "id": 314,
@@ -10320,8 +10312,8 @@
    "formation": "Pistol",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. The designed crossover step is a FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill. Base stays wide enough to hold balance and weight stays centred, not forward on the front foot.",
-   "fault_trigger": "Bouncing, high-stepping, or riding up on the toes instead of gliding. Knees crossing (karaoke-style) rather than the feet gliding past. Base narrowing so the body leans and loses balance. Weight shifting forward onto the front foot, preventing a clean load. Toes pointing backward or knees swinging wide off the linear path. Crossing at a speed that costs control. Heavy heel contact or wasted movement.",
+   "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. Base stays wide enough to hold balance.",
+   "fault_trigger": "Bouncing, high-stepping, or riding up on the toes instead of gliding. Base narrowing so the body leans and loses balance. Toes pointing backward. Crossing at a speed that costs control. Heavy heel contact or wasted movement.",
    "pose_landmarks": [
     "Left Foot",
     "Right Foot",
@@ -10342,8 +10334,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 316,
@@ -10390,8 +10382,8 @@
    "formation": "Pistol",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Maintain two-hand football security throughout the drop — the ball remains protected and positioned for efficient throwing transition. Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
-   "fault_trigger": "Ball drops off the chest or elbows flare during the drop. (Ball Position needs ball tracking.) Dropping to one hand on the ball. Arms stiff, or flailing/crossing the body’s midline, forcing the torso to overwork and sapping rotational energy. Ball drifting off a consistent carriage position.",
+   "ideal_execution_standard": "Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
+   "fault_trigger": "Elbows flare during the drop. Dropping to one hand on the ball. Arms stiff, or flailing/crossing the body’s midline, forcing the torso to overwork and sapping rotational energy.",
    "pose_landmarks": [
     "Left Hand",
     "Right Hand",
@@ -10399,8 +10391,7 @@
     "Right Wrist",
     "Left Elbow",
     "Right Elbow",
-    "Sternum",
-    "Ball Position. (Ball Position needs ball tracking.)"
+    "Sternum"
    ],
    "measurable_signal": "[DRAFT — PROXY] Two-hand ball security throughout the drop — ball protected + positioned for efficient throwing transition. POSE PROXY = hands-together/height/elbow-tuck; Ball Position needs BALL TRACKING. Partial.",
    "measurable_by_pose": "Partial",
@@ -10414,8 +10405,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
   },
   {
    "id": 318,
@@ -10483,8 +10474,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
   },
   {
    "id": 320,
@@ -10582,8 +10573,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 323,
@@ -10620,8 +10611,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 324,
@@ -10652,8 +10643,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 325,
@@ -10792,8 +10783,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Minor"
   },
   {
    "id": 329,
@@ -10859,8 +10850,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 331,
@@ -10871,8 +10862,8 @@
    "formation": "Pistol",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. The two designed crossover steps are FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill. Base stays wide enough to hold balance and weight stays centred, not forward on the front foot.",
-   "fault_trigger": "Bouncing, high-stepping, or riding up on the toes instead of gliding. Knees crossing (karaoke-style) rather than the feet gliding past. Base narrowing so the body leans and loses balance. Weight shifting forward onto the front foot, preventing a clean load. Toes pointing backward or knees swinging wide off the linear path. Crossing at a speed that costs control. Heavy heel contact or movement that disrupts timing.",
+   "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. Base stays wide enough to hold balance.",
+   "fault_trigger": "Bouncing, high-stepping, or riding up on the toes instead of gliding. Base narrowing so the body leans and loses balance. Toes pointing backward. Crossing at a speed that costs control. Heavy heel contact or movement that disrupts timing.",
    "pose_landmarks": [
     "Left Foot",
     "Right Foot",
@@ -10893,8 +10884,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 332,
@@ -10905,8 +10896,8 @@
    "formation": "Pistol",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Maintain secure two-hand football control throughout the longer drop — the football remains protected until entering the throwing motion. Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
-   "fault_trigger": "Ball drops off the chest or elbows flare during the longer drop. (Ball Position needs ball tracking.) Dropping to one hand on the ball. Arms stiff, or flailing/crossing the body’s midline, forcing the torso to overwork and sapping rotational energy. Ball drifting off a consistent carriage position.",
+   "ideal_execution_standard": "Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
+   "fault_trigger": "Elbows flare during the longer drop. Dropping to one hand on the ball. Arms stiff, or flailing/crossing the body’s midline, forcing the torso to overwork and sapping rotational energy.",
    "pose_landmarks": [
     "Left Hand",
     "Right Hand",
@@ -10914,8 +10905,7 @@
     "Right Wrist",
     "Left Elbow",
     "Right Elbow",
-    "Sternum",
-    "Ball Position. (Ball Position needs ball tracking.)"
+    "Sternum"
    ],
    "measurable_signal": "[DRAFT — PROXY] Secure two-hand football control throughout the longer drop — ball protected until the throwing motion. POSE PROXY = hands-together/height/elbow-tuck; Ball Position needs BALL TRACKING. Partial.",
    "measurable_by_pose": "Partial",
@@ -10929,8 +10919,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
   },
   {
    "id": 333,
@@ -11031,8 +11021,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 336,
@@ -11069,8 +11059,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 337,
@@ -11100,8 +11090,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
   },
   {
    "id": 338,
@@ -11112,15 +11102,13 @@
    "formation": "Pistol",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Maintain disciplined downfield vision throughout the drop while processing coverage and defensive movement. Head stays stable and level over the spine throughout the drop — no bouncing, dipping, or rocking of the upper body, which costs spatial awareness and balance.",
-   "fault_trigger": "Head drops/bobs or eyes come down during the drop. (Gaze/reads not pose-measurable — deferred.) Head bouncing, dipping, or rocking through the drop; upper body unstable, degrading spatial awareness and balance.",
+   "ideal_execution_standard": "Head stays stable and level over the spine throughout the drop — no bouncing, dipping, or rocking of the upper body, which costs spatial awareness and balance.",
+   "fault_trigger": "Head drops/bobs during the drop. Head bouncing, dipping, or rocking through the drop; upper body unstable, degrading spatial awareness and balance.",
    "pose_landmarks": [
     "Nose",
-    "Left Eye",
-    "Right Eye",
     "Left Ear",
     "Right Ear",
-    "Neck. (Head orientation measurable; gaze/reads deferred.)"
+    "Neck"
    ],
    "measurable_signal": "[DRAFT — PARTIAL] Disciplined downfield vision throughout the drop while processing coverage + defensive movement. Head orientation measurable; gaze/reads deferred. Partial.",
    "measurable_by_pose": "Partial",
@@ -11134,8 +11122,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Minor"
   },
   {
    "id": 339,
@@ -15901,8 +15889,8 @@
    "formation": "Under Center",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. The designed crossover step is a FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill. Base stays wide enough to hold balance and weight stays centred, not forward on the front foot.",
-   "fault_trigger": "Bouncing, high-stepping, or riding up on the toes instead of gliding. Knees crossing (karaoke-style) rather than the feet gliding past. Base narrowing so the body leans and loses balance. Weight shifting forward onto the front foot, preventing a clean load. Toes pointing backward or knees swinging wide off the linear path. Crossing at a speed that costs control. Heavy heel contact or wasted movement.",
+   "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. Base stays wide enough to hold balance.",
+   "fault_trigger": "Bouncing, high-stepping, or riding up on the toes instead of gliding. Base narrowing so the body leans and loses balance. Toes pointing backward. Crossing at a speed that costs control. Heavy heel contact or wasted movement.",
    "pose_landmarks": [
     "Left Foot",
     "Right Foot",
@@ -15923,8 +15911,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 478,
@@ -15957,8 +15945,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 479,
@@ -16003,8 +15991,8 @@
    "formation": "Under Center",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Maintain two-hand football security from the snap through the drop — ball near the chest with elbows controlled and ready to transition into the throwing motion. Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
-   "fault_trigger": "Ball drops off the chest or elbows flare during the drop. (Ball Position needs ball tracking.) Dropping to one hand on the ball. Arms stiff, or flailing/crossing the body’s midline, forcing the torso to overwork and sapping rotational energy. Ball drifting off a consistent carriage position.",
+   "ideal_execution_standard": "Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
+   "fault_trigger": "Elbows flare during the drop. Dropping to one hand on the ball. Arms stiff, or flailing/crossing the body’s midline, forcing the torso to overwork and sapping rotational energy.",
    "pose_landmarks": [
     "Left Hand",
     "Right Hand",
@@ -16012,8 +16000,7 @@
     "Right Wrist",
     "Left Elbow",
     "Right Elbow",
-    "Sternum",
-    "Ball Position. (Ball Position needs ball tracking.)"
+    "Sternum"
    ],
    "measurable_signal": "[DRAFT — PROXY] Two-hand ball security from snap through the drop — ball near the chest, elbows controlled, ready to transition to the throw. POSE PROXY = hands-together/height/elbow-tuck; Ball Position needs BALL TRACKING. Partial.",
    "measurable_by_pose": "Partial",
@@ -16027,8 +16014,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
   },
   {
    "id": 481,
@@ -16039,15 +16026,13 @@
    "formation": "Under Center",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Maintain vision downfield throughout the drop — head stable while the eyes progress through the defensive coverage. Head stays stable and level over the spine throughout the drop — no bouncing, dipping, or rocking of the upper body, which costs spatial awareness and balance.",
-   "fault_trigger": "Head unstable/bobbing or eyes drop during the drop. (Eye progression not pose-measurable — deferred.) Head bouncing, dipping, or rocking through the drop; upper body unstable, degrading spatial awareness and balance.",
+   "ideal_execution_standard": "Head stays stable and level over the spine throughout the drop — no bouncing, dipping, or rocking of the upper body, which costs spatial awareness and balance.",
+   "fault_trigger": "Head unstable/bobbing during the drop. Head bouncing, dipping, or rocking through the drop; upper body unstable, degrading spatial awareness and balance.",
    "pose_landmarks": [
     "Nose",
-    "Left Eye",
-    "Right Eye",
     "Left Ear",
     "Right Ear",
-    "Neck. (Head stability measurable; gaze/progression deferred.)"
+    "Neck"
    ],
    "measurable_signal": "[DRAFT — PARTIAL] Vision downfield throughout the drop — head stable while eyes progress through coverage. Head STABILITY/orientation measurable; actual EYE progression = deferred. Partial.",
    "measurable_by_pose": "Partial",
@@ -16061,8 +16046,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Minor"
   },
   {
    "id": 482,
@@ -16200,8 +16185,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Minor"
   },
   {
    "id": 486,
@@ -16232,8 +16217,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 487,
@@ -16263,8 +16248,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
   },
   {
    "id": 488,
@@ -16337,8 +16322,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 490,
@@ -16411,8 +16396,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 492,
@@ -16477,8 +16462,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 494,
@@ -16489,8 +16474,8 @@
    "formation": "Under Center",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. The two designed crossover steps are FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill. Base stays wide enough to hold balance and weight stays centred, not forward on the front foot.",
-   "fault_trigger": "Bouncing, high-stepping, or riding up on the toes instead of gliding. Knees crossing (karaoke-style) rather than the feet gliding past. Base narrowing so the body leans and loses balance. Weight shifting forward onto the front foot, preventing a clean load. Toes pointing backward or knees swinging wide off the linear path. Crossing at a speed that costs control. Heavy heel contact or movement that disrupts timing.",
+   "ideal_execution_standard": "Feet glide low to the ground throughout the drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. Base stays wide enough to hold balance.",
+   "fault_trigger": "Bouncing, high-stepping, or riding up on the toes instead of gliding. Base narrowing so the body leans and loses balance. Toes pointing backward. Crossing at a speed that costs control. Heavy heel contact or movement that disrupts timing.",
    "pose_landmarks": [
     "Left Foot",
     "Right Foot",
@@ -16511,8 +16496,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 495,
@@ -16523,8 +16508,8 @@
    "formation": "Under Center",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Maintain two-hand football security from snap reception through the drop — ball tight to the chest with elbows controlled until transitioning into the throwing motion. Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
-   "fault_trigger": "Ball drops off the chest or elbows flare during the drop. (Ball Position needs ball tracking.) Dropping to one hand on the ball. Arms stiff, or flailing/crossing the body’s midline, forcing the torso to overwork and sapping rotational energy. Ball drifting off a consistent carriage position.",
+   "ideal_execution_standard": "Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
+   "fault_trigger": "Elbows flare during the drop. Dropping to one hand on the ball. Arms stiff, or flailing/crossing the body’s midline, forcing the torso to overwork and sapping rotational energy.",
    "pose_landmarks": [
     "Left Hand",
     "Right Hand",
@@ -16532,8 +16517,7 @@
     "Right Wrist",
     "Left Elbow",
     "Right Elbow",
-    "Sternum",
-    "Ball Position. (Ball Position needs ball tracking.)"
+    "Sternum"
    ],
    "measurable_signal": "[DRAFT — PROXY] Two-hand ball security from snap through the drop — ball tight to the chest, elbows controlled, until transitioning to the throw. POSE PROXY = hands-together/height/elbow-tuck; Ball Position needs BALL TRACKING. Partial.",
    "measurable_by_pose": "Partial",
@@ -16547,8 +16531,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
   },
   {
    "id": 496,
@@ -16579,8 +16563,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 497,
@@ -16591,15 +16575,13 @@
    "formation": "Under Center",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Maintain disciplined vision downfield throughout the drop — head stable while eyes progress through defensive coverage. Head stays stable and level over the spine throughout the drop — no bouncing, dipping, or rocking of the upper body, which costs spatial awareness and balance.",
-   "fault_trigger": "Head unstable/bobbing or eyes drop during the drop. (Eye progression not pose-measurable — deferred.) Head bouncing, dipping, or rocking through the drop; upper body unstable, degrading spatial awareness and balance.",
+   "ideal_execution_standard": "Head stays stable and level over the spine throughout the drop — no bouncing, dipping, or rocking of the upper body, which costs spatial awareness and balance.",
+   "fault_trigger": "Head unstable/bobbing during the drop. Head bouncing, dipping, or rocking through the drop; upper body unstable, degrading spatial awareness and balance.",
    "pose_landmarks": [
     "Nose",
-    "Left Eye",
-    "Right Eye",
     "Left Ear",
     "Right Ear",
-    "Neck. (Head stability measurable; gaze/progression deferred.)"
+    "Neck"
    ],
    "measurable_signal": "[DRAFT — PARTIAL] Disciplined vision downfield throughout the drop — head stable while eyes progress through coverage. Head STABILITY/orientation measurable; actual EYE progression = deferred. Partial.",
    "measurable_by_pose": "Partial",
@@ -16613,8 +16595,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Minor"
   },
   {
    "id": 498,
@@ -16647,8 +16629,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Minor"
   },
   {
    "id": 499,
@@ -16857,8 +16839,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
   },
   {
    "id": 505,
@@ -16869,15 +16851,13 @@
    "formation": "Under Center",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Maintain downfield vision throughout the drop while progressing through reads — head controlled without unnecessary movement. Head stays stable and level over the spine throughout the drop — no bouncing, dipping, or rocking of the upper body, which costs spatial awareness and balance.",
-   "fault_trigger": "Head unstable or eyes drop during the drop. (Eye progression not pose-measurable — deferred.) Head bouncing, dipping, or rocking through the drop; upper body unstable, degrading spatial awareness and balance.",
+   "ideal_execution_standard": "Head stays stable and level over the spine throughout the drop — no bouncing, dipping, or rocking of the upper body, which costs spatial awareness and balance.",
+   "fault_trigger": "Head unstable during the drop. Head bouncing, dipping, or rocking through the drop; upper body unstable, degrading spatial awareness and balance.",
    "pose_landmarks": [
     "Nose",
-    "Left Eye",
-    "Right Eye",
     "Left Ear",
     "Right Ear",
-    "Neck. (Head stability measurable; gaze/reads deferred.)"
+    "Neck"
    ],
    "measurable_signal": "[DRAFT — PARTIAL] Downfield vision throughout the drop while progressing through reads — head controlled, no unnecessary movement. Head STABILITY/orientation measurable; actual EYE progression = deferred. Partial.",
    "measurable_by_pose": "Partial",
@@ -16891,8 +16871,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Minor"
   },
   {
    "id": 506,
@@ -16925,8 +16905,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 507,
@@ -16969,8 +16949,8 @@
    "formation": "Under Center",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Maintain secure two-hand football carriage throughout the seven-step drop — ball protected against the body until the throwing phase begins. Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
-   "fault_trigger": "Ball drops off the chest or elbows flare during the longer drop. (Ball Position needs ball tracking.) Dropping to one hand on the ball. Arms stiff, or flailing/crossing the body’s midline, forcing the torso to overwork and sapping rotational energy. Ball drifting off a consistent carriage position.",
+   "ideal_execution_standard": "Both hands stay securely on the ball throughout the drop. Arms and hands stay relaxed but controlled — not stiff, not so loose that the ball drifts and body position goes with it. Hands do not cross the body’s midline.",
+   "fault_trigger": "Elbows flare during the longer drop. Dropping to one hand on the ball. Arms stiff, or flailing/crossing the body’s midline, forcing the torso to overwork and sapping rotational energy.",
    "pose_landmarks": [
     "Left Hand",
     "Right Hand",
@@ -16978,8 +16958,7 @@
     "Right Wrist",
     "Left Elbow",
     "Right Elbow",
-    "Sternum",
-    "Ball Position. (Ball Position needs ball tracking.)"
+    "Sternum"
    ],
    "measurable_signal": "[DRAFT — PROXY] Secure two-hand carriage throughout the seven-step drop — ball protected against the body until the throwing phase. POSE PROXY = hands-together/height/elbow-tuck; Ball Position needs BALL TRACKING. Partial.",
    "measurable_by_pose": "Partial",
@@ -16993,8 +16972,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
   },
   {
    "id": 509,
@@ -17027,8 +17006,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Minor"
   },
   {
    "id": 510,
@@ -17166,8 +17145,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
   },
   {
    "id": 514,
@@ -17204,8 +17183,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 515,
@@ -17251,8 +17230,8 @@
    "formation": "Under Center",
    "phase": null,
    "phase_order": null,
-   "ideal_execution_standard": "Feet glide low to the ground throughout the longer drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. The three designed crossover steps are FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill. Base stays wide enough to hold balance and weight stays centred, not forward on the front foot.",
-   "fault_trigger": "Bouncing, high-stepping, or riding up on the toes instead of gliding. Knees crossing (karaoke-style) rather than the feet gliding past. Base narrowing so the body leans and loses balance. Weight shifting forward onto the front foot, preventing a clean load. Toes pointing backward or knees swinging wide off the linear path. Crossing at a speed that costs control. Wasted steps or excessive vertical movement in the deeper drop.",
+   "ideal_execution_standard": "Feet glide low to the ground throughout the longer drop — cleats cutting grass, staying in contact so a balanced throwing base is available immediately. Base stays wide enough to hold balance.",
+   "fault_trigger": "Bouncing, high-stepping, or riding up on the toes instead of gliding. Base narrowing so the body leans and loses balance. Toes pointing backward. Crossing at a speed that costs control. Wasted steps or excessive vertical movement in the deeper drop.",
    "pose_landmarks": [
     "Left Foot",
     "Right Foot",
@@ -17273,8 +17252,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 517,
@@ -17341,8 +17320,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 519,
@@ -53233,6 +53212,881 @@
    "threshold_parameters": null,
    "player_tier": "Advanced",
    "fault_severity": "Minor"
+  },
+  {
+   "id": 1792,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "3 Step",
+   "formation": "Gun",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Maintain downfield vision throughout the drop while progressing through the defensive read.",
+   "fault_trigger": "Eyes drop during the drop, not progressing through the read. (Eye progression not pose-measurable — deferred.)",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye"
+   ],
+   "measurable_signal": "[DRAFT — PARTIAL] Downfield vision throughout the drop while progressing through the read. Head STABILITY/orientation measurable; actual EYE progression = deferred. Partial.",
+   "measurable_by_pose": "Partial",
+   "camera_angle": "Side",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:33:02.973791+00:00",
+   "updated_at": "2026-09-15T20:33:02.973791+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1793,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "5 Step",
+   "formation": "Gun",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Maintain disciplined downfield vision throughout the drop while reading coverage and maintaining body control.",
+   "fault_trigger": "Eyes come down during the drop, not progressing through the read. (Gaze/reads not pose-measurable — deferred.)",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye"
+   ],
+   "measurable_signal": "[DRAFT — PARTIAL] Disciplined downfield vision throughout the drop while reading coverage + maintaining body control. Head orientation measurable; gaze/reads deferred. Partial.",
+   "measurable_by_pose": "Partial",
+   "camera_angle": "Side",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:33:02.973791+00:00",
+   "updated_at": "2026-09-15T20:33:02.973791+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1794,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "3 Step",
+   "formation": "Pistol",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Maintain downfield vision throughout the drop while progressing through defensive reads.",
+   "fault_trigger": "Eyes come down during the drop, not progressing through the read. (Gaze/reads not pose-measurable — deferred.)",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye"
+   ],
+   "measurable_signal": "[DRAFT — PARTIAL] Downfield vision throughout the drop while progressing through reads. Head orientation measurable; gaze/reads deferred. Partial.",
+   "measurable_by_pose": "Partial",
+   "camera_angle": "Side",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:33:02.973791+00:00",
+   "updated_at": "2026-09-15T20:33:02.973791+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1795,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "5 Step",
+   "formation": "Pistol",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Maintain disciplined downfield vision throughout the drop while processing coverage and defensive movement.",
+   "fault_trigger": "Eyes come down during the drop, not progressing through the read. (Gaze/reads not pose-measurable — deferred.)",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye"
+   ],
+   "measurable_signal": "[DRAFT — PARTIAL] Disciplined downfield vision throughout the drop while processing coverage + defensive movement. Head orientation measurable; gaze/reads deferred. Partial.",
+   "measurable_by_pose": "Partial",
+   "camera_angle": "Side",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:33:02.973791+00:00",
+   "updated_at": "2026-09-15T20:33:02.973791+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1796,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "3 Step",
+   "formation": "Under Center",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Maintain vision downfield throughout the drop — head stable while the eyes progress through the defensive coverage.",
+   "fault_trigger": "Eyes drop during the drop, not progressing through the read. (Eye progression not pose-measurable — deferred.)",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye"
+   ],
+   "measurable_signal": "[DRAFT — PARTIAL] Vision downfield throughout the drop — head stable while eyes progress through coverage. Head STABILITY/orientation measurable; actual EYE progression = deferred. Partial.",
+   "measurable_by_pose": "Partial",
+   "camera_angle": "Side",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:33:02.973791+00:00",
+   "updated_at": "2026-09-15T20:33:02.973791+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1797,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "5 Step",
+   "formation": "Under Center",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Maintain disciplined vision downfield throughout the drop — head stable while eyes progress through defensive coverage.",
+   "fault_trigger": "Eyes drop during the drop, not progressing through the read. (Eye progression not pose-measurable — deferred.)",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye"
+   ],
+   "measurable_signal": "[DRAFT — PARTIAL] Disciplined vision downfield throughout the drop — head stable while eyes progress through coverage. Head STABILITY/orientation measurable; actual EYE progression = deferred. Partial.",
+   "measurable_by_pose": "Partial",
+   "camera_angle": "Side",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:33:02.973791+00:00",
+   "updated_at": "2026-09-15T20:33:02.973791+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1798,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "7 Step",
+   "formation": "Under Center",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Maintain downfield vision throughout the drop while progressing through reads — head controlled without unnecessary movement.",
+   "fault_trigger": "Eyes drop during the drop, not progressing through the read. (Eye progression not pose-measurable — deferred.)",
+   "pose_landmarks": [
+    "Nose",
+    "Left Eye",
+    "Right Eye"
+   ],
+   "measurable_signal": "[DRAFT — PARTIAL] Downfield vision throughout the drop while progressing through reads — head controlled, no unnecessary movement. Head STABILITY/orientation measurable; actual EYE progression = deferred. Partial.",
+   "measurable_by_pose": "Partial",
+   "camera_angle": "Side",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:33:02.973791+00:00",
+   "updated_at": "2026-09-15T20:33:02.973791+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1799,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "3 Step",
+   "formation": "Gun",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Football remains secure from snap reception through the drop — two-hand control until entering the throwing sequence.",
+   "fault_trigger": "Ball drops off the chest during the drop. Ball drifting off a consistent carriage position. (Ball Position needs ball tracking.)",
+   "pose_landmarks": [
+    "Ball Position",
+    "Sternum"
+   ],
+   "measurable_signal": "[DRAFT — PROXY] Ball secure from snap through the drop — two-hand control until the throwing sequence. POSE PROXY = hands-together/height/elbow-tuck; Ball Position needs BALL TRACKING. Partial.",
+   "measurable_by_pose": "No",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:34:25.368494+00:00",
+   "updated_at": "2026-09-15T20:34:25.368494+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
+  },
+  {
+   "id": 1800,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "5 Step",
+   "formation": "Gun",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Maintain secure two-hand football carriage throughout the longer drop — the ball remains protected until the throwing motion begins.",
+   "fault_trigger": "Ball drops off the chest during the longer drop. Ball drifting off a consistent carriage position. (Ball Position needs ball tracking.)",
+   "pose_landmarks": [
+    "Ball Position",
+    "Sternum"
+   ],
+   "measurable_signal": "[DRAFT — PROXY] Secure two-hand football carriage throughout the longer drop — ball protected until the throwing motion. POSE PROXY = hands-together/height/elbow-tuck; Ball Position needs BALL TRACKING. Partial.",
+   "measurable_by_pose": "No",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:34:25.368494+00:00",
+   "updated_at": "2026-09-15T20:34:25.368494+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
+  },
+  {
+   "id": 1801,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "3 Step",
+   "formation": "Pistol",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Maintain two-hand football security throughout the drop — the ball remains protected and positioned for efficient throwing transition.",
+   "fault_trigger": "Ball drops off the chest during the drop. Ball drifting off a consistent carriage position. (Ball Position needs ball tracking.)",
+   "pose_landmarks": [
+    "Ball Position",
+    "Sternum"
+   ],
+   "measurable_signal": "[DRAFT — PROXY] Two-hand ball security throughout the drop — ball protected + positioned for efficient throwing transition. POSE PROXY = hands-together/height/elbow-tuck; Ball Position needs BALL TRACKING. Partial.",
+   "measurable_by_pose": "No",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:34:25.368494+00:00",
+   "updated_at": "2026-09-15T20:34:25.368494+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
+  },
+  {
+   "id": 1802,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "5 Step",
+   "formation": "Pistol",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Maintain secure two-hand football control throughout the longer drop — the football remains protected until entering the throwing motion.",
+   "fault_trigger": "Ball drops off the chest during the longer drop. Ball drifting off a consistent carriage position. (Ball Position needs ball tracking.)",
+   "pose_landmarks": [
+    "Ball Position",
+    "Sternum"
+   ],
+   "measurable_signal": "[DRAFT — PROXY] Secure two-hand football control throughout the longer drop — ball protected until the throwing motion. POSE PROXY = hands-together/height/elbow-tuck; Ball Position needs BALL TRACKING. Partial.",
+   "measurable_by_pose": "No",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:34:25.368494+00:00",
+   "updated_at": "2026-09-15T20:34:25.368494+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
+  },
+  {
+   "id": 1803,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "3 Step",
+   "formation": "Under Center",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Maintain two-hand football security from the snap through the drop — ball near the chest with elbows controlled and ready to transition into the throwing motion.",
+   "fault_trigger": "Ball drops off the chest during the drop. Ball drifting off a consistent carriage position. (Ball Position needs ball tracking.)",
+   "pose_landmarks": [
+    "Ball Position",
+    "Sternum"
+   ],
+   "measurable_signal": "[DRAFT — PROXY] Two-hand ball security from snap through the drop — ball near the chest, elbows controlled, ready to transition to the throw. POSE PROXY = hands-together/height/elbow-tuck; Ball Position needs BALL TRACKING. Partial.",
+   "measurable_by_pose": "No",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:34:25.368494+00:00",
+   "updated_at": "2026-09-15T20:34:25.368494+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
+  },
+  {
+   "id": 1804,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "5 Step",
+   "formation": "Under Center",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Maintain two-hand football security from snap reception through the drop — ball tight to the chest with elbows controlled until transitioning into the throwing motion.",
+   "fault_trigger": "Ball drops off the chest during the drop. Ball drifting off a consistent carriage position. (Ball Position needs ball tracking.)",
+   "pose_landmarks": [
+    "Ball Position",
+    "Sternum"
+   ],
+   "measurable_signal": "[DRAFT — PROXY] Two-hand ball security from snap through the drop — ball tight to the chest, elbows controlled, until transitioning to the throw. POSE PROXY = hands-together/height/elbow-tuck; Ball Position needs BALL TRACKING. Partial.",
+   "measurable_by_pose": "No",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:34:25.368494+00:00",
+   "updated_at": "2026-09-15T20:34:25.368494+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
+  },
+  {
+   "id": 1805,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "7 Step",
+   "formation": "Under Center",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Maintain secure two-hand football carriage throughout the seven-step drop — ball protected against the body until the throwing phase begins.",
+   "fault_trigger": "Ball drops off the chest during the longer drop. Ball drifting off a consistent carriage position. (Ball Position needs ball tracking.)",
+   "pose_landmarks": [
+    "Ball Position",
+    "Sternum"
+   ],
+   "measurable_signal": "[DRAFT — PROXY] Secure two-hand carriage throughout the seven-step drop — ball protected against the body until the throwing phase. POSE PROXY = hands-together/height/elbow-tuck; Ball Position needs BALL TRACKING. Partial.",
+   "measurable_by_pose": "No",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:34:25.368494+00:00",
+   "updated_at": "2026-09-15T20:34:25.368494+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
+  },
+  {
+   "id": 1806,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "3 Step",
+   "formation": "Gun",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "The designed crossover step is a FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill.",
+   "fault_trigger": "Knees crossing (karaoke-style) rather than the feet gliding past. Knees swinging wide off the linear path.",
+   "pose_landmarks": [
+    "Left Knee",
+    "Right Knee",
+    "Left Foot",
+    "Right Foot"
+   ],
+   "measurable_signal": "[DRAFT] Feet glide low to the ground — low vertical oscillation of the ankles/hips, ground contact maintained, minimal heel contact. The ONE designed crossover is foot crossing past foot; knee separation must be maintained (knees not crossing, karaoke-style). Base width held, weight not forward on the front foot. Glide/bounce, knee separation, base width and crossover detection all measurable. Needs motion pipeline.",
+   "measurable_by_pose": "Needs Motion",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:36:46.462924+00:00",
+   "updated_at": "2026-09-15T20:36:46.462924+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1807,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "3 Step",
+   "formation": "Pistol",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "The designed crossover step is a FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill.",
+   "fault_trigger": "Knees crossing (karaoke-style) rather than the feet gliding past. Knees swinging wide off the linear path.",
+   "pose_landmarks": [
+    "Left Knee",
+    "Right Knee",
+    "Left Foot",
+    "Right Foot"
+   ],
+   "measurable_signal": "[DRAFT] Feet glide low to the ground — low vertical oscillation of the ankles/hips, ground contact maintained, minimal heel contact. The ONE designed crossover is foot crossing past foot; knee separation must be maintained (knees not crossing, karaoke-style). Base width held, weight not forward on the front foot. Glide/bounce, knee separation, base width and crossover detection all measurable. Needs motion pipeline.",
+   "measurable_by_pose": "Needs Motion",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:36:46.462924+00:00",
+   "updated_at": "2026-09-15T20:36:46.462924+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1808,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "3 Step",
+   "formation": "Under Center",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "The designed crossover step is a FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill.",
+   "fault_trigger": "Knees crossing (karaoke-style) rather than the feet gliding past. Knees swinging wide off the linear path.",
+   "pose_landmarks": [
+    "Left Knee",
+    "Right Knee",
+    "Left Foot",
+    "Right Foot"
+   ],
+   "measurable_signal": "[DRAFT] Feet glide low to the ground — low vertical oscillation of the ankles/hips, ground contact maintained, minimal heel contact. The ONE designed crossover is foot crossing past foot; knee separation must be maintained (knees not crossing, karaoke-style). Base width held, weight not forward on the front foot. Glide/bounce, knee separation, base width and crossover detection all measurable. Needs motion pipeline.",
+   "measurable_by_pose": "Needs Motion",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:36:46.462924+00:00",
+   "updated_at": "2026-09-15T20:36:46.462924+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1809,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "5 Step",
+   "formation": "Gun",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "The two designed crossover steps are FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill.",
+   "fault_trigger": "Knees crossing (karaoke-style) rather than the feet gliding past. Knees swinging wide off the linear path.",
+   "pose_landmarks": [
+    "Left Knee",
+    "Right Knee",
+    "Left Foot",
+    "Right Foot"
+   ],
+   "measurable_signal": "[DRAFT] Feet glide low to the ground — low vertical oscillation of the ankles/hips, ground contact maintained, minimal heel contact. The TWO designed crossovers are foot crossing past foot; knee separation must be maintained (knees not crossing, karaoke-style). Base width held, weight not forward on the front foot. Glide/bounce, knee separation, base width and crossover detection all measurable. Needs motion pipeline.",
+   "measurable_by_pose": "Needs Motion",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:36:46.462924+00:00",
+   "updated_at": "2026-09-15T20:36:46.462924+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1810,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "5 Step",
+   "formation": "Pistol",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "The two designed crossover steps are FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill.",
+   "fault_trigger": "Knees crossing (karaoke-style) rather than the feet gliding past. Knees swinging wide off the linear path.",
+   "pose_landmarks": [
+    "Left Knee",
+    "Right Knee",
+    "Left Foot",
+    "Right Foot"
+   ],
+   "measurable_signal": "[DRAFT] Feet glide low to the ground — low vertical oscillation of the ankles/hips, ground contact maintained, minimal heel contact. The TWO designed crossovers are foot crossing past foot; knee separation must be maintained (knees not crossing, karaoke-style). Base width held, weight not forward on the front foot. Glide/bounce, knee separation, base width and crossover detection all measurable. Needs motion pipeline.",
+   "measurable_by_pose": "Needs Motion",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:36:46.462924+00:00",
+   "updated_at": "2026-09-15T20:36:46.462924+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1811,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "5 Step",
+   "formation": "Under Center",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "The two designed crossover steps are FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill.",
+   "fault_trigger": "Knees crossing (karaoke-style) rather than the feet gliding past. Knees swinging wide off the linear path.",
+   "pose_landmarks": [
+    "Left Knee",
+    "Right Knee",
+    "Left Foot",
+    "Right Foot"
+   ],
+   "measurable_signal": "[DRAFT] Feet glide low to the ground — low vertical oscillation of the ankles/hips, ground contact maintained, minimal heel contact. The TWO designed crossovers are foot crossing past foot; knee separation must be maintained (knees not crossing, karaoke-style). Base width held, weight not forward on the front foot. Glide/bounce, knee separation, base width and crossover detection all measurable. Needs motion pipeline.",
+   "measurable_by_pose": "Needs Motion",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:36:46.462924+00:00",
+   "updated_at": "2026-09-15T20:36:46.462924+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1812,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "7 Step",
+   "formation": "Under Center",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "The three designed crossover steps are FOOT crossing past foot while the knees stay on a linear path; the knees do not cross over one another as in a karaoke drill.",
+   "fault_trigger": "Knees crossing (karaoke-style) rather than the feet gliding past. Knees swinging wide off the linear path.",
+   "pose_landmarks": [
+    "Left Knee",
+    "Right Knee",
+    "Left Foot",
+    "Right Foot"
+   ],
+   "measurable_signal": "[DRAFT] Feet glide low to the ground through the longer drop — low vertical oscillation of the ankles/hips, ground contact maintained, no wasted steps. The THREE designed crossovers are foot crossing past foot; knee separation must be maintained (knees not crossing, karaoke-style). Base width held, weight not forward on the front foot. Glide/bounce, knee separation, base width and crossover detection all measurable. Needs motion pipeline.",
+   "measurable_by_pose": "Needs Motion",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:36:46.462924+00:00",
+   "updated_at": "2026-09-15T20:36:46.462924+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1813,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "3 Step",
+   "formation": "Gun",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Weight stays centred, not forward on the front foot.",
+   "fault_trigger": "Weight shifting forward onto the front foot, preventing a clean load.",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Left Ankle",
+    "Right Ankle"
+   ],
+   "measurable_signal": "[DRAFT] Feet glide low to the ground — low vertical oscillation of the ankles/hips, ground contact maintained, minimal heel contact. The ONE designed crossover is foot crossing past foot; knee separation must be maintained (knees not crossing, karaoke-style). Base width held, weight not forward on the front foot. Glide/bounce, knee separation, base width and crossover detection all measurable. Needs motion pipeline.",
+   "measurable_by_pose": "Needs Motion",
+   "camera_angle": "Side",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:36:46.462924+00:00",
+   "updated_at": "2026-09-15T20:36:46.462924+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1814,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "5 Step",
+   "formation": "Gun",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Weight stays centred, not forward on the front foot.",
+   "fault_trigger": "Weight shifting forward onto the front foot, preventing a clean load.",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Left Ankle",
+    "Right Ankle"
+   ],
+   "measurable_signal": "[DRAFT] Feet glide low to the ground — low vertical oscillation of the ankles/hips, ground contact maintained, minimal heel contact. The TWO designed crossovers are foot crossing past foot; knee separation must be maintained (knees not crossing, karaoke-style). Base width held, weight not forward on the front foot. Glide/bounce, knee separation, base width and crossover detection all measurable. Needs motion pipeline.",
+   "measurable_by_pose": "Needs Motion",
+   "camera_angle": "Side",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:36:46.462924+00:00",
+   "updated_at": "2026-09-15T20:36:46.462924+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1815,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "3 Step",
+   "formation": "Pistol",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Weight stays centred, not forward on the front foot.",
+   "fault_trigger": "Weight shifting forward onto the front foot, preventing a clean load.",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Left Ankle",
+    "Right Ankle"
+   ],
+   "measurable_signal": "[DRAFT] Feet glide low to the ground — low vertical oscillation of the ankles/hips, ground contact maintained, minimal heel contact. The ONE designed crossover is foot crossing past foot; knee separation must be maintained (knees not crossing, karaoke-style). Base width held, weight not forward on the front foot. Glide/bounce, knee separation, base width and crossover detection all measurable. Needs motion pipeline.",
+   "measurable_by_pose": "Needs Motion",
+   "camera_angle": "Side",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:36:46.462924+00:00",
+   "updated_at": "2026-09-15T20:36:46.462924+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1816,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "5 Step",
+   "formation": "Pistol",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Weight stays centred, not forward on the front foot.",
+   "fault_trigger": "Weight shifting forward onto the front foot, preventing a clean load.",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Left Ankle",
+    "Right Ankle"
+   ],
+   "measurable_signal": "[DRAFT] Feet glide low to the ground — low vertical oscillation of the ankles/hips, ground contact maintained, minimal heel contact. The TWO designed crossovers are foot crossing past foot; knee separation must be maintained (knees not crossing, karaoke-style). Base width held, weight not forward on the front foot. Glide/bounce, knee separation, base width and crossover detection all measurable. Needs motion pipeline.",
+   "measurable_by_pose": "Needs Motion",
+   "camera_angle": "Side",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:36:46.462924+00:00",
+   "updated_at": "2026-09-15T20:36:46.462924+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1817,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "3 Step",
+   "formation": "Under Center",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Weight stays centred, not forward on the front foot.",
+   "fault_trigger": "Weight shifting forward onto the front foot, preventing a clean load.",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Left Ankle",
+    "Right Ankle"
+   ],
+   "measurable_signal": "[DRAFT] Feet glide low to the ground — low vertical oscillation of the ankles/hips, ground contact maintained, minimal heel contact. The ONE designed crossover is foot crossing past foot; knee separation must be maintained (knees not crossing, karaoke-style). Base width held, weight not forward on the front foot. Glide/bounce, knee separation, base width and crossover detection all measurable. Needs motion pipeline.",
+   "measurable_by_pose": "Needs Motion",
+   "camera_angle": "Side",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:36:46.462924+00:00",
+   "updated_at": "2026-09-15T20:36:46.462924+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1818,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "5 Step",
+   "formation": "Under Center",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Weight stays centred, not forward on the front foot.",
+   "fault_trigger": "Weight shifting forward onto the front foot, preventing a clean load.",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Left Ankle",
+    "Right Ankle"
+   ],
+   "measurable_signal": "[DRAFT] Feet glide low to the ground — low vertical oscillation of the ankles/hips, ground contact maintained, minimal heel contact. The TWO designed crossovers are foot crossing past foot; knee separation must be maintained (knees not crossing, karaoke-style). Base width held, weight not forward on the front foot. Glide/bounce, knee separation, base width and crossover detection all measurable. Needs motion pipeline.",
+   "measurable_by_pose": "Needs Motion",
+   "camera_angle": "Side",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:36:46.462924+00:00",
+   "updated_at": "2026-09-15T20:36:46.462924+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1819,
+   "group_name": "Offence",
+   "position": "QB",
+   "technique": "Drop-Back",
+   "variation": "7 Step",
+   "formation": "Under Center",
+   "phase": null,
+   "phase_order": null,
+   "ideal_execution_standard": "Weight stays centred, not forward on the front foot.",
+   "fault_trigger": "Weight shifting forward onto the front foot, preventing a clean load.",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Left Ankle",
+    "Right Ankle"
+   ],
+   "measurable_signal": "[DRAFT] Feet glide low to the ground through the longer drop — low vertical oscillation of the ankles/hips, ground contact maintained, no wasted steps. The THREE designed crossovers are foot crossing past foot; knee separation must be maintained (knees not crossing, karaoke-style). Base width held, weight not forward on the front foot. Glide/bounce, knee separation, base width and crossover detection all measurable. Needs motion pipeline.",
+   "measurable_by_pose": "Needs Motion",
+   "camera_angle": "Side",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-15T20:36:46.462924+00:00",
+   "updated_at": "2026-09-15T20:36:46.462924+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   }
  ]
 }
