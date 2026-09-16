@@ -98,6 +98,7 @@ class ResolvedCheckpoint:
     row_id: int | None = None        # checkpoints_v2 row id — stable ordering key when unphased
     player_tier: str | None = None   # Fundamental | Developing | Advanced | None (untriaged → fail-open)
     fault_severity: str | None = None  # Critical | Major | Minor | None (unrated → fail-open)
+    is_safety: bool = False          # injury-risk fault (migration-v25): bypasses tier/severity/cap filtering entirely
 
 
 @dataclass
@@ -424,7 +425,8 @@ def resolve(position: str,
             assessable=assessable, not_assessable_reasons=reasons, phase_confidence=phase_conf,
             conditional_notes=_conditional_notes(r.get("technique") or "", measurement, hand_source),
             requires_hands=needs_hands_cp, formation=r.get("formation"), row_id=r.get("id"),
-            player_tier=r.get("player_tier"), fault_severity=r.get("fault_severity")))
+            player_tier=r.get("player_tier"), fault_severity=r.get("fault_severity"),
+            is_safety=bool(r.get("is_safety"))))
 
     # Order in rep sequence: a real phase_order wins; else the row id (stable insertion order —
     # honest about being arbitrary for unphased techniques, per the Step-4 decision); else the
@@ -445,13 +447,18 @@ def resolve(position: str,
     # fault_severity are FAIL-OPEN (kept) — untagged content is still valid coaching. Every
     # omission here is counted and reported in summary.tier_filter so a trimmed checklist can
     # never masquerade as the complete picture.
+    # Safety faults (migration-v25) BYPASS every filter below — they are surfaced unconditionally, on
+    # day one, regardless of viewer tier / severity floor / display cap, because "you are about to hurt
+    # yourself or someone else" is not subject to load management. They are never counted as hidden and
+    # never consume the display budget. This is stronger than the fail-open NULL rule: a safety row is
+    # kept even when its own tier/severity WOULD otherwise be filtered out.
     tier_filtered = severity_filtered = capped = 0
     if player_tier is not None:
         if player_tier not in _PLAYER_TIER_RANK:
             raise ValueError(f"unknown player_tier {player_tier!r} (expected one of {sorted(_PLAYER_TIER_RANK)})")
         vr = _PLAYER_TIER_RANK[player_tier]
         kept = [c for c in checkpoints
-                if c.player_tier is None or _PLAYER_TIER_RANK[c.player_tier] <= vr]
+                if c.is_safety or c.player_tier is None or _PLAYER_TIER_RANK[c.player_tier] <= vr]
         tier_filtered = len(checkpoints) - len(kept)
         checkpoints = kept
     if min_severity is not None:
@@ -459,16 +466,20 @@ def resolve(position: str,
             raise ValueError(f"unknown min_severity {min_severity!r} (expected one of {sorted(_SEVERITY_RANK)})")
         fr = _SEVERITY_RANK[min_severity]
         kept = [c for c in checkpoints
-                if c.fault_severity is None or _SEVERITY_RANK[c.fault_severity] <= fr]
+                if c.is_safety or c.fault_severity is None or _SEVERITY_RANK[c.fault_severity] <= fr]
         severity_filtered = len(checkpoints) - len(kept)
         checkpoints = kept
-    if max_checkpoints is not None and len(checkpoints) > max_checkpoints:
-        # Keep the most game-critical; DISPLAY them still in rep sequence (the checkpoints list is
-        # already _order_key-sorted, so a stable id-membership filter preserves that order).
-        ranked = sorted(checkpoints, key=lambda c: (_SEVERITY_CAP_RANK.get(c.fault_severity, 2),))
-        keep_ids = {id(c) for c in ranked[:max_checkpoints]}
-        capped = len(checkpoints) - max_checkpoints
-        checkpoints = [c for c in checkpoints if id(c) in keep_ids]
+    if max_checkpoints is not None:
+        # Safety rows are always shown and do NOT consume the budget; the cap applies only to the rest.
+        safety_rows = [c for c in checkpoints if c.is_safety]
+        budgeted = [c for c in checkpoints if not c.is_safety]
+        if len(budgeted) > max_checkpoints:
+            ranked = sorted(budgeted, key=lambda c: (_SEVERITY_CAP_RANK.get(c.fault_severity, 2),))
+            keep_ids = {id(c) for c in ranked[:max_checkpoints]}
+            capped = len(budgeted) - max_checkpoints
+            # DISPLAY in rep sequence: safety rows re-merged and the whole list re-sorted by _order_key.
+            checkpoints = [c for c in checkpoints if c.is_safety or id(c) in keep_ids]
+            checkpoints.sort(key=_order_key)
 
     by_tier = {t: sum(1 for c in checkpoints if c.tier == t) for t in ("judge", "proxy_only", "skip")}
     na = [c for c in checkpoints if not c.assessable]
@@ -499,6 +510,8 @@ def resolve(position: str,
             "player_tier": player_tier, "min_severity": min_severity, "max_checkpoints": max_checkpoints,
             "tier_filtered": tier_filtered, "severity_filtered": severity_filtered, "capped": capped,
             "hidden_total": tier_filtered + severity_filtered + capped,
+            # migration-v25: safety faults surfaced in this result that bypassed the filters above.
+            "safety_surfaced": sum(1 for c in checkpoints if c.is_safety),
         },
         "handedness": {"value": hand, "source": hand_source, "disagreement": hand_disagree},
         "needs_hands": any(c.requires_hands for c in checkpoints),

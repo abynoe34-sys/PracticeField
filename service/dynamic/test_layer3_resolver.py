@@ -657,14 +657,14 @@ def test_offense_wildcard_unaffected_by_all_coverages_change():
 
 
 # ── 16. two-dimensional fault tiering (migration-v23; FAULT_TIERING_PLAN.md) ──────────
-def _tier_row(id, tier, sev, order):
+def _tier_row(id, tier, sev, order, is_safety=False):
     """A minimal normalized-shape row for tier/severity filter tests (clean vocab landmark)."""
     return {"position": "QB", "variation": "5 Step", "technique": "Drop-Back", "formation": "Gun",
             "label": f"cp{id}", "name": f"cp{id}", "judge": True, "proxy_only": False, "skip": False,
             "annotated": True, "measurable_by_pose": "Yes", "camera_angle": "Both",
             "static_or_dynamic": "Dynamic", "thresholds_status": "Draft", "phase": None,
             "phase_order": order, "id": id, "pose_landmarks": ["Left Foot"],
-            "player_tier": tier, "fault_severity": sev}
+            "player_tier": tier, "fault_severity": sev, "is_safety": is_safety}
 
 
 def _tier_catalogue():
@@ -737,6 +737,30 @@ def test_tier_filters_compose_and_report_total():
           tf["player_tier"] == "Developing" and tf["min_severity"] == "Major" and tf["max_checkpoints"] == 2)
 
 
+def test_safety_faults_bypass_all_filters():
+    """migration-v25 owner directive: a safety fault surfaces UNCONDITIONALLY — exempt from the
+    player_tier unlock, the min_severity floor, AND the max_checkpoints cap, and it does not consume
+    the display budget. Modelled worst-case: an Advanced/Minor safety row that EVERY filter would
+    otherwise drop. It must survive all of them, and never be counted as hidden."""
+    cat = _tier_catalogue() + [_tier_row(99, "Advanced", "Minor", 7, is_safety=True)]
+    S = lambda **kw: L3.resolve("QB", catalogue=cat, source="checkpoints_v2", **kw)
+    # tier: a Fundamental viewer would normally hide Advanced — safety survives
+    check("safety row survives the strictest tier filter", 99 in {c.row_id for c in S(player_tier="Fundamental").checkpoints})
+    # severity: a Critical floor would normally drop Minor — safety survives
+    check("safety row survives the strictest severity floor", 99 in {c.row_id for c in S(min_severity="Critical").checkpoints})
+    # cap: even a cap of 1 (and its low severity rank) cannot drop it; it does not consume the budget
+    capped = S(max_checkpoints=1)
+    kept = {c.row_id for c in capped.checkpoints}
+    check("safety row survives the tightest cap (budget=1)", 99 in kept, f"{sorted(kept)}")
+    check("cap of 1 still yields the 1 budgeted row PLUS the safety row", len(kept) == 2, f"{sorted(kept)}")
+    # all three at once
+    both = {c.row_id for c in S(player_tier="Fundamental", min_severity="Critical", max_checkpoints=1).checkpoints}
+    check("safety row survives tier+severity+cap composed", 99 in both, f"{sorted(both)}")
+    # honesty: safety rows are reported as surfaced and never counted in hidden_total
+    tf = S(player_tier="Fundamental").summary["tier_filter"]
+    check("safety_surfaced reported (>=1)", tf["safety_surfaced"] >= 1, f"{tf}")
+
+
 def test_tier_filters_validate_input():
     for bad in (dict(player_tier="Elite"), dict(min_severity="Catastrophic")):
         try:
@@ -748,12 +772,12 @@ def test_tier_filters_validate_input():
 
 def test_tier_filter_noop_on_untagged_live_data():
     """Regression: on a still-UNTAGGED slice, a tier/severity filter must be a NO-OP (fail-open) —
-    same total as no filter, nothing hidden. Uses OL_Center Blocking, which carries zero tags. Has
-    migrated twice as tagging spread: originally QB Drop-Back, then WR (once QB was tagged), now OL
-    (once the 2026-09-16 WR/TE/RB pilot tagged every WR/TE/RB 'Also:' row). OL is the largest slice
-    still entirely untagged — pick a new untagged slice whenever the current one gets tagged."""
-    base = OL("OL_Center", technique="Blocking")
-    filt = OL("OL_Center", technique="Blocking", player_tier="Fundamental", min_severity="Critical")
+    same total as no filter, nothing hidden. Uses QB Throwing, which carries zero tags. Has migrated
+    as tagging spread: QB Drop-Back → WR → OL_Center Blocking → now QB Throwing (once the 2026-09-16 OL
+    fault-row pass tagged OL Blocking). Pick a new untagged slice whenever the current one gets tagged,
+    or retire in favour of the synthetic fail-open test once the whole catalogue is tagged."""
+    base = QB(technique="Throwing")
+    filt = QB(technique="Throwing", player_tier="Fundamental", min_severity="Critical")
     check("untagged live data: tier/severity filter changes nothing", base.summary["total"] == filt.summary["total"],
           f'{base.summary["total"]} vs {filt.summary["total"]}')
     check("untagged live data: nothing hidden (fail-open no-op)", filt.summary["tier_filter"]["hidden_total"] == 0,
@@ -866,6 +890,28 @@ def test_wrterb_te_copy_fidelity_through_execution():
           and c_wr.player_tier == c_te.player_tier and c_wr.fault_severity == c_te.fault_severity)
 
 
+# ── 19. OL fault-row tagging pass (2026-09-16) — 123 fault rows tagged; 273 no-fault rows left NULL ──
+def test_ol_fault_tagging_landed():
+    """The OL pass tagged only the 123 rows that STATE a fault; the 273 positive-technique (no-fault)
+    rows keep player_tier NULL by design (Option A — severity is a fault property, so a no-fault row
+    has none; fail-open surfaces it). Also verifies the two injury-risk faults carry is_safety with
+    NULL severity (off the performance scale, §5c) and resolve at Fundamental tier."""
+    cps = OL("OL_Center", technique="Blocking").checkpoints
+    safety = [c for c in cps if c.is_safety]
+    check("OL_Center Blocking carries 2 safety faults (Diving, Leading-with-the-Head)", len(safety) == 2,
+          f"{[(c.row_id) for c in safety]}")
+    check("safety faults are Fundamental tier with NULL severity (off the scale)",
+          all(c.player_tier == "Fundamental" and c.fault_severity is None for c in safety),
+          f"{[(c.player_tier, c.fault_severity) for c in safety]}")
+    # Option A: no-fault positive-technique rows remain untagged (player_tier None) and still resolve.
+    untagged_nofault = [c for c in cps if c.player_tier is None and not (c.fault_trigger or "").strip()]
+    check("no-fault OL rows remain untagged (Option A: severity/tier not invented)", len(untagged_nofault) > 0,
+          f"{len(untagged_nofault)}")
+    # and the fault rows that ARE tagged carry a real tier
+    tagged_fault = [c for c in cps if c.player_tier is not None and (c.fault_trigger or "").strip()]
+    check("OL fault rows carry a player_tier", len(tagged_fault) > 0, f"{len(tagged_fault)}")
+
+
 def main():
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -891,9 +937,11 @@ def main():
                test_player_tier_is_cumulative_unlock, test_null_tier_severity_fail_open,
                test_min_severity_floor, test_max_checkpoints_caps_by_severity_shows_in_rep_order,
                test_tier_filters_compose_and_report_total, test_tier_filters_validate_input,
+               test_safety_faults_bypass_all_filters,
                test_tier_filter_noop_on_untagged_live_data,
                test_qb_dropback_pilot_split_landed, test_qb_dropback_tier_filtering,
                test_wrterb_pilot_split_landed, test_wrterb_te_copy_fidelity_through_execution,
+               test_ol_fault_tagging_landed,
                test_22_cues_resolve_with_correct_cue):
         fn()
     passed = sum(1 for _, ok, _ in _checks if ok)

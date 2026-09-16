@@ -166,6 +166,9 @@ def normalize_row(v2: dict[str, Any]) -> dict[str, Any]:
         # valid coaching. See FAULT_TIERING_PLAN.md.
         "player_tier": (v2.get("player_tier") or None),
         "fault_severity": (v2.get("fault_severity") or None),
+        # migration-v25: injury-risk marker; the resolver surfaces these unconditionally (bypasses
+        # tier/severity/cap). Absent/false on all non-safety rows.
+        "is_safety": bool(v2.get("is_safety")),
         "measurable_by_pose": mbp,
         "pose_landmarks": tokens,
         "pose_landmarks_note": note,
