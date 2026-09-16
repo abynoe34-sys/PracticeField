@@ -162,8 +162,9 @@ def test_row_level_exclusion_guard():
 
 def test_wr_te_exclusion_is_noop():
     """Option B must be a TRUE no-op for WR and TE (zero null rows): no exclusions, nothing
-    dropped, totals unchanged from before the guard change (WR 291, TE 308)."""
-    for pos, total in (("WR", 291), ("TE", 308)):
+    dropped. Totals are post-fault-split (WR 291+4=295, TE 308+4=312); the no-op invariant
+    under test is excluded_unannotated_total == 0, not the row count."""
+    for pos, total in (("WR", 295), ("TE", 312)):
         r = L3.resolve(pos, prefer_snapshot=True)
         check(f"{pos}: total unchanged ({total})", r.summary["total"] == total, f'{r.summary["total"]}')
         check(f"{pos}: zero excluded (no-op)", r.summary["excluded_unannotated_total"] == 0)
@@ -187,7 +188,7 @@ def test_wr_from_checkpoints_v2():
     wr = WR()
     check("WR source is checkpoints_v2 (no longer legacy_json)", wr.summary["source"] == "checkpoints_v2",
           f'{wr.summary["source"]}')
-    check("WR resolves all 291 rows", wr.summary["total"] == 291, f'{wr.summary["total"]}')
+    check("WR resolves all 295 rows (291 + 4 fault-split children)", wr.summary["total"] == 295, f'{wr.summary["total"]}')
     check("WR: no not-migrated techniques (all annotated, 0 NULL mbp)",
           wr.summary["not_migrated_techniques"] == [], f'{wr.summary["not_migrated_techniques"]}')
     check("WR: no verdicts", wr.summary["contains_verdicts"] is False)
@@ -280,7 +281,7 @@ def test_wr_must_land_catching_tier_is_actual_not_aspirational():
 def test_te_from_checkpoints_v2():
     te = TE()
     check("TE source is checkpoints_v2", te.summary["source"] == "checkpoints_v2", f'{te.summary["source"]}')
-    check("TE resolves all 308 rows", te.summary["total"] == 308, f'{te.summary["total"]}')
+    check("TE resolves all 312 rows (308 + 4 fault-split children)", te.summary["total"] == 312, f'{te.summary["total"]}')
     check("TE: no not-migrated techniques (all annotated)", te.summary["not_migrated_techniques"] == [],
           f'{te.summary["not_migrated_techniques"]}')
     check("TE: no verdicts", te.summary["contains_verdicts"] is False)
@@ -465,14 +466,18 @@ def RB(pos, **kw):
 
 
 def test_rb_from_checkpoints_v2():
-    for pos, total in (("RB", 86), ("RB_HB", 45), ("RB_FB", 20)):
+    # RB 86 -> 89 (+3 fault-split children); RB has one intended skip row now — the S5
+    # out-of-bounds child (1830, needs the field boundary). RB_HB/RB_FB untouched by the pilot.
+    for pos, total, skip in (("RB", 89, 1), ("RB_HB", 45, 0), ("RB_FB", 20, 0)):
         r = RB(pos)
         check(f"{pos}: source is checkpoints_v2", r.summary["source"] == "checkpoints_v2")
         check(f"{pos}: resolves all {total} rows", r.summary["total"] == total, f'{r.summary["total"]}')
         check(f"{pos}: all ready (no not_migrated, no partial exclusions)",
               not r.summary["not_migrated_techniques"] and not r.summary["partial_exclusions"]
               and r.summary["excluded_unannotated_total"] == 0)
-        check(f"{pos}: no verdicts, no skip-tier", r.summary["contains_verdicts"] is False and r.summary["by_tier"]["skip"] == 0)
+        check(f"{pos}: no verdicts, skip-tier == {skip}",
+              r.summary["contains_verdicts"] is False and r.summary["by_tier"]["skip"] == skip,
+              f'{r.summary["by_tier"]}')
 
 
 def test_rb_wr_copy_fidelity():
@@ -743,12 +748,12 @@ def test_tier_filters_validate_input():
 
 def test_tier_filter_noop_on_untagged_live_data():
     """Regression: on a still-UNTAGGED slice, a tier/severity filter must be a NO-OP (fail-open) —
-    same total as no filter, nothing hidden. Uses WR, which carries zero tags (only DB and QB
-    Drop-Back are tagged so far). Originally pointed at QB Drop-Back; repointed once QB Drop-Back
-    became genuinely tagged by the 2026-09-15 QB pilot (the filter now correctly BITES there —
-    see test_qb_dropback_tier_filtering)."""
-    base = WR(technique="Routes")
-    filt = WR(technique="Routes", player_tier="Fundamental", min_severity="Critical")
+    same total as no filter, nothing hidden. Uses OL_Center Blocking, which carries zero tags. Has
+    migrated twice as tagging spread: originally QB Drop-Back, then WR (once QB was tagged), now OL
+    (once the 2026-09-16 WR/TE/RB pilot tagged every WR/TE/RB 'Also:' row). OL is the largest slice
+    still entirely untagged — pick a new untagged slice whenever the current one gets tagged."""
+    base = OL("OL_Center", technique="Blocking")
+    filt = OL("OL_Center", technique="Blocking", player_tier="Fundamental", min_severity="Critical")
     check("untagged live data: tier/severity filter changes nothing", base.summary["total"] == filt.summary["total"],
           f'{base.summary["total"]} vs {filt.summary["total"]}')
     check("untagged live data: nothing hidden (fail-open no-op)", filt.summary["tier_filter"]["hidden_total"] == 0,
@@ -804,6 +809,63 @@ def test_qb_dropback_tier_filtering():
     check("min_severity=Major keeps the Critical BC-hands row 248", 248 in major)
 
 
+# ── 18. WR/TE/RB fault-tiering pilot (2026-09-16) — 11 clean-IES splits + 29 row-tags; S2 HELD ──
+def test_wrterb_pilot_split_landed():
+    """The 2026-09-16 WR/TE/RB pilot: 40 'Also:' rows -> 51 (11 clean-IES split children, 29 row-tag/
+    held-unit UPDATEs). Verifies (a) the 11 split PARENTS no longer bundle, (b) the S1 hip-rotation
+    child carries the hips the parent lacked at judge tier, (c) the S5 out-of-bounds child is skip
+    (field-boundary reference, deferred), and — the load-bearing hold — (d) the 3 S2 knee-flexion
+    rows are STILL bundled and unsplit (no authored knee-landing standard was manufactured), tagged
+    only as single units."""
+    wr = {c.row_id: c for c in WR().checkpoints}
+    te = {c.row_id: c for c in TE().checkpoints}
+    rb = {c.row_id: c for c in RB("RB").checkpoints}
+    # (a) the 11 split parents are trimmed — no 'Also:' left on them
+    split_parents = [709, 729, 931, 967, 1061, 1081, 1087, 1107, 1218, 1437, 1473]
+    allcp = {**wr, **te, **rb}
+    still_bundled = [i for i in split_parents if "also:" in (allcp[i].fault_trigger or "").lower()]
+    check("WR/TE/RB: the 11 split parents no longer bundle ('Also:' gone)", not still_bundled, f"{still_bundled}")
+    # (b) S1 hip-rotation children (1820 WR / 1821 TE / 1822 RB) carry hips + Yes/judge tier
+    s1 = [allcp.get(i) for i in (1820, 1821, 1822)]
+    check("S1 hip-rotation children carry hips at judge tier (landmark the parent lacked)",
+          all(c and "Left Hip" in c.landmarks and c.tier == "judge" and c.player_tier == "Developing"
+              and c.fault_severity == "Minor" for c in s1),
+          f"{[(c.row_id, c.tier, c.player_tier) for c in s1 if c]}")
+    # (c) S5 out-of-bounds child (1830) is skip — needs the field boundary, deferred
+    oob = rb.get(1830)
+    check("S5 out-of-bounds child is skip-tier (field-boundary reference deferred)",
+          oob is not None and oob.tier == "skip" and oob.player_tier == "Advanced" and oob.fault_severity == "Minor",
+          f"{oob and (oob.tier, oob.player_tier, oob.fault_severity)}")
+    # (d) S2 HELD: 723/1075/1101 still bundle knee-flexion, unsplit, tagged as single units
+    s2 = [wr.get(723), te.get(1075), rb.get(1101)]
+    check("S2 knee-flexion rows are STILL bundled+unsplit (no authored IES manufactured)",
+          all(c and "also:" in (c.fault_trigger or "").lower() and "knee flexion" in c.fault_trigger.lower()
+              for c in s2), f"{[(c.row_id) for c in s2 if c and 'also:' not in (c.fault_trigger or '').lower()]}")
+    check("S2 rows tagged as single units (Fundamental/Major)",
+          all(c and c.player_tier == "Fundamental" and c.fault_severity == "Major" for c in s2),
+          f"{[(c.row_id, c.player_tier, c.fault_severity) for c in s2 if c]}")
+
+
+def test_wrterb_te_copy_fidelity_through_execution():
+    """The TE-copy check carried through EXECUTION, not just the pre-write worksheet: TE 1061's split
+    output must match WR 709's exactly (both trimmed identically), and TE child 1821 must match WR
+    child 1820 field-for-field (fault_trigger, IES-driven landmarks, camera, tier, player_tier,
+    severity). They were verified identical pre-write; this confirms the writes preserved that."""
+    wr = {c.row_id: c for c in WR().checkpoints}
+    te = {c.row_id: c for c in TE().checkpoints}
+    p_wr, p_te = wr.get(709), te.get(1061)
+    check("WR 709 / TE 1061 primaries trimmed identically (landmarks, camera, tier)",
+          p_wr and p_te and p_wr.landmarks == p_te.landmarks and p_wr.camera_angle == p_te.camera_angle
+          and p_wr.tier == p_te.tier and p_wr.player_tier == p_te.player_tier
+          and p_wr.fault_severity == p_te.fault_severity,
+          f"{p_wr and (p_wr.landmarks, p_wr.tier)} vs {p_te and (p_te.landmarks, p_te.tier)}")
+    c_wr, c_te = wr.get(1820), te.get(1821)
+    check("WR child 1820 / TE child 1821 identical field-for-field",
+          c_wr and c_te and c_wr.fault_trigger == c_te.fault_trigger and c_wr.landmarks == c_te.landmarks
+          and c_wr.camera_angle == c_te.camera_angle and c_wr.tier == c_te.tier
+          and c_wr.player_tier == c_te.player_tier and c_wr.fault_severity == c_te.fault_severity)
+
+
 def main():
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -831,6 +893,7 @@ def main():
                test_tier_filters_compose_and_report_total, test_tier_filters_validate_input,
                test_tier_filter_noop_on_untagged_live_data,
                test_qb_dropback_pilot_split_landed, test_qb_dropback_tier_filtering,
+               test_wrterb_pilot_split_landed, test_wrterb_te_copy_fidelity_through_execution,
                test_22_cues_resolve_with_correct_cue):
         fn()
     passed = sum(1 for _, ok, _ in _checks if ok)

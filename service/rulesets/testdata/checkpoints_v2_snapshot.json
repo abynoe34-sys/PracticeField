@@ -1,7 +1,7 @@
 {
- "_note": "Offline snapshot of checkpoints_v2 — the ENTIRE catalogue (QB + WR + TE + 5 OL + 3 RB + 4 DB), all columns incl. player_tier/fault_severity (migration-v23). Re-pulled 2026-09-15 after the DB fault-tiering pilot split (11 'Also:' rows -> 23; migration-v24 widened uniq_checkpoint_v2) AND the QB Drop-Back pilot split (56 multi-symptom rows -> 84, Option B: row-tag 5 archetypes, split Feet-Glide/Ball-Carriage/Head-Vision). Fallback for checkpoints_v2_source.load_raw() when Supabase is unreachable; makes resolver tests reproducible.",
+ "_note": "Offline snapshot of checkpoints_v2 — the ENTIRE catalogue (QB + WR + TE + 5 OL + 3 RB + 4 DB), all columns incl. player_tier/fault_severity (migration-v23). Re-pulled 2026-09-16 after the DB pilot split (11 'Also:' -> 23; migration-v24), the QB Drop-Back pilot split (56 -> 84, Option B), AND the WR/TE/RB pilot split (40 'Also:' rows -> 51: 11 clean-IES split children [S1 hip-rotation, S3 break-stride, S4 chop-into-load, S5 out-of-bounds skip], 29 row-tag/held UPDATEs; the 3 S2 knee-flexion rows HELD unsplit — no authored IES manufactured). Fallback for checkpoints_v2_source.load_raw() when Supabase is unreachable; makes resolver tests reproducible.",
  "source": "checkpoints_v2 (all positions)",
- "count": 1654,
+ "count": 1665,
  "rows": [
   {
    "id": 1,
@@ -23518,7 +23518,7 @@
    "phase": "Extend & Bait",
    "phase_order": 1,
    "ideal_execution_standard": "Hold the running trajectory and snap the eyes toward the incoming ball, judging its lateral path while keeping stride length intact. Fire BOTH arms outward away from the torso into the lateral lane, torquing the upper chest slightly toward the ball without breaking the lower body's running line, and form a tight diamond out wide with thumbs and index fingers connected and palms squared to the side-angle trajectory.",
-   "fault_trigger": "REACHING WITH ONE HAND - extending only the leading arm, cutting the catching surface in half. Also: the hips rotating with the chest, which breaks the running line and costs stride. (Hand shape needs the Hand landmarker.)",
+   "fault_trigger": "REACHING WITH ONE HAND - extending only the leading arm, cutting the catching surface in half. (Hand shape needs the Hand landmarker.)",
    "pose_landmarks": [
     "Left Elbow",
     "Right Elbow",
@@ -23534,13 +23534,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:17.510815+00:00",
-   "updated_at": "2026-08-31T18:45:17.510815+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 710,
@@ -23888,13 +23888,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:17.587926+00:00",
-   "updated_at": "2026-08-31T18:45:17.587926+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
   },
   {
    "id": 721,
@@ -23985,13 +23985,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:17.587926+00:00",
-   "updated_at": "2026-08-31T18:45:17.587926+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 724,
@@ -24166,12 +24166,10 @@
    "phase": "The Tuck",
    "phase_order": 3,
    "ideal_execution_standard": "Clamp the fingers around the ball the instant it settles into the hands, pulling it straight down into the pocket arm position while the head stays rotated over the shoulder and the eyes stay locked on the hands until the ball is safely into the chest - all without breaking the vertical sprint into the end zone.",
-   "fault_trigger": "Snapping the head forward before the ball is secured into the chest pocket, so the catch is completed blind. Also: breaking stride or stuttering during the tuck, which surrenders the separation the route created.",
+   "fault_trigger": "Snapping the head forward before the ball is secured into the chest pocket, so the catch is completed blind.",
    "pose_landmarks": [
     "Nose",
     "Neck",
-    "Left Elbow",
-    "Right Elbow",
     "Sternum"
    ],
    "measurable_signal": null,
@@ -24181,13 +24179,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:17.587926+00:00",
-   "updated_at": "2026-08-31T18:45:17.587926+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 730,
@@ -25800,13 +25798,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:17.735504+00:00",
-   "updated_at": "2026-08-31T18:45:17.735504+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 778,
@@ -27348,13 +27346,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:17.892736+00:00",
-   "updated_at": "2026-08-31T18:45:17.892736+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 826,
@@ -27508,13 +27506,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:17.892736+00:00",
-   "updated_at": "2026-08-31T18:45:17.892736+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
   },
   {
    "id": 831,
@@ -27768,13 +27766,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:17.892736+00:00",
-   "updated_at": "2026-08-31T18:45:17.892736+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 839,
@@ -27993,13 +27991,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:17.892736+00:00",
-   "updated_at": "2026-08-31T18:45:17.892736+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 846,
@@ -28406,13 +28404,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:17.962541+00:00",
-   "updated_at": "2026-08-31T18:45:17.962541+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 859,
@@ -28603,13 +28601,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:17.962541+00:00",
-   "updated_at": "2026-08-31T18:45:17.962541+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 865,
@@ -28958,13 +28956,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:18.042306+00:00",
-   "updated_at": "2026-08-31T18:45:18.042306+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 876,
@@ -30763,7 +30761,7 @@
    "phase": "Stem & Load",
    "phase_order": 1,
    "ideal_execution_standard": "Drive off the line at full velocity for 10-12 yards (12-15 on the deeper variation) with pads leaning forward and long natural strides, pushing the defender into a deep vertical retreat. One step before the break, subtly drop the hips an inch to gather balance and prepare the core for high-speed redirection - without chopping or stutter-stepping.",
-   "fault_trigger": "FADING EARLY - unconsciously drifting outward toward the sideline before the break depth, alerting the defender to clamp down on the corner. Also: chopping or stutter-stepping into the load, which turns a speed cut into a visible breakdown. (Absolute depth needs a scale reference and the called depth.)",
+   "fault_trigger": "FADING EARLY - unconsciously drifting outward toward the sideline before the break depth, alerting the defender to clamp down on the corner. (Absolute depth needs a scale reference and the called depth.)",
    "pose_landmarks": [
     "Left Hip",
     "Right Hip",
@@ -30778,13 +30776,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:18.20495+00:00",
-   "updated_at": "2026-08-31T18:45:18.20495+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 932,
@@ -31250,13 +31248,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:18.20495+00:00",
-   "updated_at": "2026-08-31T18:45:18.20495+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 946,
@@ -31786,13 +31784,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:18.267434+00:00",
-   "updated_at": "2026-08-31T18:45:18.267434+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 962,
@@ -31970,7 +31968,7 @@
    "phase": "Stem & Load",
    "phase_order": 1,
    "ideal_execution_standard": "Sprint hard downfield for 10-12 yards (12-15 on the deeper variation), pushing the vertical stem straight through the defender's outside shoulder to force them to protect the deep outside lane. One step before the break, drop the weight subtly into the hips and prepare to transfer laterally - without any choppy or gathering steps.",
-   "fault_trigger": "BANANA STEMMING - curving the path inward before making the actual break. A rounded line lets an inside-shade defender stay in front of the receiver the whole way. Also: chopping or gathering into the load, which turns a speed cut into a visible breakdown. (Absolute depth needs a scale reference and the called depth.)",
+   "fault_trigger": "BANANA STEMMING - curving the path inward before making the actual break. A rounded line lets an inside-shade defender stay in front of the receiver the whole way. (Absolute depth needs a scale reference and the called depth.)",
    "pose_landmarks": [
     "Left Hip",
     "Right Hip",
@@ -31985,13 +31983,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:18.339739+00:00",
-   "updated_at": "2026-08-31T18:45:18.339739+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 968,
@@ -32183,13 +32181,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-08-31T18:45:18.339739+00:00",
-   "updated_at": "2026-08-31T18:45:18.339739+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 974,
@@ -34820,7 +34818,7 @@
    "phase": "Extend & Bait",
    "phase_order": 1,
    "ideal_execution_standard": "Hold the running trajectory and snap the eyes toward the incoming ball, judging its lateral path while keeping stride length intact. Fire BOTH arms outward away from the torso into the lateral lane, torquing the upper chest slightly toward the ball without breaking the lower body's running line, and form a tight diamond out wide with thumbs and index fingers connected and palms squared to the side-angle trajectory.",
-   "fault_trigger": "REACHING WITH ONE HAND - extending only the leading arm, cutting the catching surface in half. Also: the hips rotating with the chest, which breaks the running line and costs stride. (Hand shape needs the Hand landmarker.)",
+   "fault_trigger": "REACHING WITH ONE HAND - extending only the leading arm, cutting the catching surface in half. (Hand shape needs the Hand landmarker.)",
    "pose_landmarks": [
     "Left Elbow",
     "Right Elbow",
@@ -34836,13 +34834,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-01T21:51:08.040728+00:00",
-   "updated_at": "2026-09-01T21:51:08.040728+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 1062,
@@ -35190,13 +35188,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-01T21:51:08.040728+00:00",
-   "updated_at": "2026-09-01T21:51:08.040728+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
   },
   {
    "id": 1073,
@@ -35287,13 +35285,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-01T21:51:08.040728+00:00",
-   "updated_at": "2026-09-01T21:51:08.040728+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 1076,
@@ -35468,12 +35466,10 @@
    "phase": "The Tuck",
    "phase_order": 3,
    "ideal_execution_standard": "Clamp the fingers around the ball the instant it settles into the hands, pulling it straight down into the pocket arm position while the head stays rotated over the shoulder and the eyes stay locked on the hands until the ball is safely into the chest - all without breaking the vertical sprint into the end zone.",
-   "fault_trigger": "Snapping the head forward before the ball is secured into the chest pocket, so the catch is completed blind. Also: breaking stride or stuttering during the tuck, which surrenders the separation the route created.",
+   "fault_trigger": "Snapping the head forward before the ball is secured into the chest pocket, so the catch is completed blind.",
    "pose_landmarks": [
     "Nose",
     "Neck",
-    "Left Elbow",
-    "Right Elbow",
     "Sternum"
    ],
    "measurable_signal": null,
@@ -35483,13 +35479,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-01T21:51:08.040728+00:00",
-   "updated_at": "2026-09-01T21:51:08.040728+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 1082,
@@ -35667,7 +35663,7 @@
    "phase": "Extend & Bait",
    "phase_order": 1,
    "ideal_execution_standard": "Hold the running trajectory and snap the eyes toward the incoming ball, judging its lateral path while keeping stride length intact. Fire BOTH arms outward away from the torso into the lateral lane, torquing the upper chest slightly toward the ball without breaking the lower body's running line, and form a tight diamond out wide with thumbs and index fingers connected and palms squared to the side-angle trajectory.",
-   "fault_trigger": "REACHING WITH ONE HAND - extending only the leading arm, cutting the catching surface in half. Also: the hips rotating with the chest, which breaks the running line and costs stride. (Hand shape needs the Hand landmarker.)",
+   "fault_trigger": "REACHING WITH ONE HAND - extending only the leading arm, cutting the catching surface in half. (Hand shape needs the Hand landmarker.)",
    "pose_landmarks": [
     "Left Elbow",
     "Right Elbow",
@@ -35683,13 +35679,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-01T21:51:56.654727+00:00",
-   "updated_at": "2026-09-01T21:51:56.654727+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 1088,
@@ -36037,13 +36033,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-01T21:51:56.654727+00:00",
-   "updated_at": "2026-09-01T21:51:56.654727+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical"
   },
   {
    "id": 1099,
@@ -36134,13 +36130,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-01T21:51:56.654727+00:00",
-   "updated_at": "2026-09-01T21:51:56.654727+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 1102,
@@ -36315,12 +36311,10 @@
    "phase": "The Tuck",
    "phase_order": 3,
    "ideal_execution_standard": "Clamp the fingers around the ball the instant it settles into the hands, pulling it straight down into the pocket arm position while the head stays rotated over the shoulder and the eyes stay locked on the hands until the ball is safely into the chest - all without breaking the vertical sprint into the end zone.",
-   "fault_trigger": "Snapping the head forward before the ball is secured into the chest pocket, so the catch is completed blind. Also: breaking stride or stuttering during the tuck, which surrenders the separation the route created.",
+   "fault_trigger": "Snapping the head forward before the ball is secured into the chest pocket, so the catch is completed blind.",
    "pose_landmarks": [
     "Nose",
     "Neck",
-    "Left Elbow",
-    "Right Elbow",
     "Sternum"
    ],
    "measurable_signal": null,
@@ -36330,13 +36324,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-01T21:51:56.654727+00:00",
-   "updated_at": "2026-09-01T21:51:56.654727+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 1108,
@@ -38173,13 +38167,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-03T05:09:44.749025+00:00",
-   "updated_at": "2026-09-03T05:09:44.749025+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Fundamental",
+   "fault_severity": "Major"
   },
   {
    "id": 1166,
@@ -39848,7 +39842,7 @@
    "phase": "The Transition",
    "phase_order": 3,
    "ideal_execution_standard": "Snap the hips vertically, aiming exactly 1 yard inside the sideline boundary.",
-   "fault_trigger": "\"Banana Routing\". Rounding the vertical turn in a wide, looping circle, giving trail defenders time to recover. Also: Stepping Out of Bounds - running too close to the sideline on the turn, leaving no room for a clean drop-in pass.",
+   "fault_trigger": "\"Banana Routing\". Rounding the vertical turn in a wide, looping circle, giving trail defenders time to recover.",
    "pose_landmarks": [
     "Left Hip",
     "Right Hip",
@@ -39861,13 +39855,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-03T07:53:48.422794+00:00",
-   "updated_at": "2026-09-03T07:53:48.422794+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 1219,
@@ -41881,13 +41875,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-03T11:16:15.078764+00:00",
-   "updated_at": "2026-09-03T11:16:15.078764+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 1284,
@@ -43429,13 +43423,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-03T11:16:15.078764+00:00",
-   "updated_at": "2026-09-03T11:16:15.078764+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 1332,
@@ -43589,13 +43583,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-03T11:16:15.078764+00:00",
-   "updated_at": "2026-09-03T11:16:15.078764+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Advanced",
+   "fault_severity": "Major"
   },
   {
    "id": 1337,
@@ -43849,13 +43843,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-03T11:16:15.078764+00:00",
-   "updated_at": "2026-09-03T11:16:15.078764+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 1345,
@@ -44074,13 +44068,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-03T11:16:15.078764+00:00",
-   "updated_at": "2026-09-03T11:16:15.078764+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 1352,
@@ -44487,13 +44481,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-03T11:16:15.078764+00:00",
-   "updated_at": "2026-09-03T11:16:15.078764+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 1365,
@@ -44684,13 +44678,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-03T11:16:15.078764+00:00",
-   "updated_at": "2026-09-03T11:16:15.078764+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 1371,
@@ -45039,13 +45033,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-03T11:16:15.078764+00:00",
-   "updated_at": "2026-09-03T11:16:15.078764+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 1382,
@@ -46844,7 +46838,7 @@
    "phase": "Stem & Load",
    "phase_order": 1,
    "ideal_execution_standard": "Drive off the line at full velocity for 10-12 yards (12-15 on the deeper variation) with pads leaning forward and long natural strides, pushing the defender into a deep vertical retreat. One step before the break, subtly drop the hips an inch to gather balance and prepare the core for high-speed redirection - without chopping or stutter-stepping.",
-   "fault_trigger": "FADING EARLY - unconsciously drifting outward toward the sideline before the break depth, alerting the defender to clamp down on the corner. Also: chopping or stutter-stepping into the load, which turns a speed cut into a visible breakdown. (Absolute depth needs a scale reference and the called depth.)",
+   "fault_trigger": "FADING EARLY - unconsciously drifting outward toward the sideline before the break depth, alerting the defender to clamp down on the corner. (Absolute depth needs a scale reference and the called depth.)",
    "pose_landmarks": [
     "Left Hip",
     "Right Hip",
@@ -46859,13 +46853,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-03T11:16:15.078764+00:00",
-   "updated_at": "2026-09-03T11:16:15.078764+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 1438,
@@ -47331,13 +47325,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-03T11:16:15.078764+00:00",
-   "updated_at": "2026-09-03T11:16:15.078764+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 1452,
@@ -47867,13 +47861,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-03T11:16:15.078764+00:00",
-   "updated_at": "2026-09-03T11:16:15.078764+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 1468,
@@ -48051,7 +48045,7 @@
    "phase": "Stem & Load",
    "phase_order": 1,
    "ideal_execution_standard": "Sprint hard downfield for 10-12 yards (12-15 on the deeper variation), pushing the vertical stem straight through the defender's outside shoulder to force them to protect the deep outside lane. One step before the break, drop the weight subtly into the hips and prepare to transfer laterally - without any choppy or gathering steps.",
-   "fault_trigger": "BANANA STEMMING - curving the path inward before making the actual break. A rounded line lets an inside-shade defender stay in front of the tight end the whole way. Also: chopping or gathering into the load, which turns a speed cut into a visible breakdown. (Absolute depth needs a scale reference and the called depth.)",
+   "fault_trigger": "BANANA STEMMING - curving the path inward before making the actual break. A rounded line lets an inside-shade defender stay in front of the tight end the whole way. (Absolute depth needs a scale reference and the called depth.)",
    "pose_landmarks": [
     "Left Hip",
     "Right Hip",
@@ -48066,13 +48060,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-03T11:16:15.078764+00:00",
-   "updated_at": "2026-09-03T11:16:15.078764+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 1474,
@@ -48264,13 +48258,13 @@
    "thresholds_status": "Draft",
    "final_checkpoint": null,
    "created_at": "2026-09-03T11:16:15.078764+00:00",
-   "updated_at": "2026-09-03T11:16:15.078764+00:00",
+   "updated_at": "2026-09-16T12:56:45.211796+00:00",
    "coaching_cue": null,
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null
+   "player_tier": "Developing",
+   "fault_severity": "Major"
   },
   {
    "id": 1480,
@@ -54087,6 +54081,339 @@
    "threshold_parameters": null,
    "player_tier": "Developing",
    "fault_severity": "Major"
+  },
+  {
+   "id": 1820,
+   "group_name": "Offence",
+   "position": "WR",
+   "technique": "Catching",
+   "variation": "Away - Chest/Mid",
+   "formation": "All formations",
+   "phase": "Extend & Bait",
+   "phase_order": 1,
+   "ideal_execution_standard": "Torque the upper chest toward the ball without breaking the lower body's running line, keeping stride length intact.",
+   "fault_trigger": "The hips rotating with the chest, breaking the running line and costing stride.",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Sternum"
+   ],
+   "measurable_signal": null,
+   "measurable_by_pose": "Yes",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-16T12:58:16.128502+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Minor"
+  },
+  {
+   "id": 1821,
+   "group_name": "Offence",
+   "position": "TE",
+   "technique": "Catching",
+   "variation": "Away - Chest/Mid",
+   "formation": "All formations",
+   "phase": "Extend & Bait",
+   "phase_order": 1,
+   "ideal_execution_standard": "Torque the upper chest toward the ball without breaking the lower body's running line, keeping stride length intact.",
+   "fault_trigger": "The hips rotating with the chest, breaking the running line and costing stride.",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Sternum"
+   ],
+   "measurable_signal": null,
+   "measurable_by_pose": "Yes",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-16T12:58:16.128502+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Minor"
+  },
+  {
+   "id": 1822,
+   "group_name": "Offence",
+   "position": "RB",
+   "technique": "Catching",
+   "variation": "Away - Chest/Mid",
+   "formation": "All formations",
+   "phase": "Extend & Bait",
+   "phase_order": 1,
+   "ideal_execution_standard": "Torque the upper chest toward the ball without breaking the lower body's running line, keeping stride length intact.",
+   "fault_trigger": "The hips rotating with the chest, breaking the running line and costing stride.",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip",
+    "Sternum"
+   ],
+   "measurable_signal": null,
+   "measurable_by_pose": "Yes",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-16T12:58:16.128502+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Minor"
+  },
+  {
+   "id": 1823,
+   "group_name": "Offence",
+   "position": "WR",
+   "technique": "Catching",
+   "variation": "Over the Shoulder",
+   "formation": "All formations",
+   "phase": "The Tuck",
+   "phase_order": 3,
+   "ideal_execution_standard": "Complete the tuck without breaking the vertical sprint into the end zone, preserving the separation the route created.",
+   "fault_trigger": "Breaking stride or stuttering during the tuck, which surrenders the separation the route created.",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot"
+   ],
+   "measurable_signal": null,
+   "measurable_by_pose": "Yes",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-16T12:58:16.128502+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1824,
+   "group_name": "Offence",
+   "position": "TE",
+   "technique": "Catching",
+   "variation": "Over the Shoulder",
+   "formation": "All formations",
+   "phase": "The Tuck",
+   "phase_order": 3,
+   "ideal_execution_standard": "Complete the tuck without breaking the vertical sprint into the end zone, preserving the separation the route created.",
+   "fault_trigger": "Breaking stride or stuttering during the tuck, which surrenders the separation the route created.",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot"
+   ],
+   "measurable_signal": null,
+   "measurable_by_pose": "Yes",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-16T12:58:16.128502+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1825,
+   "group_name": "Offence",
+   "position": "RB",
+   "technique": "Catching",
+   "variation": "Over the Shoulder",
+   "formation": "All formations",
+   "phase": "The Tuck",
+   "phase_order": 3,
+   "ideal_execution_standard": "Complete the tuck without breaking the vertical sprint into the end zone, preserving the separation the route created.",
+   "fault_trigger": "Breaking stride or stuttering during the tuck, which surrenders the separation the route created.",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot"
+   ],
+   "measurable_signal": null,
+   "measurable_by_pose": "Yes",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-16T12:58:16.128502+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major"
+  },
+  {
+   "id": 1826,
+   "group_name": "Offence",
+   "position": "WR",
+   "technique": "Routes",
+   "variation": "Tree - Corner",
+   "formation": "All formations",
+   "phase": "Stem & Load",
+   "phase_order": 1,
+   "ideal_execution_standard": "Gather into the break with a single subtle hip drop, without chopping or stutter-stepping into the load.",
+   "fault_trigger": "Chopping or stutter-stepping into the load, which turns a speed cut into a visible breakdown.",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot"
+   ],
+   "measurable_signal": null,
+   "measurable_by_pose": "Yes",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-16T12:58:16.128502+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Minor"
+  },
+  {
+   "id": 1827,
+   "group_name": "Offence",
+   "position": "TE",
+   "technique": "Routes",
+   "variation": "Tree - Corner",
+   "formation": "All formations",
+   "phase": "Stem & Load",
+   "phase_order": 1,
+   "ideal_execution_standard": "Gather into the break with a single subtle hip drop, without chopping or stutter-stepping into the load.",
+   "fault_trigger": "Chopping or stutter-stepping into the load, which turns a speed cut into a visible breakdown.",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot"
+   ],
+   "measurable_signal": null,
+   "measurable_by_pose": "Yes",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-16T12:58:16.128502+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Minor"
+  },
+  {
+   "id": 1828,
+   "group_name": "Offence",
+   "position": "WR",
+   "technique": "Routes",
+   "variation": "Tree - Post",
+   "formation": "All formations",
+   "phase": "Stem & Load",
+   "phase_order": 1,
+   "ideal_execution_standard": "Transfer laterally into the break without any choppy or gathering steps.",
+   "fault_trigger": "Chopping or stutter-stepping into the load, which turns a speed cut into a visible breakdown.",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot"
+   ],
+   "measurable_signal": null,
+   "measurable_by_pose": "Yes",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-16T12:58:16.128502+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Minor"
+  },
+  {
+   "id": 1829,
+   "group_name": "Offence",
+   "position": "TE",
+   "technique": "Routes",
+   "variation": "Tree - Post",
+   "formation": "All formations",
+   "phase": "Stem & Load",
+   "phase_order": 1,
+   "ideal_execution_standard": "Transfer laterally into the break without any choppy or gathering steps.",
+   "fault_trigger": "Chopping or stutter-stepping into the load, which turns a speed cut into a visible breakdown.",
+   "pose_landmarks": [
+    "Left Foot",
+    "Right Foot"
+   ],
+   "measurable_signal": null,
+   "measurable_by_pose": "Yes",
+   "camera_angle": "Both",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-16T12:58:16.128502+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Developing",
+   "fault_severity": "Minor"
+  },
+  {
+   "id": 1830,
+   "group_name": "Offence",
+   "position": "RB",
+   "technique": "Routes",
+   "variation": "Wheel",
+   "formation": "All formations",
+   "phase": "The Transition",
+   "phase_order": 3,
+   "ideal_execution_standard": "Snap the turn aiming exactly 1 yard inside the sideline boundary, leaving room for a clean drop-in pass.",
+   "fault_trigger": "Stepping Out of Bounds - running too close to the sideline on the turn, leaving no room for a clean drop-in pass.",
+   "pose_landmarks": [
+    "Left Hip",
+    "Right Hip"
+   ],
+   "measurable_signal": null,
+   "measurable_by_pose": "No",
+   "camera_angle": "Front",
+   "static_dynamic": "Dynamic",
+   "thresholds_status": "Draft",
+   "final_checkpoint": null,
+   "created_at": "2026-09-16T12:58:16.128502+00:00",
+   "updated_at": "2026-09-16T12:58:16.128502+00:00",
+   "coaching_cue": null,
+   "correction_strategy": null,
+   "check_type": null,
+   "threshold_parameters": null,
+   "player_tier": "Advanced",
+   "fault_severity": "Minor"
   }
  ]
 }
