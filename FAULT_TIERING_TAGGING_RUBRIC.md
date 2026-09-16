@@ -248,19 +248,32 @@ TE row judged fresh? (My read: transfer is defensible for these three and their 
     Ghost/Looper/Decoy, No Man's Land); the 4 Stance-Critical fumble faults (a judgment beyond the ratified
     §7 sample — flagged); Pre-Angling-Hips → Developing.
 
-## 11. Positive-phrased safety scan (for the no-fault pass — owner directive)
+## 11. Positive-phrased safety — found AND flagged (owner directive), now EXECUTED
 
-`is_safety` is NOT fault-only. Scanning the 273 no-fault OL rows found genuine safety-critical technique
-stated positively: the **5 Cut-block rows (1249 / 1254 / 1259 / 1264 / 1269)** — "Keep the head up and eyes
-locked on the target through the entirety of the strike" — the positive form of the leading-with-the-head
-injury risk. **These get `is_safety=true` when the no-fault tier-only pass runs.** (Other regex hits were
-vision/posture, not injury-risk.)
+`is_safety` is NOT fault-only. The 273 no-fault OL rows held genuine safety-critical technique stated
+positively: the **5 Cut-block rows (1249 / 1254 / 1259 / 1264 / 1269)** — "Keep the head up and eyes locked
+on the target through the entirety of the strike" — the positive form of the leading-with-the-head injury
+risk. Flagged `is_safety=true` (Fundamental) in the no-fault pass; live-verified they bypass all filters.
+(Other regex hits were vision/posture, not injury-risk.)
 
-## 9b. Still open (unchanged by the OL pass)
+## 12. OL no-fault tier-only pass EXECUTED (2026-09-16) — OL now fully tagged
 
-- The **273 OL no-fault rows** → later tier-only pass (Option A), with the §11 safety rows flagged.
-- The other ~187 no-fault rows catalogue-wide (RB 78, DB 48, TE 31, QB 26, WR 4) → same tier-only treatment.
-- The **1047 has-fault untagged rows** in QB/WR/TE/DB/RB → per-slice fault tagging, next after OL.
+The 259 no-fault OL rows with an IES tagged **tier-only** (player_tier, NULL severity — Option A):
+- **Fundamental 149** — Stance (all) + base blocks (Run/drive, 1-on-1 Man/Big-on-Big pass set, base 2pt/3pt).
+- **Developing 105** — scheme/coordination layered on base: Run-Combo, Pass_Pro-Combo/Half-Slide,
+  Pass_Pro-Zone/Slide, Run-Skip-Pull, Run-Trap, and Cut technique.
+- **Safety 5** — the §11 Cut head-up rows (Fundamental + is_safety).
+- **14 content-gap rows** (no fault AND no IES) stay untagged — nothing to judge, held like S2.
+
+**OL now 382/396 tagged** (the 14 held). Verified live: fault rows unchanged (113 with severity + 10 safety),
+0 no-fault rows carry severity, safety 15 total. Snapshot regenerated (tagged 540). resolver 238/238, cleaning 28/28.
+**OL is the first fully-tagged position — the reference point for the remaining slices.**
+
+## 9b. Still open
+
+- The other **~187 no-fault rows** (RB 78, DB 48, TE 31, QB 26, WR 4) → tier-only pass (Option A), each with its own positive-phrased-safety scan.
+- The **1047 has-fault untagged rows** in QB/WR/TE/DB/RB → per-slice fault tagging.
 - WR→TE transfer (§7b) applies when WR/TE run.
+- S2 knee-flexion content (3 rows) — held pending an authored correct-landing standard.
 
 No further writes pending direction on the next slice.

@@ -890,26 +890,29 @@ def test_wrterb_te_copy_fidelity_through_execution():
           and c_wr.player_tier == c_te.player_tier and c_wr.fault_severity == c_te.fault_severity)
 
 
-# ── 19. OL fault-row tagging pass (2026-09-16) — 123 fault rows tagged; 273 no-fault rows left NULL ──
+# ── 19. OL tagging pass COMPLETE (2026-09-16) — 123 fault rows + 259 no-fault rows tagged ──
 def test_ol_fault_tagging_landed():
-    """The OL pass tagged only the 123 rows that STATE a fault; the 273 positive-technique (no-fault)
-    rows keep player_tier NULL by design (Option A — severity is a fault property, so a no-fault row
-    has none; fail-open surfaces it). Also verifies the two injury-risk faults carry is_safety with
-    NULL severity (off the performance scale, §5c) and resolve at Fundamental tier."""
+    """OL fully tagged. Fault rows carry player_tier + fault_severity (except safety faults, NULL
+    severity); no-fault positive-technique rows carry player_tier ONLY (Option A — severity is a fault
+    property a no-fault row lacks). Injury-risk carries is_safety at Fundamental, and — the predicted
+    gap — is NOT fault-only: OL_Center Blocking includes the Cut 'keep the head up' positive-phrased
+    safety row (1249) alongside the two fault-phrased ones (1247 Diving, 1248 Leading-with-the-Head).
+    The 14 content-gap rows (no fault AND no IES) stay untagged and are excluded from resolution."""
     cps = OL("OL_Center", technique="Blocking").checkpoints
     safety = [c for c in cps if c.is_safety]
-    check("OL_Center Blocking carries 2 safety faults (Diving, Leading-with-the-Head)", len(safety) == 2,
-          f"{[(c.row_id) for c in safety]}")
-    check("safety faults are Fundamental tier with NULL severity (off the scale)",
-          all(c.player_tier == "Fundamental" and c.fault_severity is None for c in safety),
-          f"{[(c.player_tier, c.fault_severity) for c in safety]}")
-    # Option A: no-fault positive-technique rows remain untagged (player_tier None) and still resolve.
-    untagged_nofault = [c for c in cps if c.player_tier is None and not (c.fault_trigger or "").strip()]
-    check("no-fault OL rows remain untagged (Option A: severity/tier not invented)", len(untagged_nofault) > 0,
-          f"{len(untagged_nofault)}")
-    # and the fault rows that ARE tagged carry a real tier
-    tagged_fault = [c for c in cps if c.player_tier is not None and (c.fault_trigger or "").strip()]
-    check("OL fault rows carry a player_tier", len(tagged_fault) > 0, f"{len(tagged_fault)}")
+    check("OL_Center Blocking safety rows incl. the positive-phrased Cut row 1249",
+          {1247, 1248, 1249} <= {c.row_id for c in safety}, f"{sorted(c.row_id for c in safety)}")
+    check("all safety rows are Fundamental with NULL severity (off the scale, §5c)",
+          all(c.player_tier == "Fundamental" and c.fault_severity is None for c in safety))
+    # every RESOLVED OL checkpoint is now tagged (the only untagged rows are the null-both content
+    # gaps, which are NULL-mbp and excluded from resolution — so none reach .checkpoints)
+    check("every resolved OL checkpoint carries a player_tier (OL fully tagged)",
+          all(c.player_tier is not None for c in cps), f"{[c.row_id for c in cps if c.player_tier is None][:3]}")
+    # Option A holds: no-fault rows carry NO severity
+    nofault = [c for c in cps if not (c.fault_trigger or "").strip()]
+    check("no-fault OL rows carry player_tier but NULL severity (Option A)",
+          nofault and all(c.player_tier is not None and c.fault_severity is None for c in nofault),
+          f"{len(nofault)}")
 
 
 def main():
