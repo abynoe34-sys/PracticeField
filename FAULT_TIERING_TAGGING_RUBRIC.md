@@ -269,11 +269,24 @@ The 259 no-fault OL rows with an IES tagged **tier-only** (player_tier, NULL sev
 0 no-fault rows carry severity, safety 15 total. Snapshot regenerated (tagged 540). resolver 238/238, cleaning 28/28.
 **OL is the first fully-tagged position — the reference point for the remaining slices.**
 
+## 13. Non-OL no-fault tier-only pass EXECUTED (2026-09-16) — no-fault baseline complete catalogue-wide
+
+The 187 non-OL no-fault rows tagged tier-only (Option A). All had an IES (no content-gaps outside OL).
+- **DB (48):** Fundamental 11 (stance + backpedal), Developing 37 (press/coverage reactions, leverage-level release rules). Flagged LOW: the Release_*-Level rules are the ones most arguably Advanced — kept Developing (a corner learns leverage reactions relatively early, not an Advanced-only concept); owner may bump.
+- **QB (26):** Fundamental 2 (ball security), Developing 21 (bootleg, toss), Advanced 3 (Speed-Option/Shovel — reading the edge defender).
+- **RB (78):** Fundamental 37 (stance, ball security, starts, base blocks, handoff), Developing 41 (cuts, routes, toss/option, cut block).
+- **TE (31):** Fundamental 27 (stance, first-step, base blocks), Developing 4 (chip-release, cut block).
+- **WR (4):** Fundamental 3 (ball security), Developing 1 (cut block).
+- **Safety (positive-phrased scan, OL precedent):** RB 1208 / TE 1239 / WR 1244 (Cut head-up) → is_safety=Fundamental; live-verified bypass all filters. (TE 1001 "head up, neck relaxed, scan the edge" excluded — vision cue, not injury-risk.)
+
+Verified live: 0 non-OL no-fault rows left untagged, 0 carry severity (Option A). **Every no-fault row
+catalogue-wide is now tagged except OL's 14 content-gap rows.** Catalogue 727/1665. resolver 238/238, cleaning 28/28.
+
 ## 9b. Still open
 
-- The other **~187 no-fault rows** (RB 78, DB 48, TE 31, QB 26, WR 4) → tier-only pass (Option A), each with its own positive-phrased-safety scan.
-- The **1047 has-fault untagged rows** in QB/WR/TE/DB/RB → per-slice fault tagging.
+- The **1047 has-fault untagged rows** in QB/WR/TE/DB/RB → per-slice fault tagging (the last big block).
 - WR→TE transfer (§7b) applies when WR/TE run.
 - S2 knee-flexion content (3 rows) — held pending an authored correct-landing standard.
+- DB Release_*-Level rules — open to an Advanced bump if the owner wants (currently Developing, flagged LOW above).
 
-No further writes pending direction on the next slice.
+No further writes pending direction on the has-fault slices.
