@@ -126,7 +126,7 @@ the performance scale to game consequences while smuggling in a physical-safety 
   filters. **That build is a separate decision from tagging** (own migration + resolver diff + tests) — flagged in §9. Until
   it lands, safety faults are *identified* in the worksheets but the enforcement isn't wired.
 
-#### The criterion, BROADENED — mechanism-independent, TWO SIGNALS (OWNER RULING, refined 2026-09-17)
+#### The criterion, BROADENED — mechanism-independent, THREE SIGNALS (OWNER RULING, refined 2026-09-17)
 
 The first two safety examples (Leading with the Head, Diving at the Ankles) were both **contact-injury** acts, which
 tempted a narrower reading — "safety = a dangerous act against another player." **That is the wrong axis.** The safety
@@ -134,7 +134,7 @@ mechanism exists because *a player gets physically hurt*, and the cost of missin
 from a collision, the athlete's own movement, or being caught defenseless for a big hit. The injury **MECHANISM (contact vs.
 non-contact, torque vs. impact) is irrelevant** — only whether the row's text signals real physical harm.
 
-**Locked criterion — `is_safety` if the row's OWN TEXT carries EITHER signal (either qualifies):**
+**Locked criterion — `is_safety` if the row's OWN TEXT carries ANY of these signals (any one qualifies):**
 
 - **Signal (a) — names a genuine injury outright.** Explicit harm language: "can cause joint injuries" (1182), "dangerous
   risk for neck and concussive injuries" (1243/1207), "dangerous stress on the knees" (927/939/955), "unsafe way to take a
@@ -146,6 +146,21 @@ non-contact, torque vs. impact) is irrelevant** — only whether the row's text 
   the Top — standing tall on the first step, which **raises the target area for defenders**." A tall runner takes a bigger,
   cleaner hit → `is_safety`. (Flipped from Major 2026-09-17; the earlier text-only rule that required signal (a) was too
   narrow.)
+- **Signal (c) — the HEAD specifically drops / leaves the up-and-forward position INTO CONTACT** (crown of the helmet into
+  the contact path instead of the face mask). Worked examples — **OL_Center 2** "Ducking Head on Snap. Dropping the chin… on
+  the snap", **OL_RT 631** "Head Dropping. Dropping the eyes and head down **on contact**", **RB_FB 1156** "Dropping the
+  Head… right before contact", **WR 770** "ducking the head before contact" (770 also names "unsafe collision" so it's
+  additionally signal a). **The precision is load-bearing — head-drop ≠ pad level:** low pad level with the head UP is
+  correct, universally-coached technique and is **NOT** a safety concern. Signal (c) fires only on the *head itself*
+  lowering, and only in a **contact** context. Two exclusions that prove the scope:
+  - **PAD-LEVEL / "get low" language is explicitly NOT a candidate** — "sink your hips," "stay low," "get your pads under
+    theirs," "bending at the waist" (as a lunge). The scan is anchored on `head`/`chin`/`crown` precisely so pad-level rows
+    cannot match.
+  - **Head-drop OUTSIDE contact is NOT signal (c)** — a head dropping in the **stance** (OL_LT 157/169/216 "Head Dropping…
+    reaching down… miss a late blitz" — pre-snap awareness), during a **sprint/release** (WR 739/746/796/807/823/847 "head
+    dipping to watch the feet"), or in **catching** ("eyes off the leather", "blind pull") is a processing/mechanics fault,
+    Major, not safety. Same fault NAME ("Head Dropping") as 631 but a different context → different disposition; the keyword
+    never decides, the mechanism does.
 
 **The load-bearing distinction (what SEPARATES signal (b) from ordinary rep-loss):** *elevated hit magnitude / being
 defenseless to a hit* qualifies; *routine contact-outcome* ("this gets you beaten / tackled / re-routed / driven back /
@@ -159,18 +174,22 @@ the presence of a keyword. Worked EXCLUSIONS (carry exposure vocabulary but fail
     loss), the ordinary contact an OL invites every snap, not a bigger hit.
   - **"Exposes the BALL"** (1083/705/974) — a fumble/strip mechanism (turnover → Critical), not a hit on the player.
 - **Text-discipline still holds for the NAMED-injury half (signal a):** don't infer an injury from anatomical vocabulary
-  alone. Boundary case **RB 1156** ("Dropping the Head… losing sight of the target right before contact, causing the
-  fullback to completely miss the block") — head-down-into-a-block IS physically the neck-injury mechanism, but this row's
-  text asserts only "miss the block," with none of the "unsafe collision" language its sibling **WR 770** carries (770 is
-  safety *because* its text says the quiet part). Kept Major; flagged. Same text-discipline as 904 ("hard on the joints" →
-  safety) vs a plain "knee" row.
-- **Backward-check protocol when broadening (re-run 2026-09-17 with both signals across OL/DB/RB AND the already-committed
-  WR):** two scans — injury-noun/contact-danger AND exposure/hit-magnitude/vulnerability. Flips: **1182** (signal a) and
-  **1123** (signal b). Everything else carrying exposure vocabulary failed the mechanism test (press-jam / bull-rush /
-  re-route / ball-strip). 0 DB rows carry hit-delivery language (no lead-with-head/launch/targeting faults in the coverage
-  catalogue). **This two-signal rule governs the TE pass from the start** — TE's contested-catch / over-the-middle /
-  crossing content is exactly where signal (b) recurs (a receiver defenseless for a hit over the middle), so apply it there,
-  not just signal (a).
+  alone. **RB 1156** was initially kept Major under a signal-(a)-only reading (its text says "miss the block", not "unsafe
+  collision") — **now flipped to `is_safety` under signal (c)** (owner ruling 2026-09-17): its *named* fault is "Dropping the
+  Head" right before contact, which is exactly the head-into-contact mechanism, independent of whether the text also spells
+  out the injury. 904 ("hard on the joints" → safety, signal a) remains the parallel for the named-injury half.
+- **Named boundary — kept Major, NOT flipped: RB_HB 1151** "**Lunging / Bending at the Waist**. Diving forward with the head
+  down…". The *named* fault is the lunge/overextension; "head down" is a descriptor of how you lunge, not the named fault.
+  Signal (c) fires when the head-drop IS the fault (1156/2/631), not when it rides along on a differently-named balance
+  fault. Says "head down" in a contact context, so flagged for owner — but held Major on the "named fault" line.
+- **Backward-check protocol when broadening (re-run 2026-09-17 across OL/DB/RB AND the already-committed WR, once per signal
+  as each was added):** injury-noun/contact-danger (a), exposure/hit-magnitude/vulnerability (b), head-into-contact (c).
+  Flips: **1182** (a), **1123** (b), **2 / 631 / 1156** (c). Everything else carrying the surface vocabulary failed the
+  mechanism test — exposure→press-jam/bull-rush/re-route/ball-strip; head-drop→stance/sprint/release/catching (non-contact).
+  0 DB rows carry hit-delivery language (no lead-with-head/launch/targeting faults in the coverage catalogue). **This
+  three-signal rule governs the TE pass from the start** — TE's contested-catch / over-the-middle / crossing content is
+  where signals (b) and (c) recur (a receiver defenseless for a hit over the middle; head dropping into a crossing hit), so
+  apply all three there, not just (a).
 
 ---
 
@@ -359,10 +378,10 @@ The 270 WR has-fault rows, judged fresh (WR is the source; TE inherits on the re
 
 ## 9b. Still open
 
-- The **~520 has-fault untagged rows** in TE/QB → per-slice fault tagging. **TE next** — WR→TE `fault_severity` transfers on the verified receiving-skill twins (Catching / Routes / most Release); TE-original Blocking / First Step / Stance judged fresh. Apply the **two-signal §5c** from the start — TE contested-catch / over-the-middle content is where signal (b) recurs.
+- The **~520 has-fault untagged rows** in TE/QB → per-slice fault tagging. **TE next** — WR→TE `fault_severity` transfers on the verified receiving-skill twins (Catching / Routes / most Release); TE-original Blocking / First Step / Stance judged fresh. Apply the **three-signal §5c** from the start — TE contested-catch / over-the-middle content is where signals (b) and (c) recur.
 - S2 knee-flexion content (3 rows) — held pending an authored correct-landing standard.
 - DB Release_*-Level rules — settled Developing. The Critical criterion was refined twice 2026-09-17 (§5a) to "defender beaten vs enabling-condition"; carries into TE/QB.
-- ~~RB 1182 / RB 1123 — is_safety candidates~~ **RESOLVED 2026-09-17** → both `is_safety` (§5c two-signal criterion: 1182 signal (a), 1123 signal (b)).
-- **Boundary calls flagged for owner confirmation** (all currently tagged as noted): WR **904** (signal-a "hard on the joints", safety) + WR **1242** (§5c archetype + committed RB twin, safety) — §16; and the signal-(b) **exclusions** kept Major despite exposure vocabulary — WR **786/792/835/836** (press-jam), OL **633/645/692** (bull-rush push), RB **1156** (head-down block, text says "miss the block") — §5c. If the owner wants any of the press-jam/head-down exclusions treated as safety, they flip together with their siblings.
+- ~~RB 1182 / RB 1123 / RB 1156 — is_safety candidates~~ **RESOLVED 2026-09-17** → all `is_safety` (§5c: 1182 signal (a), 1123 signal (b), 1156 signal (c); + OL 2/631 signal (c)).
+- **Boundary calls flagged for owner confirmation** (all currently tagged as noted): WR **904** (signal-a "hard on the joints", safety) + WR **1242** (§5c archetype + committed RB twin, safety) — §16; the signal-(b) **exclusions** kept Major despite exposure vocabulary — WR **786/792/835/836** (press-jam), OL **633/645/692** (bull-rush push); and the signal-(c) **exclusion** RB **1151** ("Lunging/Bending at the Waist… head down" — named fault is the lunge, kept Major). If the owner wants any exclusion treated as safety, it flips with its siblings.
 
 No further writes pending direction on the next has-fault slice (TE).
