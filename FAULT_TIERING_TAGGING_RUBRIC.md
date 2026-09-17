@@ -154,6 +154,13 @@ whether real physical harm is explicitly described in the row's text.**
   other hits ("tearing open a lane", "joint elasticity", "exposes the chest/ball", "hits the helmet") were the descriptive
   false positives the text-discipline rule above screens out. Re-run this scan on WR/TE (route-cutting content is where
   non-contact knee/ankle injury language is densest) as those slices are tagged.
+- **Named boundary case — RB 1123 (STAYS Major, not safety; the 1768-equivalent for this criterion, owner-verified
+  2026-09-17):** "Popping the Top — straightening the spine and standing tall on the first step, which **raises the target
+  area for defenders** and kills forward momentum." Real football knowledge says a tall runner takes a bigger, more
+  dangerous hit — genuinely injury-adjacent. **But the row's stated consequence is performance ("kills forward momentum"),
+  and it never asserts a physical harm the way 1182/1206/1207 do.** It stays excluded *because* of the session's governing
+  discipline: don't add what the source doesn't say, even when it's true (same stretch rejected for BC-ball's synthesized IES
+  and the OL no-fault severities). **The test is what the row asserts, not what's true in football.**
 
 ---
 
@@ -327,11 +334,23 @@ The 67 RB has-fault rows, locked §5a from the start (no second pass, unlike DB)
 - **RB 1182 RESOLVED → `is_safety` (owner ruling, 2026-09-17).** Initially tagged Developing/Major and flagged, out of caution not to widen the safety axis past the contact precedent. Owner ruled the contact-vs-non-contact line is the wrong axis — the safety mechanism is about *player harm*, mechanism-independent (see the broadened §5c criterion). Flipped: `is_safety=true`, `fault_severity=NULL`, `player_tier=Developing`. Backward-check scan across all tagged OL/DB/RB rows cleared with only 1182 (see §5c backward-check protocol). RB safety now 4 total (1182/1206/1207 + 1208 no-fault head-up).
 - Verified live: RB 0 untagged, 0 no-fault rows carry severity (Option A), 0 safety rows carry severity. Catalogue 861/1665. resolver 238/238, cleaning 28/28.
 
+## 16. WR has-fault pass EXECUTED (2026-09-17) — WR fully tagged (4th complete position); judged FRESH (source for TE transfer)
+
+The 270 WR has-fault rows, judged fresh (WR is the source; TE inherits on the receiving-skill twins). §5a offense branch (turnover/fumble = Critical only; drops = Major; no defender-beaten branch) + broadened §5c safety scan applied.
+- **Fund/Critical 5:** ball-security fumble/strip (704 double-clutch, 705 flagging [twin of RB 1083], 706 exposing-the-breast) + 974 (Seam "exposing the ball → drops and **forced fumbles**" over the middle) + 1 pilot child. Offense → only the turnover branch fires.
+- **Safety 7 (new; +1244 no-fault head-up = 8 WR safety total):** 770 (blocking head-down, "unsafe way to take a collision"), 1242/1243 (cut-block Diving-at-Ankles / Leading-with-Head — **verbatim twins of committed RB 1206/1207**, and §5c-listed archetypes), + **route-cut knee-injury rows** 927/939/955 ("**dangerous stress on the knees**") and **904** (boundary case — see below). Head-contact safety = Fundamental; route-cut knee safety = Developing (matches 1182 cut-mechanics tier). NULL severity.
+- **Fund/Major 55:** eye-discipline catching (watch-it-in / eyes-stay-down, all catch locations), release drive + first-step/first-5-yards acceleration mechanics, pre-snap stance.
+- **Dev/Major ~207:** all 89 Release moves (Diamond/Kickstep/Slide/Split — named press-release skills; the "read" elements are core to executing the release, not a recognition overlay), all Routes cut/tree execution (telegraph, rounding, blind turn, toe-plant slide, drift, INT-*risk* "waiting on the ball" = enabling condition not realized turnover → Major), hand-shape/orientation catching nuance, WR blocking-in-space, cut telegraph.
+- **No Advanced (new WR rows).** Consistent with WR no-fault (F3/Dev1) and RB has-fault: WR execution is Fundamental/Developing; genuine Advanced (sight-adjustment / option-route coverage reads) is not present in the current WR catalogue — the "reads" mentioned are incidental context on mechanical break faults, and gaze/defender-position is flagged non-pose-measurable. (1 pre-existing pilot Advanced/Minor row stands.)
+- **Named boundary case — WR 904 (Cuts-Stop, tagged safety, owner to confirm):** "STIFF LEG … deceleration absorbed through the knees … **hard on the joints**." Softer injury language than 927/939/955's "dangerous stress on the knees," and its lead consequence is performance ("slower to stop") — but it is the **identical biomechanical fault** (stiff-legged deceleration through the knees) as those three confirmed knee-safety rows, so splitting the mechanism on wording alone would be inconsistent, and "hard on the joints" sits on the harm side of the 1123 line (which asserted only *exposure*). Tagged safety; strict-text-only alternative = Developing/Major. **Also note WR 1242** rides on being a §5c-listed archetype + its committed RB twin (its own text asserts *performance*, "defender steps over the block", not injury) — if strict-text-only were preferred, 1242 **and RB 1206** would move to Major together.
+- Verified live: WR 0 untagged, 0 no-fault rows carry severity (Option A), 0 safety rows carry severity. WR safety 8. Catalogue **1131/1665**, safety total 28. Snapshot regenerated (tagged 1131); resolver 238/238, cleaning 28/28.
+
 ## 9b. Still open
 
-- The **~530 has-fault untagged rows** in WR/TE/QB → per-slice fault tagging (WR→TE transfer applies).
+- The **~520 has-fault untagged rows** in TE/QB → per-slice fault tagging. **TE next** — WR→TE `fault_severity` transfers on the verified receiving-skill twins (Catching / Routes / most Release); TE-original Blocking / First Step / Stance judged fresh.
 - S2 knee-flexion content (3 rows) — held pending an authored correct-landing standard.
-- DB Release_*-Level rules — settled Developing. The Critical criterion was refined twice 2026-09-17 (§5a) to "defender beaten vs enabling-condition"; carries into WR/TE/QB.
+- DB Release_*-Level rules — settled Developing. The Critical criterion was refined twice 2026-09-17 (§5a) to "defender beaten vs enabling-condition"; carries into TE/QB.
 - ~~RB 1182 — is_safety candidate~~ **RESOLVED 2026-09-17** → `is_safety` (owner ruling; §5c criterion broadened to be injury-mechanism-independent; backward-check cleared with only 1182).
+- **WR 904 + 1242 boundary calls (§16)** — flagged for owner confirmation; both currently tagged safety.
 
-No further writes pending direction on the next has-fault slice (WR).
+No further writes pending direction on the next has-fault slice (TE).
