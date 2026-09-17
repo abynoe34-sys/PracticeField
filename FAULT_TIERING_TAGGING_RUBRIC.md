@@ -190,6 +190,28 @@ the presence of a keyword. Worked EXCLUSIONS (carry exposure vocabulary but fail
   three-signal rule governs the TE pass from the start** — TE's contested-catch / over-the-middle / crossing content is
   where signals (b) and (c) recur (a receiver defenseless for a hit over the middle; head dropping into a crossing hit), so
   apply all three there, not just (a).
+- **A FOURTH check — by established fault NAME, not just language (owner directive, 2026-09-18).** The signal scans search
+  *language*; they can miss a fault whose NAME is already established as `is_safety` elsewhere but whose sentence is
+  performance-framed under a different position's phrasing (exactly how WR 1242 "Diving at the Ankles" read as pure
+  performance — "defender steps over the block" — yet is the regulated chop-block archetype). So after the language scans,
+  also scan the tagged catalogue for every established safety-fault NAME (*Diving at the Ankles*, *Leading with the Head /
+  head-first into the knees*, *Ducking/Dropping the Head into contact*, *Sticking the Cleat* [knee-twist], *Popping the
+  Top*, stiff-legged-braking). **Run 2026-09-18 across all tagged OL/DB/RB/WR: 0 misses.** Every Diving/Leading/head-into-
+  contact archetype in a tagged position is already `is_safety`; the cut-block groups are uniform 5-for-5 across OL(×5)/RB/
+  TE-nofault/WR (base + Telegraphing[Major] + Diving[safety] + Leading[safety] + head-up[safety]). Only hit was a **name
+  collision**: OL_LG **68** "Sticking the Cleats" — a pass-pro footwork fault (feet stuck → beaten by an arm-over/spin),
+  NOT RB 1182's knee-twist; same name, different mechanism → correctly stays Major. Note the chop/cut block is a **harm-to-
+  the-opponent** danger (regulated for the defender's knees), a distinct rationale from the self-injury signals (a)/(b)/(c)
+  but the same `is_safety` disposition.
+- **Owner rulings CONFIRMED (2026-09-18, full text surfaced):** WR **904** ("hard on the joints") = `is_safety` (already
+  was; = signal a, parallel to 927/939/955). WR **1242** ("Diving at the Ankles") = `is_safety` (already was; established
+  archetype). RB_HB **1151** ("Lunging/Bending at the Waist… head down… effortless for a blitzer to side-step/swim") =
+  **stays Major** — the full text describes the blitzer EVADING (a whiffed block), NOT a collision, so signal (c)'s
+  "contact must actually be described" gate correctly excludes it. The "contact described" requirement is doing real work.
+- **Queued for the TE pass (TE untagged, so not a "miss"):** TE **1237** Diving-at-Ankles + **1238** Leading-with-Head (Cut
+  → is_safety), **1433** stiff-legged-braking (Comeback → signal a), **1445/1461** Telegraphing-the-Stop (Curl/Hitch —
+  check full text for the bundled "dangerous stress on the knees" clause, like WR 939/955). WR→TE twin-transfer + §5c will
+  catch these; listed here so they are not overlooked.
 
 ---
 
@@ -382,6 +404,6 @@ The 270 WR has-fault rows, judged fresh (WR is the source; TE inherits on the re
 - S2 knee-flexion content (3 rows) — held pending an authored correct-landing standard.
 - DB Release_*-Level rules — settled Developing. The Critical criterion was refined twice 2026-09-17 (§5a) to "defender beaten vs enabling-condition"; carries into TE/QB.
 - ~~RB 1182 / RB 1123 / RB 1156 — is_safety candidates~~ **RESOLVED 2026-09-17** → all `is_safety` (§5c: 1182 signal (a), 1123 signal (b), 1156 signal (c); + OL 2/631 signal (c)).
-- **Boundary calls flagged for owner confirmation** (all currently tagged as noted): WR **904** (signal-a "hard on the joints", safety) + WR **1242** (§5c archetype + committed RB twin, safety) — §16; the signal-(b) **exclusions** kept Major despite exposure vocabulary — WR **786/792/835/836** (press-jam), OL **633/645/692** (bull-rush push); and the signal-(c) **exclusion** RB **1151** ("Lunging/Bending at the Waist… head down" — named fault is the lunge, kept Major). If the owner wants any exclusion treated as safety, it flips with its siblings.
+- ~~Boundary calls flagged for owner~~ **RESOLVED 2026-09-18 (full text surfaced):** WR **904** = safety (confirmed), WR **1242** = safety (confirmed), RB_HB **1151** = **Major** (confirmed — full text shows the blitzer evading, no contact). Established-NAME cross-check run across all tagged positions: 0 misses (only the OL 68 "Sticking the Cleats" name-collision, correctly Major). Signal-(b) exclusions (WR 786/792/835/836 press-jam, OL 633/645/692 bull-rush) stand as Major. **No open safety-tagging flags remain on the tagged positions.**
 
 No further writes pending direction on the next has-fault slice (TE).
