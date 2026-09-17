@@ -126,41 +126,51 @@ the performance scale to game consequences while smuggling in a physical-safety 
   filters. **That build is a separate decision from tagging** (own migration + resolver diff + tests) — flagged in §9. Until
   it lands, safety faults are *identified* in the worksheets but the enforcement isn't wired.
 
-#### The criterion, BROADENED — mechanism-independent (OWNER RULING, 2026-09-17)
+#### The criterion, BROADENED — mechanism-independent, TWO SIGNALS (OWNER RULING, refined 2026-09-17)
 
 The first two safety examples (Leading with the Head, Diving at the Ankles) were both **contact-injury** acts, which
 tempted a narrower reading — "safety = a dangerous act against another player." **That is the wrong axis.** The safety
 mechanism exists because *a player gets physically hurt*, and the cost of missing that is the same whether the injury comes
-from a collision or from the athlete's own movement. A torn ACL from a plant-and-twist is as real a harm as a neck injury
-from a head-first hit; non-contact knee/ankle injuries from bad cutting mechanics are among the most common season-enders in
-football. **The injury MECHANISM (contact vs. non-contact, torque vs. impact) is irrelevant.**
+from a collision, the athlete's own movement, or being caught defenseless for a big hit. The injury **MECHANISM (contact vs.
+non-contact, torque vs. impact) is irrelevant** — only whether the row's text signals real physical harm.
 
-**Locked criterion:** `is_safety` applies to **any fault whose OWN TEXT names a genuine physical injury risk to a player** —
-contact *or* non-contact movement mechanics (torque, twist, joint strain, roll) — the mechanism doesn't matter, **only
-whether real physical harm is explicitly described in the row's text.**
+**Locked criterion — `is_safety` if the row's OWN TEXT carries EITHER signal (either qualifies):**
 
-- **The text-based discipline is load-bearing (mirror of "never invent a fault").** The row must *state* the injury risk.
-  Do **not** infer an injury the text doesn't name from anatomical vocabulary alone. "Spine rounding → can't absorb a
-  bull-rush, pocket collapses" is a **performance** consequence (Major), not safety — even though it says "spine." "Exposes
-  your chest to the edge rusher" is exposure/leverage (Major), not injury. The word "spine"/"joint"/"helmet" appearing
-  descriptively is not a safety trigger; an explicitly-stated *harm to the player* is.
-- **Worked NON-CONTACT example — RB 1182 (`is_safety`, 2026-09-17):** "Sticking the Cleat — planting the foot flat and
-  twisting the knee rather than rolling onto the inside instep, **which can cause joint injuries** or slips." Names a genuine
-  self-injury (knee torque) in its own text → `is_safety=true`, `fault_severity=NULL` (off the scale), `player_tier` kept at
-  the judged skill level (Developing — plant-cut mechanics; surfacing is unconditional regardless of tier). This is the
-  companion to the contact examples 1206/1207 and shows the axis is harm, not collision.
-- **Backward-check protocol when broadening (done 2026-09-17, before WR):** scanned every already-tagged OL/DB/RB row for
-  injury-risk vocabulary AND contact-danger phrasing; the ONLY row whose text names a real player-injury risk was 1182. All
-  other hits ("tearing open a lane", "joint elasticity", "exposes the chest/ball", "hits the helmet") were the descriptive
-  false positives the text-discipline rule above screens out. Re-run this scan on WR/TE (route-cutting content is where
-  non-contact knee/ankle injury language is densest) as those slices are tagged.
-- **Named boundary case — RB 1123 (STAYS Major, not safety; the 1768-equivalent for this criterion, owner-verified
-  2026-09-17):** "Popping the Top — straightening the spine and standing tall on the first step, which **raises the target
-  area for defenders** and kills forward momentum." Real football knowledge says a tall runner takes a bigger, more
-  dangerous hit — genuinely injury-adjacent. **But the row's stated consequence is performance ("kills forward momentum"),
-  and it never asserts a physical harm the way 1182/1206/1207 do.** It stays excluded *because* of the session's governing
-  discipline: don't add what the source doesn't say, even when it's true (same stretch rejected for BC-ball's synthesized IES
-  and the OL no-fault severities). **The test is what the row asserts, not what's true in football.**
+- **Signal (a) — names a genuine injury outright.** Explicit harm language: "can cause joint injuries" (1182), "dangerous
+  risk for neck and concussive injuries" (1243/1207), "dangerous stress on the knees" (927/939/955), "unsafe way to take a
+  collision" (770). Worked example — **RB 1182**: "planting the foot flat and twisting the knee… **which can cause joint
+  injuries**." Contact examples — **1206/1207** (diving at ankles / leading with head into knees).
+- **Signal (b) — describes increased exposure to a harder/bigger HIT or vulnerability**, even without the word "injury."
+  Language like "target area," "exposed to a hit," "defenseless," "unprotected contact," or similar — because *elevated hit
+  magnitude / vulnerability is the mechanism that turns ordinary contact into injury.* Worked example — **RB 1123**: "Popping
+  the Top — standing tall on the first step, which **raises the target area for defenders**." A tall runner takes a bigger,
+  cleaner hit → `is_safety`. (Flipped from Major 2026-09-17; the earlier text-only rule that required signal (a) was too
+  narrow.)
+
+**The load-bearing distinction (what SEPARATES signal (b) from ordinary rep-loss):** *elevated hit magnitude / being
+defenseless to a hit* qualifies; *routine contact-outcome* ("this gets you beaten / tackled / re-routed / driven back /
+misses the block") does **not**, even when it uses contact vocabulary. The test is the **mechanism the text describes**, not
+the presence of a keyword. Worked EXCLUSIONS (carry exposure vocabulary but fail the mechanism test → stay Major):
+  - **WR 786/792/835/836 (press-release)** — "chest unprotected/exposed," "defenceless," "clean target," "heavy recovery
+    punch." The described contact is a press-corner **jam/re-route** (hand-fight, rep loss: "push the receiver off his path"),
+    not an injury-magnitude hit. The words "defenceless"/"unprotected" mean *no hands ready to counter the jam*, not
+    defenseless to a collision.
+  - **OL 633/645/692 (high stance)** — "exposes your chest… drive you backward into the pocket": a **bull-rush push** (rep
+    loss), the ordinary contact an OL invites every snap, not a bigger hit.
+  - **"Exposes the BALL"** (1083/705/974) — a fumble/strip mechanism (turnover → Critical), not a hit on the player.
+- **Text-discipline still holds for the NAMED-injury half (signal a):** don't infer an injury from anatomical vocabulary
+  alone. Boundary case **RB 1156** ("Dropping the Head… losing sight of the target right before contact, causing the
+  fullback to completely miss the block") — head-down-into-a-block IS physically the neck-injury mechanism, but this row's
+  text asserts only "miss the block," with none of the "unsafe collision" language its sibling **WR 770** carries (770 is
+  safety *because* its text says the quiet part). Kept Major; flagged. Same text-discipline as 904 ("hard on the joints" →
+  safety) vs a plain "knee" row.
+- **Backward-check protocol when broadening (re-run 2026-09-17 with both signals across OL/DB/RB AND the already-committed
+  WR):** two scans — injury-noun/contact-danger AND exposure/hit-magnitude/vulnerability. Flips: **1182** (signal a) and
+  **1123** (signal b). Everything else carrying exposure vocabulary failed the mechanism test (press-jam / bull-rush /
+  re-route / ball-strip). 0 DB rows carry hit-delivery language (no lead-with-head/launch/targeting faults in the coverage
+  catalogue). **This two-signal rule governs the TE pass from the start** — TE's contested-catch / over-the-middle /
+  crossing content is exactly where signal (b) recurs (a receiver defenseless for a hit over the middle), so apply it there,
+  not just signal (a).
 
 ---
 
@@ -333,6 +343,7 @@ The 67 RB has-fault rows, locked §5a from the start (no second pass, unlike DB)
 - **Fund/Major 30 / Dev/Major 26** (1182 removed from Dev/Major on the flip). Tier: Fundamental = ball security, base blocks, first-step burst, stance, watch-it-in catching eyes, handoff eyes; Developing = named cut techniques, routes, hand-shape catching, option/toss exchange, tells. **No Advanced** — RB has-fault is execution-heavy; its reads (find the void, track the block, option pitch) are Developing-level.
 - **RB 1182 RESOLVED → `is_safety` (owner ruling, 2026-09-17).** Initially tagged Developing/Major and flagged, out of caution not to widen the safety axis past the contact precedent. Owner ruled the contact-vs-non-contact line is the wrong axis — the safety mechanism is about *player harm*, mechanism-independent (see the broadened §5c criterion). Flipped: `is_safety=true`, `fault_severity=NULL`, `player_tier=Developing`. Backward-check scan across all tagged OL/DB/RB rows cleared with only 1182 (see §5c backward-check protocol). RB safety now 4 total (1182/1206/1207 + 1208 no-fault head-up).
 - Verified live: RB 0 untagged, 0 no-fault rows carry severity (Option A), 0 safety rows carry severity. Catalogue 861/1665. resolver 238/238, cleaning 28/28.
+- **RB safety later 4→5:** RB_HB 1123 ("Popping the Top… raises the target area for defenders") flipped from Fund/Major → `is_safety`=Fundamental on the 2026-09-17 signal-(b) refinement (§5c). RB safety = 1182/1206/1207/1208/1123.
 
 ## 16. WR has-fault pass EXECUTED (2026-09-17) — WR fully tagged (4th complete position); judged FRESH (source for TE transfer)
 
@@ -342,15 +353,16 @@ The 270 WR has-fault rows, judged fresh (WR is the source; TE inherits on the re
 - **Fund/Major 55:** eye-discipline catching (watch-it-in / eyes-stay-down, all catch locations), release drive + first-step/first-5-yards acceleration mechanics, pre-snap stance.
 - **Dev/Major ~207:** all 89 Release moves (Diamond/Kickstep/Slide/Split — named press-release skills; the "read" elements are core to executing the release, not a recognition overlay), all Routes cut/tree execution (telegraph, rounding, blind turn, toe-plant slide, drift, INT-*risk* "waiting on the ball" = enabling condition not realized turnover → Major), hand-shape/orientation catching nuance, WR blocking-in-space, cut telegraph.
 - **No Advanced (new WR rows).** Consistent with WR no-fault (F3/Dev1) and RB has-fault: WR execution is Fundamental/Developing; genuine Advanced (sight-adjustment / option-route coverage reads) is not present in the current WR catalogue — the "reads" mentioned are incidental context on mechanical break faults, and gaze/defender-position is flagged non-pose-measurable. (1 pre-existing pilot Advanced/Minor row stands.)
-- **Named boundary case — WR 904 (Cuts-Stop, tagged safety, owner to confirm):** "STIFF LEG … deceleration absorbed through the knees … **hard on the joints**." Softer injury language than 927/939/955's "dangerous stress on the knees," and its lead consequence is performance ("slower to stop") — but it is the **identical biomechanical fault** (stiff-legged deceleration through the knees) as those three confirmed knee-safety rows, so splitting the mechanism on wording alone would be inconsistent, and "hard on the joints" sits on the harm side of the 1123 line (which asserted only *exposure*). Tagged safety; strict-text-only alternative = Developing/Major. **Also note WR 1242** rides on being a §5c-listed archetype + its committed RB twin (its own text asserts *performance*, "defender steps over the block", not injury) — if strict-text-only were preferred, 1242 **and RB 1206** would move to Major together.
+- **Named boundary case — WR 904 (Cuts-Stop, tagged safety, owner to confirm):** "STIFF LEG … deceleration absorbed through the knees … **hard on the joints**." Softer injury language than 927/939/955's "dangerous stress on the knees," and its lead consequence is performance ("slower to stop") — but it is the **identical biomechanical fault** (stiff-legged deceleration through the knees) as those three confirmed knee-safety rows, so splitting the mechanism on wording alone would be inconsistent. "Hard on the joints" clears signal (a) (a stated joint-stress harm). Tagged safety; strict-text-only alternative = Developing/Major. **Also note WR 1242** rides on being a §5c-listed archetype + its committed RB twin (its own text asserts *performance*, "defender steps over the block", not injury) — if strict-text-only were preferred, 1242 **and RB 1206** would move to Major together.
 - Verified live: WR 0 untagged, 0 no-fault rows carry severity (Option A), 0 safety rows carry severity. WR safety 8. Catalogue **1131/1665**, safety total 28. Snapshot regenerated (tagged 1131); resolver 238/238, cleaning 28/28.
+- **Signal-(b) re-scan (2026-09-17, after the WR commit):** the two-signal §5c refinement was applied back across the committed WR rows too. No new WR flips beyond the flagged exclusions — WR's exposure vocabulary (786/792/835/836 "chest exposed/unprotected/defenceless") is press-jam/re-route (rep loss), failing the mechanism test. WR safety stays 8; catalogue safety total 28→29 comes from RB 1123.
 
 ## 9b. Still open
 
-- The **~520 has-fault untagged rows** in TE/QB → per-slice fault tagging. **TE next** — WR→TE `fault_severity` transfers on the verified receiving-skill twins (Catching / Routes / most Release); TE-original Blocking / First Step / Stance judged fresh.
+- The **~520 has-fault untagged rows** in TE/QB → per-slice fault tagging. **TE next** — WR→TE `fault_severity` transfers on the verified receiving-skill twins (Catching / Routes / most Release); TE-original Blocking / First Step / Stance judged fresh. Apply the **two-signal §5c** from the start — TE contested-catch / over-the-middle content is where signal (b) recurs.
 - S2 knee-flexion content (3 rows) — held pending an authored correct-landing standard.
 - DB Release_*-Level rules — settled Developing. The Critical criterion was refined twice 2026-09-17 (§5a) to "defender beaten vs enabling-condition"; carries into TE/QB.
-- ~~RB 1182 — is_safety candidate~~ **RESOLVED 2026-09-17** → `is_safety` (owner ruling; §5c criterion broadened to be injury-mechanism-independent; backward-check cleared with only 1182).
-- **WR 904 + 1242 boundary calls (§16)** — flagged for owner confirmation; both currently tagged safety.
+- ~~RB 1182 / RB 1123 — is_safety candidates~~ **RESOLVED 2026-09-17** → both `is_safety` (§5c two-signal criterion: 1182 signal (a), 1123 signal (b)).
+- **Boundary calls flagged for owner confirmation** (all currently tagged as noted): WR **904** (signal-a "hard on the joints", safety) + WR **1242** (§5c archetype + committed RB twin, safety) — §16; and the signal-(b) **exclusions** kept Major despite exposure vocabulary — WR **786/792/835/836** (press-jam), OL **633/645/692** (bull-rush push), RB **1156** (head-down block, text says "miss the block") — §5c. If the owner wants any of the press-jam/head-down exclusions treated as safety, they flip together with their siblings.
 
 No further writes pending direction on the next has-fault slice (TE).
