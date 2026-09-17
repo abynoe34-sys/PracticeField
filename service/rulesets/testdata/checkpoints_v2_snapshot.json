@@ -39890,8 +39890,8 @@
    "check_type": null,
    "threshold_parameters": null,
    "player_tier": "Developing",
-   "fault_severity": "Major",
-   "is_safety": false
+   "fault_severity": null,
+   "is_safety": true
   },
   {
    "id": 1183,

@@ -126,6 +126,35 @@ the performance scale to game consequences while smuggling in a physical-safety 
   filters. **That build is a separate decision from tagging** (own migration + resolver diff + tests) — flagged in §9. Until
   it lands, safety faults are *identified* in the worksheets but the enforcement isn't wired.
 
+#### The criterion, BROADENED — mechanism-independent (OWNER RULING, 2026-09-17)
+
+The first two safety examples (Leading with the Head, Diving at the Ankles) were both **contact-injury** acts, which
+tempted a narrower reading — "safety = a dangerous act against another player." **That is the wrong axis.** The safety
+mechanism exists because *a player gets physically hurt*, and the cost of missing that is the same whether the injury comes
+from a collision or from the athlete's own movement. A torn ACL from a plant-and-twist is as real a harm as a neck injury
+from a head-first hit; non-contact knee/ankle injuries from bad cutting mechanics are among the most common season-enders in
+football. **The injury MECHANISM (contact vs. non-contact, torque vs. impact) is irrelevant.**
+
+**Locked criterion:** `is_safety` applies to **any fault whose OWN TEXT names a genuine physical injury risk to a player** —
+contact *or* non-contact movement mechanics (torque, twist, joint strain, roll) — the mechanism doesn't matter, **only
+whether real physical harm is explicitly described in the row's text.**
+
+- **The text-based discipline is load-bearing (mirror of "never invent a fault").** The row must *state* the injury risk.
+  Do **not** infer an injury the text doesn't name from anatomical vocabulary alone. "Spine rounding → can't absorb a
+  bull-rush, pocket collapses" is a **performance** consequence (Major), not safety — even though it says "spine." "Exposes
+  your chest to the edge rusher" is exposure/leverage (Major), not injury. The word "spine"/"joint"/"helmet" appearing
+  descriptively is not a safety trigger; an explicitly-stated *harm to the player* is.
+- **Worked NON-CONTACT example — RB 1182 (`is_safety`, 2026-09-17):** "Sticking the Cleat — planting the foot flat and
+  twisting the knee rather than rolling onto the inside instep, **which can cause joint injuries** or slips." Names a genuine
+  self-injury (knee torque) in its own text → `is_safety=true`, `fault_severity=NULL` (off the scale), `player_tier` kept at
+  the judged skill level (Developing — plant-cut mechanics; surfacing is unconditional regardless of tier). This is the
+  companion to the contact examples 1206/1207 and shows the axis is harm, not collision.
+- **Backward-check protocol when broadening (done 2026-09-17, before WR):** scanned every already-tagged OL/DB/RB row for
+  injury-risk vocabulary AND contact-danger phrasing; the ONLY row whose text names a real player-injury risk was 1182. All
+  other hits ("tearing open a lane", "joint elasticity", "exposes the chest/ball", "hits the helmet") were the descriptive
+  false positives the text-discipline rule above screens out. Re-run this scan on WR/TE (route-cutting content is where
+  non-contact knee/ankle injury language is densest) as those slices are tagged.
+
 ---
 
 ### 5d. Tells / deception — re-examined as a CATEGORY (owner-flagged; the earlier "Minor" was wrong)
@@ -293,16 +322,16 @@ The 67 DB has-fault rows tagged severity + tier. No injury-risk faults (coverage
 
 The 67 RB has-fault rows, locked §5a from the start (no second pass, unlike DB).
 - **Fund/Critical 8:** fumble/strip/muffed-pitch (1082/1083/1084 ball security, 1184/1197 ball-slip-on-cut, 1132 elbow-flare-strip burst, 1168 clamp-early mesh, 1172 muffed pitch). RB is offense → §5a defender-beaten branch N/A; only the turnover branch fires. **Drops = Major** (incompletion, not turnover).
-- **Safety 2:** 1206 (diving at ankles) + 1207 (leading with head into knees) — cut-block injury pattern, is_safety=Fundamental, NULL severity, same as OL's flagged pair.
-- **Fund/Major 30 / Dev/Major 27.** Tier: Fundamental = ball security, base blocks, first-step burst, stance, watch-it-in catching eyes, handoff eyes; Developing = named cut techniques, routes, hand-shape catching, option/toss exchange, tells. **No Advanced** — RB has-fault is execution-heavy; its reads (find the void, track the block, option pitch) are Developing-level.
-- **Flagged for owner — RB 1182:** "sticking the cleat…twisting the knee…can cause joint injuries" names a non-contact self-injury; tagged Developing/Major (NOT is_safety) to avoid widening the safety axis beyond the contact-injury precedent (head/ankles). Owner to decide.
-- Verified live: RB 0 untagged, 0 no-fault rows carry severity (Option A). Catalogue 861/1665. resolver 238/238, cleaning 28/28.
+- **Safety 3 (1182 added by the 2026-09-17 ruling below):** 1206 (diving at ankles) + 1207 (leading with head into knees) — contact cut-block injury pattern; **1182 (sticking the cleat / knee-twist) — the non-contact companion.** All `is_safety`, NULL severity, tier kept at judged level.
+- **Fund/Major 30 / Dev/Major 26** (1182 removed from Dev/Major on the flip). Tier: Fundamental = ball security, base blocks, first-step burst, stance, watch-it-in catching eyes, handoff eyes; Developing = named cut techniques, routes, hand-shape catching, option/toss exchange, tells. **No Advanced** — RB has-fault is execution-heavy; its reads (find the void, track the block, option pitch) are Developing-level.
+- **RB 1182 RESOLVED → `is_safety` (owner ruling, 2026-09-17).** Initially tagged Developing/Major and flagged, out of caution not to widen the safety axis past the contact precedent. Owner ruled the contact-vs-non-contact line is the wrong axis — the safety mechanism is about *player harm*, mechanism-independent (see the broadened §5c criterion). Flipped: `is_safety=true`, `fault_severity=NULL`, `player_tier=Developing`. Backward-check scan across all tagged OL/DB/RB rows cleared with only 1182 (see §5c backward-check protocol). RB safety now 4 total (1182/1206/1207 + 1208 no-fault head-up).
+- Verified live: RB 0 untagged, 0 no-fault rows carry severity (Option A), 0 safety rows carry severity. Catalogue 861/1665. resolver 238/238, cleaning 28/28.
 
 ## 9b. Still open
 
 - The **~530 has-fault untagged rows** in WR/TE/QB → per-slice fault tagging (WR→TE transfer applies).
 - S2 knee-flexion content (3 rows) — held pending an authored correct-landing standard.
 - DB Release_*-Level rules — settled Developing. The Critical criterion was refined twice 2026-09-17 (§5a) to "defender beaten vs enabling-condition"; carries into WR/TE/QB.
-- RB 1182 — is_safety candidate (self-injury), currently Developing/Major; owner to rule.
+- ~~RB 1182 — is_safety candidate~~ **RESOLVED 2026-09-17** → `is_safety` (owner ruling; §5c criterion broadened to be injury-mechanism-independent; backward-check cleared with only 1182).
 
 No further writes pending direction on the next has-fault slice (WR).
