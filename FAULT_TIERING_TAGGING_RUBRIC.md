@@ -95,7 +95,7 @@ Two independent dimensions. Every proposed tag cites which anchor it maps to; th
 ### 5a. `fault_severity` — consequence (mostly position-agnostic, transfers reasonably)
 | Severity | Anchor | Pilot precedent |
 |---|---|---|
-| **Critical** | Turnover / fumble / safety-injury risk — the rep is lost or someone gets hurt | WR/TE/RB eyes-up-early "clean catch becomes a fumble" = Fundamental/**Critical** |
+| **Critical** | Turnover / fumble / safety-injury risk — the rep is lost or someone gets hurt. **For defenders (refined 2026-09-17): the row's own text describes an UNCONTESTED, EXPLOSIVE outcome** (a named deep route getting wide-open / clean / "blow-past" / "over your head" / "run into the deep hole" — the DB analog of a turnover). **Keyed on described OUTCOME, not the literal word "touchdown," and NOT on described RISK** — "vulnerable to", "massive void", "blind spot", "exposed" are risk/enabling-condition language → Major, not Critical. Short/intermediate wide-open completions (flat/curl/checkdown) are uncontested but not explosive → Major. | WR/TE/RB fumble = Fundamental/**Critical**; DB "deep seam wide open for a vertical post" / "beat cleanly down the sideline" = **Critical** |
 | **Major** | Core mechanic failure — the technique's primary job fails (whiffed block, blown break, lost leverage) | most footwork/leverage faults across all pilots |
 | **Minor** | Refinement — costs efficiency/margin but the rep still largely works | QB chop-into-load, hip over-sink = **Minor** |
 
@@ -285,15 +285,14 @@ catalogue-wide is now tagged except OL's 14 content-gap rows.** Catalogue 727/16
 ## 14. DB has-fault pass EXECUTED (2026-09-17) — DB now fully tagged (2nd complete position)
 
 The 67 DB has-fault rows tagged severity + tier. No injury-risk faults (coverage) → 0 is_safety.
-- **Severity:** Major = coverage-technique failure (core job fails → completion/beat); **Critical** narrowly = the 2 rows naming a catastrophe in their own text (1704 "PI or separation TD", 1722 play-action "easy touchdown"); Minor = pure balance cleanliness (1700 high-knee-lift, 1683/1741 clicking-heels).
 - **Tier:** Fundamental 24 (stance + base pedal/pad-level/eyes discipline), Developing 32 (coverage-footwork reactions, jam technique, leverage maintenance), Advanced 11 (recognition/anticipation — guessing the route, sitting on the stem, squatting early, play-action, reading when to bail).
-- Reserved-Critical rule: only where the row text names a TD/PI outcome (the DB analog of a turnover). Flagged: this keeps Critical rare/conservative; owner may widen to "deep beat" faults.
+- **Severity — REVISED 2026-09-17 to the §5a "described uncontested/explosive outcome" criterion** (the first keyword-only pass was under-inclusive). Final: **Critical 14** (Fund 1 / Dev 6 / Adv 7), **Major 50**, **Minor 3**. The 14 Critical are the rows whose text states a wide-open/clean/blow-past DEEP outcome: 1665, 1676, 1685, 1697, 1710, 1762, 1768, 1682, 1703, 1704, 1720, 1722, 1727, 1763. Held at Major = risk/exposure language ("vulnerable", "massive void", "blind spot", "exposed", in-phase "stack you") and short-completion outcomes.
 - Verified live: DB 0 untagged, 0 no-fault rows carry severity (Option A). Catalogue 794/1665. resolver 238/238, cleaning 28/28.
 
 ## 9b. Still open
 
 - The **~980 has-fault untagged rows** in QB/WR/TE/RB → per-slice fault tagging (WR→TE transfer applies).
 - S2 knee-flexion content (3 rows) — held pending an authored correct-landing standard.
-- DB Release_*-Level rules + the reserved-Critical rule — both settled Developing/narrow-Critical (reviewed against live rows); open to an owner widen.
+- DB Release_*-Level rules — settled Developing (reviewed against live rows). The Critical criterion was refined 2026-09-17 (§5a) from keyword-only to "described uncontested/explosive outcome"; carries into QB/WR/TE/RB.
 
 No further writes pending direction on the next has-fault slice.
