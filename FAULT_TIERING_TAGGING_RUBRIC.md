@@ -289,10 +289,20 @@ The 67 DB has-fault rows tagged severity + tier. No injury-risk faults (coverage
 - **Severity — REVISED TWICE 2026-09-17.** First from keyword-only → "explosive outcome" (14 Critical). Then owner review sharpened the line to **"defender BEATEN / cannot contest" vs "enabling condition (space opened)"** (§5a): "wide open for [route]" is the same reality as "void" (Major), so **6 moved back** (1682/1697/1703/1727/1762/1763). **Final: Critical 8** (Fund 1 / Dev 4 / Adv 3), **Major 56**, **Minor 3**. The 8 Critical: 1665, 1676, 1685, 1710, 1720, 1768 (defender beaten) + 1704 (PI/separation-TD), 1722 (play-action TD). 1768 was the closest call (has both "deep hole" space-language and "back turned + runs easily" beaten-language) — kept Critical on the beaten element. Held at Major = enabling-condition/space language + risk ("vulnerable"/"void"/"blind spot") + short completions + in-phase "stack you".
 - Verified live: DB 0 untagged, 0 no-fault rows carry severity (Option A). Catalogue 794/1665. resolver 238/238, cleaning 28/28.
 
+## 15. RB has-fault pass EXECUTED (2026-09-17) — RB fully tagged (3rd complete position); §5a applied first-pass
+
+The 67 RB has-fault rows, locked §5a from the start (no second pass, unlike DB).
+- **Fund/Critical 8:** fumble/strip/muffed-pitch (1082/1083/1084 ball security, 1184/1197 ball-slip-on-cut, 1132 elbow-flare-strip burst, 1168 clamp-early mesh, 1172 muffed pitch). RB is offense → §5a defender-beaten branch N/A; only the turnover branch fires. **Drops = Major** (incompletion, not turnover).
+- **Safety 2:** 1206 (diving at ankles) + 1207 (leading with head into knees) — cut-block injury pattern, is_safety=Fundamental, NULL severity, same as OL's flagged pair.
+- **Fund/Major 30 / Dev/Major 27.** Tier: Fundamental = ball security, base blocks, first-step burst, stance, watch-it-in catching eyes, handoff eyes; Developing = named cut techniques, routes, hand-shape catching, option/toss exchange, tells. **No Advanced** — RB has-fault is execution-heavy; its reads (find the void, track the block, option pitch) are Developing-level.
+- **Flagged for owner — RB 1182:** "sticking the cleat…twisting the knee…can cause joint injuries" names a non-contact self-injury; tagged Developing/Major (NOT is_safety) to avoid widening the safety axis beyond the contact-injury precedent (head/ankles). Owner to decide.
+- Verified live: RB 0 untagged, 0 no-fault rows carry severity (Option A). Catalogue 861/1665. resolver 238/238, cleaning 28/28.
+
 ## 9b. Still open
 
-- The **~980 has-fault untagged rows** in QB/WR/TE/RB → per-slice fault tagging (WR→TE transfer applies).
+- The **~530 has-fault untagged rows** in WR/TE/QB → per-slice fault tagging (WR→TE transfer applies).
 - S2 knee-flexion content (3 rows) — held pending an authored correct-landing standard.
-- DB Release_*-Level rules — settled Developing (reviewed against live rows). The Critical criterion was refined 2026-09-17 (§5a) from keyword-only to "described uncontested/explosive outcome"; carries into QB/WR/TE/RB.
+- DB Release_*-Level rules — settled Developing. The Critical criterion was refined twice 2026-09-17 (§5a) to "defender beaten vs enabling-condition"; carries into WR/TE/QB.
+- RB 1182 — is_safety candidate (self-injury), currently Developing/Major; owner to rule.
 
-No further writes pending direction on the next has-fault slice.
+No further writes pending direction on the next has-fault slice (WR).
