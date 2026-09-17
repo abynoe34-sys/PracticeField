@@ -282,11 +282,18 @@ The 187 non-OL no-fault rows tagged tier-only (Option A). All had an IES (no con
 Verified live: 0 non-OL no-fault rows left untagged, 0 carry severity (Option A). **Every no-fault row
 catalogue-wide is now tagged except OL's 14 content-gap rows.** Catalogue 727/1665. resolver 238/238, cleaning 28/28.
 
+## 14. DB has-fault pass EXECUTED (2026-09-17) — DB now fully tagged (2nd complete position)
+
+The 67 DB has-fault rows tagged severity + tier. No injury-risk faults (coverage) → 0 is_safety.
+- **Severity:** Major = coverage-technique failure (core job fails → completion/beat); **Critical** narrowly = the 2 rows naming a catastrophe in their own text (1704 "PI or separation TD", 1722 play-action "easy touchdown"); Minor = pure balance cleanliness (1700 high-knee-lift, 1683/1741 clicking-heels).
+- **Tier:** Fundamental 24 (stance + base pedal/pad-level/eyes discipline), Developing 32 (coverage-footwork reactions, jam technique, leverage maintenance), Advanced 11 (recognition/anticipation — guessing the route, sitting on the stem, squatting early, play-action, reading when to bail).
+- Reserved-Critical rule: only where the row text names a TD/PI outcome (the DB analog of a turnover). Flagged: this keeps Critical rare/conservative; owner may widen to "deep beat" faults.
+- Verified live: DB 0 untagged, 0 no-fault rows carry severity (Option A). Catalogue 794/1665. resolver 238/238, cleaning 28/28.
+
 ## 9b. Still open
 
-- The **1047 has-fault untagged rows** in QB/WR/TE/DB/RB → per-slice fault tagging (the last big block).
-- WR→TE transfer (§7b) applies when WR/TE run.
+- The **~980 has-fault untagged rows** in QB/WR/TE/RB → per-slice fault tagging (WR→TE transfer applies).
 - S2 knee-flexion content (3 rows) — held pending an authored correct-landing standard.
-- DB Release_*-Level rules — open to an Advanced bump if the owner wants (currently Developing, flagged LOW above).
+- DB Release_*-Level rules + the reserved-Critical rule — both settled Developing/narrow-Critical (reviewed against live rows); open to an owner widen.
 
-No further writes pending direction on the has-fault slices.
+No further writes pending direction on the next has-fault slice.
