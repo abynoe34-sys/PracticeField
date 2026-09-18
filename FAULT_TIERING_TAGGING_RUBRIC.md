@@ -422,7 +422,7 @@ The 260 QB has-fault rows, judged fresh (0 intra-QB transfer basis — QB is per
 ## 9b. Still open (has-fault tagging is DONE — these are the remaining held/deferred items)
 
 - **HELD content, not tagging gaps:** OL's 14 content-gap rows (no fault AND no IES) + the S2 knee-flexion rows (3, WR 723 / TE 1075 / RB 1101, tagged Fund/Major as single units but the split child awaits an authored correct-landing standard). Nothing to judge until real coaching content lands.
-- **Boundary calls flagged for owner** (all currently tagged as noted): WR **904** = safety, WR **1242** = safety (both confirmed 2026-09-18); RB_HB **1151** = Major (confirmed); **TE 1004** = Fund/Major (§17, LOS jam/blow-off = rep-loss vs RB 1123's open-field hit — owner to confirm). Signal-(b) exclusions (WR 786/792/835/836 press-jam, OL 633/645/692 bull-rush) stand as Major.
+- **Boundary calls — ALL RESOLVED (owner-confirmed, no open rulings):** WR **904** = safety, WR **1242** = safety, RB_HB **1151** = Major, **TE 1004** = Fund/Major (owner: "stays Major, not safety — I agree with the exclusion" — LOS jam/blow-off = rep-loss, distinct from RB 1123's open-field hit). Signal-(b) exclusions (WR 786/792/835/836 press-jam, OL 633/645/692 bull-rush) stand as Major.
 - ~~RB 1182 / 1123 / 1156 — is_safety candidates~~ **RESOLVED 2026-09-17** → all `is_safety` (§5c: 1182 (a), 1123 (b), 1156 (c); + OL 2/631 (c)).
 - **Next: whole-catalogue calibration** — the deferred Layer-4 work (labelled footage → real Threshold Parameters). Fault tiering (player_tier + fault_severity + is_safety, all 6 positions) is now the completed baseline it sits on.
 
