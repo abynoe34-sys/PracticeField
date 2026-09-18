@@ -33806,8 +33806,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -33839,8 +33839,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -33973,8 +33973,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -34006,8 +34006,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -34107,8 +34107,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -34140,8 +34140,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -34272,8 +34272,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -34305,8 +34305,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -34504,9 +34504,9 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
+   "player_tier": "Fundamental",
    "fault_severity": null,
-   "is_safety": false
+   "is_safety": true
   },
   {
    "id": 1021,
@@ -34537,8 +34537,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -34603,8 +34603,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -34636,8 +34636,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -34801,8 +34801,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -34834,8 +34834,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -34902,8 +34902,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -34935,8 +34935,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -34972,8 +34972,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35006,8 +35006,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35041,8 +35041,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35080,8 +35080,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35113,8 +35113,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35145,8 +35145,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35181,8 +35181,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35216,8 +35216,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35250,8 +35250,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35285,8 +35285,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35319,8 +35319,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35356,8 +35356,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35455,8 +35455,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35521,8 +35521,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35587,8 +35587,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35620,8 +35620,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35722,8 +35722,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical",
    "is_safety": false
   },
   {
@@ -35757,8 +35757,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical",
    "is_safety": false
   },
   {
@@ -35789,8 +35789,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical",
    "is_safety": false
   },
   {
@@ -35924,8 +35924,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35958,8 +35958,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -35993,8 +35993,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -36025,8 +36025,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -36058,8 +36058,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -36093,8 +36093,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -36124,8 +36124,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -36156,8 +36156,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -36191,8 +36191,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -36223,8 +36223,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -36292,8 +36292,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -36324,8 +36324,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -36396,8 +36396,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -36426,8 +36426,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -36457,8 +36457,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -36493,8 +36493,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -36525,8 +36525,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -41652,8 +41652,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -41686,9 +41686,9 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
+   "player_tier": "Fundamental",
    "fault_severity": null,
-   "is_safety": false
+   "is_safety": true
   },
   {
    "id": 1238,
@@ -41717,9 +41717,9 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
+   "player_tier": "Fundamental",
    "fault_severity": null,
-   "is_safety": false
+   "is_safety": true
   },
   {
    "id": 1239,
@@ -42987,8 +42987,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43022,8 +43022,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43055,8 +43055,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43087,8 +43087,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43122,8 +43122,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43188,8 +43188,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43220,8 +43220,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43253,8 +43253,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43288,8 +43288,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43321,8 +43321,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43354,8 +43354,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43387,8 +43387,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43422,8 +43422,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43456,8 +43456,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43491,8 +43491,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43523,8 +43523,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43556,8 +43556,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43591,8 +43591,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43624,8 +43624,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43656,8 +43656,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43689,8 +43689,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43721,8 +43721,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43756,8 +43756,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43791,8 +43791,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43826,8 +43826,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43859,8 +43859,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43891,8 +43891,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43924,8 +43924,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43957,8 +43957,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -43990,8 +43990,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44023,8 +44023,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44055,8 +44055,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44088,8 +44088,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44121,8 +44121,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44156,8 +44156,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44189,8 +44189,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44222,8 +44222,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44254,8 +44254,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44286,8 +44286,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44318,8 +44318,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44353,8 +44353,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44385,8 +44385,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44420,8 +44420,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44453,8 +44453,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44488,8 +44488,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44520,8 +44520,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44553,8 +44553,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44586,8 +44586,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44619,8 +44619,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44651,8 +44651,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44686,8 +44686,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44718,8 +44718,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44784,8 +44784,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44816,8 +44816,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44848,8 +44848,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44883,8 +44883,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44949,8 +44949,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -44982,8 +44982,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45017,8 +45017,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45052,8 +45052,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45084,8 +45084,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45117,8 +45117,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45149,8 +45149,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45216,8 +45216,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45249,8 +45249,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45281,8 +45281,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45314,8 +45314,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45349,8 +45349,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45381,8 +45381,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45449,8 +45449,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45484,8 +45484,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45516,8 +45516,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45549,8 +45549,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45581,8 +45581,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45612,8 +45612,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45645,8 +45645,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45680,8 +45680,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45712,8 +45712,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45745,8 +45745,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45777,8 +45777,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45809,8 +45809,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45875,8 +45875,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45910,8 +45910,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45945,8 +45945,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -45977,8 +45977,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46012,8 +46012,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46080,8 +46080,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46112,8 +46112,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46145,8 +46145,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46178,8 +46178,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46213,8 +46213,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46245,8 +46245,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46278,8 +46278,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46311,8 +46311,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46346,8 +46346,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46379,8 +46379,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46444,8 +46444,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46477,8 +46477,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46510,8 +46510,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46545,8 +46545,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46577,8 +46577,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46610,8 +46610,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46643,8 +46643,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46675,8 +46675,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46708,8 +46708,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46743,8 +46743,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46776,8 +46776,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46811,8 +46811,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46846,8 +46846,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46880,8 +46880,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46912,8 +46912,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46947,8 +46947,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -46980,8 +46980,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47013,8 +47013,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47048,8 +47048,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47080,8 +47080,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47112,8 +47112,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47145,8 +47145,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47178,8 +47178,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47213,8 +47213,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47246,8 +47246,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47281,8 +47281,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47316,8 +47316,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47348,8 +47348,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47380,9 +47380,9 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
+   "player_tier": "Developing",
    "fault_severity": null,
-   "is_safety": false
+   "is_safety": true
   },
   {
    "id": 1411,
@@ -47413,8 +47413,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47447,8 +47447,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47480,8 +47480,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47515,8 +47515,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47547,8 +47547,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47581,8 +47581,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47613,8 +47613,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47645,8 +47645,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47677,8 +47677,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47710,8 +47710,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47745,8 +47745,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47777,8 +47777,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47812,8 +47812,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47847,8 +47847,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47879,8 +47879,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47913,8 +47913,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47946,8 +47946,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -47979,8 +47979,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48011,8 +48011,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48043,8 +48043,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48078,8 +48078,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48113,8 +48113,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48149,9 +48149,9 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
+   "player_tier": "Developing",
    "fault_severity": null,
-   "is_safety": false
+   "is_safety": true
   },
   {
    "id": 1434,
@@ -48184,8 +48184,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48219,8 +48219,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48253,8 +48253,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48322,8 +48322,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48357,8 +48357,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48390,8 +48390,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48425,8 +48425,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48462,8 +48462,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48497,8 +48497,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48529,8 +48529,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48565,9 +48565,9 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
+   "player_tier": "Developing",
    "fault_severity": null,
-   "is_safety": false
+   "is_safety": true
   },
   {
    "id": 1446,
@@ -48600,8 +48600,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48635,8 +48635,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48669,8 +48669,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48703,8 +48703,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48738,8 +48738,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48806,8 +48806,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48841,8 +48841,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48878,8 +48878,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48913,8 +48913,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48945,8 +48945,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -48979,8 +48979,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49014,8 +49014,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49048,8 +49048,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49081,8 +49081,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49117,9 +49117,9 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
+   "player_tier": "Developing",
    "fault_severity": null,
-   "is_safety": false
+   "is_safety": true
   },
   {
    "id": 1462,
@@ -49152,8 +49152,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49187,8 +49187,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49221,8 +49221,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49255,8 +49255,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49290,8 +49290,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49358,8 +49358,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49393,8 +49393,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49428,8 +49428,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49463,8 +49463,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49496,8 +49496,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49565,8 +49565,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49600,8 +49600,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49633,8 +49633,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49667,8 +49667,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49700,8 +49700,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49767,8 +49767,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Critical",
    "is_safety": false
   },
   {
@@ -49802,8 +49802,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49837,8 +49837,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49872,8 +49872,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49904,8 +49904,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Developing",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49935,8 +49935,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -49970,8 +49970,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -50005,8 +50005,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -50038,8 +50038,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -50073,8 +50073,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -50108,8 +50108,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -50143,8 +50143,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -50179,8 +50179,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -50213,8 +50213,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -50245,8 +50245,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
@@ -50281,8 +50281,8 @@
    "correction_strategy": null,
    "check_type": null,
    "threshold_parameters": null,
-   "player_tier": null,
-   "fault_severity": null,
+   "player_tier": "Fundamental",
+   "fault_severity": "Major",
    "is_safety": false
   },
   {
