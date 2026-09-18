@@ -410,15 +410,20 @@ The 260 TE has-fault rows: **242 WR twins transferred** + **18 TE-original judge
 
 ## 9b. Still open
 
-- The **~260 QB has-fault rows** → the LAST has-fault slice. QB is largely QB-original (no WR-transfer basis); judged fresh with §5a (QB offense: turnover/fumble = Critical; only QB option/pocket-collapse-to-sack reads are the interesting tier calls) + the 4 safety checks (QB has little contact — watch Pocket Movement / sack-exposure language). Then whole-catalogue calibration.
-- OL's 14 content-gap rows (no fault AND no IES) stay untagged — nothing to judge, held like S2.
-- S2 knee-flexion content (3 rows) — held pending an authored correct-landing standard.
-- DB Release_*-Level rules — settled Developing. The Critical criterion was refined twice 2026-09-17 (§5a) to "defender beaten vs enabling-condition"; carries into QB.
-- ~~RB 1182 / RB 1123 / RB 1156 — is_safety candidates~~ **RESOLVED 2026-09-17** → all `is_safety` (§5c: 1182 signal (a), 1123 signal (b), 1156 signal (c); + OL 2/631 signal (c)).
-- S2 knee-flexion content (3 rows) — held pending an authored correct-landing standard.
-- DB Release_*-Level rules — settled Developing. The Critical criterion was refined twice 2026-09-17 (§5a) to "defender beaten vs enabling-condition"; carries into TE/QB.
-- ~~RB 1182 / RB 1123 / RB 1156 — is_safety candidates~~ **RESOLVED 2026-09-17** → all `is_safety` (§5c: 1182 signal (a), 1123 signal (b), 1156 signal (c); + OL 2/631 signal (c)).
-- ~~Boundary calls flagged for owner~~ **RESOLVED 2026-09-18 (full text surfaced):** WR **904** = safety (confirmed), WR **1242** = safety (confirmed), RB_HB **1151** = **Major** (confirmed — full text shows the blitzer evading, no contact). Established-NAME cross-check run across all tagged positions: 0 misses (only the OL 68 "Sticking the Cleats" name-collision, correctly Major). Signal-(b) exclusions (WR 786/792/835/836 press-jam, OL 633/645/692 bull-rush) stand as Major.
-- **TE 1004 flagged (§17)** — "Standing Tall… easy target to jam or blow off the line"; tagged Fund/Major (LOS jam/blow-off = rep-loss, pad-level), owner to confirm vs the RB 1123 "target area" precedent.
+## 18. QB has-fault pass EXECUTED (2026-09-18) — QB fully tagged (6th/last position); WHOLE-CATALOGUE HAS-FAULT TAGGING COMPLETE
 
-No further writes pending direction on the last has-fault slice (QB).
+The 260 QB has-fault rows, judged fresh (0 intra-QB transfer basis — QB is per-row original; verified 0 fault-string matches to already-tagged QB rows). §5a offense branch + the 4 safety checks.
+- **QB has ZERO safety rows** — confirmed by two targeted scans of the pressure/sack territory the owner flagged. QB doesn't deliver contact (no block/dive → no signal a/c) and isn't caught in open-field exposure; the catalogue routes QB "exposure" through the BALL (strip/fumble → severity, not safety) and frames pressure as a **sack (rep-loss)** or **loss** ("edge rusher hit you"/"hunt you down for a loss" = Major), never a blindside/defenseless/hit-while-throwing injury. The specific "defenseless QB" language (blindside/unblocked-drilled/hit-as-he-throws) simply isn't in the catalogue.
+- **Severity:** Critical = turnover only — Ball Carry fumble/strip (218/219/220) + the Toss center-exchange **fumble** (1233). Everything else Major: throws = incompletion (no INT language); ball-exposure in the pocket/exchange = fumble-*risk* mechanics (enabling-vs-realized line → Major); drop/pocket footwork = Major. No Minor (all state a real rep consequence).
+- **Tier (coherent QB split):** base footwork = **Fundamental** (Stance; the 1/3/5/7-step Drop-Back drops — foundational QB movement, matching the pilot's Fundamental drop rows); developed execution = **Developing** (all Throwing mechanics, Exchange hand-off/mesh, Play-Action fakes, all Pocket Movement); recognition = **Advanced** (only the Speed-Option/Shovel rows 1234/1276, matching the no-fault QB option-read precedent). Distribution of the 260: Fund/Critical 4, Fund/Major ~99 (Stance 29 + base drops 70), Dev/Major ~155 (Throwing 40 + Exchange 37 + Play-Action 13 + Pocket 65), Adv/Major 2.
+- Verified live: QB 0 untagged has-fault, 0 no-fault rows carry severity (Option A), 0 safety. **Catalogue 1651/1665; 0 has-fault rows untagged catalogue-wide.** The 14 remaining untagged = OL's content-gap rows (no fault AND no IES). Snapshot regenerated (1651); resolver **236/236**, cleaning 28/28.
+- **Test retired:** `test_tier_filter_noop_on_untagged_live_data` (238→236 checks). It needed a fully-untagged live slice (last pointed at QB Throwing); no such slice remains now that has-fault tagging is complete. Its fail-open invariant is covered synthetically + durably by `test_null_tier_severity_fail_open`, per the retired test's own note.
+
+## 9b. Still open (has-fault tagging is DONE — these are the remaining held/deferred items)
+
+- **HELD content, not tagging gaps:** OL's 14 content-gap rows (no fault AND no IES) + the S2 knee-flexion rows (3, WR 723 / TE 1075 / RB 1101, tagged Fund/Major as single units but the split child awaits an authored correct-landing standard). Nothing to judge until real coaching content lands.
+- **Boundary calls flagged for owner** (all currently tagged as noted): WR **904** = safety, WR **1242** = safety (both confirmed 2026-09-18); RB_HB **1151** = Major (confirmed); **TE 1004** = Fund/Major (§17, LOS jam/blow-off = rep-loss vs RB 1123's open-field hit — owner to confirm). Signal-(b) exclusions (WR 786/792/835/836 press-jam, OL 633/645/692 bull-rush) stand as Major.
+- ~~RB 1182 / 1123 / 1156 — is_safety candidates~~ **RESOLVED 2026-09-17** → all `is_safety` (§5c: 1182 (a), 1123 (b), 1156 (c); + OL 2/631 (c)).
+- **Next: whole-catalogue calibration** — the deferred Layer-4 work (labelled footage → real Threshold Parameters). Fault tiering (player_tier + fault_severity + is_safety, all 6 positions) is now the completed baseline it sits on.
+
+All 6 position groups (OL/DB/RB/WR/TE/QB) fully tagged; every has-fault row carries player_tier + severity (or is_safety); every no-fault row carries player_tier only (Option A). No further tagging writes pending.

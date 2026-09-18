@@ -770,18 +770,14 @@ def test_tier_filters_validate_input():
             check(f"invalid {list(bad)[0]} raises", True)
 
 
-def test_tier_filter_noop_on_untagged_live_data():
-    """Regression: on a still-UNTAGGED slice, a tier/severity filter must be a NO-OP (fail-open) —
-    same total as no filter, nothing hidden. Uses QB Throwing, which carries zero tags. Has migrated
-    as tagging spread: QB Drop-Back → WR → OL_Center Blocking → now QB Throwing (once the 2026-09-16 OL
-    fault-row pass tagged OL Blocking). Pick a new untagged slice whenever the current one gets tagged,
-    or retire in favour of the synthetic fail-open test once the whole catalogue is tagged."""
-    base = QB(technique="Throwing")
-    filt = QB(technique="Throwing", player_tier="Fundamental", min_severity="Critical")
-    check("untagged live data: tier/severity filter changes nothing", base.summary["total"] == filt.summary["total"],
-          f'{base.summary["total"]} vs {filt.summary["total"]}')
-    check("untagged live data: nothing hidden (fail-open no-op)", filt.summary["tier_filter"]["hidden_total"] == 0,
-          f'{filt.summary["tier_filter"]}')
+# NOTE: test_tier_filter_noop_on_untagged_live_data was RETIRED 2026-09-18. It asserted the
+# tier/severity fail-open no-op on a still-UNTAGGED live slice (migrated QB Drop-Back → WR →
+# OL_Center Blocking → QB Throwing as tagging spread). The whole-catalogue has-fault tagging pass
+# is now COMPLETE (0 has-fault rows untagged; only OL's 14 content-gap rows carry no tag, and they
+# don't form a filterable slice), so no fully-untagged live slice remains — by design. The fail-open
+# invariant it protected is covered synthetically and durably by test_null_tier_severity_fail_open
+# (untriaged row id 5 survives the strictest tier filter and severity floor), per this test's own
+# retire-when-fully-tagged note.
 
 
 # ── 17. QB Drop-Back fault-tiering pilot (2026-09-15) — Option B split executed ──────
@@ -941,7 +937,6 @@ def main():
                test_min_severity_floor, test_max_checkpoints_caps_by_severity_shows_in_rep_order,
                test_tier_filters_compose_and_report_total, test_tier_filters_validate_input,
                test_safety_faults_bypass_all_filters,
-               test_tier_filter_noop_on_untagged_live_data,
                test_qb_dropback_pilot_split_landed, test_qb_dropback_tier_filtering,
                test_wrterb_pilot_split_landed, test_wrterb_te_copy_fidelity_through_execution,
                test_ol_fault_tagging_landed,
