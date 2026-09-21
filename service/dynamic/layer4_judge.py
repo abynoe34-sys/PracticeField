@@ -8,8 +8,9 @@ frame indices) via nine check types, and, ONLY where the catalogue permits, judg
 THE ONE RULE (handover §6.5, owner's absolute ruling), enforced ONCE, centrally, in
 `judge_checkpoint` — never inside a check type:
   * Thresholds Status = Draft         → compute + report the measured value; verdict is
-                                         `measured_only`. NEVER pass/fail. (all 590 rows today)
-  * Thresholds Status = Calibrated    → may declare pass/fail. (no row holds this yet)
+                                         `measured_only`. NEVER pass/fail. (every row today:
+                                         1,655 Draft / 10 Not Applicable)
+  * Thresholds Status = Calibrated    → may declare pass/fail. (no row holds this yet — 0 Calibrated)
   * Thresholds Status = Not Applicable → Layer 4 does not run for this checkpoint (returns None).
 There is exactly one branch that can emit pass/fail (the Calibrated branch of the gate); a
 check type's `judge` callable is NEVER invoked from the Draft path, so no Draft row can
@@ -26,10 +27,11 @@ hand — the inter-hand bug), never the Z axis, and scaling in shoulder widths /
 Layer 4 never sees raw landmarks, so it cannot reintroduce those bugs; it also must not
 paper over them by guessing a unit.
 
-SCHEMA NOTE: `Check Type` and `Threshold Parameters` (handover §1) are NOT yet Airtable
-fields — that schema change touches all 590 rows and is held for owner sign-off. Until then
-Layer 4 takes `check_type` and `params` as explicit inputs. When the fields land,
-build_ruleset carries them and Layer 3 passes them through to here unchanged.
+SCHEMA NOTE: `Check Type` and `Threshold Parameters` (handover §1) now EXIST as columns on
+the Supabase `checkpoints_v2` table (migration-v22) — the earlier "held for Airtable sign-off"
+note is resolved. Both are still empty on every row (calibration is 0% authored), so Layer 4
+continues to take `check_type` and `params` as explicit inputs; once populated,
+`checkpoints_v2_source` carries them and Layer 3 passes them through unchanged.
 """
 
 from __future__ import annotations

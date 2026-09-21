@@ -3,7 +3,8 @@ test_layer3_resolver.py — first committed test suite for Layer 3 (Step 4 part 
 
 Runnable without a framework:  <venv>/python test_layer3_resolver.py
 Exits nonzero on any failure. QB is resolved from the checkpoints_v2 offline snapshot
-(prefer_snapshot=True) so tests are reproducible without a DB; WR from the legacy JSON.
+(prefer_snapshot=True) so tests are reproducible without a DB. Every position now resolves
+from the checkpoints_v2 snapshot; the legacy JSON path is no longer exercised.
 
 The load-bearing check is test_22_cues_resolve_with_correct_cue: the whole migration existed
 to preserve those cues, so "resolves without erroring" is NOT the bar — each migrated cue must
