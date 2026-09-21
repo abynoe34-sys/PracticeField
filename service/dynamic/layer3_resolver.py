@@ -13,10 +13,11 @@ scores, no pass/fail. That is Layer 4, gated on calibration. Every numeric value
 catalogue's `measurable_signal` is a RECOMMENDATION, not a rule, until a row's
 `thresholds_status` is `Calibrated` (no row is, yet).
 
-SOURCE OF TRUTH (2026-09-07): QB is read from the Supabase `checkpoints_v2` table via
-`checkpoints_v2_source` (cleaning + normalisation). WR is still read from the legacy
-`service/rulesets/wr_ruleset.json` because its pose annotation has not been authored into
-checkpoints_v2 yet (Step 4 (d), a DATA prerequisite). Each position has exactly one source.
+SOURCE OF TRUTH (2026-09-07..09): EVERY position group (QB, WR, TE, the five OL, the three
+RB, the four DB — see `V2_POSITIONS`) is read from the Supabase `checkpoints_v2` table via
+`checkpoints_v2_source` (cleaning + normalisation). The legacy `*_ruleset.json` path
+(`load_catalogue`) is unreachable for any real position; retiring it is the separate, still-
+open Step 6 decision, so the JSON files remain on disk for now.
 It resolves derived (non-MediaPipe) landmark tokens via `landmark_derivations.py`, and
 **fails loudly** on any token outside the controlled vocabulary — no silent skipping.
 
