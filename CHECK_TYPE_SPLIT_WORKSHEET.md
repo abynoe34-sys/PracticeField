@@ -1,254 +1,149 @@
-# check_type Split Worksheet — Ready-vs-Blocked, per facet
+# check_type Split Worksheet — FINAL (coach-test framing)
 
-> Status: **PROPOSALS FOR REVIEW — nothing written to `checkpoints_v2`.** Every one of the
-> 263 signal-bearing judge-tier rows was read individually (not pattern-matched). This worksheet
-> decomposes the multi-measurement rows facet-by-facet and calls each facet **ready** (split into
-> its own row + assign `check_type` now) or **blocked** (held, like the 14 OL content-gap rows and
-> S2 — genuinely absent until its prerequisite exists). Mirrors the fault-tiering pilot discipline.
-> Branch `fault-tiering-two-dimensional`. Last updated 2026-09-24.
+> Status: **FINAL PROPOSAL FOR REVIEW — nothing written to `checkpoints_v2`.** All 263
+> signal-bearing judge-tier rows read individually. Supersedes the earlier quantity-count draft of
+> this file (the "4 facets per glide parent / ~400 rows" reading was wrong — see §2). Branch
+> `fault-tiering-two-dimensional`. Last updated 2026-09-24.
 
-## 0. The decision this encodes (owner ruling, 2026-09-24)
+## 0. The two-part rule this encodes
 
-Not "split vs. pick." Under Layer 4's architecture — **one `check_type`, one verdict, per row,
-forever** — "pick the dominant facet" does not defer the un-picked facets; it **discards them
-permanently** (there is no later step where a single-verdict row grows a second verdict). That is
-strictly worse than a row-count increase for a facet that is fully calculable today.
+**(a) Ready vs. blocked, per facet** (owner ruling): under Layer 4's *one verdict per row, forever*
+architecture, "pick the dominant facet" **discards** the others permanently — worse than a
+row-count bump for a facet calculable today. So a facet is either **ready** (real landmarks, no
+missing infra → gets a row + `check_type` now) or **blocked** (missing infra → genuinely held, like
+the 14 OL content-gap rows and S2; not folded, not noted-in-signal).
 
-The correct axis is **ready vs. blocked, applied per facet**:
+**(b) The coach test decides granularity, NOT a quantity-count** (owner ruling): for each candidate,
+ask *would a coach watching film treat this as one thing to check, or genuinely several independent
+things?* — never "how many calculable quantities are in the sentence." The gap between those two is
+exactly where over-splitting lives (§2, §3). Two structural facts make the coach-test answer
+"one dominant facet" for almost every multi-quantity row:
 
-- **Ready** — the facet has real landmarks and no missing infrastructure. → **Split** it into its
-  own row and assign its `check_type` now. Not premature: if two things genuinely need separate
-  measurement, they were never one checkpoint (the fault-splitting principle, re-applied).
-- **Blocked** — the facet needs infrastructure that does not exist. → **Hold** it. Not folded into
-  a surviving row, not noted in the signal text — genuinely absent, exactly like the 14 OL
-  content-gap rows and the S2 knee-flexion content. Nothing to write until the prerequisite lands.
+1. **check_type inherits fault-tiering's bundling.** A fault-split child is already one fault / one
+   landmark set → one `check_type`, never re-split. A row fault-tiering deliberately left bundled is
+   one coaching thing → one dominant `check_type`.
+2. **the QB Drop-Back matrix already carries dedicated sibling rows per cell** (Base, Shoulders,
+   Hips, Stride, Tempo, First-step, Plant, Finish, Glide, Step-sequence all exist per formation×step
+   — verified e.g. 3-Step gun: `239` Base, `243` Shoulders, `249` Hips, `245` Tempo beside `237`
+   Finish, `247` Step-seq). A row that re-lists hips/shoulders/base is **not** new measurement —
+   those are their own rows. Folding them in would duplicate.
 
-This cannot be an automated pass (the earlier keyword classifier undercounted multi-facet 11% vs a
-23% hand rate, and here it threw ~5 false positives — §7). Every row was read.
+**Genuine split only where the coach test = quantity-count AND no sibling row / fault-child already
+covers the facet.** In practice that is the OL Blocking rows (sparse table, no siblings) and nothing
+else.
 
-## 1. The three prerequisites that gate "blocked"
+## 1. The three prerequisites that gate every "blocked" facet
 
-Only three distinct missing pieces produce every blocked facet in the whole slice:
-
-| # | Prerequisite (missing) | What it blocks | Kind |
+| # | Missing prerequisite | Blocks | Kind |
 |---|---|---|---|
-| **P1** | **Snap-frame reference** — pose alone cannot mark the snap; needs ball tracking or a manually-marked snap frame | any facet timed *against the snap*: first-step latency/onset, transition-timing-from-snap, hip-rotation baselined "at the snap frame", snap-to-throw tempo, "zero drop vs pre-snap" | infrastructure |
-| **P2** | **Ball tracking** — no object detector for the ball | the *exact ball-release point*, and ball-security/protection facets | infrastructure |
-| **P3** | **Run concept / aiming point** — deferred by owner (a play-call unknown, not infrastructure) | the "did the track match the intended aiming point" *judgment* in Exchange | report-only (measure & report, defer the verdict) |
+| **P1** | **Snap-frame reference** (pose can't mark the snap; needs ball tracking or a manual snap frame) | first-step latency/onset, transition-timing-from-snap, hip-rotation baselined "at the snap frame", snap-to-throw tempo, "zero drop vs pre-snap" | true hold |
+| **P2** | **Ball tracking** | exact ball-release point, ball-security/protection | true hold |
+| **P3** | **Run concept / aiming point** (deferred play-call, not infra) | the *verdict* on Exchange track-vs-aiming-point | report-only (measure & report the track; defer the judgment) |
 
-P1/P2 are true holds. **P3 is different** — the measurement (the track/open-angle) is *ready and
-reported*; only the good/bad *judgment* is deferred, via the existing conditional-note pattern.
-Do not conflate "report the value, defer the verdict" (P3) with "hold, nothing to write" (P1/P2).
+A **held facet** = a facet of a multi row we do *not* create a row for. A **calibration-blocked
+row** = an existing single row whose `check_type` is knowable (assign it; Draft → `measured_only`)
+but whose thresholds can't be set until P1/P2 lands. Different things.
 
-## 2. Scope of the split (the honest size)
+## 2. Glide — the reconciliation, from the children's actual text
 
-Reading all 263 individually, the multi-measurement + single-but-blocked pool is **larger than the
-earlier ~50–60 estimate — ~95 rows are touched.** Breakdown by disposition:
+fault-tiering already decomposed glide into three rows per formation×step. Confirmed live:
 
-| disposition | rows | what happens |
-|---|---|---|
-| **Clean single-facet, ready** (the ~168 not listed below) | ~168 | assign `check_type` directly, no split — the batch that follows this worksheet |
-| **Multi, all facets ready** → split into N ready rows | ~66 | Glide, Step-sequence, Finish/platform, OL-churn, the Throwing/Pocket gestalts |
-| **Multi, one+ facet blocked** → split ready, hold blocked | ~16 | OL-blocking, snap-anchored transitions, release-ball rows |
-| **Single-facet but wholly blocked** → hold the row | ~5 | rotation-baselined-at-snap |
-| **Mild multi (primary + timing-secondary)** → judgment, §6 | ~25 (overlaps above) | Shoulder+open-timing, Exchange hip/shoulder, stance stagger+toe |
+| piece | ids | landmarks | fault_trigger (verbatim, abridged) | one `check_type` |
+|---|---|---|---|---|
+| **FG-core** | 240,259,315,331,477,494,516 | `L/R Foot, L/R Heel, L/R Ankle` (no knees/hips) | "Bouncing, high-stepping, or riding up on the toes instead of gliding… heavy heel contact…" | **`trend`** — low, smooth vertical oscillation |
+| **FG-knees** | 1806–1812 | `L/R Knee, L/R Foot` | "Knees crossing (karaoke-style) rather than feet gliding past." | **`range`** — knee separation on a linear path |
+| **FG-weight** | 1813–1819 | `L/R Hip, L/R Ankle` | "Weight shifting forward onto the front foot…" | **`range`** — hip-over-ankle (centered) |
 
-**This inflates row count materially** (see §5's granularity question) — that is the honest
-consequence of compound coaching checkpoints meeting a one-verdict-per-row engine, and it is a
-decision to see explicitly, not smuggle.
+FG-core's sentence lists ~5 symptoms (bounce, base-narrow, toe-direction, cross-speed, heel) but the
+coach test sees **one**: is the foot gliding low and smooth? All symptoms are that one
+ankle-oscillation measurement failing. → **glide = 21 rows, one `check_type` each, no further
+split.** (The earlier draft's 84 was the quantity-count error.) Note this reproduces fault-tiering's
+own judgment — it split out only the genuinely-different-landmark faults (knees, weight) and left the
+rest as one glide fault.
 
-## 3. Archetypes — facet decomposition, ready/blocked, member ids
+## 3. Assignment — every archetype → one dominant `check_type`, 0 new rows (unless flagged)
 
-Each archetype's member rows were read individually and conform unless a deviation is named.
-`check_type` per ready facet in **bold**.
+Each group's members were read individually; deviations named. Coach-test collapse in the "why one".
 
-### A. Glide (21 rows) — all facets READY
-Ids: 240, 259, 315, 331, 477, 494, 516, 1806–1819 (the 14 fault-tiering split-children).
-Signal: "feet glide low… low vertical oscillation… knee separation maintained (not karaoke)…
-base width held… designed crossovers."
-
-| facet | check_type | ready? | landmarks |
+| archetype | ids | `check_type` | why one (coach test) |
 |---|---|---|---|
-| low vertical oscillation of ankles/hips | **trend** (or stillness-inverse) | READY | ankles, hips |
-| knee separation (knees not crossing) | **range** | READY | L/R knee |
-| base width held | **range** | READY | ankles |
-| designed crossover count/position | **ordering_window** / count | READY | feet (Layer-2 `classify_crossover`) |
+| FG-core | 240,259,315,331,477,494,516 | `trend` | glide-vs-bounce = one gesture |
+| FG-knees | 1806–1812 | `range` | one isolated fault (fault-child) |
+| FG-weight | 1813–1819 | `range` | one isolated fault (fault-child) |
+| Step-sequence | 247,257,322,330,478,493,506 | `ordering_window` (step/crossover pattern) | rhythm facet = sibling Tempo row |
+| Finish/platform | 233,237,255,310,323,336,379,383,489,491,514; Pocket 392,406,413; Throwing 438,448,459,474 | `range` (balance/loaded base) | hips/shoulders/base = sibling rows ⚑ see §5 Finish-vs-Base |
+| Shoulder + open-timing | 227,243,324,376,486,496,518; Pocket 410; Throwing 460 | `range` (angle held through phase) | "open early" = same angle failing over time, not separate ordering |
+| Transition + balance | 226,241,253,307,318,334,482,502,510 | `range` (balance) | timing facet P1-held per row (see below) |
+| Convergence-plant | 268,273,342,347,522,527 | `convergence` | foot-heading vs body-heading = one agreement check |
+| Alignment-stacking | 411 | `convergence` | head/shoulders/hips/feet should agree = one |
+| Sprint | 267,341,521 | `trend` | one displacement-rate |
+| Hip-before-shoulder | 456,457,469,422,453,463,465 | `strict_ordering` | the sequence IS the one thing (magnitude/posture folded) |
+| Separation / arm-slot / shoulder angle (clean) | 464,471,475,441,454,460,467,439,451,461,446,470,473,424,404,434,425 | `range` | single angle each |
+| Loaded-base / posture / stance gestalt | QB Stance 287–295,365–370,541–549 (18); Pocket 389,390,416,417,418,435,392,406,413,393,423,430,396,428,397,401,407,409,412,419,391,395,385,429; Throwing 438,448,459,474,442,440,452,462,437 | `range` | "athletic ready base/posture" = one gestalt |
+| OL Stance stagger | 12,19,60,76,82,123,148,154,160,167,208,213,562,568,608,635,640,646,652,694,700 (21) | `range` | one stagger distance (§4 param-scoping: position-specific bounds) |
+| Drop-Back scalar singles (base/stride/hips/first-step/plant/depth) | 223,224,230–234,236,238,239,242,244,245,249,251,252,256,258,261,263,264,297,298,300,302,305,306,308,309,312,313,316,319,320,321,325,327,328,329,333,335,337,378,483–485,487,488,490,492,498,499,501,503,504,507,509,512,513,514,515,517 | `range` (or `trend` for tempo) | each is one scalar-at-frame; tempo-through-steps = `trend` |
+| Exchange step + hip + shoulder | 278,354,529 (step, +P3 track); 281,349,536 (hip); 283,360,539 (shoulder) | `range` | "stay square through the exchange" = one; track = P3 report-only |
 
-→ 4 ready rows per parent. **No blocked facet.** (Granularity: 4×21 = 84 rows — see §5.)
+### Calibration-blocked single rows (assign `check_type`, flag P1 — cannot calibrate yet)
+- Rotation-baselined-at-snap: **271, 340, 345, 520, 525** → `range` (rotation magnitude), **P1**.
+- Snap-anchored tempo: **236, 301, 314, 479, 500** → `trend`, **P1**. (Inter-step tempo rows —
+  245, 260, 326, 511 — are `trend` and ready, *not* blocked; the divergence is per-row, §4.)
+- Transition *timing* facet on the snap-anchored transition rows (307,318,334,482,502) → held (P1);
+  their balance facet stays the ready `range` row above.
+- Release rows: **445, 449, 451, 466, 472** (Throwing) + **394, 399** (Pocket) → arm-geometry /
+  body-control `range` is the ready row; exact ball-point / ball-security facet held (**P2**).
 
-### B. Step-sequence (7 rows) — all facets READY
-Ids: 247, 257, 322, 330, 478, 493, 506. Signal: "step count, crossover count + position, and
-rhythm all measurable."
+## 4. Row-by-row nuance that defeats pattern-matching (worked, verified)
+- **266 vs 271** (both Pocket hip-rotation): 266 measures rotation over the *movement window* →
+  ready (and its rotation facet is covered by the rotation archetype anyway → 266 = one `trend`,
+  lateral displacement); 271 baselines rotation *"at the snap frame"* → P1-blocked. Same body part,
+  opposite call.
+- **Transition 253 vs 318**: 253 "from shotgun reception… movement connected" (no snap) → timing
+  ready; 318 "after **securing the snap**" → timing P1-held.
+- **Rhythm**: inter-step "consistent tempo through all steps" → ready `trend`; "tempo **from snap**
+  through final step" → P1. Both say "tempo".
+- **456 vs 454**: 456 IS the single hip-before-shoulder `strict_ordering`; 454 (shoulders) →
+  `range`, its "rotate after hips" folded because 456 owns that sequence.
 
-| facet | check_type | ready? |
-|---|---|---|
-| step count | **range**/count at events | READY |
-| crossover count + position | **ordering_window** | READY |
-| inter-step rhythm | **trend** (interval consistency) | READY — *inter-step*, not snap-anchored, so **not** P1-blocked |
+## 5. Genuine splits + the two borderline flags (unresolved — do NOT default)
 
-→ 3 ready rows per parent. No blocked facet.
+**Genuine splits (coach test = quantity, no sibling/child covers — OL Blocking only):**
 
-### C. Finish / throwing-platform (14 rows) — all facets READY
-Ids (hand-corrected): 233, 237, 255, 310, 323, 336, 379, 383, 489, 491, 514 (Drop-Back) +
-392, 406, 413 (Pocket) + the loaded-base gestalts 438, 448, 459, 474 (Throwing).
-Signal: "balanced feet, aligned hips + shoulders, weight transfer."
+| row | split into (each its own `range` row) | held (P1) | net new rows |
+|---|---|---|---|
+| **OL_Center Blocking id 2** (Pass_Pro) | base width · back/spine flatness · knee bend | first-step latency; pre-snap-drop baseline | **+2** |
+| **OL_Center Blocking id 7** (Run) | direction of travel · back/spine flatness | first-step onset | **+1** |
+| **OL_Center Blocking id 5** (Pass_Pro) | ankle churn (`trend`) · elbow-lock (`range`) | — | **+1** |
 
-| facet | check_type | ready? |
-|---|---|---|
-| base width | **range** | READY |
-| hip alignment / load | **range** | READY |
-| shoulder alignment | **range** | READY |
-| weight transfer / centering | **range** (hip-over-base) or **trend** | READY (force itself is a proxy — measure the COM-over-base position, not force) |
+Three separate checks each, **no dependency logic folded in** (kept simple, per ruling).
 
-→ up to 4 ready rows per parent. **Granularity flag (§5): a coach's "are you in position to throw"
-is arguably one gestalt** — but it is N *different* quantities each in its own band, which is N
-`range` checks, **not** a `convergence` check (convergence tests whether N signals *agree with each
-other*; here they don't — feet-width and shoulder-angle aren't the same quantity). So the honest
-mapping is a genuine split, and the inflation is real.
+**Borderline — kept explicitly unresolved:**
+- **OL churn id 10** (Run): ankle churn + forward drive. A coach may read "drive him back with
+  active feet" as *one* thing, or churn and drive as two. **Not defaulted** — needs a call.
+- **Finish vs. Base**: the Finish rows collapse to `range` (balance/readiness), but that is
+  near-duplicate of each cell's dedicated Base row. Possibly one row, not two. **Not defaulted** —
+  needs a call (merge Finish into Base, or keep Finish as a distinct whole-body-readiness check).
 
-### D. Shoulder + open-timing (8 rows) — both facets READY
-Ids (hand-corrected; keyword mis-added 304): 227, 243, 324, 376, 410, 460, 486, 496, 518.
-Signal: "shoulder-line angle + open-timing; avoid opening early before the throw."
+## 6. One-line pointer for later (do not act on now)
+> **correction_strategy note (OL pass-set):** base-width / hip-depth / knee-bend are mechanically
+> coupled — a narrow base often forces a high hip or straight knee, and vice versa. Kept here as
+> three independent `check_type` rows (Layer 4 has no dependency logic). Preserve for
+> `correction_strategy` authoring: the fix for one may live in another. Not a complication to this
+> task — just a pointer so it isn't lost.
 
-| facet | check_type | ready? |
-|---|---|---|
-| shoulder-line angle | **range** | READY |
-| open-timing (shoulders not opening early) | **strict_ordering** (shoulder-open must not lead release) | READY — anchored to **release**, which Layer 2 detects (NOT the snap, so not P1) |
+## 7. Final counts (for review, before any write)
+- **263 existing signal rows → one `check_type` each** (per §3), of which:
+  - ~15 are **calibration-blocked** (P1/P2) — get a `check_type`, can't calibrate until the prereq.
+  - a handful carry a **held facet** (P1/P2) or **P3 report-only** track — no extra row created.
+- **Genuine new rows: +4** (OL Blocking id 2 → +2, id 7 → +1, id 5 → +1).
+- **2 borderline** unresolved (OL churn id 10 → possibly +1; Finish-vs-Base → possibly −0/merge).
 
-→ 2 ready rows per parent. This is the clean case where a "+ timing" secondary is genuinely
-ready and genuinely separate — split, don't discard.
+→ **263 → ~267 rows (+4), possibly ~268 pending the two flags.** The earlier ~8–12 estimate came in
+lower once the coach test was applied strictly with sibling/fault-child awareness: the QB matrix
+"multi" rows all collapse to one dominant facet, so the only irreducible splits are OL Blocking's.
 
-### E. Transition + balance (per-row split — one facet P1-blocked, one ready)
-Ids: 226, 241, 253, 307, 318, 334, 482, 502, 510. Signal: "transition from stance into the drop…
-timing + balance/posture."
-
-| facet | check_type | ready? |
-|---|---|---|
-| balance / posture through the transition | **range** (torso/base) | READY |
-| transition *timing* | **strict_ordering** vs snap | **depends on anchor — read per row** |
-
-**Per-row deviation (this is why it can't be pattern-matched):** rows that time the transition
-*"after securing the snap"* (307, 318, 334, 482, 502) → timing facet is **P1-blocked** (hold).
-Rows that describe transition as *movement-smoothness from the stance/catch* with no snap anchor
-(226, 241, 253, 510) → timing facet is a **trend** on movement continuity, **READY**. Balance/posture
-facet is READY in all 9.
-
-### F. Rotation-baselined-at-snap (5 rows) — single facet, wholly P1-BLOCKED
-Ids: 271, 340, 345, 520, 525. Signal: "angle between hip-line **at the snap frame** and its
-orientation ~10-15 frames later."
-One measurement (rotation magnitude), but its baseline is the snap frame → **P1-blocked**. Not a
-split — **hold the row** until a snap reference exists (or the owner re-authors the baseline to
-movement-onset instead of snap, which would make it READY `range` — flagged, not assumed).
-*Contrast 266:* rotation measured over the *movement window*, not the snap → **READY** (see §4).
-
-### G. Convergence-plant (6 rows) — single facet, READY, already correct
-Ids: 268, 273, 342, 347, 522, 527. Signal: "plant foot heading vector vs the body's actual
-subsequent movement heading — a clean plant shows them aligned." This is a textbook **convergence**
-check (two signals that should agree), deliberately self-referential so it needs no play direction.
-**Assign `convergence` now, no split.** (Model examples of a correctly single-facet dynamic row.)
-
-### H. Sprint intensity (3 rows) — single facet, READY
-Ids: 267, 341, 521. "Lateral displacement of Pelvis Center per frame, sustained, no deceleration."
-Single **trend**, READY (relative rate; absolute speed needs scale, but the trend is judgeable).
-
-### I. OL_Center Blocking, snap-gated (2 rows) — split ready, hold blocked
-- **id 2** (Pass_Pro): base-width retention **range** READY · torso-lean (spine-flat) **range**
-  READY · knee-flexion **range** READY · first-step latency **P1-blocked** · "zero drop vs pre-snap
-  height" **P1-blocked** (needs the pre-snap baseline frame). → 3 ready rows, 2 held facets.
-- **id 7** (Run): direction-of-travel (pelvis displacement vector) **range**/vector READY ·
-  torso-lean **range** READY · first-step onset timing **P1-blocked**. → 2 ready rows, 1 held. (Also
-  needs both front+side coverage — a camera-view note, already handled by the resolver, not a hold.)
-
-### J. OL_Center churn (2 rows) — all facets READY
-- **id 5**: continuous ankle churn **trend** READY · elbow-angle stability ("locked arms") **range**
-  READY. ("anchor locked vs a real rusher" is unmeasurable without an opponent — a coaching caveat,
-  **not a facet to hold**; drop it, don't create a row for it.)
-- **id 10**: ankle churn **trend** READY · forward pelvis drive **trend** READY. → 2 ready rows.
-
-### K. Release-ball rows (7 rows) — split ready (arm/body proxy), hold ball-point
-Ids: 445, 449, 451, 466, 472 (Throwing) + 394, 399 (Pocket Escape).
-- arm-path / arm-extension geometry (Throwing) → **range**/**trend** READY (the pose proxy).
-- body-control / balance (Pocket Escape) → **range** READY.
-- exact ball-release point / ball-security → **P2-blocked** (needs ball tracking). Hold.
-
-### Scattered multi in "Z_other" (individually read — not clean singles)
-- **266** Pocket: hip-rotation over the move **range** READY + lateral displacement **trend** READY
-  (both ready; *not* snap-anchored, unlike F). Split into 2.
-- **437** Throwing (airborne): torso alignment **range** READY + head stability **stillness** READY.
-- **452, 462** Throwing finish: finish-direction **range** + deceleration **trend** + balance
-  **range** — all READY. Split into 3.
-- **454, 457** Throwing: shoulder/hip angle **range** READY + rotate-after-hips **strict_ordering**
-  READY. (457 adds rotation-magnitude **range**.) 456 is the *clean single* strict_ordering
-  ("hips initiate before shoulders") — no split.
-- **443** Throwing takeoff: takeoff-timing (ground-departure event) **synchronisation**/ordering
-  READY + directional control **range** READY.
-- **440** Throwing landing: knee-flexion **range** + landing balance **range** — READY.
-- **453, 463, 465** Throwing kinetic-chain: sequence timing (ground→hips) **strict_ordering** READY
-  + posture **range** READY; "force" is a proxy (measure the sequence, not force — not a held facet).
-- **411** Pocket: head/shoulders/hips/feet stacked → single **convergence** READY (they *should*
-  agree — convergence is right here, no split).
-- **404, 434** Pocket: hip angle **range** + rotation-timing **strict_ordering**(vs release) READY.
-- **415** Pocket: step-size/rhythm **trend** + crossing detection **ordering_window** READY.
-- **391, 395** Pocket: first-step direction **range** + balance/upper-body-stability **range**/
-  **stillness** READY.
-- **Exchange 278, 354, 529**: open-angle/step **range** READY + track-vs-aiming-point **P3
-  report-only** (measure & report the track, defer the verdict — the conditional-note pattern).
-- **Exchange 281, 283, 349, 360, 536, 539**: hip/shoulder angle **range** READY + early-opening/
-  rotation-timing **strict_ordering** (vs the exchange/mesh moment) — READY if anchored to a
-  pose-detectable mesh event; **flag** any that implicitly need the snap.
-- **Stance 365, 542** (mild): foot-stagger distance **range** + toe angle **range** — two ready
-  range facets, or one "foot geometry" row. §6 judgment (lean: keep as one `range` on stagger, the
-  toe angle a second only if the owner wants it judged separately).
-
-## 4. Row-by-row nuance that defeats pattern-matching (worked)
-
-The load-bearing reason this had to be read individually, shown with real pairs:
-
-- **266 vs 271** (both Pocket hip-rotation): 266 measures rotation *over the movement window* →
-  READY; 271 measures rotation *"at the snap frame"* → P1-blocked. Same body part, opposite call.
-- **Transition 253 vs 318**: 253 "from shotgun reception… catch + first movement connected" (no
-  snap anchor) → timing READY; 318 "after **securing the snap**" → timing P1-blocked.
-- **456 vs 454** (both Throwing hip/shoulder): 456 is a *single* strict_ordering (hips-before-
-  shoulders) → no split; 454 bundles shoulder-angle + after-hips ordering → split into 2.
-- **Rhythm: Step-sequence B vs snap-to-throw tempo**: inter-step rhythm (B) → READY; "tempo from
-  **snap** through final step" (e.g. 314, 479, 500) → P1-blocked. Both say "rhythm/tempo."
-
-## 5. The granularity question (needs an owner ruling before the write)
-
-Applying "split every ready facet" **literally** to the archetypes yields large inflation — Glide
-alone is 4 × 21 = 84 rows; Finish up to 4 × 14 = 56; the 263 signal rows could exceed ~400 after
-splitting. Two sub-questions:
-
-1. **Is a gestalt archetype one row or N?** I checked whether `convergence` collapses them: it does
-   for **G (plant)** and **411 (stacking)** — genuinely "N signals should agree" → one convergence
-   row. It does **not** for **Finish/platform** or **Glide-base** — those are N *different*
-   quantities each in its own band, which `convergence` cannot express, so they are genuine N-way
-   `range`/`trend` splits. Recommend: use `convergence` wherever the facets are the-same-quantity-
-   should-agree; split the rest.
-2. **Do the ~25 mild-multi "+ timing" secondaries each earn a row?** Where the secondary is a
-   distinct, ready, coach-named fault (shoulder open-timing, D) — yes, split (discarding it loses
-   real coaching). Where it is descriptive re-statement of the primary (stance toe-angle) — one row.
-   This is the judgment §6 lists per row.
-
-I did **not** pre-decide the inflation. The framework (ready→split, blocked→hold, convergence where
-facets agree) is settled; the exact granularity per gestalt is the one thing to confirm.
-
-## 6. Mild-multi rows needing a per-row granularity call (listed, not pre-split)
-365, 542 (stance stagger+toe) · 391, 395 (first-step+balance) · 440 (landing knee+balance) ·
-281, 283, 349, 360, 536, 539 (exchange angle+opening-timing) · 469 (hip rotation+timing).
-Recommendation per row is in §3; none are blocked — the only question is split-into-2 vs one row.
-
-## 7. Keyword scaffold false-positives caught by reading (evidence for row-by-row)
-The archetype keyword pass mis-classified: **224** (a first-step row, not Finish), **501** (Plant),
-**515** (depth) pulled into Finish by "throwing base~"; **543** (a *static* stance shoulder row)
-and **304** (single-facet) pulled into the snap buckets by the words "snap"/"transition". All
-excluded above by hand. A pattern-match would have split or held the wrong rows.
-
-## 8. What I need before any write
-1. **The granularity ruling** (§5): `convergence`-collapse where facets agree + genuine N-split
-   elsewhere — confirm; and whether the mild-multi secondaries (§6) split or stay.
-2. Then I assign `check_type` to the ~168 clean singles + the ready split-children in one pass,
-   bring the exact new-row list back for a final look, and only then write to `checkpoints_v2`.
-
-Held (unchanged): P1 snap-timing facets, P2 ball-point facets — genuinely absent, like the 14 OL
-content-gap rows and S2. P3 Exchange track = measured & reported, verdict deferred.
+## 8. What happens on approval
+1. Rule on the two §5 borderlines.
+2. I generate the literal 263-row `id → check_type` list (a fresh live pull) + the +4 new-row
+   definitions, and bring that exact list back for a final look.
+3. Only then write to `checkpoints_v2`. Nothing is written before that review.
