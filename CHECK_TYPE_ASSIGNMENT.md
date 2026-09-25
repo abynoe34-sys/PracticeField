@@ -1,10 +1,10 @@
-# check_type Assignment — FINAL for review (pre-write)
+# check_type Assignment — WRITTEN & VERIFIED (2026-09-25)
 
-> **PROPOSAL FOR FINAL REVIEW — nothing written to `checkpoints_v2` yet.** The complete
+> **DONE — written to `checkpoints_v2` and verified against fresh live data (2026-09-25).** The complete
 > `id → check_type` assignment for all 263 signal-bearing judge-tier rows, plus the +5 new split-child
-> rows. Generated from a fresh live pull (2026-09-25), classification reproducible in SQL, with three
-> per-row corrections applied by hand (§4). Follows `CHECK_TYPE_SPLIT_WORKSHEET.md`. Branch
-> `fault-tiering-two-dimensional`.
+> rows (ids 1831–1835). Owner ruling on the split-parent metadata was **(R) route** (§7). Verification
+> in §8. `threshold_parameters` left NULL (Draft — calibration is separate, footage-gated). Follows
+> `CHECK_TYPE_SPLIT_WORKSHEET.md`. Branch `fault-tiering-two-dimensional`.
 
 ## 0. Owner rulings encoded here
 - **Finish vs. Base: separate.** Base = static foot-width (`range`). Finish's justifying clause —
@@ -132,15 +132,27 @@ Write to `checkpoints_v2`: set `check_type` on the 263 existing rows per §2; in
 extracted IES/landmarks and inherited tiers per §3; leave `threshold_parameters` empty (Draft). Then
 regenerate the snapshot and run the resolver suite. **Nothing is written before this review is approved.**
 
-## 7. OPEN before write — fault/severity/is_safety routing on the OL Blocking splits
+## 7. RESOLVED — fault/severity/is_safety routing on the OL Blocking splits: (R) route
 Write-prep surfaced that each split parent (2/5/7) carries ONE fault mapping to only a SUBSET of its
-measurement facets, so "children inherit the parent's flags" (§3) is ambiguous and, taken literally,
-would contradict the ratified §5c safety criterion (it would mark base-width/knee children `is_safety`
-with no injury text). **Recommended (Option R): route fault_trigger / fault_severity / is_safety to the
-child facet that actually describes the fault; the other facets become no-fault performance rows.**
-Consequential flips this entails, flagged: **id 2** (kept, base-width) `is_safety` true→false — the
-head-drop safety fault moves to NEW-1 (spine); **id 7** (kept, direction) severity Major→NULL — the
-"Roll-Snapping" fault moves to NEW-3 (spine). id 5's "Pop and Stop" stays on the churn facet (kept);
-elbow-lock child → NULL. id 10 has no fault (both children clean). `player_tier` inherits unchanged;
-every `check_type` is exactly as in §2/§3. **Awaiting owner ruling: (R) route, or (I) literal
-inheritance. No write until ruled.**
+measurement facets, so blanket "children inherit the parent's flags" would contradict the ratified §5c
+safety criterion (it would mark base-width/knee children `is_safety` with no injury text).
+**Owner ruling: (R) — route `fault_trigger` / `fault_severity` / `is_safety` to the child facet that
+actually describes the fault; the other facets become no-fault performance rows.** Rationale: the
+original bundled flags were necessarily coarse; routing to the separated facet *gains* precision the
+bundling couldn't express (same principle as every split in this effort, one layer down into the
+metadata). Applied flips: **id 2** (base-width) `is_safety` true→false — the head-drop safety fault
+moved to **1831** (spine, `is_safety=true`); **id 7** (direction) severity Major→NULL — "Roll-Snapping"
+moved to **1833** (spine, Major); **id 5** "Pop and Stop" kept on the churn facet (Major); **1834**
+(elbow-lock) NULL; **id 10** no fault (both clean). `player_tier` inherited unchanged.
+
+## 8. Verification (against fresh live data, 2026-09-25)
+- **Row-by-row (all 9 split rows)** confirmed against the §7 routing table: id 2 `range`/is_safety **false**,
+  id 5 `trend`/Major (Pop-and-Stop kept), id 7 `range`/severity **NULL**, id 10 `trend`/no-fault;
+  1831 `range`/Fundamental/`is_safety=true`/"Ducking Head", 1832 `range`/knee, 1833 `range`/**Major**/"Roll-Snapping",
+  1834 `range`/Developing/elbow-lock, 1835 `trend`/forward-drive. All landmarks facet-scoped; all `threshold_parameters` NULL.
+- **Aggregate integrity:** total catalogue **1670** (1665 + 5); **268** rows carry `check_type`
+  (range 212 / trend 24 / cross_phase 10 / strict_ordering 8 / ordering_window 7 / convergence 7);
+  **0** signal-bearing judge rows missing `check_type`; **0** `check_type` on non-signal/non-judge rows;
+  **0** rows with `threshold_parameters` set (nothing calibrated).
+- **Snapshot** regenerated from live → `testdata/checkpoints_v2_snapshot.json` (1670 rows, 0 column drift).
+- **Suites:** cleaning/source **28/28**, resolver **49/49** (incl. OL_Center Blocking phase-ordering with the new children) — both green.
