@@ -20,8 +20,8 @@
 
 | check_type | n | notes |
 |---|---|---|
-| `range` | 204 | dominant — angles, widths, distances, positions, held-through-phase angles, loaded-base gestalts |
-| `trend` | 23 | glide-core oscillation (7), inter-step tempo (4), sprint (3), lateral-displacement/economy (2), snap-tempo (7, P1) |
+| `range` | 206 | dominant — angles, widths, distances, positions, held-through-phase angles, loaded-base gestalts, snap→throw duration (225,300) |
+| `trend` | 21 | glide-core oscillation (7), inter-step tempo (4), sprint (3), lateral-displacement/economy (2), snap-tempo (5, P1) |
 | `cross_phase` | 10 | Finish — weight transfer back→front (9 Drop-Back + 383 PA) |
 | `strict_ordering` | 8 | throwing kinetic sequence (hip-before-shoulder etc.) + release-vs-apex |
 | `ordering_window` | 7 | step-sequence step/crossover pattern |
@@ -29,8 +29,9 @@
 | **SPLIT** | 4 rows | OL Blocking 2/5/7/10 → **+5 new rows** (§3) |
 | **total** | **263** | +5 new = **268 rows** post-write |
 
-Dispositions within the above: **calibration-blocked** — 10 (rotation@snap 5: `271,340,345,520,525`;
-snap-tempo 7: `236,301,314,479,500,225,300`) get a check_type but can't calibrate until **P1**
+Dispositions within the above: **calibration-blocked** — 10 (P1 snap-frame): rotation@snap 5
+`271,340,345,520,525`; snap→throw duration `range` 2 `225,300`; snap-tempo `trend` 5
+`236,301,314,479,500` — each gets a check_type but can't calibrate until **P1**
 (snap-frame reference). **held facet** — 7 rows keep a ready check but hold a **P2** (ball-tracking)
 facet: `445,449,451,466,472,394,399`. **P3 report-only** — Exchange track `278,354,529` (open-angle
 `range` is judged; the track is reported, verdict deferred on run concept).
@@ -47,8 +48,9 @@ facet: `445,449,451,466,472,394,399`. **P3 report-only** — Exchange track `278
 - `range` **ready (81)**: `223,224,227,230,231,232,234,238,239,242,243,244,249,251,252,256,258,261,263,264,297,298,302,304,305,306,308,309,312,313,316,319,320,321,324,325,327,328,329,333,335,337,371,376,378,379,483,484,485,486,487,488,490,492,496,498,499,501,503,504,507,509,512,513,515,517,518,1806,1807,1808,1809,1810,1811,1812,1813,1814,1815,1816,1817,1818,1819`
   (incl. FG-knees `1806–1812` = knee separation; FG-weight `1813–1819` = weight centered; `379` = static reset posture — corrected out of Finish, see §4)
 - `range` **ready + held transition-timing facet (9)**: `226,241,253,307,318,334,482,502,510` — each resolves to one balance `range`; the transition-*timing* facet is **P1-held on the 7 snap-anchored** (`226,241,307,318,334,482,502`) and **folded-ready on the 2 movement-anchored** (`253,510`). No new row either way.
+- `range` **P1 snap→throw duration (2)**: `225,300` — two-sided duration window (bidirectional fault); needs the snap-frame reference to calibrate.
 - `trend` **ready (11)**: FG-core glide `240,259,315,331,477,494,516`; inter-step tempo `245,260,326,511`
-- `trend` **P1 snap-tempo (7)**: `236,301,314,479,500,225,300`
+- `trend` **P1 snap-tempo (5)**: `236,301,314,479,500`
 - `cross_phase` **ready (9)** — Finish, weight transfer: `233,237,255,310,323,336,489,491,514`
 - `ordering_window` **ready (7)** — step-sequence: `247,257,322,330,478,493,506`
 - **SPLIT**: (none here — OL only)
@@ -109,9 +111,12 @@ text is **extracted from the parent**, not invented. No dependency logic folded 
 | **NEW-5** | forward drive | `trend` | Pelvis Center | "sustained forward Pelvis displacement; drive the defender vertically" |
 
 ## 4. Per-row corrections applied by hand (beyond the archetype pass — flagged for review)
-1. **`225`, `300`** (1-Step "complete the progression with proper timing **from snap to throw** ~0.3–0.4s"):
-   reclassified from `range` → `trend`, **P1 (snap-tempo)** — the defining content is the snap-to-throw
-   duration, not the single step. Same treatment as the other snap-tempo rows.
+1. **`225`, `300`** (1-Step "proper timing **from snap to throw** ~0.3–0.4s"; fault "out of sync"):
+   **`range`** on the derived snap→throw duration (a two-sided window), **P1**-blocked. NOT
+   `strict_ordering`/`synchronisation` — the fault is bidirectional (too fast *and* too slow), which
+   only a two-sided band catches; the event order is trivial. The five tempo siblings
+   (`236,301,314,479,500`) stay `trend` — they measure motion *smoothness* ("no hitch/pause/gather"),
+   a property independent of duration, and none states a target time.
 2. **`379`** (Play-Action "Regain a balanced throwing **posture**…"): kept `range`, **not** Finish/
    `cross_phase` — its IES has **no** weight-transfer/ground-force clause; it is a static reset end-state.
 3. **`383`** (Play-Action "balanced base… **weight transfer**… before release"): → `cross_phase` with
@@ -126,3 +131,16 @@ a row is `Calibrated` with real `threshold_parameters` (footage-gated, separate 
 Write to `checkpoints_v2`: set `check_type` on the 263 existing rows per §2; insert NEW-1..NEW-5 with
 extracted IES/landmarks and inherited tiers per §3; leave `threshold_parameters` empty (Draft). Then
 regenerate the snapshot and run the resolver suite. **Nothing is written before this review is approved.**
+
+## 7. OPEN before write — fault/severity/is_safety routing on the OL Blocking splits
+Write-prep surfaced that each split parent (2/5/7) carries ONE fault mapping to only a SUBSET of its
+measurement facets, so "children inherit the parent's flags" (§3) is ambiguous and, taken literally,
+would contradict the ratified §5c safety criterion (it would mark base-width/knee children `is_safety`
+with no injury text). **Recommended (Option R): route fault_trigger / fault_severity / is_safety to the
+child facet that actually describes the fault; the other facets become no-fault performance rows.**
+Consequential flips this entails, flagged: **id 2** (kept, base-width) `is_safety` true→false — the
+head-drop safety fault moves to NEW-1 (spine); **id 7** (kept, direction) severity Major→NULL — the
+"Roll-Snapping" fault moves to NEW-3 (spine). id 5's "Pop and Stop" stays on the churn facet (kept);
+elbow-lock child → NULL. id 10 has no fault (both children clean). `player_tier` inherits unchanged;
+every `check_type` is exactly as in §2/§3. **Awaiting owner ruling: (R) route, or (I) literal
+inheritance. No write until ruled.**
