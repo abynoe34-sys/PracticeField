@@ -74,7 +74,15 @@ a 🔗 marker in the `⚑` column **and** a bold "**WR + TE — one fix, both**"
 owner can't overlook that a single cell writes to two positions.
 
 Ingest contract: pattern → write `correction_strategy` (+`coaching_cue`) to every row in `applies_to`;
-`override?` rows get per-position values; `root_cause_first` resolves to the referenced checkpoints.
+`override?` rows get per-position values.
+
+**`root_cause_first` — ruling (may point to ANY checkpoint, fault or no-fault):**
+- **References another *fault* pattern** → the instruction is "fix that fault first, using its own
+  `correction_strategy`." (A chain to another entry's fix.)
+- **References a *no-fault* checkpoint** (e.g. OL base-width id 2, knee id 1832) → there is **no separate
+  fix to look up**. For a positive-technique row the diagnostic and the fix are the same thing — the
+  checkpoint's own `ideal_execution_standard` **is** the correction ("achieve this standard"). The
+  reference means "get this checkpoint's standard right first," nothing more to author.
 
 ## 5. Sample worksheet (~15 rows — FORMAT CHECK, all owner cells intentionally blank)
 
@@ -110,11 +118,13 @@ carries their real insight, **not** to fill the sample:
   directly."
 - **P09 `root_cause_first`** ← **base width (id 2)** + **knee bend / hip sink (id 1832)**.
 
-**The structural finding this surfaces:** both root causes (id 2 base-width, id 1832 knee) are now
-**no-fault positive-technique rows** — so `root_cause_first` references **checkpoints**, which may not
-themselves be faults. The column is a checkpoint reference, not a fault-pattern reference. This is
-exactly the OL base-width/hip-depth/knee-bend dependency flagged in `CHECK_TYPE_SPLIT_WORKSHEET.md` §6,
-now given a concrete home in the format.
+**This is settled, not an open question (see §4 ruling):** both root causes (id 2 base-width, id 1832
+knee) are **no-fault positive-technique rows**, so per the ingest ruling there is **no separate fix to
+author** for them — their own `ideal_execution_standard` already *is* the correction (diagnostic and fix
+are the same thing for a positive-technique row). The owner authors P09's `correction_strategy` once; the
+`root_cause_first` pointer just says "get base-width and knee-bend right first," resolving to those rows'
+existing standards. This gives the OL base-width/hip-depth/knee-bend dependency (flagged in
+`CHECK_TYPE_SPLIT_WORKSHEET.md` §6) a concrete home in the format.
 
 ## 7. On approval
 Build the full pattern-keyed worksheet (~764 rows, or ~293 if WR↔TE auto-transfer is accepted) with the
