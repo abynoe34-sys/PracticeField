@@ -1,0 +1,6560 @@
+{
+ "_note": "pattern_id -> row-id list for ingest of the filled CORRECTION_STRATEGY_WORKSHEET.csv back into checkpoints_v2. Generated 2026-09-27 from the 1205 has-fault rows, normalized (WR<->TE auto-transfer). Every has-fault row appears in exactly one pattern.",
+ "total_patterns": 764,
+ "total_has_fault_rows": 1205,
+ "patterns": {
+  "P0001": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    131
+   ],
+   "row_count": 1
+  },
+  "P0002": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    139
+   ],
+   "row_count": 1
+  },
+  "P0003": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    620
+   ],
+   "row_count": 1
+  },
+  "P0004": {
+   "position_groups": "OL/RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    1206,
+    1237,
+    1242,
+    1247,
+    1252,
+    1257,
+    1262,
+    1267
+   ],
+   "row_count": 8
+  },
+  "P0005": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    143
+   ],
+   "row_count": 1
+  },
+  "P0006": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    8
+   ],
+   "row_count": 1
+  },
+  "P0007": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    627
+   ],
+   "row_count": 1
+  },
+  "P0008": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    5
+   ],
+   "row_count": 1
+  },
+  "P0009": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    1833
+   ],
+   "row_count": 1
+  },
+  "P0010": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    68
+   ],
+   "row_count": 1
+  },
+  "P0011": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    628
+   ],
+   "row_count": 1
+  },
+  "P0012": {
+   "position_groups": "OL/RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    1205,
+    1236,
+    1241,
+    1246,
+    1251,
+    1256,
+    1261,
+    1266
+   ],
+   "row_count": 8
+  },
+  "P0013": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    69
+   ],
+   "row_count": 1
+  },
+  "P0014": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    615
+   ],
+   "row_count": 1
+  },
+  "P0015": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    92,
+    578
+   ],
+   "row_count": 2
+  },
+  "P0016": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    172,
+    658
+   ],
+   "row_count": 2
+  },
+  "P0017": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    182,
+    668
+   ],
+   "row_count": 2
+  },
+  "P0018": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    97,
+    583
+   ],
+   "row_count": 2
+  },
+  "P0019": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    617
+   ],
+   "row_count": 1
+  },
+  "P0020": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    39
+   ],
+   "row_count": 1
+  },
+  "P0021": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    112,
+    598
+   ],
+   "row_count": 2
+  },
+  "P0022": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    197,
+    683
+   ],
+   "row_count": 2
+  },
+  "P0023": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    87,
+    573
+   ],
+   "row_count": 2
+  },
+  "P0024": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    1831
+   ],
+   "row_count": 1
+  },
+  "P0025": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    558
+   ],
+   "row_count": 1
+  },
+  "P0026": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    107,
+    593
+   ],
+   "row_count": 2
+  },
+  "P0027": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    133
+   ],
+   "row_count": 1
+  },
+  "P0028": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    553
+   ],
+   "row_count": 1
+  },
+  "P0029": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    24
+   ],
+   "row_count": 1
+  },
+  "P0030": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    631
+   ],
+   "row_count": 1
+  },
+  "P0031": {
+   "position_groups": "OL/RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    1207,
+    1238,
+    1243,
+    1248,
+    1253,
+    1258,
+    1263,
+    1268
+   ],
+   "row_count": 8
+  },
+  "P0032": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    554
+   ],
+   "row_count": 1
+  },
+  "P0033": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    192,
+    678
+   ],
+   "row_count": 2
+  },
+  "P0034": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    29
+   ],
+   "row_count": 1
+  },
+  "P0035": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    71
+   ],
+   "row_count": 1
+  },
+  "P0036": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    65
+   ],
+   "row_count": 1
+  },
+  "P0037": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    144
+   ],
+   "row_count": 1
+  },
+  "P0038": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    177,
+    663
+   ],
+   "row_count": 2
+  },
+  "P0039": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    624
+   ],
+   "row_count": 1
+  },
+  "P0040": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    34
+   ],
+   "row_count": 1
+  },
+  "P0041": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    138
+   ],
+   "row_count": 1
+  },
+  "P0042": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    202,
+    688
+   ],
+   "row_count": 2
+  },
+  "P0043": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    117,
+    603
+   ],
+   "row_count": 2
+  },
+  "P0044": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    130
+   ],
+   "row_count": 1
+  },
+  "P0045": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    54
+   ],
+   "row_count": 1
+  },
+  "P0046": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    102,
+    187,
+    588,
+    673
+   ],
+   "row_count": 4
+  },
+  "P0047": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    134
+   ],
+   "row_count": 1
+  },
+  "P0048": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    44
+   ],
+   "row_count": 1
+  },
+  "P0049": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    49
+   ],
+   "row_count": 1
+  },
+  "P0050": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    622
+   ],
+   "row_count": 1
+  },
+  "P0051": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    557
+   ],
+   "row_count": 1
+  },
+  "P0052": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    643,
+    655
+   ],
+   "row_count": 2
+  },
+  "P0053": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    562,
+    568
+   ],
+   "row_count": 2
+  },
+  "P0054": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    608,
+    609
+   ],
+   "row_count": 2
+  },
+  "P0055": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    14,
+    20
+   ],
+   "row_count": 2
+  },
+  "P0056": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    151,
+    163,
+    210
+   ],
+   "row_count": 3
+  },
+  "P0057": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    157,
+    169,
+    216
+   ],
+   "row_count": 3
+  },
+  "P0058": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    564,
+    570
+   ],
+   "row_count": 2
+  },
+  "P0059": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    636,
+    648
+   ],
+   "row_count": 2
+  },
+  "P0060": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    695
+   ],
+   "row_count": 1
+  },
+  "P0061": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    79,
+    85
+   ],
+   "row_count": 2
+  },
+  "P0062": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    152,
+    164,
+    211
+   ],
+   "row_count": 3
+  },
+  "P0063": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    61
+   ],
+   "row_count": 1
+  },
+  "P0064": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    702
+   ],
+   "row_count": 1
+  },
+  "P0065": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    699,
+    700
+   ],
+   "row_count": 2
+  },
+  "P0066": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    11,
+    17
+   ],
+   "row_count": 2
+  },
+  "P0067": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    611
+   ],
+   "row_count": 1
+  },
+  "P0068": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    74,
+    80
+   ],
+   "row_count": 2
+  },
+  "P0069": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    640,
+    652
+   ],
+   "row_count": 2
+  },
+  "P0070": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    217
+   ],
+   "row_count": 1
+  },
+  "P0071": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    158,
+    170
+   ],
+   "row_count": 2
+  },
+  "P0072": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    126
+   ],
+   "row_count": 1
+  },
+  "P0073": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    633,
+    645,
+    692
+   ],
+   "row_count": 3
+  },
+  "P0074": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    121
+   ],
+   "row_count": 1
+  },
+  "P0075": {
+   "position_groups": "OL",
+   "flag": "",
+   "row_ids": [
+    59,
+    60
+   ],
+   "row_count": 2
+  },
+  "P0076": {
+   "position_groups": "QB/RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    219,
+    705,
+    1057,
+    1083
+   ],
+   "row_count": 4
+  },
+  "P0077": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    218
+   ],
+   "row_count": 1
+  },
+  "P0078": {
+   "position_groups": "QB/RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    220,
+    706,
+    1058,
+    1084
+   ],
+   "row_count": 4
+  },
+  "P0079": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    1799,
+    1801,
+    1803,
+    1804
+   ],
+   "row_count": 4
+  },
+  "P0080": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    1800,
+    1802,
+    1805
+   ],
+   "row_count": 3
+  },
+  "P0081": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    372
+   ],
+   "row_count": 1
+  },
+  "P0082": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    299
+   ],
+   "row_count": 1
+  },
+  "P0083": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    381
+   ],
+   "row_count": 1
+  },
+  "P0084": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    507
+   ],
+   "row_count": 1
+  },
+  "P0085": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    483
+   ],
+   "row_count": 1
+  },
+  "P0086": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    239,
+    256,
+    320,
+    333,
+    492
+   ],
+   "row_count": 5
+  },
+  "P0087": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    231
+   ],
+   "row_count": 1
+  },
+  "P0088": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    309
+   ],
+   "row_count": 1
+  },
+  "P0089": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    259,
+    331,
+    494
+   ],
+   "row_count": 3
+  },
+  "P0090": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    240,
+    315,
+    477
+   ],
+   "row_count": 3
+  },
+  "P0091": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    516
+   ],
+   "row_count": 1
+  },
+  "P0092": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    302
+   ],
+   "row_count": 1
+  },
+  "P0093": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    329
+   ],
+   "row_count": 1
+  },
+  "P0094": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    235
+   ],
+   "row_count": 1
+  },
+  "P0095": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    248,
+    317,
+    480,
+    495
+   ],
+   "row_count": 4
+  },
+  "P0096": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    254,
+    332,
+    508
+   ],
+   "row_count": 3
+  },
+  "P0097": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    245
+   ],
+   "row_count": 1
+  },
+  "P0098": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    253
+   ],
+   "row_count": 1
+  },
+  "P0099": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    301
+   ],
+   "row_count": 1
+  },
+  "P0100": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    1793,
+    1794,
+    1795
+   ],
+   "row_count": 3
+  },
+  "P0101": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    1792,
+    1796,
+    1797,
+    1798
+   ],
+   "row_count": 4
+  },
+  "P0102": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    374
+   ],
+   "row_count": 1
+  },
+  "P0103": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    379
+   ],
+   "row_count": 1
+  },
+  "P0104": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    255,
+    323,
+    336,
+    489,
+    491
+   ],
+   "row_count": 5
+  },
+  "P0105": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    375
+   ],
+   "row_count": 1
+  },
+  "P0106": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    262,
+    311,
+    338
+   ],
+   "row_count": 3
+  },
+  "P0107": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    303
+   ],
+   "row_count": 1
+  },
+  "P0108": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    250,
+    505
+   ],
+   "row_count": 2
+  },
+  "P0109": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    229
+   ],
+   "row_count": 1
+  },
+  "P0110": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    481,
+    497
+   ],
+   "row_count": 2
+  },
+  "P0111": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    263
+   ],
+   "row_count": 1
+  },
+  "P0112": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    337
+   ],
+   "row_count": 1
+  },
+  "P0113": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    319
+   ],
+   "row_count": 1
+  },
+  "P0114": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    487,
+    504,
+    513
+   ],
+   "row_count": 3
+  },
+  "P0115": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    249
+   ],
+   "row_count": 1
+  },
+  "P0116": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    378
+   ],
+   "row_count": 1
+  },
+  "P0117": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    306
+   ],
+   "row_count": 1
+  },
+  "P0118": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    230
+   ],
+   "row_count": 1
+  },
+  "P0119": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    236
+   ],
+   "row_count": 1
+  },
+  "P0120": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    514
+   ],
+   "row_count": 1
+  },
+  "P0121": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    313
+   ],
+   "row_count": 1
+  },
+  "P0122": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    328
+   ],
+   "row_count": 1
+  },
+  "P0123": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    498
+   ],
+   "row_count": 1
+  },
+  "P0124": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    509
+   ],
+   "row_count": 1
+  },
+  "P0125": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    238
+   ],
+   "row_count": 1
+  },
+  "P0126": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    261
+   ],
+   "row_count": 1
+  },
+  "P0127": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    224
+   ],
+   "row_count": 1
+  },
+  "P0128": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    1806,
+    1807,
+    1808,
+    1809,
+    1810,
+    1811,
+    1812
+   ],
+   "row_count": 7
+  },
+  "P0129": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    373
+   ],
+   "row_count": 1
+  },
+  "P0130": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    318
+   ],
+   "row_count": 1
+  },
+  "P0131": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    300
+   ],
+   "row_count": 1
+  },
+  "P0132": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    377
+   ],
+   "row_count": 1
+  },
+  "P0133": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    383
+   ],
+   "row_count": 1
+  },
+  "P0134": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    242,
+    312
+   ],
+   "row_count": 2
+  },
+  "P0135": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    488
+   ],
+   "row_count": 1
+  },
+  "P0136": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    251,
+    327
+   ],
+   "row_count": 2
+  },
+  "P0137": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    308
+   ],
+   "row_count": 1
+  },
+  "P0138": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    234
+   ],
+   "row_count": 1
+  },
+  "P0139": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    512
+   ],
+   "row_count": 1
+  },
+  "P0140": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    501
+   ],
+   "row_count": 1
+  },
+  "P0141": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    233,
+    310
+   ],
+   "row_count": 2
+  },
+  "P0142": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    237
+   ],
+   "row_count": 1
+  },
+  "P0143": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    316
+   ],
+   "row_count": 1
+  },
+  "P0144": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    225
+   ],
+   "row_count": 1
+  },
+  "P0145": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    223
+   ],
+   "row_count": 1
+  },
+  "P0146": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    485
+   ],
+   "row_count": 1
+  },
+  "P0147": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    305
+   ],
+   "row_count": 1
+  },
+  "P0148": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    314
+   ],
+   "row_count": 1
+  },
+  "P0149": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    297
+   ],
+   "row_count": 1
+  },
+  "P0150": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    260
+   ],
+   "row_count": 1
+  },
+  "P0151": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    479
+   ],
+   "row_count": 1
+  },
+  "P0152": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    500
+   ],
+   "row_count": 1
+  },
+  "P0153": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    326
+   ],
+   "row_count": 1
+  },
+  "P0154": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    243,
+    324
+   ],
+   "row_count": 2
+  },
+  "P0155": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    376
+   ],
+   "row_count": 1
+  },
+  "P0156": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    518
+   ],
+   "row_count": 1
+  },
+  "P0157": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    258,
+    335,
+    486,
+    496
+   ],
+   "row_count": 4
+  },
+  "P0158": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    227
+   ],
+   "row_count": 1
+  },
+  "P0159": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    304
+   ],
+   "row_count": 1
+  },
+  "P0160": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    244
+   ],
+   "row_count": 1
+  },
+  "P0161": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    490
+   ],
+   "row_count": 1
+  },
+  "P0162": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    228
+   ],
+   "row_count": 1
+  },
+  "P0163": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    482
+   ],
+   "row_count": 1
+  },
+  "P0164": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    502
+   ],
+   "row_count": 1
+  },
+  "P0165": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    510
+   ],
+   "row_count": 1
+  },
+  "P0166": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    511
+   ],
+   "row_count": 1
+  },
+  "P0167": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    232
+   ],
+   "row_count": 1
+  },
+  "P0168": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    380
+   ],
+   "row_count": 1
+  },
+  "P0169": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    503
+   ],
+   "row_count": 1
+  },
+  "P0170": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    515
+   ],
+   "row_count": 1
+  },
+  "P0171": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    484
+   ],
+   "row_count": 1
+  },
+  "P0172": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    307
+   ],
+   "row_count": 1
+  },
+  "P0173": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    226
+   ],
+   "row_count": 1
+  },
+  "P0174": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    334
+   ],
+   "row_count": 1
+  },
+  "P0175": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    241
+   ],
+   "row_count": 1
+  },
+  "P0176": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    371
+   ],
+   "row_count": 1
+  },
+  "P0177": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    517
+   ],
+   "row_count": 1
+  },
+  "P0178": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    264,
+    325
+   ],
+   "row_count": 2
+  },
+  "P0179": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    499
+   ],
+   "row_count": 1
+  },
+  "P0180": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    1813,
+    1814,
+    1815,
+    1816,
+    1817,
+    1818,
+    1819
+   ],
+   "row_count": 7
+  },
+  "P0181": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    252,
+    298
+   ],
+   "row_count": 2
+  },
+  "P0182": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    321
+   ],
+   "row_count": 1
+  },
+  "P0183": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    382
+   ],
+   "row_count": 1
+  },
+  "P0184": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    246
+   ],
+   "row_count": 1
+  },
+  "P0185": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    478
+   ],
+   "row_count": 1
+  },
+  "P0186": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    493
+   ],
+   "row_count": 1
+  },
+  "P0187": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    247,
+    322
+   ],
+   "row_count": 2
+  },
+  "P0188": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    257,
+    330
+   ],
+   "row_count": 2
+  },
+  "P0189": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    506
+   ],
+   "row_count": 1
+  },
+  "P0190": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    1234
+   ],
+   "row_count": 1
+  },
+  "P0191": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    1272
+   ],
+   "row_count": 1
+  },
+  "P0192": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    535
+   ],
+   "row_count": 1
+  },
+  "P0193": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    276,
+    350,
+    534
+   ],
+   "row_count": 3
+  },
+  "P0194": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    285
+   ],
+   "row_count": 1
+  },
+  "P0195": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    531
+   ],
+   "row_count": 1
+  },
+  "P0196": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    283,
+    360,
+    539
+   ],
+   "row_count": 3
+  },
+  "P0197": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    275,
+    353,
+    533
+   ],
+   "row_count": 3
+  },
+  "P0198": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    354
+   ],
+   "row_count": 1
+  },
+  "P0199": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    1233
+   ],
+   "row_count": 1
+  },
+  "P0200": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    529
+   ],
+   "row_count": 1
+  },
+  "P0201": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    280,
+    351,
+    530
+   ],
+   "row_count": 3
+  },
+  "P0202": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    281,
+    349,
+    536
+   ],
+   "row_count": 3
+  },
+  "P0203": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    359
+   ],
+   "row_count": 1
+  },
+  "P0204": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    286
+   ],
+   "row_count": 1
+  },
+  "P0205": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    355
+   ],
+   "row_count": 1
+  },
+  "P0206": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    540
+   ],
+   "row_count": 1
+  },
+  "P0207": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    278
+   ],
+   "row_count": 1
+  },
+  "P0208": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    279,
+    352,
+    537
+   ],
+   "row_count": 3
+  },
+  "P0209": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    282,
+    357,
+    532
+   ],
+   "row_count": 3
+  },
+  "P0210": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    1276
+   ],
+   "row_count": 1
+  },
+  "P0211": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    284,
+    358,
+    538
+   ],
+   "row_count": 3
+  },
+  "P0212": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    356
+   ],
+   "row_count": 1
+  },
+  "P0213": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    277
+   ],
+   "row_count": 1
+  },
+  "P0214": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    408
+   ],
+   "row_count": 1
+  },
+  "P0215": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    386
+   ],
+   "row_count": 1
+  },
+  "P0216": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    436
+   ],
+   "row_count": 1
+  },
+  "P0217": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    398
+   ],
+   "row_count": 1
+  },
+  "P0218": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    435
+   ],
+   "row_count": 1
+  },
+  "P0219": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    416
+   ],
+   "row_count": 1
+  },
+  "P0220": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    407
+   ],
+   "row_count": 1
+  },
+  "P0221": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    389
+   ],
+   "row_count": 1
+  },
+  "P0222": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    417
+   ],
+   "row_count": 1
+  },
+  "P0223": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    392
+   ],
+   "row_count": 1
+  },
+  "P0224": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    396
+   ],
+   "row_count": 1
+  },
+  "P0225": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    267
+   ],
+   "row_count": 1
+  },
+  "P0226": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    340
+   ],
+   "row_count": 1
+  },
+  "P0227": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    520
+   ],
+   "row_count": 1
+  },
+  "P0228": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    432
+   ],
+   "row_count": 1
+  },
+  "P0229": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    415
+   ],
+   "row_count": 1
+  },
+  "P0230": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    412
+   ],
+   "row_count": 1
+  },
+  "P0231": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    405
+   ],
+   "row_count": 1
+  },
+  "P0232": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    402
+   ],
+   "row_count": 1
+  },
+  "P0233": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    390
+   ],
+   "row_count": 1
+  },
+  "P0234": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    385
+   ],
+   "row_count": 1
+  },
+  "P0235": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    403
+   ],
+   "row_count": 1
+  },
+  "P0236": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    414
+   ],
+   "row_count": 1
+  },
+  "P0237": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    522
+   ],
+   "row_count": 1
+  },
+  "P0238": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    268
+   ],
+   "row_count": 1
+  },
+  "P0239": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    342
+   ],
+   "row_count": 1
+  },
+  "P0240": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    409
+   ],
+   "row_count": 1
+  },
+  "P0241": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    429
+   ],
+   "row_count": 1
+  },
+  "P0242": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    393
+   ],
+   "row_count": 1
+  },
+  "P0243": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    423
+   ],
+   "row_count": 1
+  },
+  "P0244": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    430
+   ],
+   "row_count": 1
+  },
+  "P0245": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    388
+   ],
+   "row_count": 1
+  },
+  "P0246": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    431
+   ],
+   "row_count": 1
+  },
+  "P0247": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    404
+   ],
+   "row_count": 1
+  },
+  "P0248": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    425
+   ],
+   "row_count": 1
+  },
+  "P0249": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    434
+   ],
+   "row_count": 1
+  },
+  "P0250": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    394
+   ],
+   "row_count": 1
+  },
+  "P0251": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    387
+   ],
+   "row_count": 1
+  },
+  "P0252": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    384
+   ],
+   "row_count": 1
+  },
+  "P0253": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    401
+   ],
+   "row_count": 1
+  },
+  "P0254": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    399
+   ],
+   "row_count": 1
+  },
+  "P0255": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    420
+   ],
+   "row_count": 1
+  },
+  "P0256": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    428
+   ],
+   "row_count": 1
+  },
+  "P0257": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    411
+   ],
+   "row_count": 1
+  },
+  "P0258": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    422
+   ],
+   "row_count": 1
+  },
+  "P0259": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    397
+   ],
+   "row_count": 1
+  },
+  "P0260": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    347
+   ],
+   "row_count": 1
+  },
+  "P0261": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    400
+   ],
+   "row_count": 1
+  },
+  "P0262": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    418
+   ],
+   "row_count": 1
+  },
+  "P0263": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    391
+   ],
+   "row_count": 1
+  },
+  "P0264": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    527
+   ],
+   "row_count": 1
+  },
+  "P0265": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    271
+   ],
+   "row_count": 1
+  },
+  "P0266": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    424
+   ],
+   "row_count": 1
+  },
+  "P0267": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    427
+   ],
+   "row_count": 1
+  },
+  "P0268": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    410
+   ],
+   "row_count": 1
+  },
+  "P0269": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    433
+   ],
+   "row_count": 1
+  },
+  "P0270": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    413
+   ],
+   "row_count": 1
+  },
+  "P0271": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    421
+   ],
+   "row_count": 1
+  },
+  "P0272": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    406
+   ],
+   "row_count": 1
+  },
+  "P0273": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    346
+   ],
+   "row_count": 1
+  },
+  "P0274": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    526
+   ],
+   "row_count": 1
+  },
+  "P0275": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    273
+   ],
+   "row_count": 1
+  },
+  "P0276": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    426
+   ],
+   "row_count": 1
+  },
+  "P0277": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    395
+   ],
+   "row_count": 1
+  },
+  "P0278": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    419
+   ],
+   "row_count": 1
+  },
+  "P0279": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    546
+   ],
+   "row_count": 1
+  },
+  "P0280": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    291
+   ],
+   "row_count": 1
+  },
+  "P0281": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    367
+   ],
+   "row_count": 1
+  },
+  "P0282": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    293
+   ],
+   "row_count": 1
+  },
+  "P0283": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    542
+   ],
+   "row_count": 1
+  },
+  "P0284": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    545
+   ],
+   "row_count": 1
+  },
+  "P0285": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    364
+   ],
+   "row_count": 1
+  },
+  "P0286": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    296
+   ],
+   "row_count": 1
+  },
+  "P0287": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    361
+   ],
+   "row_count": 1
+  },
+  "P0288": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    288
+   ],
+   "row_count": 1
+  },
+  "P0289": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    548
+   ],
+   "row_count": 1
+  },
+  "P0290": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    292,
+    370
+   ],
+   "row_count": 2
+  },
+  "P0291": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    547
+   ],
+   "row_count": 1
+  },
+  "P0292": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    541
+   ],
+   "row_count": 1
+  },
+  "P0293": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    287
+   ],
+   "row_count": 1
+  },
+  "P0294": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    368
+   ],
+   "row_count": 1
+  },
+  "P0295": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    294,
+    366
+   ],
+   "row_count": 2
+  },
+  "P0296": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    549
+   ],
+   "row_count": 1
+  },
+  "P0297": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    295,
+    369
+   ],
+   "row_count": 2
+  },
+  "P0298": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    543
+   ],
+   "row_count": 1
+  },
+  "P0299": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    289
+   ],
+   "row_count": 1
+  },
+  "P0300": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    362
+   ],
+   "row_count": 1
+  },
+  "P0301": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    544
+   ],
+   "row_count": 1
+  },
+  "P0302": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    290
+   ],
+   "row_count": 1
+  },
+  "P0303": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    363
+   ],
+   "row_count": 1
+  },
+  "P0304": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    365
+   ],
+   "row_count": 1
+  },
+  "P0305": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    462
+   ],
+   "row_count": 1
+  },
+  "P0306": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    458
+   ],
+   "row_count": 1
+  },
+  "P0307": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    444
+   ],
+   "row_count": 1
+  },
+  "P0308": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    463
+   ],
+   "row_count": 1
+  },
+  "P0309": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    461
+   ],
+   "row_count": 1
+  },
+  "P0310": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    439
+   ],
+   "row_count": 1
+  },
+  "P0311": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    469
+   ],
+   "row_count": 1
+  },
+  "P0312": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    468
+   ],
+   "row_count": 1
+  },
+  "P0313": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    474
+   ],
+   "row_count": 1
+  },
+  "P0314": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    448
+   ],
+   "row_count": 1
+  },
+  "P0315": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    466
+   ],
+   "row_count": 1
+  },
+  "P0316": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    451
+   ],
+   "row_count": 1
+  },
+  "P0317": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    467
+   ],
+   "row_count": 1
+  },
+  "P0318": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    473
+   ],
+   "row_count": 1
+  },
+  "P0319": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    447
+   ],
+   "row_count": 1
+  },
+  "P0320": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    454
+   ],
+   "row_count": 1
+  },
+  "P0321": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    452
+   ],
+   "row_count": 1
+  },
+  "P0322": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    440
+   ],
+   "row_count": 1
+  },
+  "P0323": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    450
+   ],
+   "row_count": 1
+  },
+  "P0324": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    464
+   ],
+   "row_count": 1
+  },
+  "P0325": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    471
+   ],
+   "row_count": 1
+  },
+  "P0326": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    443
+   ],
+   "row_count": 1
+  },
+  "P0327": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    442
+   ],
+   "row_count": 1
+  },
+  "P0328": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    446
+   ],
+   "row_count": 1
+  },
+  "P0329": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    470
+   ],
+   "row_count": 1
+  },
+  "P0330": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    476
+   ],
+   "row_count": 1
+  },
+  "P0331": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    472
+   ],
+   "row_count": 1
+  },
+  "P0332": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    449
+   ],
+   "row_count": 1
+  },
+  "P0333": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    445
+   ],
+   "row_count": 1
+  },
+  "P0334": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    475
+   ],
+   "row_count": 1
+  },
+  "P0335": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    457
+   ],
+   "row_count": 1
+  },
+  "P0336": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    456
+   ],
+   "row_count": 1
+  },
+  "P0337": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    460
+   ],
+   "row_count": 1
+  },
+  "P0338": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    441
+   ],
+   "row_count": 1
+  },
+  "P0339": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    465
+   ],
+   "row_count": 1
+  },
+  "P0340": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    437
+   ],
+   "row_count": 1
+  },
+  "P0341": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    438
+   ],
+   "row_count": 1
+  },
+  "P0342": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    459
+   ],
+   "row_count": 1
+  },
+  "P0343": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    453
+   ],
+   "row_count": 1
+  },
+  "P0344": {
+   "position_groups": "QB",
+   "flag": "",
+   "row_ids": [
+    455
+   ],
+   "row_count": 1
+  },
+  "P0345": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    704,
+    1056,
+    1082
+   ],
+   "row_count": 3
+  },
+  "P0346": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1138
+   ],
+   "row_count": 1
+  },
+  "P0347": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1156
+   ],
+   "row_count": 1
+  },
+  "P0348": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1151
+   ],
+   "row_count": 1
+  },
+  "P0349": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1140
+   ],
+   "row_count": 1
+  },
+  "P0350": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1165
+   ],
+   "row_count": 1
+  },
+  "P0351": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1160
+   ],
+   "row_count": 1
+  },
+  "P0352": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    724,
+    1076,
+    1102
+   ],
+   "row_count": 3
+  },
+  "P0353": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    718,
+    1070,
+    1096
+   ],
+   "row_count": 3
+  },
+  "P0354": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    1823,
+    1824,
+    1825
+   ],
+   "row_count": 3
+  },
+  "P0355": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    725,
+    1077,
+    1103
+   ],
+   "row_count": 3
+  },
+  "P0356": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    720,
+    1072,
+    1098
+   ],
+   "row_count": 3
+  },
+  "P0357": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    716,
+    1068,
+    1094
+   ],
+   "row_count": 3
+  },
+  "P0358": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    723,
+    1075,
+    1101
+   ],
+   "row_count": 3
+  },
+  "P0359": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    726,
+    1078,
+    1104
+   ],
+   "row_count": 3
+  },
+  "P0360": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    728,
+    1080,
+    1106
+   ],
+   "row_count": 3
+  },
+  "P0361": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    727,
+    1079,
+    1105
+   ],
+   "row_count": 3
+  },
+  "P0362": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    709,
+    1061,
+    1087
+   ],
+   "row_count": 3
+  },
+  "P0363": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    729,
+    1081,
+    1107
+   ],
+   "row_count": 3
+  },
+  "P0364": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    722,
+    1074,
+    1100
+   ],
+   "row_count": 3
+  },
+  "P0365": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    713,
+    1065,
+    1091
+   ],
+   "row_count": 3
+  },
+  "P0366": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    719,
+    1071,
+    1097
+   ],
+   "row_count": 3
+  },
+  "P0367": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    714,
+    1066,
+    1092
+   ],
+   "row_count": 3
+  },
+  "P0368": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    711,
+    1063,
+    1089
+   ],
+   "row_count": 3
+  },
+  "P0369": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    1820,
+    1821,
+    1822
+   ],
+   "row_count": 3
+  },
+  "P0370": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    710,
+    1062,
+    1088
+   ],
+   "row_count": 3
+  },
+  "P0371": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    717,
+    1069,
+    1095
+   ],
+   "row_count": 3
+  },
+  "P0372": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    721,
+    1073,
+    1099
+   ],
+   "row_count": 3
+  },
+  "P0373": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    712,
+    1064,
+    1090
+   ],
+   "row_count": 3
+  },
+  "P0374": {
+   "position_groups": "RB/WR/TE",
+   "flag": "shared_cross_role",
+   "row_ids": [
+    715,
+    1067,
+    1093
+   ],
+   "row_count": 3
+  },
+  "P0375": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1182
+   ],
+   "row_count": 1
+  },
+  "P0376": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1147
+   ],
+   "row_count": 1
+  },
+  "P0377": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1184
+   ],
+   "row_count": 1
+  },
+  "P0378": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1179
+   ],
+   "row_count": 1
+  },
+  "P0379": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1148
+   ],
+   "row_count": 1
+  },
+  "P0380": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1194
+   ],
+   "row_count": 1
+  },
+  "P0381": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1186
+   ],
+   "row_count": 1
+  },
+  "P0382": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1192
+   ],
+   "row_count": 1
+  },
+  "P0383": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1197
+   ],
+   "row_count": 1
+  },
+  "P0384": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1178
+   ],
+   "row_count": 1
+  },
+  "P0385": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1168
+   ],
+   "row_count": 1
+  },
+  "P0386": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1144
+   ],
+   "row_count": 1
+  },
+  "P0387": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1171
+   ],
+   "row_count": 1
+  },
+  "P0388": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1167
+   ],
+   "row_count": 1
+  },
+  "P0389": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1172
+   ],
+   "row_count": 1
+  },
+  "P0390": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1174
+   ],
+   "row_count": 1
+  },
+  "P0391": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1112
+   ],
+   "row_count": 1
+  },
+  "P0392": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1110
+   ],
+   "row_count": 1
+  },
+  "P0393": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1113
+   ],
+   "row_count": 1
+  },
+  "P0394": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1132
+   ],
+   "row_count": 1
+  },
+  "P0395": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1123
+   ],
+   "row_count": 1
+  },
+  "P0396": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1126
+   ],
+   "row_count": 1
+  },
+  "P0397": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1137
+   ],
+   "row_count": 1
+  },
+  "P0398": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1129
+   ],
+   "row_count": 1
+  },
+  "P0399": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1134
+   ],
+   "row_count": 1
+  },
+  "P0400": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1218
+   ],
+   "row_count": 1
+  },
+  "P0401": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1209
+   ],
+   "row_count": 1
+  },
+  "P0402": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1203
+   ],
+   "row_count": 1
+  },
+  "P0403": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1222
+   ],
+   "row_count": 1
+  },
+  "P0404": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1213
+   ],
+   "row_count": 1
+  },
+  "P0405": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1229
+   ],
+   "row_count": 1
+  },
+  "P0406": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1224
+   ],
+   "row_count": 1
+  },
+  "P0407": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1214
+   ],
+   "row_count": 1
+  },
+  "P0408": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1204
+   ],
+   "row_count": 1
+  },
+  "P0409": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1226
+   ],
+   "row_count": 1
+  },
+  "P0410": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1830
+   ],
+   "row_count": 1
+  },
+  "P0411": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1211
+   ],
+   "row_count": 1
+  },
+  "P0412": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1120
+   ],
+   "row_count": 1
+  },
+  "P0413": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1114
+   ],
+   "row_count": 1
+  },
+  "P0414": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1117
+   ],
+   "row_count": 1
+  },
+  "P0415": {
+   "position_groups": "RB",
+   "flag": "",
+   "row_ids": [
+    1119
+   ],
+   "row_count": 1
+  },
+  "P0416": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1665
+   ],
+   "row_count": 1
+  },
+  "P0417": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1718
+   ],
+   "row_count": 1
+  },
+  "P0418": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1768
+   ],
+   "row_count": 1
+  },
+  "P0419": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1731
+   ],
+   "row_count": 1
+  },
+  "P0420": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1708,
+    1743
+   ],
+   "row_count": 2
+  },
+  "P0421": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1694
+   ],
+   "row_count": 1
+  },
+  "P0422": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1727
+   ],
+   "row_count": 1
+  },
+  "P0423": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1720
+   ],
+   "row_count": 1
+  },
+  "P0424": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1676
+   ],
+   "row_count": 1
+  },
+  "P0425": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1790
+   ],
+   "row_count": 1
+  },
+  "P0426": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1659,
+    1729
+   ],
+   "row_count": 2
+  },
+  "P0427": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1726
+   ],
+   "row_count": 1
+  },
+  "P0428": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1740
+   ],
+   "row_count": 1
+  },
+  "P0429": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1711
+   ],
+   "row_count": 1
+  },
+  "P0430": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1680
+   ],
+   "row_count": 1
+  },
+  "P0431": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1703
+   ],
+   "row_count": 1
+  },
+  "P0432": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1672
+   ],
+   "row_count": 1
+  },
+  "P0433": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1725
+   ],
+   "row_count": 1
+  },
+  "P0434": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1722
+   ],
+   "row_count": 1
+  },
+  "P0435": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1730
+   ],
+   "row_count": 1
+  },
+  "P0436": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1688
+   ],
+   "row_count": 1
+  },
+  "P0437": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1770
+   ],
+   "row_count": 1
+  },
+  "P0438": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1777
+   ],
+   "row_count": 1
+  },
+  "P0439": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1741
+   ],
+   "row_count": 1
+  },
+  "P0440": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1683
+   ],
+   "row_count": 1
+  },
+  "P0441": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1760
+   ],
+   "row_count": 1
+  },
+  "P0442": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1670
+   ],
+   "row_count": 1
+  },
+  "P0443": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1712
+   ],
+   "row_count": 1
+  },
+  "P0444": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1678
+   ],
+   "row_count": 1
+  },
+  "P0445": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1791
+   ],
+   "row_count": 1
+  },
+  "P0446": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1667
+   ],
+   "row_count": 1
+  },
+  "P0447": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1748
+   ],
+   "row_count": 1
+  },
+  "P0448": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1782
+   ],
+   "row_count": 1
+  },
+  "P0449": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1705
+   ],
+   "row_count": 1
+  },
+  "P0450": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1781
+   ],
+   "row_count": 1
+  },
+  "P0451": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1787
+   ],
+   "row_count": 1
+  },
+  "P0452": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1761
+   ],
+   "row_count": 1
+  },
+  "P0453": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1783
+   ],
+   "row_count": 1
+  },
+  "P0454": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1710
+   ],
+   "row_count": 1
+  },
+  "P0455": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1747,
+    1772
+   ],
+   "row_count": 2
+  },
+  "P0456": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1692
+   ],
+   "row_count": 1
+  },
+  "P0457": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1709,
+    1732
+   ],
+   "row_count": 2
+  },
+  "P0458": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1700
+   ],
+   "row_count": 1
+  },
+  "P0459": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1771
+   ],
+   "row_count": 1
+  },
+  "P0460": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1719
+   ],
+   "row_count": 1
+  },
+  "P0461": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1765
+   ],
+   "row_count": 1
+  },
+  "P0462": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1697
+   ],
+   "row_count": 1
+  },
+  "P0463": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1690,
+    1755
+   ],
+   "row_count": 2
+  },
+  "P0464": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1744
+   ],
+   "row_count": 1
+  },
+  "P0465": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1685
+   ],
+   "row_count": 1
+  },
+  "P0466": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1746
+   ],
+   "row_count": 1
+  },
+  "P0467": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1784
+   ],
+   "row_count": 1
+  },
+  "P0468": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1673
+   ],
+   "row_count": 1
+  },
+  "P0469": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1724
+   ],
+   "row_count": 1
+  },
+  "P0470": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1669
+   ],
+   "row_count": 1
+  },
+  "P0471": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1704
+   ],
+   "row_count": 1
+  },
+  "P0472": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1756
+   ],
+   "row_count": 1
+  },
+  "P0473": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1788
+   ],
+   "row_count": 1
+  },
+  "P0474": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1728
+   ],
+   "row_count": 1
+  },
+  "P0475": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1774
+   ],
+   "row_count": 1
+  },
+  "P0476": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1769
+   ],
+   "row_count": 1
+  },
+  "P0477": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1715
+   ],
+   "row_count": 1
+  },
+  "P0478": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1695
+   ],
+   "row_count": 1
+  },
+  "P0479": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1786
+   ],
+   "row_count": 1
+  },
+  "P0480": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1763
+   ],
+   "row_count": 1
+  },
+  "P0481": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1733
+   ],
+   "row_count": 1
+  },
+  "P0482": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1687
+   ],
+   "row_count": 1
+  },
+  "P0483": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1762
+   ],
+   "row_count": 1
+  },
+  "P0484": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1682
+   ],
+   "row_count": 1
+  },
+  "P0485": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1759
+   ],
+   "row_count": 1
+  },
+  "P0486": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1785
+   ],
+   "row_count": 1
+  },
+  "P0487": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1714
+   ],
+   "row_count": 1
+  },
+  "P0488": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1677
+   ],
+   "row_count": 1
+  },
+  "P0489": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1663
+   ],
+   "row_count": 1
+  },
+  "P0490": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1608
+   ],
+   "row_count": 1
+  },
+  "P0491": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1789
+   ],
+   "row_count": 1
+  },
+  "P0492": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1661
+   ],
+   "row_count": 1
+  },
+  "P0493": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1664
+   ],
+   "row_count": 1
+  },
+  "P0494": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1739
+   ],
+   "row_count": 1
+  },
+  "P0495": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1618
+   ],
+   "row_count": 1
+  },
+  "P0496": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1736
+   ],
+   "row_count": 1
+  },
+  "P0497": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1780
+   ],
+   "row_count": 1
+  },
+  "P0498": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1750
+   ],
+   "row_count": 1
+  },
+  "P0499": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1752
+   ],
+   "row_count": 1
+  },
+  "P0500": {
+   "position_groups": "DB",
+   "flag": "",
+   "row_ids": [
+    1737
+   ],
+   "row_count": 1
+  },
+  "P0501": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    768
+   ],
+   "row_count": 1
+  },
+  "P0502": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    763
+   ],
+   "row_count": 1
+  },
+  "P0503": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    760
+   ],
+   "row_count": 1
+  },
+  "P0504": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    770
+   ],
+   "row_count": 1
+  },
+  "P0505": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    761
+   ],
+   "row_count": 1
+  },
+  "P0506": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    767
+   ],
+   "row_count": 1
+  },
+  "P0507": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    765
+   ],
+   "row_count": 1
+  },
+  "P0508": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    769
+   ],
+   "row_count": 1
+  },
+  "P0509": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    762
+   ],
+   "row_count": 1
+  },
+  "P0510": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    764
+   ],
+   "row_count": 1
+  },
+  "P0511": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    766
+   ],
+   "row_count": 1
+  },
+  "P0512": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    771
+   ],
+   "row_count": 1
+  },
+  "P0513": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    752
+   ],
+   "row_count": 1
+  },
+  "P0514": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    749
+   ],
+   "row_count": 1
+  },
+  "P0515": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    745
+   ],
+   "row_count": 1
+  },
+  "P0516": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    757
+   ],
+   "row_count": 1
+  },
+  "P0517": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    751
+   ],
+   "row_count": 1
+  },
+  "P0518": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    747
+   ],
+   "row_count": 1
+  },
+  "P0519": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    756
+   ],
+   "row_count": 1
+  },
+  "P0520": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    746
+   ],
+   "row_count": 1
+  },
+  "P0521": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    754
+   ],
+   "row_count": 1
+  },
+  "P0522": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    758
+   ],
+   "row_count": 1
+  },
+  "P0523": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    755
+   ],
+   "row_count": 1
+  },
+  "P0524": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    750
+   ],
+   "row_count": 1
+  },
+  "P0525": {
+   "position_groups": "WR",
+   "flag": "",
+   "row_ids": [
+    744
+   ],
+   "row_count": 1
+  },
+  "P0526": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    740,
+    1042
+   ],
+   "row_count": 2
+  },
+  "P0527": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    735,
+    1037
+   ],
+   "row_count": 2
+  },
+  "P0528": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    743,
+    748,
+    1045
+   ],
+   "row_count": 3
+  },
+  "P0529": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    734,
+    1036
+   ],
+   "row_count": 2
+  },
+  "P0530": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    742,
+    1044
+   ],
+   "row_count": 2
+  },
+  "P0531": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    733,
+    753,
+    1035
+   ],
+   "row_count": 3
+  },
+  "P0532": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    739,
+    1041
+   ],
+   "row_count": 2
+  },
+  "P0533": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    737,
+    1039
+   ],
+   "row_count": 2
+  },
+  "P0534": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    732,
+    1034
+   ],
+   "row_count": 2
+  },
+  "P0535": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    741,
+    759,
+    1043
+   ],
+   "row_count": 3
+  },
+  "P0536": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    736,
+    1038
+   ],
+   "row_count": 2
+  },
+  "P0537": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    731,
+    1032
+   ],
+   "row_count": 2
+  },
+  "P0538": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    730,
+    1033
+   ],
+   "row_count": 2
+  },
+  "P0539": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    738,
+    1040
+   ],
+   "row_count": 2
+  },
+  "P0540": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    816,
+    1322
+   ],
+   "row_count": 2
+  },
+  "P0541": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    810,
+    1316
+   ],
+   "row_count": 2
+  },
+  "P0542": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    793,
+    1299
+   ],
+   "row_count": 2
+  },
+  "P0543": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    803,
+    1309
+   ],
+   "row_count": 2
+  },
+  "P0544": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    840,
+    1346
+   ],
+   "row_count": 2
+  },
+  "P0545": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    782,
+    1288
+   ],
+   "row_count": 2
+  },
+  "P0546": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    809,
+    1315
+   ],
+   "row_count": 2
+  },
+  "P0547": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    839,
+    1345
+   ],
+   "row_count": 2
+  },
+  "P0548": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    789,
+    1295
+   ],
+   "row_count": 2
+  },
+  "P0549": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    858,
+    1364
+   ],
+   "row_count": 2
+  },
+  "P0550": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    831,
+    1337
+   ],
+   "row_count": 2
+  },
+  "P0551": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    860,
+    1366
+   ],
+   "row_count": 2
+  },
+  "P0552": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    773,
+    1279
+   ],
+   "row_count": 2
+  },
+  "P0553": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    857,
+    1363
+   ],
+   "row_count": 2
+  },
+  "P0554": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    863,
+    1369
+   ],
+   "row_count": 2
+  },
+  "P0555": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    838,
+    1344
+   ],
+   "row_count": 2
+  },
+  "P0556": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    866,
+    1372
+   ],
+   "row_count": 2
+  },
+  "P0557": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    855,
+    1361
+   ],
+   "row_count": 2
+  },
+  "P0558": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    797,
+    1303
+   ],
+   "row_count": 2
+  },
+  "P0559": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    824,
+    1330
+   ],
+   "row_count": 2
+  },
+  "P0560": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    800,
+    1306
+   ],
+   "row_count": 2
+  },
+  "P0561": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    854,
+    1360
+   ],
+   "row_count": 2
+  },
+  "P0562": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    804,
+    1310
+   ],
+   "row_count": 2
+  },
+  "P0563": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    828,
+    1334
+   ],
+   "row_count": 2
+  },
+  "P0564": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    844,
+    1350
+   ],
+   "row_count": 2
+  },
+  "P0565": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    836,
+    1342
+   ],
+   "row_count": 2
+  },
+  "P0566": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    859,
+    1365
+   ],
+   "row_count": 2
+  },
+  "P0567": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    786,
+    1292
+   ],
+   "row_count": 2
+  },
+  "P0568": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    795,
+    1301
+   ],
+   "row_count": 2
+  },
+  "P0569": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    807,
+    1313
+   ],
+   "row_count": 2
+  },
+  "P0570": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    796,
+    1302
+   ],
+   "row_count": 2
+  },
+  "P0571": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    823,
+    1329
+   ],
+   "row_count": 2
+  },
+  "P0572": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    847,
+    1353
+   ],
+   "row_count": 2
+  },
+  "P0573": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    785,
+    1291
+   ],
+   "row_count": 2
+  },
+  "P0574": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    813,
+    1319
+   ],
+   "row_count": 2
+  },
+  "P0575": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    815,
+    1321
+   ],
+   "row_count": 2
+  },
+  "P0576": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    865,
+    1371
+   ],
+   "row_count": 2
+  },
+  "P0577": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    843,
+    1349
+   ],
+   "row_count": 2
+  },
+  "P0578": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    781,
+    1287
+   ],
+   "row_count": 2
+  },
+  "P0579": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    861,
+    1367
+   ],
+   "row_count": 2
+  },
+  "P0580": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    829,
+    1335
+   ],
+   "row_count": 2
+  },
+  "P0581": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    833,
+    1339
+   ],
+   "row_count": 2
+  },
+  "P0582": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    862,
+    1368
+   ],
+   "row_count": 2
+  },
+  "P0583": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    856,
+    1362
+   ],
+   "row_count": 2
+  },
+  "P0584": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    794,
+    1300
+   ],
+   "row_count": 2
+  },
+  "P0585": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    850,
+    1356
+   ],
+   "row_count": 2
+  },
+  "P0586": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    799,
+    1305
+   ],
+   "row_count": 2
+  },
+  "P0587": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    827,
+    1333
+   ],
+   "row_count": 2
+  },
+  "P0588": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    779,
+    1285
+   ],
+   "row_count": 2
+  },
+  "P0589": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    822,
+    1328
+   ],
+   "row_count": 2
+  },
+  "P0590": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    818,
+    1324
+   ],
+   "row_count": 2
+  },
+  "P0591": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    841,
+    1347
+   ],
+   "row_count": 2
+  },
+  "P0592": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    806,
+    1312
+   ],
+   "row_count": 2
+  },
+  "P0593": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    837,
+    1343
+   ],
+   "row_count": 2
+  },
+  "P0594": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    812,
+    1318
+   ],
+   "row_count": 2
+  },
+  "P0595": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    775,
+    1281
+   ],
+   "row_count": 2
+  },
+  "P0596": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    820,
+    1326
+   ],
+   "row_count": 2
+  },
+  "P0597": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    805,
+    1311
+   ],
+   "row_count": 2
+  },
+  "P0598": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    846,
+    1352
+   ],
+   "row_count": 2
+  },
+  "P0599": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    852,
+    1358
+   ],
+   "row_count": 2
+  },
+  "P0600": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    826,
+    1332
+   ],
+   "row_count": 2
+  },
+  "P0601": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    848,
+    1354
+   ],
+   "row_count": 2
+  },
+  "P0602": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    808,
+    1314
+   ],
+   "row_count": 2
+  },
+  "P0603": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    851,
+    1357
+   ],
+   "row_count": 2
+  },
+  "P0604": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    830,
+    1336
+   ],
+   "row_count": 2
+  },
+  "P0605": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    792,
+    1298
+   ],
+   "row_count": 2
+  },
+  "P0606": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    776,
+    1282
+   ],
+   "row_count": 2
+  },
+  "P0607": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    819,
+    1325
+   ],
+   "row_count": 2
+  },
+  "P0608": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    780,
+    1286
+   ],
+   "row_count": 2
+  },
+  "P0609": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    791,
+    1297
+   ],
+   "row_count": 2
+  },
+  "P0610": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    842,
+    1348
+   ],
+   "row_count": 2
+  },
+  "P0611": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    867,
+    1373
+   ],
+   "row_count": 2
+  },
+  "P0612": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    790,
+    1296
+   ],
+   "row_count": 2
+  },
+  "P0613": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    817,
+    1323
+   ],
+   "row_count": 2
+  },
+  "P0614": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    845,
+    1351
+   ],
+   "row_count": 2
+  },
+  "P0615": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    772,
+    1278
+   ],
+   "row_count": 2
+  },
+  "P0616": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    834,
+    1340
+   ],
+   "row_count": 2
+  },
+  "P0617": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    787,
+    1293
+   ],
+   "row_count": 2
+  },
+  "P0618": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    802,
+    1308
+   ],
+   "row_count": 2
+  },
+  "P0619": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    788,
+    1294
+   ],
+   "row_count": 2
+  },
+  "P0620": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    814,
+    1320
+   ],
+   "row_count": 2
+  },
+  "P0621": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    853,
+    1359
+   ],
+   "row_count": 2
+  },
+  "P0622": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    774,
+    1280
+   ],
+   "row_count": 2
+  },
+  "P0623": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    821,
+    1327
+   ],
+   "row_count": 2
+  },
+  "P0624": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    849,
+    1355
+   ],
+   "row_count": 2
+  },
+  "P0625": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    798,
+    1304
+   ],
+   "row_count": 2
+  },
+  "P0626": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    811,
+    1317
+   ],
+   "row_count": 2
+  },
+  "P0627": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    864,
+    1370
+   ],
+   "row_count": 2
+  },
+  "P0628": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    832,
+    1338
+   ],
+   "row_count": 2
+  },
+  "P0629": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    777,
+    1283
+   ],
+   "row_count": 2
+  },
+  "P0630": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    835,
+    1341
+   ],
+   "row_count": 2
+  },
+  "P0631": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    801,
+    1307
+   ],
+   "row_count": 2
+  },
+  "P0632": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    825,
+    1331
+   ],
+   "row_count": 2
+  },
+  "P0633": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    784,
+    1290
+   ],
+   "row_count": 2
+  },
+  "P0634": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    783,
+    1289
+   ],
+   "row_count": 2
+  },
+  "P0635": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    778,
+    1284
+   ],
+   "row_count": 2
+  },
+  "P0636": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    892,
+    1398
+   ],
+   "row_count": 2
+  },
+  "P0637": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    925,
+    1431
+   ],
+   "row_count": 2
+  },
+  "P0638": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    876,
+    1382
+   ],
+   "row_count": 2
+  },
+  "P0639": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    900,
+    1406
+   ],
+   "row_count": 2
+  },
+  "P0640": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    871,
+    1377
+   ],
+   "row_count": 2
+  },
+  "P0641": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    890,
+    1396
+   ],
+   "row_count": 2
+  },
+  "P0642": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    921,
+    1427
+   ],
+   "row_count": 2
+  },
+  "P0643": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    893,
+    1399
+   ],
+   "row_count": 2
+  },
+  "P0644": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    884,
+    1390
+   ],
+   "row_count": 2
+  },
+  "P0645": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    909,
+    1415
+   ],
+   "row_count": 2
+  },
+  "P0646": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    971,
+    1477
+   ],
+   "row_count": 2
+  },
+  "P0647": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    967,
+    1473
+   ],
+   "row_count": 2
+  },
+  "P0648": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    943,
+    959,
+    1449,
+    1465
+   ],
+   "row_count": 4
+  },
+  "P0649": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    975,
+    1481
+   ],
+   "row_count": 2
+  },
+  "P0650": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    918,
+    1424
+   ],
+   "row_count": 2
+  },
+  "P0651": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    915,
+    1421
+   ],
+   "row_count": 2
+  },
+  "P0652": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    885,
+    1391
+   ],
+   "row_count": 2
+  },
+  "P0653": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    938,
+    1444
+   ],
+   "row_count": 2
+  },
+  "P0654": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    1826,
+    1827,
+    1828,
+    1829
+   ],
+   "row_count": 4
+  },
+  "P0655": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    966,
+    1472
+   ],
+   "row_count": 2
+  },
+  "P0656": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    950,
+    1456
+   ],
+   "row_count": 2
+  },
+  "P0657": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    954,
+    1460
+   ],
+   "row_count": 2
+  },
+  "P0658": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    974,
+    1480
+   ],
+   "row_count": 2
+  },
+  "P0659": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    935,
+    1441
+   ],
+   "row_count": 2
+  },
+  "P0660": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    931,
+    1437
+   ],
+   "row_count": 2
+  },
+  "P0661": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    947,
+    1453
+   ],
+   "row_count": 2
+  },
+  "P0662": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    882,
+    1388
+   ],
+   "row_count": 2
+  },
+  "P0663": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    934,
+    1440
+   ],
+   "row_count": 2
+  },
+  "P0664": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    970,
+    1476
+   ],
+   "row_count": 2
+  },
+  "P0665": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    913,
+    1419
+   ],
+   "row_count": 2
+  },
+  "P0666": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    879,
+    1385
+   ],
+   "row_count": 2
+  },
+  "P0667": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    928,
+    940,
+    956,
+    1434,
+    1446,
+    1462
+   ],
+   "row_count": 6
+  },
+  "P0668": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    920,
+    1426
+   ],
+   "row_count": 2
+  },
+  "P0669": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    891,
+    1397
+   ],
+   "row_count": 2
+  },
+  "P0670": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    964,
+    1470
+   ],
+   "row_count": 2
+  },
+  "P0671": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    908,
+    1414
+   ],
+   "row_count": 2
+  },
+  "P0672": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    894,
+    1400
+   ],
+   "row_count": 2
+  },
+  "P0673": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    869,
+    1375
+   ],
+   "row_count": 2
+  },
+  "P0674": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    902,
+    1408
+   ],
+   "row_count": 2
+  },
+  "P0675": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    976,
+    1482
+   ],
+   "row_count": 2
+  },
+  "P0676": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    944,
+    960,
+    1450,
+    1466
+   ],
+   "row_count": 4
+  },
+  "P0677": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    968,
+    1474
+   ],
+   "row_count": 2
+  },
+  "P0678": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    948,
+    1454
+   ],
+   "row_count": 2
+  },
+  "P0679": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    936,
+    1442
+   ],
+   "row_count": 2
+  },
+  "P0680": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    932,
+    1438
+   ],
+   "row_count": 2
+  },
+  "P0681": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    919,
+    1425
+   ],
+   "row_count": 2
+  },
+  "P0682": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    889,
+    1395
+   ],
+   "row_count": 2
+  },
+  "P0683": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    911,
+    1417
+   ],
+   "row_count": 2
+  },
+  "P0684": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    883,
+    1389
+   ],
+   "row_count": 2
+  },
+  "P0685": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    898,
+    1404
+   ],
+   "row_count": 2
+  },
+  "P0686": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    868,
+    1374
+   ],
+   "row_count": 2
+  },
+  "P0687": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    881,
+    1387
+   ],
+   "row_count": 2
+  },
+  "P0688": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    914,
+    1420
+   ],
+   "row_count": 2
+  },
+  "P0689": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    907,
+    1413
+   ],
+   "row_count": 2
+  },
+  "P0690": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    878,
+    1384
+   ],
+   "row_count": 2
+  },
+  "P0691": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    952,
+    1458
+   ],
+   "row_count": 2
+  },
+  "P0692": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    926,
+    1432
+   ],
+   "row_count": 2
+  },
+  "P0693": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    922,
+    1428
+   ],
+   "row_count": 2
+  },
+  "P0694": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    897,
+    1403
+   ],
+   "row_count": 2
+  },
+  "P0695": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    973,
+    1479
+   ],
+   "row_count": 2
+  },
+  "P0696": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    953,
+    1459
+   ],
+   "row_count": 2
+  },
+  "P0697": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    969,
+    977,
+    1475,
+    1483
+   ],
+   "row_count": 4
+  },
+  "P0698": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    945,
+    961,
+    1451,
+    1467
+   ],
+   "row_count": 4
+  },
+  "P0699": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    887,
+    1393
+   ],
+   "row_count": 2
+  },
+  "P0700": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    917,
+    1423
+   ],
+   "row_count": 2
+  },
+  "P0701": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    875,
+    1381
+   ],
+   "row_count": 2
+  },
+  "P0702": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    924,
+    1430
+   ],
+   "row_count": 2
+  },
+  "P0703": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    895,
+    1401
+   ],
+   "row_count": 2
+  },
+  "P0704": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    978,
+    1484
+   ],
+   "row_count": 2
+  },
+  "P0705": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    946,
+    962,
+    1452,
+    1468
+   ],
+   "row_count": 4
+  },
+  "P0706": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    880,
+    1386
+   ],
+   "row_count": 2
+  },
+  "P0707": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    912,
+    1418
+   ],
+   "row_count": 2
+  },
+  "P0708": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    916,
+    1422
+   ],
+   "row_count": 2
+  },
+  "P0709": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    874,
+    1380
+   ],
+   "row_count": 2
+  },
+  "P0710": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    906,
+    1412
+   ],
+   "row_count": 2
+  },
+  "P0711": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    896,
+    1402
+   ],
+   "row_count": 2
+  },
+  "P0712": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    923,
+    1429
+   ],
+   "row_count": 2
+  },
+  "P0713": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    972,
+    1478
+   ],
+   "row_count": 2
+  },
+  "P0714": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    951,
+    1457
+   ],
+   "row_count": 2
+  },
+  "P0715": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    886,
+    1392
+   ],
+   "row_count": 2
+  },
+  "P0716": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    904,
+    1410
+   ],
+   "row_count": 2
+  },
+  "P0717": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    927,
+    1433
+   ],
+   "row_count": 2
+  },
+  "P0718": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    910,
+    1416
+   ],
+   "row_count": 2
+  },
+  "P0719": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    877,
+    1383
+   ],
+   "row_count": 2
+  },
+  "P0720": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    873,
+    1379
+   ],
+   "row_count": 2
+  },
+  "P0721": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    899,
+    1405
+   ],
+   "row_count": 2
+  },
+  "P0722": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    939,
+    955,
+    1445,
+    1461
+   ],
+   "row_count": 4
+  },
+  "P0723": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    888,
+    1394
+   ],
+   "row_count": 2
+  },
+  "P0724": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    963,
+    1469
+   ],
+   "row_count": 2
+  },
+  "P0725": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    937,
+    1443
+   ],
+   "row_count": 2
+  },
+  "P0726": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    949,
+    1455
+   ],
+   "row_count": 2
+  },
+  "P0727": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    933,
+    1439
+   ],
+   "row_count": 2
+  },
+  "P0728": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    965,
+    1471
+   ],
+   "row_count": 2
+  },
+  "P0729": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    929,
+    941,
+    957,
+    1435,
+    1447,
+    1463
+   ],
+   "row_count": 6
+  },
+  "P0730": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    905,
+    1411
+   ],
+   "row_count": 2
+  },
+  "P0731": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    901,
+    1407
+   ],
+   "row_count": 2
+  },
+  "P0732": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    872,
+    1378
+   ],
+   "row_count": 2
+  },
+  "P0733": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    870,
+    1376
+   ],
+   "row_count": 2
+  },
+  "P0734": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    903,
+    1409
+   ],
+   "row_count": 2
+  },
+  "P0735": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    930,
+    942,
+    958,
+    1436,
+    1448,
+    1464
+   ],
+   "row_count": 6
+  },
+  "P0736": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    984,
+    1490
+   ],
+   "row_count": 2
+  },
+  "P0737": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    980,
+    1486
+   ],
+   "row_count": 2
+  },
+  "P0738": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    985,
+    1491
+   ],
+   "row_count": 2
+  },
+  "P0739": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    981,
+    1498
+   ],
+   "row_count": 2
+  },
+  "P0740": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    988,
+    1494
+   ],
+   "row_count": 2
+  },
+  "P0741": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    982,
+    1488
+   ],
+   "row_count": 2
+  },
+  "P0742": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    979,
+    1485
+   ],
+   "row_count": 2
+  },
+  "P0743": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    987,
+    1493
+   ],
+   "row_count": 2
+  },
+  "P0744": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    983,
+    1500
+   ],
+   "row_count": 2
+  },
+  "P0745": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    989,
+    1495
+   ],
+   "row_count": 2
+  },
+  "P0746": {
+   "position_groups": "WR/TE",
+   "flag": "shared_WRTE",
+   "row_ids": [
+    986,
+    1503
+   ],
+   "row_count": 2
+  },
+  "P0747": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1008
+   ],
+   "row_count": 1
+  },
+  "P0748": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1014
+   ],
+   "row_count": 1
+  },
+  "P0749": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1020
+   ],
+   "row_count": 1
+  },
+  "P0750": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1009
+   ],
+   "row_count": 1
+  },
+  "P0751": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1023
+   ],
+   "row_count": 1
+  },
+  "P0752": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1013
+   ],
+   "row_count": 1
+  },
+  "P0753": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1021
+   ],
+   "row_count": 1
+  },
+  "P0754": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1024
+   ],
+   "row_count": 1
+  },
+  "P0755": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1048
+   ],
+   "row_count": 1
+  },
+  "P0756": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1053
+   ],
+   "row_count": 1
+  },
+  "P0757": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1050
+   ],
+   "row_count": 1
+  },
+  "P0758": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1052
+   ],
+   "row_count": 1
+  },
+  "P0759": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1030
+   ],
+   "row_count": 1
+  },
+  "P0760": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1029
+   ],
+   "row_count": 1
+  },
+  "P0761": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1004
+   ],
+   "row_count": 1
+  },
+  "P0762": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1000
+   ],
+   "row_count": 1
+  },
+  "P0763": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    999
+   ],
+   "row_count": 1
+  },
+  "P0764": {
+   "position_groups": "TE",
+   "flag": "",
+   "row_ids": [
+    1005
+   ],
+   "row_count": 1
+  }
+ }
+}

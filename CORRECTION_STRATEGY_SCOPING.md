@@ -126,7 +126,25 @@ are the same thing for a positive-technique row). The owner authors P09's `corre
 existing standards. This gives the OL base-width/hip-depth/knee-bend dependency (flagged in
 `CHECK_TYPE_SPLIT_WORKSHEET.md` §6) a concrete home in the format.
 
-## 7. On approval
-Build the full pattern-keyed worksheet (~764 rows, or ~293 if WR↔TE auto-transfer is accepted) with the
-read-only columns pre-filled and every owner cell blank. Nothing is written to `checkpoints_v2` until the
-owner-filled worksheet comes back and is reviewed row-by-row (same standard as the check_type write).
+## 7. BUILT (2026-09-27) — `CORRECTION_STRATEGY_WORKSHEET.csv` + `CORRECTION_STRATEGY_ROWMAP.json`
+
+The full pattern-keyed worksheet is built as data files (not markdown). **Number reconciled:
+764 patterns**, and WR↔TE auto-transfer is *already baked in* — normalization merges the twins, so a
+🔗 WR+TE pattern is **one worksheet row covering both positions' rows**. (The earlier "~293" was only the
+WR+TE *subset's* authoring units, not the catalogue total — 764 is the whole, with transfer applied.)
+
+- **`CORRECTION_STRATEGY_WORKSHEET.csv`** — 764 data rows, one per normalized pattern, sorted by
+  position group then technique. Read-only cols: `pattern_id`, `flag` (🔗 WR+TE shared / ✳ cross-role,
+  confirm transfer / blank), `position_groups`, `technique`, `representative_fault`,
+  `representative_ideal_execution_standard`, `applies_to_row_ids`, `row_count`. Owner-fill (all blank):
+  `correction_strategy`, `coaching_cue`, `root_cause_first`, `override`.
+- **`CORRECTION_STRATEGY_ROWMAP.json`** — `pattern_id → row-id list` for ingest of the filled CSV back
+  into `checkpoints_v2` later.
+
+**Reconciliation (verified):** every one of the **1205** has-fault rows appears in **exactly one**
+pattern — sum of `row_count` = 1205, 0 rows duplicated across patterns, 0 rows missing. Flag split:
+221 🔗 (WR+TE), 29 ✳ (cross-role), 514 single-group. Patterns by primary group (worksheet sections):
+OL 75 · QB 269 · RB 71 · DB 85 · WR 246 (25 WR-only + 221 WR+TE shared) · TE 18 (TE-only).
+
+Nothing is written to `checkpoints_v2` until the owner-filled worksheet comes back and is reviewed
+row-by-row (same standard as the check_type write).
